@@ -42,6 +42,7 @@ export default async function fetchMetadata (source, resourceId, documentType, r
   const initial_metadata = {
     id: null,
     title: null,
+    description: null,
     author: null,
     rights: null,
     sudoc: null,
@@ -93,6 +94,8 @@ export default async function fetchMetadata (source, resourceId, documentType, r
     metadata.identifier = listmetadata['@id'] ? listmetadata['@id'] : null
 
     metadata.title = listmetadata.title ? listmetadata.title : ''
+
+    metadata.description = listmetadata.description ? listmetadata.description : ''
 
     metadata.type = listmetadata['@type'] ? listmetadata['@type'] : ''
 

@@ -1,5 +1,5 @@
 <template>
-    <HelloWorld
+    <HomePageDefault
       v-if="Object.keys(currCollection).length > 0"
       :collection-identifier="collectionId"
       :currentCollection="currCollection"
@@ -10,11 +10,11 @@
 <script>
 import { ref, watch } from 'vue'
 
-import HelloWorld from '@/components/HelloWorld.vue'
+import HomePageDefault from '@/components/HomePageDefault.vue'
 
 export default {
   name: 'HomePage',
-  components: { HelloWorld },
+  components: { HomePageDefault },
   props: {
     collectionIdentifier: {
       type: String,

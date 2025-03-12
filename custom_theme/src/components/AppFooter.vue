@@ -1,6 +1,6 @@
 <template>
   <footer class="footer is-flex-align-items-flex-end mt-auto">
-    <div class="columns app-width-margin">
+    <div class="columns">
       <div class="column description">
         <div class="title-container">
           <span class="title">
@@ -58,16 +58,13 @@
             :to="{ name: 'About'}"
             active-class="active"
           >
-            About
+            À propos
           </router-link><!-- , params: {collId: collectionId}  -->
         </li>
         <li>
-          <router-link
-            :to="{ name: 'Terms'}"
-            active-class="active"
-          >
-            Terms of service
-          </router-link>
+          <a href="/termsofservice" class="">
+            Mentions légales
+          </a>
         </li>
         <li>
           <a target="_blank" href="https://www.huma-num.fr/">
@@ -148,9 +145,6 @@ export default {
     text-align: left;
     color: white;
   }
-}
-.footer .column {
-  padding: 0;
 }
 .footer .column .description {
   display: flex;

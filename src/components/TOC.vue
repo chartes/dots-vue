@@ -15,14 +15,14 @@
           /><!--expandedById[item.identifier] || -->
           <a
             class="toc-title"
-            :title="item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : 'pas de titre' : `Fragment n° ${index + 1}`"
+            :title="item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : item.citeType : item.citeType"
             :data-href="item.url"
             :class="route.hash === item.hash ? 'is-current' : !route.hash && item.identifier === currentRefId ? 'is-current' : ''"
             v-on:click.prevent="goTo(item)"
           >
-            {{ item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : 'pas de titre' : `Fragment n° ${index + 1}` }}
+            {{ item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : item.citeType : item.citeType }}
 
-          </a>
+          </a><!-- : 'pas de titre' : `Fragment n° ${index + 1}` -->
         </div>
         <!-- <div
           v-if="expandedById[item.identifier]"

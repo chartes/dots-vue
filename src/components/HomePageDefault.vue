@@ -1,6 +1,6 @@
 <template>
   <div class="home-mask" :class="homeCssClass">
-      <div class="tiles">
+    <div class="tiles">
       <div class="tile page-header app-width-padding">
         <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center wrapper">
           <div class="tile is-child">
@@ -9,17 +9,17 @@
             </div>
             <div class="project-tile">
               <router-link
-                :to="{ name: 'About', params: {collId: collectionId} }"
+                :to="{ name: 'About'}"
                 active-class="active"
               >
-                En savoir plus
-              </router-link>
+                About
+              </router-link><!-- , params: {collId: collectionId}  -->
             </div>
           </div>
           <div class="wrapper">
             <div class="toc-area app-width-margin" :class="tocCssClass">
               <div class="toc-area-header">
-                <a href="#">Parcourir la collection </a>
+                <a href="#">Browse</a>
                 <a href="#" class="toggle-btn" v-on:click.prevent="toggleExpanded(collectionId)"></a>
               </div>
               <div v-if="componentTOC.length > 0"
@@ -38,43 +38,23 @@
         </div>
       </div>
     </div>
-    <div id="article" class="article app-width-margin">
-
-      <h1>La collection</h1>
-
-        <p class="texte">Dans le cadre des projets de numérisation soutenus par la sous-direction
-            des bibliothèques et de la documentation à la direction de l'Enseignement supérieur du
-            ministère de l'Education nationale, de l'enseignement supérieur et de la recherche et
-            dans une logique de mise à disposition des ressources de la bibliothèque de l'École
-            nationale des chartes à un large public de chercheurs excédant le cercle restreint des
-            élèves de l'École et des archivistes paléographes, nous avons proposé un premier choix
-            de documents numérisés qui visent à compléter l'offre de la bibliothèque.</p>
-        <p class="texte">Ce projet de numérisation a pour objectif de&nbsp;:</p>
-        <ul>
-            <li>faire connaître certains documents emblématiques de la bibliothèque et de l'École
-                des chartes à un public élargi&nbsp;;</li>
-            <li>faciliter pour tous les chercheurs la consultation de ces documents qui sont peu
-                présents dans les fonds des bibliothèques de recherche françaises, en offrant un
-                support de substitution&nbsp;;</li>
-            <li>permettre la mise en œuvre d'une nouvelle méthode de recherche fondée sur un
-                environnement numérique de travail.</li>
-        </ul>
-        <p class="texte">La spécificité de la bibliothèque de l'École des chartes, que reflètent les
-            enseignements de l'École depuis son origine, est d'être axée sur les <em>éditions de
-                sources</em>, en particulier les sources concernant l'histoire de France.</p>
-        <p class="texte">A cet égard, l'ensemble que forment les éditions de cartulaires est
-            particulièrement remarquable&nbsp;; les collections de la bibliothèque tendent depuis
-            toujours à l'exhaustivité dans ce domaine.</p>
-        <p class="texte">Au reste, c'est sur cette série que portent un grand nombre des demandes de
-            consultation sur place par les chercheurs français ou étrangers. Il nous a donc paru
-            important et urgent de donner à ces cartulaires un accès facilité et une plus grande
-            visibilité, d'autant plus que nous ne pouvons que rarement satisfaire les demandes de
-            prêt pour des éditions souvent anciennes (datant du XIX<sup>e</sup> siècle pour la
-            plupart) et fragilisées en raison de leur fréquente manipulation, ainsi que de leur date
-            d'édition (à un moment où des papiers de mauvaise qualité sont massivement utilisés pour
-            l'édition).
-        </p>
-    </div>
+    <section class="main app-width-margin">
+      <div
+        v-if="currCollection.description"
+        id="article"
+        class="article app-width-margin"
+      >
+        <h1>La collection</h1>
+          {{ currCollection.description ? currCollection.description : collectionDescription }}
+      </div>
+      <div
+        v-else
+        id="article"
+        class="article app-width-margin"
+      >
+        <p class="texte">This collection provides no DTS default description.</p>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -102,22 +82,23 @@ export default {
     })
 
     const layout = inject('variable-layout')
-    const collectionAltTitle = `${import.meta.env.VITE_APP_PROJECT_ALT_TITLE}`
+    const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
+    const collectionDescription = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_DESC}`
     const collectionId = ref(props.collectionIdentifier)
-    console.log('HelloWorld setup collectionId', collectionId.value)
+    console.log('HomePageDefault setup collectionId', collectionId.value)
 
     const componentTOC = ref([])
     const currCollection = ref(props.currentCollection)
 
     componentTOC.value = [...currCollection.value.member]
-    console.log('HelloWorld currentCollection.value / componentTOC.value : ', currCollection.value, componentTOC.value)
+    console.log('HomePageDefault currentCollection.value / componentTOC.value : ', currCollection.value, componentTOC.value)
 
-    console.log('HelloWorld componentTOC / collectionId : ', Object.fromEntries(componentTOC.value.map(col => [col.identifier, false])), componentTOC.value, collectionId, currCollection)
+    console.log('HomePageDefault componentTOC / collectionId : ', Object.fromEntries(componentTOC.value.map(col => [col.identifier, false])), componentTOC.value, collectionId, currCollection)
 
     const expandedById = ref([])
 
     const toggleExpanded = async (collId) => {
-      // console.log('HelloWorld Modal toggleExpanded', componentTOC.value)
+      // console.log('HomePageDefault Modal toggleExpanded', componentTOC.value)
       if (componentTOC.value.length === 0) {
         const response = await getMetadataFromApi(collId)
         response.member.forEach(m => {
@@ -127,11 +108,11 @@ export default {
           m.parent = collId
         })
         componentTOC.value = response.member
-        // console.log('HelloWorld toggleExpanded componentTOC', componentTOC.value)
+        // console.log('HomePageDefault toggleExpanded componentTOC', componentTOC.value)
       }
       expandedById.value[collId] = !expandedById.value[collId]
       state.isTreeOpened = !state.isTreeOpened
-      // console.log('HelloWorld toggleExpanded after expandedById[collectionId] : ', collId, expandedById.value)
+      // console.log('HomePageDefault toggleExpanded after expandedById[collectionId] : ', collId, expandedById.value)
     }
 
     const homeCssClass = computed(() => {
@@ -145,6 +126,7 @@ export default {
 
     return {
       collectionAltTitle,
+      collectionDescription,
       homeCssClass,
       tocCssClass: layout.tocCssClass,
       collectionId,
@@ -164,7 +146,7 @@ a {
 #article {
   padding: 40px 10% 120px;
   border-bottom: 1px dotted #ffffff;
-  min-height: 100%;
+  /* min-height: 100%; */
 }
 #article article {
   margin: 0;

@@ -32,6 +32,11 @@ const router = createRouter({
       component: () => import('@/views/DocumentationPage.vue')
     },
     {
+      path: '/:collId?/termsofservice',
+      name: 'Terms',
+      component: () => import('@/views/TermsOfService.vue')
+    },
+    {
       path: '/:collId?/document/:id',
       name: 'Document',
       component: () => import('@/views/DocumentPage.vue'),

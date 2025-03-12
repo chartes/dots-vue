@@ -11,6 +11,8 @@ async function getMetadataFromApi (id, options = {}) {
   let response_metadata = {}
   if (id === 'elec') {
     response_metadata = await fetch(`${_baseApiURL}/collection`, { mode: 'cors', ...options })
+  } else if (!id) {
+    response_metadata = await fetch(`${_baseApiURL}/collection`, { mode: 'cors', ...options })
   } else {
     response_metadata = await fetch(`${_baseApiURL}/collection?id=${id}`, { mode: 'cors', ...options })
   }

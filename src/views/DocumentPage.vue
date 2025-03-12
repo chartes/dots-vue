@@ -339,7 +339,7 @@ export default {
 
   async setup () {
     console.log('PROJECT test : ', PROJECT)
-    const topTOCDisplayIndicator = `${import.meta.env.VITE_APP_DISPLAY_TOP_TOC}` !== 'false'
+    const topTOCDisplayIndicator = `${import.meta.env.VITE_APP_APP_DISPLAY_TOP_TOC}` !== 'false'
     console.log('topTOCDisplayIndicator test : ', topTOCDisplayIndicator)
     const manifestIsAvailable = ref(false)
     const manifest = ref(null)
@@ -406,11 +406,11 @@ export default {
     const collection = ref()
 
     const isLoading = ref(false)
-    const TOC_DEPTH = ref(parseInt(`${import.meta.env.VITE_APP_TOC_DEPTH}`))
+    const TOC_DEPTH = ref(parseInt(`${import.meta.env.VITE_APP_APP_TOC_DEPTH}`))
     const editorialTypesIsValid = ref(false)
     const currentLevelIndicator = ref(false)
     const currentLevel = ref(1)
-    const editorialLevel = ref(parseInt(`${import.meta.env.VITE_APP_EDITORIAL_LEVEL}`))
+    const editorialLevel = ref(parseInt(`${import.meta.env.VITE_APP_APP_EDITORIAL_LEVEL}`))
     const flatTOC = ref([])
     const topTOC = ref([])
     const bottomTOC = ref([])
@@ -459,8 +459,8 @@ export default {
 
           // Fetch editorial level document parts if any (based on citeType)
           let editorialTypes = []
-          if (import.meta.env.VITE_APP_EDITORIAL_TYPE && import.meta.env.VITE_APP_EDITORIAL_TYPE.length > 0) {
-            editorialTypes = import.meta.env.VITE_APP_EDITORIAL_TYPE.replace(/\s/g, '').split(',')
+          if (import.meta.env.VITE_APP_APP_EDITORIAL_TYPE && import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.length > 0) {
+            editorialTypes = import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.replace(/\s/g, '').split(',')
           }
           currentItem.value.editorialLevelIndicator = editorialTypes.includes(currentItem.value.citeType) ? 'toEdit' : 'renderToc'
           store.commit('setCurrentItem', currentItem.value)
@@ -514,8 +514,8 @@ export default {
 
       // Fetch editorial level document parts if any (based on citeType)
       let editorialTypes = []
-      if (import.meta.env.VITE_APP_EDITORIAL_TYPE && import.meta.env.VITE_APP_EDITORIAL_TYPE.length > 0) {
-        editorialTypes = import.meta.env.VITE_APP_EDITORIAL_TYPE.replace(/\s/g, '').split(',')
+      if (import.meta.env.VITE_APP_APP_EDITORIAL_TYPE && import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.length > 0) {
+        editorialTypes = import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.replace(/\s/g, '').split(',')
       }
       // Validate that there are actually in the data
       editorialTypesIsValid.value = processFlatTOC.some(item => editorialTypes.some(l => l === item.citeType))
@@ -681,8 +681,8 @@ export default {
         ? Math.max(...processFlatTOC.map(i => i.level))
         : Math.max(...processFlatTOC.filter(i => !titleMissing(i)).map(item => item.level)) - 1
       console.log('document DoTS maxTocDepth : ', maxTocDepth)
-      // check if there is an editorial level set up by the user in .env VITE_APP_EDITORIAL_LEVEL
-      editorialLevel.value = parseInt(`${import.meta.env.VITE_APP_EDITORIAL_LEVEL}`)
+      // check if there is an editorial level set up by the user in .env VITE_APP_APP_EDITORIAL_LEVEL
+      editorialLevel.value = parseInt(`${import.meta.env.VITE_APP_APP_EDITORIAL_LEVEL}`)
       console.log('USER editorialLevel.value / typeof : ', editorialLevel.value, typeof (editorialLevel.value))
       editorialLevel.value = editorialLevel.value > maxTocDepth ? 0 : editorialLevel.value
       console.log('VALIDATED editorialLevel.value / typeof : ', editorialLevel.value, typeof (editorialLevel.value))

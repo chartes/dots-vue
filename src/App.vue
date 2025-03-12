@@ -1,10 +1,13 @@
 <template>
   <div class="layout-grid-container">
-    <app-navbar class="layout-navbar"/>
+    <app-navbar
+      class="layout-navbar"
+      :root-collection-identifier="rootCollectionIdentifier"
+    />
       <suspense>
         <router-view
           class="layout-main"
-          :collection-identifier="collectionId === 'elec' ? '' : collectionId"
+          :collection-identifier="collectionId"
           :current-collection="currCollection"
           :key="currCollection"
         />
@@ -20,7 +23,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import router from '@/router'
 
@@ -28,6 +31,7 @@ import AppNavbar from '@/components/AppNavbar'
 import AppFooter from '@/components/AppFooter.vue'
 import BackToTopButton from '@/components/BackToTopButton.vue'
 import fetchMetadata from '@/composables/get-metadata'
+import { getMetadataFromApi } from '@/api/document'
 
 function getSimpleObject (obj) {
   // console.log("getSimpleObject / obj", obj)
@@ -36,6 +40,7 @@ function getSimpleObject (obj) {
     identifier: obj.identifier ? obj.identifier : obj['@id'],
     citeType: obj['@type'] ? obj['@type'] : obj.citeType,
     title: obj.title,
+    description: obj.description,
     level: obj.level,
     editorialLevelIndicator: obj.editorialLevelIndicator,
     totalChildren: obj.totalChildren,
@@ -59,7 +64,8 @@ export default {
     const route = useRoute()
     const collectionId = ref('')
     const currCollection = ref({})
-    const collectionAltTitle = `${import.meta.env.VITE_APP_PROJECT_ALT_TITLE}`
+    const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
+    const rootCollectionIdentifier = ref('')
 
     console.log('App.vue setup route / route.params.collId / collectionId.value : ', route, route.params.collId, collectionId)
     // getting and formatting collection details
@@ -75,6 +81,7 @@ export default {
       formatedResponse = { ...formatedResponse, member: formatedResponse.member?.map(m => { return getSimpleObject(m) }) }
       currCollection.value = formatedResponse
     }
+
     watch(
       router.currentRoute, async (newRoute, oldRoute) => {
         console.log('App.vue watch change in route : ', oldRoute, newRoute)
@@ -85,7 +92,14 @@ export default {
           if (newRoute.params.collId) {
             collectionId.value = newRoute.params.collId
           } else {
-            collectionId.value = 'elec'
+            if (`${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ID}`.length === 0) {
+              const rootResponse = await getMetadataFromApi()
+              rootCollectionIdentifier.value = rootResponse['@id']
+              console.log('App.vue get rootCollectionIdentifier', rootCollectionIdentifier.value)
+            } else {
+              rootCollectionIdentifier.value = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ID}`
+            }
+            collectionId.value = rootCollectionIdentifier.value
           }
           console.log('App.vue watch collectionId.value : ', collectionId.value)
           await getCurrentCollection(newRoute)
@@ -95,6 +109,7 @@ export default {
     )
 
     return {
+      rootCollectionIdentifier,
       collectionId,
       currCollection,
       collectionAltTitle,
@@ -136,7 +151,7 @@ body {
   height: 100%;
   /* height: calc(100% - 50px); */
   grid-template-columns: 100%;
-  grid-template-rows: 70px auto 272px;
+  grid-template-rows: 70px 1fr auto;
   grid-template-areas:
     "header"
     "main"

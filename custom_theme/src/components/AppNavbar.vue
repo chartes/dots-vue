@@ -5,26 +5,34 @@
       :class="menuCssClass"
     >
       <div class="level-left">
-        <router-link
-          class="logo-header"
-          active-class="active"
-          :to="{ name: 'Home' }"
-        />
+        <a target="_blank" href="https://www.chartes.psl.eu/" class="logo-header"></a>
         <span class="level-item">
-          <router-link
-            active-class="active"
+          <!--<a
             class="level-item-external"
-            :to="{ name: 'Home' }"
-            >{{ rootCollectionId }}
-          </router-link>
-          <router-link
-            v-if="route.path.includes(rootCollectionId)"
+            target="_blank"
+            href="https://www.chartes.psl.eu/"
+          >
+            École des chartes
+          </a>-->
+          <a
             class="level-item-external"
+            target="_blank"
+            href="http://elec.enc.sorbonne.fr/"
+          >
+            Élec
+          </a>
+          <router-link
+            v-if="route.path.includes(homePageLink)"
             active-class="active"
-            :to="{ name: 'Home', params: {collId: rootCollectionId} }"
-            >{{ rootCollectionId }}
-          </router-link>
+            :to="{ name: 'Home', params: {collId: homePageLink} }"
+            >{{ homePageLink }}</router-link
+          >
         </span>
+        <!-- <span class="level-item">
+          <router-link :to="{ name: 'About', params: {collId: homePageLink} }" active-class="active"
+            >Le projet
+          </router-link>
+        </span> -->
       </div>
        <div class="level-right">
        <div class="level-item menu">
@@ -34,30 +42,39 @@
          >
           API <b>{ }</b>
          </a>
+          <!--<router-link :to="{ name: 'Documentation', params: {collId: homePageLink} }" active-class="active"
+            >Documentation de l'API</router-link>
+           <ul class="submenu">
+            <li>
+              <a target="_blank" href="https://chartes.github.io/dots_documentation/">
+                DoTS
+              </a>
+            </li>
+            <li>
+              <a  target="_blank" href="#">
+                DoTS-Vue
+              </a>
+            </li>
+          </ul>-->
         </div>
       </div>
     </nav>
     <div class="mobile-button">
+      <!-- <router-link :to="{ name: 'Search' }" class="home-button"></router-link> -->
       <Burger @change="burgerChanged" :opened="isMenuOpened" />
     </div>
   </section>
 </template>
 <script>
-import {ref, computed, onMounted, onBeforeUnmount, reactive, watch} from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, reactive } from 'vue'
 import Burger from './Burger.vue'
 import { useRoute } from 'vue-router'
 
 export default {
   name: 'HomePage',
   components: { Burger },
-  props: {
-    rootCollectionIdentifier: {
-      type: String,
-      required: true
-    }
-  },
 
-  setup (props) {
+  setup () {
     // State
     const state = reactive({
       isMenuOpened: false
@@ -65,9 +82,7 @@ export default {
     const route = useRoute()
     const isMenuOpened = ref(false)
     const rootURL = ref(import.meta.env.VITE_APP_APP_ROOT_URL.length > 0 ? `${import.meta.env.VITE_APP_APP_ROOT_URL.slice(1, import.meta.env.VITE_APP_APP_ROOT_URL.length)}` : '')
-    const rootCollectionId = ref(props.rootCollectionIdentifier)
-    console.log('AppNavbar setup props.rootCollectionIdentifier', props.rootCollectionIdentifier)
-    console.log('AppNavbar setup rootCollectionId', rootCollectionId.value)
+    const homePageLink = ref(import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ID.length > 0 ? `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ID}` : 'Home')
 
     // Computed property
     const menuCssClass = computed(() => {
@@ -91,10 +106,6 @@ export default {
     onBeforeUnmount(() => {
       document.body.removeEventListener('click', closeMenu)
     })
-    watch(props, (newProps) => {
-      console.log('AppNavbar watch props : ', newProps)
-      rootCollectionId.value = newProps.rootCollectionIdentifier
-    }, { deep: true, immediate: true })
 
     // Expose properties and methods to the template
     return {
@@ -102,7 +113,7 @@ export default {
       isMenuOpened,
       menuCssClass,
       rootURL,
-      rootCollectionId,
+      homePageLink,
       burgerChanged,
       closeMenu
     }
@@ -147,7 +158,7 @@ nav span.level-item:not(:last-child)::after {
   width: 45px;
   height: 50px;
   margin:0 40px 0 2px;
-  background: url(../assets/images/home-mobile.png) center / contain no-repeat;
+  background: url(../assets/images/head_logo.svg) center / contain no-repeat;
 }
 .level-left {
   display: flex;

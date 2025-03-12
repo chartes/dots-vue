@@ -7,10 +7,6 @@
             <p class="title">
               {{ collectionAltTitle ? collectionAltTitle : currentCollection.title }}
             </p>
-            <!--<p class="header-baseline">
-              <span>Position</span> : à l’origine, les positions prises et à défendre par
-              l’élève, face au jury. Depuis, un résumé de la thèse soutenue.
-            </p>-->
           </div>
         </div>
       </div>
@@ -57,7 +53,7 @@ export default {
   },
 
   setup (props) {
-    const collectionAltTitle = `${import.meta.env.VITE_APP_PROJECT_ALT_TITLE}`
+    const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
     const currCollection = ref(props.currentCollection)
     // console.log('AboutPage setup props.currentCollection / currCollection', props.currentCollection, currCollection.value)
     // console.log('AboutPage setup myComponents', myComponents)
@@ -91,6 +87,19 @@ export default {
 <style>
 article.about {
   margin-top: 0;
+}
+.tile.is-child {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.title-tile {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 .about-page {
   display: flex;
