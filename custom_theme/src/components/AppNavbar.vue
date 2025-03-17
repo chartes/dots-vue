@@ -82,7 +82,7 @@ export default {
     const route = useRoute()
     const isMenuOpened = ref(false)
     const rootURL = ref(import.meta.env.VITE_APP_APP_ROOT_URL.length > 0 ? `${import.meta.env.VITE_APP_APP_ROOT_URL.slice(1, import.meta.env.VITE_APP_APP_ROOT_URL.length)}` : '')
-    const homePageLink = ref(import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ID.length > 0 ? `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ID}` : 'Home')
+    const homePageLink = ref(import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID.length > 0 ? `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}` : 'Home')
 
     // Computed property
     const menuCssClass = computed(() => {

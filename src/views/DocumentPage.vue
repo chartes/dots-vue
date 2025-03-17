@@ -1,9 +1,10 @@
-<template>
+<template xmlns:TOC="http://www.w3.org/1999/html">
   <div class="is-flex is-flex-direction-column" :class="viewModeCssClass"><!-- v-if="!isModalOpened" -->
     <CollectionModal
       class="modal-area"
       v-if="isLoading && isModalOpened"
       :isOpen="isModalOpened ? isModalOpened : false"
+      :is-doc-projectId-included="isDocProjectIdInc"
       :collectionIdentifier="selectedCollectionId"
       :currentItem="selectedCollection"
       :toc="flatTOC"
@@ -32,6 +33,7 @@
             <nav>
               <TOC
                v-if="flatTOC.length > 0"
+               :is-doc-projectId-included="isDocProjectIdInc"
                :margin="0"
                :toc="flatTOC.filter(n => n.level > 0)"
                :maxcitedepth="TOC_DEPTH"
@@ -117,8 +119,14 @@
           >
             <template v-for="(ancestor, index) in item" v-bind:key="index">
               <router-link
-                v-if="ancestor.level === arianeCollection.value[0][0].level"
+                v-if="isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
                 :to="{ name: 'Home', params: {collId: ancestor.identifier} }"
+                >
+                {{ ancestor.title }}
+              </router-link>
+              <router-link
+                v-else-if="!isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
+                :to="{ name: 'Home' }"
                 >
                 {{ ancestor.title }}
               </router-link>
@@ -176,6 +184,7 @@
           <nav>
             <nav>
               <TOC
+               :is-doc-projectId-included="isDocProjectIdInc"
                :margin="0"
                :toc="flatTOC.filter(n => n.level > 0)"
                :maxcitedepth="TOC_DEPTH"
@@ -190,6 +199,7 @@
       <div class="document-views is-flex" v-if="isLoading">
         <div v-if="!refId || refId && refId.length === 0" class="text-view" id="text-view">
           <document
+            :is-doc-projectId-included="isDocProjectIdInc"
             :id="resourceId"
             :level="currentLevel"
             :editorialLevelIndicator="currentLevelIndicator"
@@ -202,6 +212,7 @@
         </div>
         <div v-else class="text-view" id="text-view">
           <document
+            :is-doc-projectId-included="isDocProjectIdInc"
             :id="resourceId + '&ref=' + refId"
             :level="currentLevel"
             :editorialLevelIndicator="currentLevelIndicator"
@@ -250,7 +261,6 @@ import router from '@/router/index.js'
 import fetchMetadata from '@/composables/get-metadata.js'
 import store from '@/store'
 
-const PROJECT = `${import.meta.env.VITE_APP_PROJECT}`
 
 /* const sources = [
   { name: 'databnf', ext: 'data.bnf.fr', type: 'author_link' },
@@ -336,10 +346,21 @@ export default {
     ToNextButton,
     CollectionModal
   }, // ListeTheseAnnee, ModalDocumentMetadata
-
-  async setup () {
-    console.log('PROJECT test : ', PROJECT)
-    const topTOCDisplayIndicator = `${import.meta.env.VITE_APP_APP_DISPLAY_TOP_TOC}` !== 'false'
+  props: {
+    isDocProjectIdIncluded: {
+      type: Boolean,
+      required: true
+    },
+    rootCollectionIdentifier: {
+      type: String,
+      required: true
+    },
+  },
+  async setup (props) {
+    const topTOCDisplayIndicator = `${import.meta.env.VITE_APP_APP_DISPLAY_TOP_TOC}`.toLowerCase() !== 'false'
+    const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
+    const rootCollectionId = ref(props.rootCollectionIdentifier)
+    const docProjectId = ref('')
     console.log('topTOCDisplayIndicator test : ', topTOCDisplayIndicator)
     const manifestIsAvailable = ref(false)
     const manifest = ref(null)
@@ -478,6 +499,8 @@ export default {
           console.log('init type : ', documentType.value)
           isModalOpened.value = true
         }
+        docProjectId.value = isDocProjectIdInc.value ? currentItem.value.extensions['dots:dotsProjectId'] + '/' : ''
+        console.log('docProjectId.value ', docProjectId.value)
         currentLevelIndicator.value = currentItem.value.editorialLevelIndicator
         refId.value = Object.keys(route.query).length > 0 && Object.keys(route.query).includes('refId')
           ? refId.value = route.query.refId
@@ -655,6 +678,7 @@ export default {
       // Move ultimate ancestor to first position
 
       const ultimateAncestor = processFlatTOC.filter(item => item.parent === null)[0]
+      console.log('setup afterParents find ultimate ancestor = rootCollection : ', ultimateAncestor)
       const ultimateAncestorIndex = processFlatTOC.findIndex(item => item.parent === null)
       console.log('setup afterParents find ultimate ancestor : ', processFlatTOC, ultimateAncestor, ultimateAncestorIndex)
 
@@ -731,10 +755,10 @@ export default {
         processFlatTOC.filter(item => editorialTypes.includes(item.citeType)).forEach((node) => {
           node.editorialLevelIndicator = 'toEdit'
           if (node.level <= 0) {
-            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}/document/${node.identifier}`
+            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}/${node.identifier}`
             node.router = node.identifier
           } else {
-            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path}?refId=${node.identifier}`
+            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
             node.router = `${route.params.id}?refId=${node.identifier}`
             node.router_params = route.params.id
             node.router_refid = node.identifier
@@ -744,10 +768,10 @@ export default {
         processFlatTOC.filter(item => item.level === editorialLevel.value).forEach((node) => {
           node.editorialLevelIndicator = 'toEdit'
           if (node.level <= 0) {
-            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}/document/${node.identifier}`
+            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}/${node.identifier}`
             node.router = node.identifier
           } else {
-            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path}?refId=${node.identifier}`
+            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
             node.router = `${route.params.id}?refId=${node.identifier}`
             node.router_params = route.params.id
             node.router_refid = node.identifier
@@ -759,14 +783,14 @@ export default {
         node.editorialLevelIndicator = 'hash'
         node.ancestor_editorialLevel = ancestor
         if (node.ancestor_editorialLevel !== route.params.id) {
-          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path}?refId=${node.ancestor_editorialLevel}#${node.identifier}`
+          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.ancestor_editorialLevel}#${node.identifier}`
           node.router = `${route.params.id}?refId=${node.ancestor_editorialLevel}#${node.identifier}`
           node.hash = `#${node.identifier}`
           node.router_params = route.params.id
           node.router_refid = node.ancestor_editorialLevel
           node.router_hash = `#${node.identifier}`
         } else {
-          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path}#${node.identifier}`
+          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}#${node.identifier}`
           node.router = `${route.params.id}#${node.identifier}`
           node.hash = `#${node.identifier}`
           node.router_params = route.params.id
@@ -788,15 +812,18 @@ export default {
       processFlatTOC.filter(item => !item.url).forEach(node => {
         node.editorialLevelIndicator = 'renderToc'
         if (node.level <= 0) {
-          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}/${node.identifier}`
+          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${node.identifier}`
           node.router = node.identifier
           node.router_params = node.identifier
           // console.log("addFlag on node.level <=0 :", node)
         } else {
-          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path}?refId=${node.identifier}`
+          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
           node.router = `${route.params.id}?refId=${node.identifier}`
           node.router_params = route.params.id
           node.router_refid = node.identifier
+          if (node.identifier === 'a1') {
+            console.log('node.url ', node.url, '\n', window.location.origin, '\n', import.meta.env.VITE_APP_APP_ROOT_URL, '\n', route.path)
+          }
         }
       })
 
@@ -1131,9 +1158,13 @@ export default {
             if (refId.value) {
               // select flatTOC elements between the current matching refId and the last element belonging to the same parent
               const followingElementInTreeLimb = flatTOC.value.findIndex(i => i.identifier === refId.value) + 1
+              //console.log('watch query : bottomTOC debug followingElementInTreeLimb', followingElementInTreeLimb)
               const allFollowingElementsInTOC = flatTOC.value.slice(followingElementInTreeLimb, flatTOC.value.length)
-              const lastElementInTreeLimb = allFollowingElementsInTOC.findIndex(i => i.parent === flatTOC.value.find(i => i.identifier === refId.value).parent) + 1
+              //console.log('watch query : bottomTOC debug allFollowingElementsInTOC', allFollowingElementsInTOC)
+              const lastElementInTreeLimb = allFollowingElementsInTOC.findIndex(i => i.parent === flatTOC.value.find(i => i.identifier === refId.value).parent) !== -1 ? allFollowingElementsInTOC.findIndex(i => i.parent === flatTOC.value.find(i => i.identifier === refId.value).parent) + 1 : allFollowingElementsInTOC.length
+              //console.log('watch query : bottomTOC debug lastElementInTreeLimb', lastElementInTreeLimb)
               const currentMatchingElementIndex = flatTOC.value.findIndex(i => i.identifier === refId.value)
+              //console.log('watch query : bottomTOC debug currentMatchingElementIndex', currentMatchingElementIndex)
               // assign portion of topTOC to the bottomTOC and unlink the variables
               bottomTOC.value = JSON.parse(JSON.stringify(flatTOC.value.slice(followingElementInTreeLimb, lastElementInTreeLimb + currentMatchingElementIndex)))
             } else {
@@ -1197,6 +1228,9 @@ export default {
       layout,
       resourceId,
       collection,
+      isDocProjectIdInc,
+      rootCollectionId,
+      docProjectId,
       isLoading,
       TOC_DEPTH,
       currentLevelIndicator,

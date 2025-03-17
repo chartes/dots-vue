@@ -15,14 +15,14 @@
           /><!--expandedById[item.identifier] || -->
           <a
             class="toc-title"
-            :title="item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : item.citeType : item.citeType"
+            :title="item.url"
             :data-href="item.url"
             :class="route.hash === item.hash ? 'is-current' : !route.hash && item.identifier === currentRefId ? 'is-current' : ''"
             v-on:click.prevent="goTo(item)"
           >
             {{ item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : item.citeType : item.citeType }}
 
-          </a><!-- : 'pas de titre' : `Fragment n° ${index + 1}` -->
+          </a><!-- : 'pas de titre' : `Fragment n° ${index + 1}` :title="item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : item.citeType : item.citeType"-->
         </div>
         <!-- <div
           v-if="expandedById[item.identifier]"
@@ -55,6 +55,10 @@ export default {
   }, // CarouselPlugin, Slide, Pagination, Navigation
 
   props: {
+    isDocProjectIdIncluded: {
+      type: Boolean,
+      required: true
+    },
     margin: { required: true, default: 0, type: Number },
     toc: { required: true, default: () => [], type: Array },
     maxcitedepth: { required: false, default: 0, type: Number },
@@ -62,6 +66,7 @@ export default {
   },
   emits: ['updateRefId'],
   setup (props) {
+    const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const currentRefId = ref(props.refid)
     const route = useRoute()
     const expandedById = ref({})
@@ -126,17 +131,32 @@ export default {
     const goTo = function (item) {
       // currentRefId.value = ref
       // console.log("TOC ref : ", $event, currentRefId.value)
-      if (item.router_hash) {
-        if (item.router_refid) {
-          router.push({ name: 'Document', params: { collId: route.params.collId, id: item.router_params }, query: { refId: item.router_refid }, hash: item.router_hash })
+      if (isDocProjectIdInc.value) {
+        if (item.router_hash) {
+          if (item.router_refid) {
+            router.push({ name: 'Document', params: { collId: route.params.collId, id: item.router_params }, query: { refId: item.router_refid }, hash: item.router_hash })
+          } else {
+            router.push({ name: 'Document', params: { collId: route.params.collId, id: item.router_params }, hash: item.router_hash })
+          }
+        } else if (item.router_refid) {
+          console.log('TOC goto item.router_refid: ', item.router_refid)
+          router.push({ name: 'Document', params: { collId: route.params.collId, id: item.router_params }, query: { refId: item.router_refid } })
         } else {
-          router.push({ name: 'Document', params: { collId: route.params.collId, id: item.router_params }, hash: item.router_hash })
+          router.push({ name: 'Document', params: { collId: route.params.collId, id: item.router_params } })
         }
-      } else if (item.router_refid) {
-        console.log('TOC goto item.router_refid: ', item.router_refid)
-        router.push({ name: 'Document', params: { collId: route.params.collId, id: item.router_params }, query: { refId: item.router_refid } })
       } else {
-        router.push({ name: 'Document', params: { collId: route.params.collId, id: item.router_params } })
+        if (item.router_hash) {
+          if (item.router_refid) {
+            router.push({ name: 'Document', params: { id: item.router_params }, query: { refId: item.router_refid }, hash: item.router_hash })
+          } else {
+            router.push({ name: 'Document', params: { id: item.router_params }, hash: item.router_hash })
+          }
+        } else if (item.router_refid) {
+          console.log('TOC goto item.router_refid: ', item.router_refid)
+          router.push({ name: 'Document', params: { id: item.router_params }, query: { refId: item.router_refid } })
+        } else {
+          router.push({ name: 'Document', params: { id: item.router_params } })
+        }
       }
     }
     watch(expandedById, () => {
@@ -165,6 +185,7 @@ export default {
     })
     return {
       route,
+      isDocProjectIdInc,
       toggleBurger,
       currentRefId,
       goTo,

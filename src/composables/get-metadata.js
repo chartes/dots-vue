@@ -99,7 +99,7 @@ export default async function fetchMetadata (source, resourceId, documentType, r
 
     metadata.type = listmetadata['@type'] ? listmetadata['@type'] : ''
 
-    metadata.citation = listmetadata['@id'] ? `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path}` : null
+    metadata.citation = listmetadata['@id'] ? `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}` : null
 
     metadata.member = listmetadata.member ? listmetadata.member : []
 

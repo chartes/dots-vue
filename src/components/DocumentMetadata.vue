@@ -618,7 +618,7 @@ export default {
                 {}
               )
 
-        const removedKeys = ['children', 'member', 'editorialLevelIndicator', 'renderToc', 'level', 'expanded', 'router', 'dublincore', 'extensions']/* gerer les 'url' à supp pour les collections seulement */
+        const removedKeys = ['children', 'member', 'editorialLevelIndicator', 'renderToc', 'level', 'expanded', 'router', 'router_params', 'dublincore', 'extensions']/* gerer les 'url' à supp pour les collections seulement */
 
         metadata.value = props.metadataprop
 

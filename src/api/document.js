@@ -1,4 +1,4 @@
-const _baseApiURL = `${import.meta.env.VITE_APP_API_URL}`
+const _baseApiURL = `${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`
 
 async function getCoverDataFromApi (id, options = {}) {
   const response_coverData = await fetch(`${_baseApiURL}/cover?id=${id}`, { mode: 'cors', ...options })

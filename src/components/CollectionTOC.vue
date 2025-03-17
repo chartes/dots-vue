@@ -14,16 +14,24 @@
           />
           <span
             v-if="item['@type'] === 'Collection' || item.citeType === 'Collection'"
-            :class="route.params.collId === item.identifier ? 'is-current' : ''"
+            :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
             @click="toggleExpanded(item.identifier)"
           >
             {{ item.citeType }}
             {{ item.title }}
           </span>
           <router-link
+            v-else-if="isDocProjectIdInc"
+            :class="route.params.id === item.identifier ? 'is-current' : ''"
+            :to="{ name: 'Document', params: {collId: Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'], id: item.identifier} }"
+          >
+            {{ item.citeType }}
+            {{ item.title }}
+          </router-link>
+          <router-link
             v-else
             :class="route.params.id === item.identifier ? 'is-current' : ''"
-            :to="{ name: 'Document', params: {collId: Array.isArray(item.parent) ? item.parent.filter(p => p === route.params.collId)[0] : item.parent, id: item.identifier} }"
+            :to="{ name: 'Document', params: { id: item.identifier} }"
           >
             {{ item.citeType }}
             {{ item.title }}
@@ -34,6 +42,7 @@
                   || item.expanded === true && item.totalChildren > 0 && item.children?.length > 0">
 
           <CollectionTOC
+            :is-doc-projectId-included="isDocProjectIdInc"
             :margin="$props.margin + 23"
             :toc="item.children"
           />
@@ -75,11 +84,24 @@ export default {
   components: {},
 
   props: {
-    toc: { required: true, default: () => [], type: Array },
-    margin: { required: true, default: 0, type: Number }
+    isDocProjectIdIncluded: {
+      type: Boolean,
+      required: true
+    },
+    toc: {
+      required: true,
+      default: () => [],
+      type: Array
+    },
+    margin: {
+      required: true,
+      default: 0,
+      type: Number
+    }
   },
   setup (props) {
     const route = useRoute()
+    const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
 
     const expandedById = ref({})
 
@@ -118,6 +140,7 @@ export default {
 
     return {
       route,
+      isDocProjectIdInc,
       toggleExpanded,
       expandedById,
       selectedParent,

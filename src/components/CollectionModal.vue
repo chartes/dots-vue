@@ -29,6 +29,7 @@
         >
           <div v-if="expandedById[collectionId] && collectionTOC.filter(item => item.identifier === collectionId)[0].children.length > 0">
             <CollectionTOC
+              :is-doc-projectId-included="isDocProjectIdInc"
               :margin="0"
               :toc="collectionTOC.filter(item => item.identifier === collectionId)[0].children"
             />
@@ -48,6 +49,10 @@ export default {
   components: { CollectionTOC, DocumentMetadata },
   props: {
     isOpen: {
+      type: Boolean,
+      required: true
+    },
+    isDocProjectIdIncluded: {
       type: Boolean,
       required: true
     },
@@ -73,7 +78,7 @@ export default {
     })
 
     const isModalOpened = ref(props.isOpen)
-
+    const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const collectionTOC = ref(props.toc)
     console.log('CollectionModal props.toc : ', props.toc)
 
@@ -200,6 +205,7 @@ export default {
     return {
       modalCssClass,
       isModalOpened,
+      isDocProjectIdInc,
       appendMissingChildren,
       toggleContent,
       target,

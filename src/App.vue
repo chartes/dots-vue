@@ -2,11 +2,16 @@
   <div class="layout-grid-container">
     <app-navbar
       class="layout-navbar"
+      :is-doc-projectId-included="isDocProjectIdInc"
       :root-collection-identifier="rootCollectionIdentifier"
+      :root-collection-short-title="projectShortTitle"
+      :collection-identifier="collectionId"
     />
       <suspense>
         <router-view
           class="layout-main"
+          :is-doc-projectId-included="isDocProjectIdInc"
+          :root-collection-identifier="rootCollectionIdentifier"
           :collection-identifier="collectionId"
           :current-collection="currCollection"
           :key="currCollection"
@@ -15,7 +20,8 @@
     <back-to-top-button class="back-to-top-button"/>
     <app-footer
       class="layout-footer"
-      :collection-identifier="collectionId === 'elec' ? '' : collectionId"
+      :root-collection-identifier="rootCollectionIdentifier"
+      :collection-identifier="collectionId"
       :current-collection="currCollection"
       :key="currCollection"
     />
@@ -23,7 +29,7 @@
 </template>
 
 <script>
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import router from '@/router'
 
@@ -65,9 +71,11 @@ export default {
     const collectionId = ref('')
     const currCollection = ref({})
     const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
+    const projectShortTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_SHORT_TITLE}`
     const rootCollectionIdentifier = ref('')
+    const isDocProjectIdInc = `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID}`.toLowerCase() === 'true'
 
-    console.log('App.vue setup route / route.params.collId / collectionId.value : ', route, route.params.collId, collectionId)
+    console.log('App.vue setup route / route.params.collId / collectionId.value : ', route, route.params.collId ? route.params.collId : 'no param collId', collectionId)
     // getting and formatting collection details
     const getCurrentCollection = async (route) => {
       console.log('App.vue getCurrentCollection origin route', origin, route)
@@ -85,22 +93,39 @@ export default {
     watch(
       router.currentRoute, async (newRoute, oldRoute) => {
         console.log('App.vue watch change in route : ', oldRoute, newRoute)
-        if (newRoute && oldRoute && newRoute.params.collId === oldRoute.params.collId) {
-          console.log('App.vue watch no change in route')
-        } else {
-          console.log('App.vue watch route.params : ', newRoute.params)
-          if (newRoute.params.collId) {
-            collectionId.value = newRoute.params.collId
+        if (isDocProjectIdInc) {
+          if (newRoute && oldRoute && newRoute.params.collId === oldRoute.params.collId) {
+            console.log('App.vue watch no change in route')
           } else {
-            if (`${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ID}`.length === 0) {
+            console.log('App.vue watch route.params : ', newRoute.params)
+            if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
               const rootResponse = await getMetadataFromApi()
               rootCollectionIdentifier.value = rootResponse['@id']
               console.log('App.vue get rootCollectionIdentifier', rootCollectionIdentifier.value)
             } else {
-              rootCollectionIdentifier.value = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ID}`
+              rootCollectionIdentifier.value = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
+              console.log('App.vue set rootCollectionIdentifier as .env', rootCollectionIdentifier.value)
             }
-            collectionId.value = rootCollectionIdentifier.value
+            if (newRoute.params.collId) {
+              collectionId.value = newRoute.params.collId
+              console.log('App.vue watch collectionId.value as route.params.collId : ', collectionId.value)
+            } else {
+              collectionId.value = rootCollectionIdentifier.value
+              console.log('App.vue watch NO route.params.collId -> collectionId.value = rootCollectionIdentifier.value : ', collectionId.value, rootCollectionIdentifier.value)
+            }
+            console.log('App.vue watch collectionId.value : ', collectionId.value)
+            await getCurrentCollection(newRoute)
+            console.log('App.vue currCollection.value : ', currCollection.value)
           }
+        } else {
+          if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
+            const rootResponse = await getMetadataFromApi()
+            rootCollectionIdentifier.value = rootResponse['@id']
+            console.log('App.vue get rootCollectionIdentifier', rootCollectionIdentifier.value)
+          } else {
+            rootCollectionIdentifier.value = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
+          }
+          collectionId.value = rootCollectionIdentifier.value
           console.log('App.vue watch collectionId.value : ', collectionId.value)
           await getCurrentCollection(newRoute)
           console.log('App.vue currCollection.value : ', currCollection.value)
@@ -110,6 +135,8 @@ export default {
 
     return {
       rootCollectionIdentifier,
+      isDocProjectIdInc,
+      projectShortTitle,
       collectionId,
       currCollection,
       collectionAltTitle,

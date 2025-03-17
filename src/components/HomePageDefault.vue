@@ -28,6 +28,7 @@
               >
                 <div v-if="expandedById[collectionId] && componentTOC.length > 0">
                   <CollectionTOC
+                    :is-doc-projectId-included="isDocProjectIdInc"
                     :toc="componentTOC"
                     :margin="0"
                   />
@@ -45,13 +46,17 @@
         class="article app-width-margin"
       >
         <h1>La collection</h1>
-          {{ currCollection.description ? currCollection.description : collectionDescription }}
+          {{ currCollection.description }}
       </div>
       <div
         v-else
         id="article"
         class="article app-width-margin"
       >
+        <HomePageDefaultContent
+          :target-div="2"
+        >
+        </HomePageDefaultContent>
         <p class="texte">This collection provides no DTS default description.</p>
       </div>
     </section>
@@ -63,10 +68,15 @@ import { computed, inject, reactive, ref, watch } from 'vue'
 
 import { getMetadataFromApi } from '@/api/document.js'
 import CollectionTOC from '@/components/CollectionTOC.vue'
+import HomePageDefaultContent from '../../custom_theme/src/components/HomePageDefaultContent.vue'
 
 export default {
-  components: { CollectionTOC },
+  components: { CollectionTOC, HomePageDefaultContent },
   props: {
+    isDocProjectIdIncluded: {
+      type: Boolean,
+      required: true
+    },
     collectionIdentifier: {
       type: String,
       required: true
@@ -82,10 +92,12 @@ export default {
     })
 
     const layout = inject('variable-layout')
+
+    const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
-    const collectionDescription = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_DESC}`
     const collectionId = ref(props.collectionIdentifier)
     console.log('HomePageDefault setup collectionId', collectionId.value)
+    // const HomeDefaultContent = HomePageDefaultContent
 
     const componentTOC = ref([])
     const currCollection = ref(props.currentCollection)
@@ -125,8 +137,8 @@ export default {
     }, { deep: true, immediate: true })
 
     return {
+      isDocProjectIdInc,
       collectionAltTitle,
-      collectionDescription,
       homeCssClass,
       tocCssClass: layout.tocCssClass,
       collectionId,

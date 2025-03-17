@@ -1,6 +1,7 @@
 <template>
     <HomePageDefault
       v-if="Object.keys(currCollection).length > 0"
+      :is-doc-projectId-included="isDocProjectIdInc"
       :collection-identifier="collectionId"
       :currentCollection="currCollection"
       :key="currCollection"
@@ -16,6 +17,10 @@ export default {
   name: 'HomePage',
   components: { HomePageDefault },
   props: {
+    isDocProjectIdIncluded: {
+      type: Boolean,
+      required: true
+    },
     collectionIdentifier: {
       type: String,
       required: true
@@ -27,6 +32,7 @@ export default {
   },
 
   setup (props) {
+    const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const collectionId = ref(props.collectionIdentifier)
     const currCollection = ref(props.currentCollection)
     console.log('HomePage setup props collectionIdentifier : ', props.collectionIdentifier)
@@ -39,6 +45,7 @@ export default {
     }, { deep: true, immediate: true })
 
     return {
+      isDocProjectIdInc,
       collectionId,
       currCollection
     }

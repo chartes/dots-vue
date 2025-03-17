@@ -31,12 +31,22 @@
               src="@/assets/images/footer_enc_logo.png"
             />
           </a>
+          <a
+              target="_blank"
+              href="https://projet.biblissima.fr/fr"
+            >
+              <img
+              class="biblissima-logo"
+              alt="Logo de Biblissima+"
+              src="@/assets/images/Logo_biblissima_footer_white.png"
+            />
+          </a>
         </div>
         <div class="logo">
           <a
               target="_blank"
               href="https://chartes.github.io/dots_documentation/"
-            >Powered by ...
+            >Powered by
             <img
               class="dots-logo"
               alt="Logo de DoTS"
@@ -52,14 +62,6 @@
           <a target="_blank" href="https://www.chartes.psl.eu/contact">
             Contact
           </a>
-        </li>
-        <li>
-          <router-link
-            :to="{ name: 'About'}"
-            active-class="active"
-          >
-            About
-          </router-link><!-- , params: {collId: collectionId}  -->
         </li>
         <li>
           <router-link
@@ -103,7 +105,6 @@ export default {
     console.log('Footer setup footerDescription : ', `${import.meta.env.VITE_APP_APP_FOOTER_DESC}` === 'undefined')
     console.log('Footer setup props.collectionIdentifier / collectionId.value : ', props.collectionIdentifier, collectionId.value)
     console.log('Footer setup props.currentCollection / currCollection.value : ', props.currentCollection, currCollection.value)
-    console.log('Footer setup footerSubtitles', footerSubtitles)
     console.log('Footer setup footerSubtitles', footerSubtitles)
 
     watch(props, (newProps) => {
@@ -215,6 +216,7 @@ export default {
   flex-grow: 1;
   & > .logo {
     display: flex;
+    flex-direction: column;
     flex-grow: 1;
     justify-content: center;
     align-items: center;
@@ -224,12 +226,17 @@ export default {
       justify-content: center;
       align-items: center;
       vertical-align: center;
+      margin: 10px;
       border-bottom: none;
       color: #FFFFFF;
     }
   }
 }
 .enc-logo {
+  width: auto;
+  height: 70px;
+}
+.biblissima-logo {
   width: auto;
   height: 70px;
 }

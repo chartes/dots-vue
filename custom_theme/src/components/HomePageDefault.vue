@@ -103,7 +103,6 @@ export default {
 
     const layout = inject('variable-layout')
     const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
-    const collectionDescription = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_DESC}`
     const collectionId = ref(props.collectionIdentifier)
     console.log('HomePageDefault setup collectionId', collectionId.value)
 
@@ -146,7 +145,6 @@ export default {
 
     return {
       collectionAltTitle,
-      collectionDescription,
       homeCssClass,
       tocCssClass: layout.tocCssClass,
       collectionId,

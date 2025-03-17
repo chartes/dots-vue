@@ -13,6 +13,7 @@
       class="row bottom-toc"
     >
       <TOC
+       :is-doc-projectId-included="isDocProjectIdInc"
        :margin="0"
        :toc="asideTOC"
        :maxcitedepth="maxcitedepth"
@@ -26,6 +27,7 @@
       class="row bottom-toc"
     >
       <TOC
+       :is-doc-projectId-included="isDocProjectIdInc"
        :margin="0"
        :toc="asideTOC"
        :maxcitedepth="maxcitedepth"
@@ -41,11 +43,12 @@
       class="row bottom-toc"
     >
       <TOC
-       :margin="0"
-       :toc="asideTOC"
-       :maxcitedepth="maxcitedepth"
-       :refid="parentId.includes('&ref=') ? parentId.split('&ref=')[1] : parentId"
-       :key="parentId"
+        :is-doc-projectId-included="isDocProjectIdInc"
+        :margin="0"
+        :toc="asideTOC"
+        :maxcitedepth="maxcitedepth"
+        :refid="parentId.includes('&ref=') ? parentId.split('&ref=')[1] : parentId"
+        :key="parentId"
       />
     </div>
   </div>
@@ -65,11 +68,12 @@ export default {
     TOC
   },
 
-  props: ['id', 'level', 'editoriallevel', 'bottomtoc', 'maxcitedepth', 'documenttype', 'editorialLevelIndicator'],
+  props: ['id', 'level', 'editoriallevel', 'bottomtoc', 'maxcitedepth', 'documenttype', 'editorialLevelIndicator', 'isDocProjectIdIncluded'],
 
   async setup (props) {
     // Declare route to capture route hash (used in scrollTo()) to display selected Table Of Content items below the editorial level
     const route = useRoute()
+    const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     // The parentId will the id used for the DoTS API, it is either the resourceId or the resourceId + '&ref=' + refId
     // TODO: rename to a more appropriate name : it is the id used for Dots API : dotsID ?
     const parentId = ref(props.id)
@@ -180,6 +184,7 @@ export default {
     }
 
     return {
+      isDocProjectIdInc,
       parentId,
       currentLevelIndicator,
       currentLevel,

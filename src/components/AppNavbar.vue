@@ -15,15 +15,23 @@
             active-class="active"
             class="level-item-external"
             :to="{ name: 'Home' }"
-            >{{ rootCollectionId }}
+            >{{ projectShortTitle ? projectShortTitle : rootCollectionId }}
           </router-link>
           <router-link
-            v-if="route.path.includes(rootCollectionId)"
+            v-if="isDocProjectIdInc && collectionId && collectionId !== rootCollectionId"
             class="level-item-external"
             active-class="active"
-            :to="{ name: 'Home', params: {collId: rootCollectionId} }"
+            :to="{ name: 'Home', params: {collId: collectionId} }"
+            >{{ collectionId }}
+          </router-link>
+          <!--<router-link
+            v-else-if="route.path.includes(rootCollectionId)"
+            class="level-item-external"
+            active-class="active"
+            :to="{ name: 'Home' }"
             >{{ rootCollectionId }}
           </router-link>
+          {{route.path}}-->
         </span>
       </div>
        <div class="level-right">
@@ -43,7 +51,7 @@
   </section>
 </template>
 <script>
-import {ref, computed, onMounted, onBeforeUnmount, reactive, watch} from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
 import Burger from './Burger.vue'
 import { useRoute } from 'vue-router'
 
@@ -51,7 +59,19 @@ export default {
   name: 'HomePage',
   components: { Burger },
   props: {
+    isDocProjectIdIncluded: {
+      type: Boolean,
+      required: true
+    },
     rootCollectionIdentifier: {
+      type: String,
+      required: true
+    },
+    rootCollectionShortTitle: {
+      type: String,
+      required: true
+    },
+    collectionIdentifier: {
       type: String,
       required: true
     }
@@ -65,9 +85,13 @@ export default {
     const route = useRoute()
     const isMenuOpened = ref(false)
     const rootURL = ref(import.meta.env.VITE_APP_APP_ROOT_URL.length > 0 ? `${import.meta.env.VITE_APP_APP_ROOT_URL.slice(1, import.meta.env.VITE_APP_APP_ROOT_URL.length)}` : '')
+    const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
+    const projectShortTitle = ref(props.rootCollectionShortTitle)
+    const collectionId = ref(props.collectionIdentifier)
     console.log('AppNavbar setup props.rootCollectionIdentifier', props.rootCollectionIdentifier)
     console.log('AppNavbar setup rootCollectionId', rootCollectionId.value)
+    console.log('AppNavbar props.collectionIdentifier', props.collectionIdentifier)
 
     // Computed property
     const menuCssClass = computed(() => {
@@ -94,6 +118,7 @@ export default {
     watch(props, (newProps) => {
       console.log('AppNavbar watch props : ', newProps)
       rootCollectionId.value = newProps.rootCollectionIdentifier
+      collectionId.value = newProps.collectionIdentifier
     }, { deep: true, immediate: true })
 
     // Expose properties and methods to the template
@@ -102,7 +127,10 @@ export default {
       isMenuOpened,
       menuCssClass,
       rootURL,
+      isDocProjectIdInc,
       rootCollectionId,
+      projectShortTitle,
+      collectionId,
       burgerChanged,
       closeMenu
     }
