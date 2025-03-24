@@ -40,12 +40,20 @@
   </article>
 </template>
 <script>
-import { shallowRef, defineAsyncComponent, ref } from 'vue'
-import myComponents from '@/views/about/index'
+import { shallowRef, defineAsyncComponent, ref, watch } from 'vue'
+// import myComponents from '@/views/about/index'
 
 export default {
   name: 'AboutPage',
   props: {
+    collectionsSettings: {
+      type: Object,
+      required: true
+    },
+    collectionIdentifier: {
+      type: String,
+      required: true
+    },
     currentCollection: {
       type: Object,
       required: true
@@ -53,30 +61,68 @@ export default {
   },
 
   setup (props) {
+    const appConfig = ref(props.collectionsSettings)
+    const collectionConfig = ref({})
+    const aboutSettings = ref([])
     const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
+    const collectionId = ref(props.collectionIdentifier)
     const currCollection = ref(props.currentCollection)
+    // const tabs = ref([])
+    // const currentTab = shallowRef('')
     // console.log('AboutPage setup props.currentCollection / currCollection', props.currentCollection, currCollection.value)
     // console.log('AboutPage setup myComponents', myComponents)
-    const tabs = []
-    for (let i = 0; i < myComponents.length; i += 1) {
-      // console.log('AboutPage setup comp : ', myComponents[i], '\n comp.tabName : ', myComponents[i].tabName, '\n comp.compName : ', myComponents[i].compName)
-      const component = defineAsyncComponent(() => import(`./about/${myComponents[i].compName}.vue`)
-        .then((comp) => {
-          return comp
-        })
-        .catch((error) => {
-          console.log(`error loading ${myComponents[i].compName}.vue : `, error)
-        })
-      )
-
-      tabs.push([myComponents[i].tabName, component])
+    let tabs = []
+    let currentTab = shallowRef('')
+    const getTabs = async () => {
+      // const tabs = []
+      for (let i = 0; i < aboutSettings.value.length; i += 1) {
+        console.log('AboutPage setup comp : ', aboutSettings.value[i], '\n comp.tabName : ', aboutSettings.value[i].tabName, '\n comp.compName : ', aboutSettings.value[i].compName)
+        let component
+        if (collectionConfig.value.length > 0 && collectionConfig.value[0].aboutPageSettings.length > 0) {
+          component = defineAsyncComponent(() => import(`./about/${collectionId.value}/${aboutSettings.value[i].compName}.vue`)
+            .then((comp) => {
+              return comp
+            })
+            .catch((error) => {
+              console.log(`error loading ${aboutSettings.value[i].compName}.vue : `, error)
+            })
+          )
+        } else {
+          component = defineAsyncComponent(() => import(`./about/${aboutSettings.value[i].compName}.vue`)
+            .then((comp) => {
+              return comp
+            })
+            .catch((error) => {
+              console.log(`error loading ${aboutSettings.value[i].compName}.vue : `, error)
+            })
+          )
+        }
+        tabs.push([aboutSettings.value[i].tabName, component])
+        console.log('AboutPage setup tabs', tabs)
+        console.log('AboutPage setup tabs[0]', tabs[0])
+        currentTab = shallowRef(tabs[0][1])
+      }
     }
-    // console.log('AboutPage setup tabs', tabs)
-    // console.log('AboutPage setup tabs[0]', tabs[0])
-    const currentTab = shallowRef(tabs[0][1])
+    watch(props, async (newProps) => {
+      tabs = []
+      appConfig.value = newProps.collectionsSettings
+      collectionId.value = newProps.collectionIdentifier
+      currCollection.value = newProps.currentCollection
+      collectionConfig.value = appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value)
+      if (collectionConfig.value.length > 0 && collectionConfig.value[0].aboutPageSettings.length > 0) {
+        aboutSettings.value = collectionConfig.value[0].aboutPageSettings
+      } else {
+        aboutSettings.value = appConfig.value.genericConf.aboutPageSettings
+      }
+      console.log('HomePageDefault watch appConfig aboutSettings : ', appConfig, aboutSettings.value)
+      await getTabs()
+    }, { deep: true, immediate: true })
+
     return {
+      collectionConfig,
       currCollection,
       collectionAltTitle,
+      getTabs,
       tabs,
       currentTab
     }
@@ -165,6 +211,7 @@ article.about {
 .about .content h1,
 .about .content h2 {
   padding-top: 0;
+  text-align: left;
 }
 .about .content h1 {
   margin: 30px 0 !important;

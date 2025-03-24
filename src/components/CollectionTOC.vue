@@ -12,8 +12,36 @@
             :class="expandedById[item.identifier] || item.expanded === true ? 'expanded' : ''"
             @click="toggleExpanded(item.identifier)"
           />
-          <span
+          <template
             v-if="item['@type'] === 'Collection' || item.citeType === 'Collection'"
+          >
+            <span
+              v-if="!isDocProjectIdInc"
+              :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
+              @click="toggleExpanded(item.identifier)"
+            >
+              {{ item.citeType }}
+              {{ item.title }}
+            </span>
+            <router-link
+              v-else-if="isDocProjectIdInc && item.parent === rootCollectionId"
+              :class="route.params.id === item.identifier ? 'is-current' : ''"
+              :to="{ name: 'Home', params: {collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] !== item.parent ? item.extensions['dots:dotsProjectId'] : item.identifier : item.identifier} }"
+            >
+              {{ item.citeType }}
+              {{ item.title }}
+            </router-link>
+            <span
+              v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId"
+              :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
+              @click="toggleExpanded(item.identifier)"
+            >
+              {{ item.citeType }}
+              {{ item.title }}
+            </span>
+          </template>
+          <!--<span
+            v-if="!isDocProjectIdInc && (item['@type'] === 'Collection' || item.citeType === 'Collection')"
             :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
             @click="toggleExpanded(item.identifier)"
           >
@@ -21,9 +49,25 @@
             {{ item.title }}
           </span>
           <router-link
+            v-else-if="isDocProjectIdInc && item.parent === rootCollectionId && (item['@type'] === 'Collection' || item.citeType === 'Collection')"
+            :class="route.params.id === item.identifier ? 'is-current' : ''"
+            :to="{ name: 'Home', params: {collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] !== item.parent ? item.extensions['dots:dotsProjectId'] : item.identifier : item.identifier} }"
+          >
+            {{ item.citeType }}
+            {{ item.title }}
+          </router-link>
+          <span
+            v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId && (item['@type'] === 'Collection' || item.citeType === 'Collection')"
+            :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
+            @click="toggleExpanded(item.identifier)"
+          >
+            {{ item.citeType }}
+            {{ item.title }}
+          </span>-->
+          <router-link
             v-else-if="isDocProjectIdInc"
             :class="route.params.id === item.identifier ? 'is-current' : ''"
-            :to="{ name: 'Document', params: {collId: Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'], id: item.identifier} }"
+            :to="{ name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }"
           >
             {{ item.citeType }}
             {{ item.title }}
@@ -31,7 +75,7 @@
           <router-link
             v-else
             :class="route.params.id === item.identifier ? 'is-current' : ''"
-            :to="{ name: 'Document', params: { id: item.identifier} }"
+            :to="{ name: 'Document', params: { id: item.identifier } }"
           >
             {{ item.citeType }}
             {{ item.title }}
@@ -99,9 +143,19 @@ export default {
       type: Number
     }
   },
-  setup (props) {
+  async setup (props) {
     const route = useRoute()
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
+    const rootCollectionId = ref('')
+
+    if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
+      const rootResponse = await getMetadataFromApi()
+      rootCollectionId.value = rootResponse['@id']
+      console.log('App.vue get rootCollectionId', rootCollectionId.value)
+    } else {
+      rootCollectionId.value = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
+      console.log('App.vue set rootCollectionId as .env', rootCollectionId.value)
+    }
 
     const expandedById = ref({})
 
@@ -141,6 +195,7 @@ export default {
     return {
       route,
       isDocProjectIdInc,
+      rootCollectionId,
       toggleExpanded,
       expandedById,
       selectedParent,

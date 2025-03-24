@@ -15,14 +15,14 @@
             active-class="active"
             class="level-item-external"
             :to="{ name: 'Home' }"
-            >{{ projectShortTitle ? projectShortTitle : rootCollectionId }}
-          </router-link>
+            >{{ rootCollectionId }}
+          </router-link><!-- {{ projectShortTitle ? projectShortTitle : rootCollectionId }} -->
           <router-link
             v-if="isDocProjectIdInc && collectionId && collectionId !== rootCollectionId"
             class="level-item-external"
             active-class="active"
             :to="{ name: 'Home', params: {collId: collectionId} }"
-            >{{ collectionId }}
+            >{{ projectShortTitle ? projectShortTitle :collectionId }}
           </router-link>
           <!--<router-link
             v-else-if="route.path.includes(rootCollectionId)"
@@ -118,6 +118,7 @@ export default {
     watch(props, (newProps) => {
       console.log('AppNavbar watch props : ', newProps)
       rootCollectionId.value = newProps.rootCollectionIdentifier
+      projectShortTitle.value = newProps.rootCollectionShortTitle
       collectionId.value = newProps.collectionIdentifier
     }, { deep: true, immediate: true })
 

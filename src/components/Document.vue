@@ -59,6 +59,7 @@ import { defineAsyncComponent, ref } from 'vue'
 import { getCoverDataFromApi, getDocumentFromApi } from '@/api/document'
 import { useRoute } from 'vue-router'
 import TOC from '@/components/TOC.vue'
+import router from "@/router";
 
 const VITE_APP_IIIF_URL = `${import.meta.env.VITE_APP_IIIF_URL}`
 
@@ -161,7 +162,9 @@ export default {
       })
 
       // Remove the xslt generated left-hand side TOC (used in other ENC's apps but not here)
-      tmpDom.querySelector('#aside').remove()
+      if (tmpDom.querySelector('#aside') !== null) {
+        tmpDom.querySelector('#aside').remove()
+      }
 
       // Return what will make the async component
       return new Promise((resolve) => {
@@ -178,6 +181,8 @@ export default {
       // If the selected item is an anchor, capture and scroll to that anchor
       const hash = route.hash ? route.hash.replace('#', '') : ''
       console.log('Document.vue scrollTo on resolve hash : ', hash)
+      console.log('Document.vue scrollTo on resolve route : ', route)
+      console.log('Document.vue scrollTo on resolve router : ', router)
       if (hash.length) {
         location.hash = hash
       }

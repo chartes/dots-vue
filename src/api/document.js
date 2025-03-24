@@ -9,7 +9,7 @@ async function getCoverDataFromApi (id, options = {}) {
 
 async function getMetadataFromApi (id, options = {}) {
   let response_metadata = {}
-  if (id === 'elec') {
+  if (id === 'elec' || id === 'dots_demo_root') {
     response_metadata = await fetch(`${_baseApiURL}/collection`, { mode: 'cors', ...options })
   } else if (!id) {
     response_metadata = await fetch(`${_baseApiURL}/collection`, { mode: 'cors', ...options })

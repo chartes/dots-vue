@@ -23,13 +23,13 @@ if (isDocProjectIdIncluded) {
     history: createWebHistory(rootURL),
     routes: [
       {
-        path: '/',
+        path: '/:collId?',
         name: 'Home',
         component: () => import('@/views/HomePage.vue'),
         props: true
       },
       {
-        path: '/about',
+        path: '/:collId?/about',
         name: 'About',
         component: () => import('@/views/AboutPage.vue')
       },

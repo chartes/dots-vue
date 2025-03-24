@@ -17,10 +17,10 @@ const app = createApp(App).provide('variable-layout', useLayout())
   .use(router)
   .use(store)
   .use(VueHighlightJS)
-
-router.isReady().then(() => {
+app.mount('#app')
+/* router.isReady().then(() => {
   app.mount('#app')
-})
+}) */
 
 /* const modules = import.meta.glob('@/views/about/*.vue', { eager: true })
 

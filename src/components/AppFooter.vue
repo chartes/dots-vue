@@ -4,10 +4,10 @@
       <div class="column description">
         <div class="title-container">
           <span class="title">
-            {{ footerTitle ? footerTitle : currCollection.title }}
+            {{ footTitle ? footTitle : currCollection.title }}
           </span>
           <span
-            v-for="(subtitle, index) in footerSubtitles" :key="index"
+            v-for="(subtitle, index) in footSubtitles" :key="index"
             class="subtitle"
           >
             {{ subtitle }}
@@ -15,12 +15,12 @@
         </div>
         <div class="column description">
           <div class="row description">
-            {{ footerDescription }}
+            {{ footDescription }}
           </div>
         </div>
       </div>
       <div class="column logos">
-        <div class="logo">
+        <div class="logo-institutions">
           <a
               target="_blank"
               href="https://www.chartes.psl.eu/"
@@ -43,15 +43,19 @@
           </a>
         </div>
         <div class="logo">
+          <span>
+            Powered by
+          </span>
           <a
+              class="dots-logo"
               target="_blank"
               href="https://chartes.github.io/dots_documentation/"
-            >Powered by
-            <img
+            >
+            <!--<img
               class="dots-logo"
               alt="Logo de DoTS"
               src="@/assets/images/Logo_dots.png"
-            />
+            />-->
           </a>
         </div>
       </div>
@@ -90,6 +94,18 @@ export default {
       type: String,
       required: true
     },
+    footerTitle: {
+      type: String,
+      required: true
+    },
+    footerSubtitles: {
+      type: Array,
+      required: true
+    },
+    footerDescription: {
+      type: String,
+      required: true
+    },
     currentCollection: {
       type: Object,
       required: true
@@ -97,27 +113,33 @@ export default {
   },
 
   setup (props) {
-    const footerTitle = `${import.meta.env.VITE_APP_APP_FOOTER_TITLE}`
-    const footerSubtitles = `${import.meta.env.VITE_APP_APP_FOOTER_SUBTITLES}` === 'undefined' ? undefined : `${import.meta.env.VITE_APP_APP_FOOTER_SUBTITLES}`.split(',')
-    const footerDescription = `${import.meta.env.VITE_APP_APP_FOOTER_DESC}`
+    // const footerTitle = `${import.meta.env.VITE_APP_APP_FOOTER_TITLE}`
+    // const footerSubtitles = `${import.meta.env.VITE_APP_APP_FOOTER_SUBTITLES}` === 'undefined' ? undefined : `${import.meta.env.VITE_APP_APP_FOOTER_SUBTITLES}`.split(',')
+    // const footerDescription = `${import.meta.env.VITE_APP_APP_FOOTER_DESC}`
+    const footTitle = ref(props.footerTitle)
+    const footSubtitles = ref(props.footerSubtitles)
+    const footDescription = ref(props.footerDescription)
     const collectionId = ref(props.collectionIdentifier)
     const currCollection = ref(props.currentCollection)
     console.log('Footer setup footerDescription : ', `${import.meta.env.VITE_APP_APP_FOOTER_DESC}` === 'undefined')
     console.log('Footer setup props.collectionIdentifier / collectionId.value : ', props.collectionIdentifier, collectionId.value)
     console.log('Footer setup props.currentCollection / currCollection.value : ', props.currentCollection, currCollection.value)
-    console.log('Footer setup footerSubtitles', footerSubtitles)
+    console.log('Footer setup footSubtitles', footSubtitles)
 
     watch(props, (newProps) => {
       collectionId.value = newProps.collectionIdentifier
+      footTitle.value = newProps.footerTitle
+      footSubtitles.value = newProps.footerSubtitles
+      footDescription.value = newProps.footerDescription
       currCollection.value = newProps.currentCollection
     })
 
     return {
       collectionId,
       currCollection,
-      footerTitle,
-      footerSubtitles,
-      footerDescription
+      footTitle,
+      footSubtitles,
+      footDescription
     }
   }
 }
@@ -214,13 +236,34 @@ export default {
   flex-direction: column;
   align-items: center;
   flex-grow: 1;
-  & > .logo {
+  & > .logo-institutions {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     justify-content: center;
     align-items: center;
     vertical-align: center;
+
+    & > a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      vertical-align: center;
+      margin: 10px;
+      border-bottom: none;
+      color: #FFFFFF;
+    }
+  }
+  & > .logo {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    vertical-align: center;
+    & > span {
+      color: white;
+    }
     & > a {
       display: flex;
       justify-content: center;
@@ -241,8 +284,13 @@ export default {
   height: 70px;
 }
 .dots-logo {
-  width: auto;
+  display: inline-block;
+  width: 70px;
   height: 70px;
+  background: url(../assets/images/Logo_dots.png) center / contain no-repeat;
+  &:hover {
+    background: url(../assets/images/dots-logo-retro.drawio.svg) center / contain no-repeat;
+  }
 }
 @media screen and (max-width: 800px) {
   .footer {

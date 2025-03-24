@@ -130,6 +130,9 @@ a {
 #article {
   padding: 40px 10% 120px;
   border-bottom: 1px dotted #ffffff;
+  & > p {
+    text-indent: 0;
+  }
   /* min-height: 100%; */
 }
 #article article {
@@ -137,6 +140,7 @@ a {
 }
 #article h1, #article h2,
 #article {
+  text-align: left;
   font-family: "Barlow", sans-serif !important;
 }
 #article h1 {

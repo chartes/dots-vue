@@ -51,8 +51,8 @@
         href=""
         @click="toggleTOCMenu"
         class="toc-menu-toggle"
-        :class="currentLevelIndicator !== 'toEdit' ? 'hideAsideToc' : TOCMenuBtnCssClass"
-        >Sommaire</a
+        :class="TOCMenuBtnCssClass"
+        ><!-- :class="currentLevelIndicator !== 'toEdit' ? 'hideAsideToc' : TOCMenuBtnCssClass" -->Sommaire</a
       >
       <ul class="is-flex">
         <li>
@@ -92,9 +92,16 @@
         </li>
         <li>
           <a
-            v-if="metadata.downloadXML"
+            v-if="refId.length > 0"
             target="_blank"
-            v-bind:href="metadata.downloadXML"
+            v-bind:href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}&ref=${refId}`"
+            class="xml-btn"
+            aria-label="Télécharger le XML"
+          />
+          <a
+            v-else
+            target="_blank"
+            v-bind:href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}`"
             class="xml-btn"
             aria-label="Télécharger le XML"
           />
@@ -355,13 +362,20 @@ export default {
       type: String,
       required: true
     },
+    collectionsSettings: {
+      type: Object,
+      required: true
+    }
   },
   async setup (props) {
-    const topTOCDisplayIndicator = `${import.meta.env.VITE_APP_APP_DISPLAY_TOP_TOC}`.toLowerCase() !== 'false'
+    // const topTOCDisplayIndicator = `${import.meta.env.VITE_APP_APP_DISPLAY_TOP_TOC}`.toLowerCase() !== 'false'
+    const topTOCDisplayIndicator = ref(false)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const docProjectId = ref('')
     console.log('topTOCDisplayIndicator test : ', topTOCDisplayIndicator)
+    const appConfig = ref(props.collectionsSettings)
+    const currCollectionConfig = ref(null)
     const manifestIsAvailable = ref(false)
     const manifest = ref(null)
     const miradorContainer = ref(null)
@@ -501,6 +515,10 @@ export default {
         }
         docProjectId.value = isDocProjectIdInc.value ? currentItem.value.extensions['dots:dotsProjectId'] + '/' : ''
         console.log('docProjectId.value ', docProjectId.value)
+
+        currCollectionConfig.value = appConfig.value.collectionsConf.filter(coll => coll.collectionId === currentItem.value.extensions['dots:dotsProjectId'])
+        topTOCDisplayIndicator.value = currCollectionConfig.value.length > 0 ? currCollectionConfig.value[0].tableOfContentsSettings.displayTopToc !== false : false
+
         currentLevelIndicator.value = currentItem.value.editorialLevelIndicator
         refId.value = Object.keys(route.query).length > 0 && Object.keys(route.query).includes('refId')
           ? refId.value = route.query.refId
@@ -537,8 +555,11 @@ export default {
 
       // Fetch editorial level document parts if any (based on citeType)
       let editorialTypes = []
-      if (import.meta.env.VITE_APP_APP_EDITORIAL_TYPE && import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.length > 0) {
+      /*if (import.meta.env.VITE_APP_APP_EDITORIAL_TYPE && import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.length > 0) {
         editorialTypes = import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.replace(/\s/g, '').split(',')
+      }*/
+      if (currCollectionConfig.value.length > 0 && currCollectionConfig.value[0].tableOfContentsSettings.editByCiteType.length > 0) {
+        editorialTypes = currCollectionConfig.value[0].tableOfContentsSettings.editByCiteType
       }
       // Validate that there are actually in the data
       editorialTypesIsValid.value = processFlatTOC.some(item => editorialTypes.some(l => l === item.citeType))
@@ -1111,6 +1132,9 @@ export default {
         }
       }
     )
+    /* watch(props, (newProps) => {
+      appConfig.value = newProps.collectionsSettings
+    }, { deep: true, immediate: true }) */
 
     watch(
       router.currentRoute, async (newRoute, oldRoute) => {
@@ -1203,11 +1227,18 @@ export default {
       const appView = document.getElementById('app')
       appView.addEventListener('scroll', updateMiradorTopPosition)
       window.addEventListener('scroll', updateMiradorTopPosition)
+      layout.isTOCMenuOpened.value = false
     })
 
     onUnmounted(() => {
       const appView = document.getElementById('app')
       layout.changeViewMode('text-mode')
+      console.log('layout on leave', layout, layout.isTOCMenuOpened.value)
+      if (layout.isTOCMenuOpened.value === true) {
+        console.log('closing TOC on leave')
+        layout.isTOCMenuOpened.value === false
+      }
+      layout.isTOCMenuOpened.value = false
       appView.removeEventListener('scroll', updateMiradorTopPosition)
       window.removeEventListener('scroll', updateMiradorTopPosition)
     })

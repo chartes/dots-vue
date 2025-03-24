@@ -1,0 +1,140 @@
+{
+  "genericConf": {
+    "homePageSettings": {
+      "collectionsPerPage": 3,
+      "collectionAltTitle": "",
+      "collectionShortTitle": "",
+      "collectionDescription": ""
+    },
+    "footerSettings": {
+      "footerTitle": "",
+      "footerSubtitles": [
+      ],
+      "footerDescription": "Développé par la Mission projets numériques de l'École nationale des chartes – PSL avec le soutien de Biblissima+. Biblissima+ bénéficie d’une aide de l'Etat gérée par l'ANR au titre du Programme d’investissements d’avenir intégré à France 2030, portant la référence ANR-21-ESRE-0005."
+    },
+    "tableOfContentsSettings": {
+      "tableOfContentDepth": 5,
+      "editByLevel": 1,
+      "editByCiteType": [
+      ],
+      "displayTopToc": false
+    },
+    "aboutPageSettings": [
+      { "tabName": "tabName1", "compName": "about1" },
+      { "tabName": "tabName2", "compName": "about2" },
+      { "tabName": "tabName3", "compName": "about3" }
+    ]
+  },
+  "excludeCollectionIds": [
+    ],
+  "collectionsConf": [
+    {
+      "collectionId": "cid",
+      "homePageSettings": {
+        "collectionAltTitle": "",
+        "collectionShortTitle": "",
+        "collectionDescription": "",
+        "logo": "Logo_cid.svg"
+      },
+      "footerSettings": {
+        "footerTitle": "CID footerTitle",
+        "footerSubtitles": [
+          "CID subTitle1",
+          "CID subTitle2"
+        ],
+        "footerDescription": ""
+      },
+      "tableOfContentsSettings": {
+        "tableOfContentDepth": 5,
+        "editByLevel": 0,
+        "editByCiteType": [
+        ],
+        "displayTopToc": false
+      },
+      "aboutPageSettings": [
+      ]
+    },
+    {
+      "collectionId": "theater",
+      "homePageSettings": {
+        "collectionAltTitle": "",
+        "collectionShortTitle": "",
+        "collectionDescription": "",
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/6/61/Frontispiece_to_Moli%C3%A8re%27s_Dom_Juan_by_P_Brissart_1682_-_c%C3%A9sar.jpg"
+      },
+      "footerSettings": {
+        "footerTitle": "Theater footerTitle",
+        "footerSubtitles": [
+          "Theater subTitle1",
+          "Theater subTitle2"
+        ],
+        "footerDescription": ""
+      },
+      "tableOfContentsSettings": {
+        "tableOfContentDepth": 5,
+        "editByLevel": 0,
+        "editByCiteType": [
+        ],
+        "displayTopToc": false
+      },
+      "aboutPageSettings": [
+      ]
+    },
+    {
+      "collectionId": "cartulaires",
+      "homePageSettings": {
+        "collectionAltTitle": "Ze cartulaires de l'ENC",
+        "collectionShortTitle": "Carts",
+        "collectionDescription": "",
+        "logo": "Logo_cartulaires.png"
+      },
+      "footerSettings": {
+        "footerTitle": "Cartulaires footerTitle",
+        "footerSubtitles": [
+          "Cartulaires subTitle1",
+          "Cartulaires subTitle2"
+        ],
+        "footerDescription": "Le projet d'édition des CARTULAIRES a été développé par la Mission projets numériques de l'École nationale des chartes – PSL avec le soutien de Biblissima+. Biblissima+ bénéficie d’une aide de l'Etat gérée par l'ANR au titre du Programme d’investissements d’avenir intégré à France 2030, portant la référence ANR-21-ESRE-0005."
+      },
+      "tableOfContentsSettings": {
+        "tableOfContentDepth": 5,
+        "editByLevel": null,
+        "editByCiteType": [
+          "partie",
+          "acte"
+        ],
+        "displayTopToc": false
+      },
+      "aboutPageSettings": [
+      ]
+    },
+    {
+      "collectionId": "ENCPOS",
+      "homePageSettings": {
+        "collectionAltTitle": "Ze positions de l'ENC",
+        "collectionShortTitle": "Thèses",
+        "collectionDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla eget euismod erat. Praesent dictum nulla nibh, non vulputate odio finibus sed. Curabitur vestibulum, ligula eget."
+      },
+      "footerSettings": {
+        "footerTitle": "Positions footerTitle",
+        "footerSubtitles": [
+          "Positions subTitle1",
+          "Positions subTitle2"
+        ],
+        "footerDescription": "Le projet d'édition des POSITIONS a été développé par la Mission projets numériques de l'École nationale des chartes – PSL avec le soutien de Biblissima+. Biblissima+ bénéficie d’une aide de l'Etat gérée par l'ANR au titre du Programme d’investissements d’avenir intégré à France 2030, portant la référence ANR-21-ESRE-0005."
+      },
+      "tableOfContentsSettings": {
+        "tableOfContentDepth": 5,
+        "editByLevel": null,
+        "editByCiteType": ["Resource"
+        ],
+        "displayTopToc": true
+      },
+      "aboutPageSettings": [
+        { "tabName": "Les thèses", "compName": "about1" },
+        { "tabName": "Les positions", "compName": "about2" },
+        { "tabName": "Consultation", "compName": "about3" }
+      ]
+    }
+  ]
+}

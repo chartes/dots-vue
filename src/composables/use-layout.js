@@ -44,6 +44,7 @@ export default function useLayout () {
 
   return {
     rawSearchedTerm,
+    isTOCMenuOpened,
     imageIsAvailable,
     tocCssClass,
     tocMenuCssClass,
