@@ -92,7 +92,7 @@
         </li>
         <li>
           <a
-            v-if="refId.length > 0"
+            v-if="refId && refId.length > 0"
             target="_blank"
             v-bind:href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}&ref=${refId}`"
             class="xml-btn"
