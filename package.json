@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "5.1.4",
+    "lodash": "4.17.21",
     "@vue/eslint-config-standard": "^8.0.1",
     "eslint": "^8.26.0",
     "eslint-plugin-vue": "^9.0.0",
