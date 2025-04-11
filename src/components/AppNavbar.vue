@@ -56,7 +56,7 @@ import Burger from './Burger.vue'
 import { useRoute } from 'vue-router'
 
 export default {
-  name: 'HomePage',
+  name: 'AppNavbar',
   components: { Burger },
   props: {
     isDocProjectIdIncluded: {
