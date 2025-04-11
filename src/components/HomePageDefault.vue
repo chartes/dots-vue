@@ -273,6 +273,7 @@ import CollectionTOC from '@/components/CollectionTOC.vue'
 import HomePageDefaultContent from '../../custom_theme/src/components/HomePageDefaultContent.vue'
 
 export default {
+  name: "HomePageDefault",
   components: { CollectionTOC, HomePageDefaultContent },
   props: {
     isDocProjectIdIncluded: {
@@ -291,7 +292,7 @@ export default {
       type: String,
       required: true
     },
-    collectionsSettings: {
+    collectionConfig: {
       type: Object,
       required: true
     },
@@ -314,8 +315,7 @@ export default {
     // const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
-    const appConfig = ref(props.collectionsSettings)
-    const collectionConfig = ref({})
+    const collConfig = ref(props.collectionConfig)
     const collectionDescription = ref('')
     const collectionAltTitle = ref(props.collectionAlternativeTitle)
     const collectionId = ref(props.collectionIdentifier)
@@ -358,14 +358,13 @@ export default {
       return state.isTreeOpened ? 'is-tree-opened' : ''
     })
 
-    const ImgUrl = (source) => {
-      const sourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
-      if (sourceConfig && Object.keys(sourceConfig.homePageSettings).includes('logo') && sourceConfig.homePageSettings.logo.length) {
+    const ImgUrl = () => {
+      if (collConfig && Object.keys(collConfig.value.homePageSettings).includes('logo') && collConfig.value.homePageSettings.logo.length) {
         // console.log('ImgUrl found : ', sourceConfig.homePageSettings.logo)
-        if (sourceConfig.homePageSettings.logo.includes('https')) {
-          return sourceConfig.homePageSettings.logo
+        if (collConfig.value.homePageSettings.logo.includes('https')) {
+          return collConfig.value.homePageSettings.logo
         } else {
-          return new URL(`/src/assets/images/${sourceConfig.homePageSettings.logo}`, import.meta.url).href
+          return new URL(`/src/assets/images/${collConfig.value.homePageSettings.logo}`, import.meta.url).href
         }
       } else {
         return false
@@ -389,19 +388,13 @@ export default {
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
       collectionId.value = newProps.collectionIdentifier
-      appConfig.value = newProps.collectionsSettings
-      collectionConfig.value = appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value)[0]
-      pageSize.value = appConfig.value.genericConf.homePageSettings.collectionsPerPage
+      collConfig.value = newProps.collectionConfig
+      pageSize.value = collConfig.value.homePageSettings.collectionsPerPage
       paginated()
       collectionAltTitle.value = newProps.collectionAlternativeTitle
       currCollection.value = newProps.currentCollection
-      // const collectionConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value)
-      if (collectionConfig.value && Object.keys(collectionConfig.value).length) {
-        collectionDescription.value = collectionConfig.value.homePageSettings.collectionDescription
-      } else {
-        collectionDescription.value = appConfig.value.genericConf.homePageSettings.collectionDescription
-      }
-      console.log('HomePageDefault watch collectionConfig collectionDescription : ', collectionConfig.value, collectionDescription)
+      collectionDescription.value = collConfig.value.homePageSettings.collectionDescription
+      console.log('HomePageDefault watch collectionConfig collectionDescription : ', collConfig.value, collectionDescription)
     }, { deep: true, immediate: true })
 
     watch(currentPage, () => {
@@ -409,7 +402,7 @@ export default {
     })
 
     return {
-      collectionConfig,
+      collConfig,
       isDocProjectIdInc,
       dtsRootCollectionId,
       rootCollectionId,

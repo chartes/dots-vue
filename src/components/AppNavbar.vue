@@ -17,6 +17,7 @@
             :to="{ name: 'Home' }"
             >{{ rootCollectionId !== dtsRootCollectionId ? projectShortTitle ? projectShortTitle : rootCollectionId : rootCollectionId }}
           </router-link><!-- {{ projectShortTitle ? projectShortTitle : rootCollectionId }} -->
+          <!--TODO: troubleshoot subcollection not showing when on document-->
           <router-link
             v-if="isDocProjectIdInc && collectionId && collectionId !== rootCollectionId"
             class="level-item-external"

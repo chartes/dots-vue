@@ -365,7 +365,7 @@ export default {
       type: String,
       required: true
     },
-    collectionsSettings: {
+    collectionConfig: {
       type: Object,
       required: true
     }
@@ -377,9 +377,8 @@ export default {
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const docProjectId = ref('')
     console.log('topTOCDisplayIndicator test : ', topTOCDisplayIndicator)
-    const appConfig = ref(props.collectionsSettings)
-    console.log('DocumentPage props.collectionsSettings', props.collectionsSettings)
-    const currCollectionConfig = ref(null)
+    const collConfig = ref(props.collectionConfig)
+    console.log('DocumentPage props.collectionConfig', props.collectionConfig)
     const manifestIsAvailable = ref(false)
     const manifest = ref(null)
     const miradorContainer = ref(null)
@@ -445,12 +444,12 @@ export default {
     const collection = ref()
 
     const isLoading = ref(false)
-    const TOC_DEPTH = ref(props.collectionsSettings.genericConf.tableOfContentsSettings.tableOfContentDepth)
+    const TOC_DEPTH = ref(props.collectionConfig.tableOfContentsSettings.tableOfContentDepth)
     const editorialTypesIsValid = ref(false)
     const countEditorialTypes = ref([])
     const currentLevelIndicator = ref(false)
     const currentLevel = ref(1)
-    const editorialLevel = ref(props.collectionsSettings.genericConf.tableOfContentsSettings.editByLevel)
+    const editorialLevel = ref(props.collectionConfig.tableOfContentsSettings.editByLevel)
     const flatTOC = ref([])
     const topTOC = ref([])
     const bottomTOC = ref([])
@@ -499,9 +498,8 @@ export default {
 
           // Fetch editorial level document parts if any (based on citeType)
           let editorialTypes = []
-          currCollectionConfig.value = appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId) // currentItem.value.extensions['dots:dotsProjectId'])
-          if (currCollectionConfig.value.length > 0 && currCollectionConfig.value[0].tableOfContentsSettings.editByCiteType.length > 0) {
-            editorialTypes = currCollectionConfig.value[0].tableOfContentsSettings.editByCiteType
+          if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByCiteType.length > 0) {
+            editorialTypes = collConfig.value[0].tableOfContentsSettings.editByCiteType
           }
           currentItem.value.editorialLevelIndicator = editorialTypes.includes(currentItem.value.citeType) ? 'toEdit' : 'renderToc'
           store.commit('setCurrentItem', currentItem.value)
@@ -522,9 +520,8 @@ export default {
         docProjectId.value = isDocProjectIdInc.value ? route.params.collId + '/' : ''
         console.log('docProjectId.value ', docProjectId.value)
 
-        currCollectionConfig.value = _.merge({}, appConfig.value.genericConf, appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId)[0])//appConfig.value.collectionsConf.filter(coll => coll.collectionId === currentItem.value.extensions['dots:dotsProjectId'])
-        console.log('Objectassign currCollectionConfig.value : ', currCollectionConfig.value)
-        topTOCDisplayIndicator.value = currCollectionConfig.value.tableOfContentsSettings.displayTopToc !== false
+        console.log('Objectassign collConfig.value : ', collConfig.value)
+        topTOCDisplayIndicator.value = collConfig.value.tableOfContentsSettings.displayTopToc !== false
 
         currentLevelIndicator.value = currentItem.value.editorialLevelIndicator
         refId.value = Object.keys(route.query).length > 0 && Object.keys(route.query).includes('refId')
@@ -574,14 +571,13 @@ export default {
       if (import.meta.env.VITE_APP_APP_EDITORIAL_TYPE && import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.length > 0) {
         editorialTypes = import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.replace(/\s/g, '').split(',')
       }
-      if (currCollectionConfig.value.length > 0 && currCollectionConfig.value.tableOfContentsSettings.editByCiteType.length > 0) {
-        editorialTypes = currCollectionConfig.value.tableOfContentsSettings.editByCiteType
+      if (collConfig.value.length > 0 && collConfig.value.tableOfContentsSettings.editByCiteType.length > 0) {
+        editorialTypes = collConfig.value.tableOfContentsSettings.editByCiteType
       }
       */
 
-      currCollectionConfig.value = _.merge({}, appConfig.value.genericConf, appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId)[0])
-      console.log('TOC currCollectionConfig.value for editorialTypes : ', currCollectionConfig.value)
-      editorialTypes = currCollectionConfig.value.tableOfContentsSettings.editByCiteType
+      console.log('TOC collConfig.value for editorialTypes : ', collConfig.value)
+      editorialTypes = collConfig.value.tableOfContentsSettings.editByCiteType
 
       // Validate that there are actually in the data
       editorialTypesIsValid.value = processFlatTOC.some(item => editorialTypes.some(l => l === item.citeType))
@@ -754,10 +750,9 @@ export default {
       // check if there is an editorial level set up by the user in dots_vue.conf.json
 
 
-      currCollectionConfig.value = _.merge({}, appConfig.value.genericConf, appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId)[0])
-      editorialLevel.value = currCollectionConfig.value.tableOfContentsSettings.editByLevel
-      /*if (currCollectionConfig.value.length > 0 && currCollectionConfig.value[0].tableOfContentsSettings.editByLevel !== '' && currCollectionConfig.value[0].tableOfContentsSettings.editByLevel >= 0) {
-        editorialLevel.value = currCollectionConfig.value[0].tableOfContentsSettings.editByLevel
+      editorialLevel.value = collConfig.value.tableOfContentsSettings.editByLevel
+      /*if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByLevel !== '' && collConfig.value[0].tableOfContentsSettings.editByLevel >= 0) {
+        editorialLevel.value = collConfig.value[0].tableOfContentsSettings.editByLevel
       }*/
 
       console.log('USER editorialLevel.value / typeof : ', editorialLevel.value, typeof (editorialLevel.value))
@@ -794,9 +789,7 @@ export default {
         node.descendant = count
         return count
       }
-        console.log("test currCollectionConfig.value ", docProjectId.value, appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId)[0])
-      currCollectionConfig.value = _.merge({}, appConfig.value.genericConf, appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId)[0])
-      countEditorialTypes.value = currCollectionConfig.value.tableOfContentsSettings.countByCiteType
+      countEditorialTypes.value = collConfig.value.tableOfContentsSettings.countByCiteType
 
       for (let i = 0; i < processFlatTOC.length; i += 1) {
         if (processFlatTOC[i].level >= 0) {
@@ -1296,6 +1289,7 @@ export default {
       collection,
       isDocProjectIdInc,
       rootCollectionId,
+      collConfig,
       docProjectId,
       isLoading,
       TOC_DEPTH,

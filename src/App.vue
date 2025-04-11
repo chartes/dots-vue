@@ -17,7 +17,7 @@
           :dts-root-collection-identifier="dtsRootCollectionId"
           :root-collection-identifier="rootCollectionIdentifier"
           :collection-alternative-title="collectionAltTitle"
-          :collections-settings="appConfig"
+          :collection-config="collectionConfig"
           :collection-identifier="collectionId"
           :current-collection="currCollection"
           :key="currCollection+route.name"
@@ -28,9 +28,7 @@
       class="layout-footer"
       :root-collection-identifier="rootCollectionIdentifier"
       :collection-identifier="collectionId"
-      :footer-title="footTitle"
-      :footer-subtitles="footSubtitles"
-      :footer-description="footDescription"
+      v-bind="collectionConfig.footerSettings"
       :current-collection="currCollection"
       :key="currCollection"
     />
@@ -38,9 +36,10 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import router from '@/router'
+import _ from "lodash"
 import settings from '@/settings/dots_vue.conf.json'
 
 import AppNavbar from '@/components/AppNavbar'
@@ -70,6 +69,7 @@ function getSimpleObject (obj) {
 }
 
 export default {
+  name: "App",
   components: {
     BackToTopButton,
     AppNavbar,
@@ -79,19 +79,14 @@ export default {
   setup () {
     const route = useRoute()
     const collectionId = ref('')
+    const collectionConfig = ref({})
     const currCollection = ref({})
     const appConfig = settings
-    const projectShortTitle = ref('')
-    const collectionAltTitle = ref('')
     const collShortTitle = ref('')
-    const collectionDescription = ref('')
-    const footTitle = ref('')
-    const footSubtitles = ref([])
-    const footDescription = ref('')
-    // const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
     // const projectShortTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_SHORT_TITLE}`
-    const dtsRootCollectionId = ref('')
-    const rootCollectionIdentifier = ref('')
+    const dtsRootCollectionId = ref(null)
+    const rootCollectionIdentifier = ref(null)
+    const projectShortTitle = ref('');
     const isDocProjectIdInc = `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID}`.toLowerCase() === 'true'
     console.log('App.vue setup route / route.params.collId / collectionId.value : ', route, route.params.collId ? route.params.collId : 'no param collId', collectionId)
     // getting and formatting collection details
@@ -166,30 +161,19 @@ export default {
           await getCurrentCollection(newRoute)
           console.log('App.vue watch currCollection.value : ', currCollection.value)
         }
+        // Collection is loaded
         console.log('App.vue watch appConfig.collectionsConf & type : ', appConfig.collectionsConf, Array.isArray(appConfig.collectionsConf), collectionId.value)
-        const rootCollectionConfig = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.collectionsConf.filter(coll => coll.collectionId === rootCollectionIdentifier.value) : []
-        const collectionConfig = appConfig.collectionsConf.filter(coll => coll.collectionId === collectionId.value)
-        projectShortTitle.value = rootCollectionConfig.length ? rootCollectionConfig[0].homePageSettings.collectionShortTitle : appConfig.genericConf.homePageSettings.collectionShortTitle
-        if (collectionConfig.length > 0) {
-          collectionAltTitle.value = collectionConfig[0].homePageSettings.collectionAltTitle
-          collShortTitle.value = collectionConfig[0].homePageSettings.collectionShortTitle
-          collectionDescription.value = collectionConfig[0].homePageSettings.collectionDescription
-          footTitle.value = collectionConfig[0].footerSettings.footerTitle
-          footSubtitles.value = collectionConfig[0].footerSettings.footerSubtitles
-          footDescription.value = collectionConfig[0].footerSettings.footerDescription
-        } else {
-          collectionAltTitle.value = appConfig.genericConf.homePageSettings.collectionAltTitle
-          collShortTitle.value = appConfig.genericConf.homePageSettings.collectionShortTitle
-          collectionDescription.value = appConfig.genericConf.homePageSettings.collectionDescription
-          footTitle.value = appConfig.genericConf.footerSettings.footerTitle
-          footSubtitles.value = appConfig.genericConf.footerSettings.footerSubtitles
-          footDescription.value = appConfig.genericConf.footerSettings.footerDescription
-        }
-        console.log('App.vue watch collectionAltTitle.value : ', collectionAltTitle.value)
-        console.log('App.vue watch projectShortTitle.value : ', projectShortTitle.value)
-          console.log('App.vue watch collShortTitle.value : ', collShortTitle.value)
+
+        const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
+        const rootCollectionConfig = _.merge({},  appConfig.genericConf, rootCollectionOverrides)
+        projectShortTitle.value = rootCollectionConfig ? rootCollectionConfig.homePageSettings.collectionShortTitle : appConfig.genericConf.homePageSettings.collectionShortTitle
+
+        const collectionOverrides = appConfig.collectionsConf.find(coll => coll.collectionId === collectionId.value);
+        collectionConfig.value = _.merge({}, rootCollectionConfig, collectionOverrides)
+
       }, { deep: true, immediate: true }
     )
+    
 
     return {
       route,
@@ -198,13 +182,9 @@ export default {
       isDocProjectIdInc,
       projectShortTitle,
       collShortTitle,
-      collectionDescription,
       collectionId,
       currCollection,
-      collectionAltTitle,
-      footTitle,
-      footSubtitles,
-      footDescription,
+      collectionConfig,
       appConfig,
       getCurrentCollection
     }

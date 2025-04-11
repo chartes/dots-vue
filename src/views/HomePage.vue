@@ -5,7 +5,7 @@
       :dts-root-collection-identifier="dtsRootCollectionId"
       :root-collection-identifier="rootCollectionId"
       :collection-identifier="collectionId"
-      :collections-settings="appConfig"
+      :collection-config="collConfig"
       :collection-alternative-title="collectionAltTitle"
       :currentCollection="currCollection"
       :key="currCollection"
@@ -33,7 +33,7 @@ export default {
       type: String,
       required: true
     },
-    collectionsSettings: {
+    collectionConfig: {
       type: Object,
       required: true
     },
@@ -56,7 +56,7 @@ export default {
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const collectionId = ref(props.collectionIdentifier)
-    const appConfig = ref(props.collectionsSettings)
+    const collConfig = ref(props.collectionConfig)
     const collectionAltTitle = ref(props.collectionAlternativeTitle)
     const currCollection = ref(props.currentCollection)
     console.log('HomePage setup props.dtsRootCollectionIdentifier', props.dtsRootCollectionIdentifier)
@@ -69,7 +69,7 @@ export default {
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
       collectionId.value = newProps.collectionIdentifier
-      appConfig.value = newProps.collectionsSettings
+      collConfig.value = newProps.collectionConfig
       collectionAltTitle.value = newProps.collectionAlternativeTitle
       currCollection.value = newProps.currentCollection
     }, { deep: true, immediate: true })
@@ -79,7 +79,7 @@ export default {
       dtsRootCollectionId,
       rootCollectionId,
       collectionId,
-      appConfig,
+      collConfig,
       collectionAltTitle,
       currCollection
     }
