@@ -190,6 +190,7 @@
         <aside id="aside">
           <nav>
             <nav>
+              <span v-if="arianeDocument.length && arianeDocument[0].descendant">{{ arianeDocument[0].descendant }}{{ countEditorialTypes.length > 0 ? ' item de type ' + countEditorialTypes[0] : '' }}</span>
               <TOC
                :is-doc-projectId-included="isDocProjectIdInc"
                :margin="0"
@@ -251,6 +252,7 @@ import CollectionModal from '@/components/CollectionModal.vue'
 import { useStore } from 'vuex'
 import useMirador from '@/composables/use-mirador'
 import { getMetadataFromApi, getParentFromApi, getTOCFromApi } from '@/api/document'
+import _ from 'lodash'
 
 import {
   computed,
@@ -313,6 +315,7 @@ function getSimpleObject (obj) {
     level: obj.level,
     editorialLevelIndicator: obj.editorialLevelIndicator,
     totalChildren: obj.totalChildren,
+    totalDescendants: obj.totalDescendants,
     children: obj.children,
     member: obj.member,
     parent: obj.parent,
@@ -375,6 +378,7 @@ export default {
     const docProjectId = ref('')
     console.log('topTOCDisplayIndicator test : ', topTOCDisplayIndicator)
     const appConfig = ref(props.collectionsSettings)
+    console.log('DocumentPage props.collectionsSettings', props.collectionsSettings)
     const currCollectionConfig = ref(null)
     const manifestIsAvailable = ref(false)
     const manifest = ref(null)
@@ -441,11 +445,12 @@ export default {
     const collection = ref()
 
     const isLoading = ref(false)
-    const TOC_DEPTH = ref(parseInt(`${import.meta.env.VITE_APP_APP_TOC_DEPTH}`))
+    const TOC_DEPTH = ref(props.collectionsSettings.genericConf.tableOfContentsSettings.tableOfContentDepth)
     const editorialTypesIsValid = ref(false)
+    const countEditorialTypes = ref([])
     const currentLevelIndicator = ref(false)
     const currentLevel = ref(1)
-    const editorialLevel = ref(parseInt(`${import.meta.env.VITE_APP_APP_EDITORIAL_LEVEL}`))
+    const editorialLevel = ref(props.collectionsSettings.genericConf.tableOfContentsSettings.editByLevel)
     const flatTOC = ref([])
     const topTOC = ref([])
     const bottomTOC = ref([])
@@ -494,8 +499,9 @@ export default {
 
           // Fetch editorial level document parts if any (based on citeType)
           let editorialTypes = []
-          if (import.meta.env.VITE_APP_APP_EDITORIAL_TYPE && import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.length > 0) {
-            editorialTypes = import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.replace(/\s/g, '').split(',')
+          currCollectionConfig.value = appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId) // currentItem.value.extensions['dots:dotsProjectId'])
+          if (currCollectionConfig.value.length > 0 && currCollectionConfig.value[0].tableOfContentsSettings.editByCiteType.length > 0) {
+            editorialTypes = currCollectionConfig.value[0].tableOfContentsSettings.editByCiteType
           }
           currentItem.value.editorialLevelIndicator = editorialTypes.includes(currentItem.value.citeType) ? 'toEdit' : 'renderToc'
           store.commit('setCurrentItem', currentItem.value)
@@ -513,11 +519,12 @@ export default {
           console.log('init type : ', documentType.value)
           isModalOpened.value = true
         }
-        docProjectId.value = isDocProjectIdInc.value ? currentItem.value.extensions['dots:dotsProjectId'] + '/' : ''
+        docProjectId.value = isDocProjectIdInc.value ? route.params.collId + '/' : ''
         console.log('docProjectId.value ', docProjectId.value)
 
-        currCollectionConfig.value = appConfig.value.collectionsConf.filter(coll => coll.collectionId === currentItem.value.extensions['dots:dotsProjectId'])
-        topTOCDisplayIndicator.value = currCollectionConfig.value.length > 0 ? currCollectionConfig.value[0].tableOfContentsSettings.displayTopToc !== false : false
+        currCollectionConfig.value = _.merge({}, appConfig.value.genericConf, appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId)[0])//appConfig.value.collectionsConf.filter(coll => coll.collectionId === currentItem.value.extensions['dots:dotsProjectId'])
+        console.log('Objectassign currCollectionConfig.value : ', currCollectionConfig.value)
+        topTOCDisplayIndicator.value = currCollectionConfig.value.tableOfContentsSettings.displayTopToc !== false
 
         currentLevelIndicator.value = currentItem.value.editorialLevelIndicator
         refId.value = Object.keys(route.query).length > 0 && Object.keys(route.query).includes('refId')
@@ -549,18 +556,33 @@ export default {
         response.member.forEach(m => { m.level = store.state.currentItem.level + 1 })
         response.member.forEach(m => { m.identifier = m['@id'] })
       }
+
+      response.member.filter(item => !item.title).forEach(m => {
+        m.title = m.dublincore && m.dublincore.title && m.dublincore.title.length ? m.dublincore.title : ''
+        m.title = m.title.length ? m.title : m.extensions && m.extensions['tei:role'] ? m.extensions['tei:num'] ? m.extensions['tei:role'] + ' ' + m.extensions['tei:num'] :  m.extensions['tei:role'] + ' ' + m.identifier : ''
+        m.title = m.title.length ? m.title : m.extensions && m.citeType && m.extensions['tei:num'] ? m.citeType + ' ' + m.extensions['tei:num'] : ''
+        m.title = m.title.length ? m.title : m.citeType + ' ' + m.identifier
+      })
+
       let processFlatTOC = []
       processFlatTOC = [store.state.currentItem, ...response.member]
       processFlatTOC.filter(item => item.level === 1).forEach(i => { i.parent = resourceId.value })
 
       // Fetch editorial level document parts if any (based on citeType)
       let editorialTypes = []
-      /*if (import.meta.env.VITE_APP_APP_EDITORIAL_TYPE && import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.length > 0) {
+      /*
+      if (import.meta.env.VITE_APP_APP_EDITORIAL_TYPE && import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.length > 0) {
         editorialTypes = import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.replace(/\s/g, '').split(',')
-      }*/
-      if (currCollectionConfig.value.length > 0 && currCollectionConfig.value[0].tableOfContentsSettings.editByCiteType.length > 0) {
-        editorialTypes = currCollectionConfig.value[0].tableOfContentsSettings.editByCiteType
       }
+      if (currCollectionConfig.value.length > 0 && currCollectionConfig.value.tableOfContentsSettings.editByCiteType.length > 0) {
+        editorialTypes = currCollectionConfig.value.tableOfContentsSettings.editByCiteType
+      }
+      */
+
+      currCollectionConfig.value = _.merge({}, appConfig.value.genericConf, appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId)[0])
+      console.log('TOC currCollectionConfig.value for editorialTypes : ', currCollectionConfig.value)
+      editorialTypes = currCollectionConfig.value.tableOfContentsSettings.editByCiteType
+
       // Validate that there are actually in the data
       editorialTypesIsValid.value = processFlatTOC.some(item => editorialTypes.some(l => l === item.citeType))
       console.log('editorialTypes editorialTypesIsValid.value', editorialTypes, editorialTypesIsValid.value)
@@ -600,6 +622,7 @@ export default {
                   level: node.level,
                   editorialLevelIndicator: node.editorialLevelIndicator,
                   totalChildren: obj.totalChildren,
+                  totalDescendants: obj.totalDescendants,
                   children: obj.children ? obj.children : [],
                   member: obj.member ? obj.member : [],
                   parent: node.parent,
@@ -658,6 +681,7 @@ export default {
                 level: node.level,
                 editorialLevelIndicator: node.editorialLevelIndicator,
                 totalChildren: obj.totalChildren,
+                totalDescendants: obj.totalDescendants,
                 children: obj.children ? obj.children : [],
                 member: obj.member ? obj.member : [],
                 parent: node.parent,
@@ -726,10 +750,18 @@ export default {
         ? Math.max(...processFlatTOC.map(i => i.level))
         : Math.max(...processFlatTOC.filter(i => !titleMissing(i)).map(item => item.level)) - 1
       console.log('document DoTS maxTocDepth : ', maxTocDepth)
-      // check if there is an editorial level set up by the user in .env VITE_APP_APP_EDITORIAL_LEVEL
-      editorialLevel.value = parseInt(`${import.meta.env.VITE_APP_APP_EDITORIAL_LEVEL}`)
+
+      // check if there is an editorial level set up by the user in dots_vue.conf.json
+
+
+      currCollectionConfig.value = _.merge({}, appConfig.value.genericConf, appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId)[0])
+      editorialLevel.value = currCollectionConfig.value.tableOfContentsSettings.editByLevel
+      /*if (currCollectionConfig.value.length > 0 && currCollectionConfig.value[0].tableOfContentsSettings.editByLevel !== '' && currCollectionConfig.value[0].tableOfContentsSettings.editByLevel >= 0) {
+        editorialLevel.value = currCollectionConfig.value[0].tableOfContentsSettings.editByLevel
+      }*/
+
       console.log('USER editorialLevel.value / typeof : ', editorialLevel.value, typeof (editorialLevel.value))
-      editorialLevel.value = editorialLevel.value > maxTocDepth ? 0 : editorialLevel.value
+      editorialLevel.value = editorialLevel.value > maxTocDepth ? maxTocDepth : editorialLevel.value
       console.log('VALIDATED editorialLevel.value / typeof : ', editorialLevel.value, typeof (editorialLevel.value))
 
       console.log('currentLevel / typeof : ', currentLevel, typeof (currentLevel.value))
@@ -753,7 +785,7 @@ export default {
       processFlatTOC.filter(item => item.level >= 0).forEach((node) => { node.children = [] })
 
       function countDescendants (node, count = 0) {
-        count = node.totalChildren
+        count = node.totalDescendants
         if (node.children && node.children.length > 0) {
           for (let i = 0; i < node.children.length; i += 1) {
             count += countDescendants(node.children[i])
@@ -762,11 +794,14 @@ export default {
         node.descendant = count
         return count
       }
+        console.log("test currCollectionConfig.value ", docProjectId.value, appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId)[0])
+      currCollectionConfig.value = _.merge({}, appConfig.value.genericConf, appConfig.value.collectionsConf.filter(coll => coll.collectionId === route.params.collId)[0])
+      countEditorialTypes.value = currCollectionConfig.value.tableOfContentsSettings.countByCiteType
 
       for (let i = 0; i < processFlatTOC.length; i += 1) {
         if (processFlatTOC[i].level >= 0) {
           processFlatTOC[i].children = processFlatTOC.filter(node => node.parent === processFlatTOC[i].identifier)
-          processFlatTOC[i].totalChildren = processFlatTOC.filter(node => node.parent === processFlatTOC[i].identifier && editorialTypes.includes(node.citeType)).length
+          processFlatTOC[i].totalDescendants = processFlatTOC.filter(node => node.parent === processFlatTOC[i].identifier && countEditorialTypes.value.includes(node.citeType)).length
         }
       }
 
@@ -1076,7 +1111,7 @@ export default {
           previousRefId.value = refIdTOC[currentItemIndex - 1].identifier
           previousRefTitle.value = refIdTOC[currentItemIndex - 1].title
             ? refIdTOC[currentItemIndex - 1].title
-            : refIdTOC[currentItemIndex - 1].dublincore?.title
+            : refIdTOC[currentItemIndex - 1].citeType + ' ' + refIdTOC[currentItemIndex - 1].identifier
             // console.log('function getNewRefId previousRefId.value : ', previousRefId.value)
         }
         if (currentItemIndex === refIdTOC.length - 1) {
@@ -1091,8 +1126,8 @@ export default {
           nextRefId.value = refIdTOC[currentItemIndex + 1].identifier
           nextRefTitle.value = refIdTOC[currentItemIndex + 1].title
             ? refIdTOC[currentItemIndex + 1].title
-            : refIdTOC[currentItemIndex + 1].dublincore?.title
-            // console.log('function getNewRefId nextRefId.value : ', nextRefId.value)
+            : refIdTOC[currentItemIndex + 1].citeType + ' ' + refIdTOC[currentItemIndex + 1].identifier
+          // console.log('function getNewRefId nextRefId.value : ', nextRefId.value)
         }
       } else {
         previousRefId.value = ''
@@ -1266,6 +1301,7 @@ export default {
       TOC_DEPTH,
       currentLevelIndicator,
       editorialLevel,
+      countEditorialTypes,
       currentLevel,
       documentType,
       flatTOC,

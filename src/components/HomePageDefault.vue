@@ -1,8 +1,64 @@
 <template>
   <div
-    v-if="collectionId === rootCollectionId"
+    v-if="rootCollectionId === dtsRootCollectionId && collectionId === rootCollectionId"
     class="collection-list"
-  >
+  ><!-- && currCollection.member.every(m => m.citeType === 'Collection') -->
+    <div class="tiles">
+      <div class="tile page-header app-width-padding">
+        <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center wrapper">
+          <div class="tile is-child">
+            <div class="title-tile">
+              <p class="title">{{ collectionAltTitle ? collectionAltTitle : currCollection.title }}</p>
+            </div>
+            <div class="project-tile">
+              <router-link
+                v-if="collectionId !== rootCollectionId"
+                :to="{ name: 'About', params: {collId: collectionId}}"
+                active-class="active"
+              >
+                About
+              </router-link><!-- , params: {collId: collectionId}  -->
+              <router-link
+                v-else
+                :to="{ name: 'About'}"
+                active-class="active"
+              >
+                About
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="main app-width-margin">
+      <div
+        v-if="currCollection.description"
+        id="article"
+        class="article app-width-margin"
+      >
+        <h1>La collection</h1>
+          {{ currCollection.description }}
+      </div>
+      <div
+        v-else-if="collectionDescription"
+        id="article"
+        class="article app-width-margin"
+      >
+        <h1>La collection</h1>
+          {{ collectionDescription }}
+      </div>
+      <div
+        v-else
+        id="article"
+        class="article app-width-margin"
+      >
+        <HomePageDefaultContent
+          :target-div="2"
+        >
+        </HomePageDefaultContent>
+        <p class="texte">This collection provides no DTS default description.</p>
+      </div>
+    </section>
     <div
       class="document-list app-width-margin"
     >
@@ -11,6 +67,9 @@
             v-if="totalPages"
             class="pagination has-text-centered is-flex is-flex-direction-row is-justify-content-center"
           >
+            <div class="pagination-documents-count">
+              {{ componentTOC.length }} {{ componentTOC.length === 1 ? 'collection' : 'collections' }}
+            </div>
             <div class="pagination-controls">
               <a
                 :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
@@ -41,9 +100,6 @@
                 @click="currentPage < totalPages ? currentPage = totalPages : null"
               />
             </div>
-            <span class="pagination-documents-count pagination-previous">
-              {{ componentTOC.length }} {{ componentTOC.length === 1 ? 'collection' : 'collections' }}
-            </span>
           </div>
         </div>
       <div
@@ -223,6 +279,10 @@ export default {
       type: Boolean,
       required: true
     },
+    dtsRootCollectionIdentifier: {
+      type: String,
+      required: true
+    },
     rootCollectionIdentifier: {
       type: String,
       required: true
@@ -252,6 +312,7 @@ export default {
 
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     // const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
+    const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const appConfig = ref(props.collectionsSettings)
     const collectionConfig = ref({})
@@ -325,6 +386,7 @@ export default {
     }
 
     watch(props, (newProps) => {
+      dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
       collectionId.value = newProps.collectionIdentifier
       appConfig.value = newProps.collectionsSettings
@@ -349,6 +411,7 @@ export default {
     return {
       collectionConfig,
       isDocProjectIdInc,
+      dtsRootCollectionId,
       rootCollectionId,
       collectionAltTitle,
       collectionDescription,
@@ -628,7 +691,7 @@ a {
   border-bottom: solid 1px #b9192f;
 }
 .pagination-documents-count {
-  margin-left: auto;
+  margin-right: auto;
   color: #b9192f;
   border: none;
 }

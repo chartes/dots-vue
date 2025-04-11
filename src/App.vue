@@ -3,8 +3,10 @@
     <app-navbar
       class="layout-navbar"
       :is-doc-projectId-included="isDocProjectIdInc"
+      :dts-root-collection-identifier="dtsRootCollectionId"
       :root-collection-identifier="rootCollectionIdentifier"
       :root-collection-short-title="projectShortTitle"
+      :collection-short-title="collShortTitle"
       :collection-identifier="collectionId"
       :key="currCollection+route.fullPath"
     />
@@ -12,6 +14,7 @@
         <router-view
           class="layout-main"
           :is-doc-projectId-included="isDocProjectIdInc"
+          :dts-root-collection-identifier="dtsRootCollectionId"
           :root-collection-identifier="rootCollectionIdentifier"
           :collection-alternative-title="collectionAltTitle"
           :collections-settings="appConfig"
@@ -62,7 +65,7 @@ function getSimpleObject (obj) {
     dublincore: obj.dublincore,
     extensions: obj.extensions
   }
-  // console.log("getSimpleObject / simpleObject", simpleObject)
+  // console.log('getSimpleObject / simpleObject', simpleObject)
   return simpleObject
 }
 
@@ -78,21 +81,39 @@ export default {
     const collectionId = ref('')
     const currCollection = ref({})
     const appConfig = settings
-    const collectionAltTitle = ref('')
     const projectShortTitle = ref('')
+    const collectionAltTitle = ref('')
+    const collShortTitle = ref('')
     const collectionDescription = ref('')
     const footTitle = ref('')
     const footSubtitles = ref([])
     const footDescription = ref('')
     // const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
     // const projectShortTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_SHORT_TITLE}`
+    const dtsRootCollectionId = ref('')
     const rootCollectionIdentifier = ref('')
     const isDocProjectIdInc = `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID}`.toLowerCase() === 'true'
     console.log('App.vue setup route / route.params.collId / collectionId.value : ', route, route.params.collId ? route.params.collId : 'no param collId', collectionId)
     // getting and formatting collection details
+
+    const getDtsRootResponse = async () => {
+      const dtsRootResponse = await getMetadataFromApi()
+      dtsRootCollectionId.value = dtsRootResponse['@id']
+      console.log('App.vue get dtsRootCollectionId', dtsRootCollectionId.value)
+    }
+    getDtsRootResponse()
+
     const getCurrentCollection = async (route) => {
       console.log('App.vue getCurrentCollection origin route', origin, route)
-      const metadataResponse = await fetchMetadata('app.vue', collectionId.value, 'Collection', route)
+      console.log('this is where it fails')
+      let metadataResponse = {}
+      if (rootCollectionIdentifier.value === dtsRootCollectionId.value && rootCollectionIdentifier.value === collectionId.value) {
+        metadataResponse = await fetchMetadata('app.vue', '', 'Collection', route)
+      } else {
+        metadataResponse = await fetchMetadata('app.vue', collectionId.value, 'Collection', route)
+      }
+      //const metadataResponse = await fetchMetadata('app.vue', collectionId.value, 'Collection', route)
+      console.log('yes it has failed ', collectionId.value)
       console.log('App.vue metadataResponse', metadataResponse)
       if (appConfig.excludeCollectionIds.length > 0) {
         metadataResponse.member = metadataResponse.member.filter(m => !appConfig.excludeCollectionIds.includes(m['@id']))
@@ -115,9 +136,8 @@ export default {
           } else {
             console.log('App.vue watch route.params : ', newRoute.params)
             if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
-              const rootResponse = await getMetadataFromApi()
-              rootCollectionIdentifier.value = rootResponse['@id']
-              console.log('App.vue get rootCollectionIdentifier', rootCollectionIdentifier.value)
+              rootCollectionIdentifier.value = dtsRootCollectionId.value
+              console.log('App.vue get rootCollectionIdentifier = dtsRootCollectionId', rootCollectionIdentifier.value, dtsRootCollectionId.value)
             } else {
               rootCollectionIdentifier.value = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
               console.log('App.vue set rootCollectionIdentifier as .env', rootCollectionIdentifier.value)
@@ -135,11 +155,11 @@ export default {
           }
         } else {
           if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
-            const rootResponse = await getMetadataFromApi()
-            rootCollectionIdentifier.value = rootResponse['@id']
-            console.log('App.vue get rootCollectionIdentifier', rootCollectionIdentifier.value)
+            rootCollectionIdentifier.value = dtsRootCollectionId.value
+            console.log('App.vue get rootCollectionIdentifier = dtsRootCollectionId', rootCollectionIdentifier.value, dtsRootCollectionId.value)
           } else {
             rootCollectionIdentifier.value = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
+            console.log('App.vue set rootCollectionIdentifier as .env', rootCollectionIdentifier.value)
           }
           collectionId.value = rootCollectionIdentifier.value
           console.log('App.vue watch collectionId.value : ', collectionId.value)
@@ -147,17 +167,19 @@ export default {
           console.log('App.vue watch currCollection.value : ', currCollection.value)
         }
         console.log('App.vue watch appConfig.collectionsConf & type : ', appConfig.collectionsConf, Array.isArray(appConfig.collectionsConf), collectionId.value)
+        const rootCollectionConfig = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.collectionsConf.filter(coll => coll.collectionId === rootCollectionIdentifier.value) : []
         const collectionConfig = appConfig.collectionsConf.filter(coll => coll.collectionId === collectionId.value)
+        projectShortTitle.value = rootCollectionConfig.length ? rootCollectionConfig[0].homePageSettings.collectionShortTitle : appConfig.genericConf.homePageSettings.collectionShortTitle
         if (collectionConfig.length > 0) {
           collectionAltTitle.value = collectionConfig[0].homePageSettings.collectionAltTitle
-          projectShortTitle.value = collectionConfig[0].homePageSettings.collectionShortTitle
+          collShortTitle.value = collectionConfig[0].homePageSettings.collectionShortTitle
           collectionDescription.value = collectionConfig[0].homePageSettings.collectionDescription
           footTitle.value = collectionConfig[0].footerSettings.footerTitle
           footSubtitles.value = collectionConfig[0].footerSettings.footerSubtitles
           footDescription.value = collectionConfig[0].footerSettings.footerDescription
         } else {
           collectionAltTitle.value = appConfig.genericConf.homePageSettings.collectionAltTitle
-          projectShortTitle.value = appConfig.genericConf.homePageSettings.collectionShortTitle
+          collShortTitle.value = appConfig.genericConf.homePageSettings.collectionShortTitle
           collectionDescription.value = appConfig.genericConf.homePageSettings.collectionDescription
           footTitle.value = appConfig.genericConf.footerSettings.footerTitle
           footSubtitles.value = appConfig.genericConf.footerSettings.footerSubtitles
@@ -165,14 +187,17 @@ export default {
         }
         console.log('App.vue watch collectionAltTitle.value : ', collectionAltTitle.value)
         console.log('App.vue watch projectShortTitle.value : ', projectShortTitle.value)
+          console.log('App.vue watch collShortTitle.value : ', collShortTitle.value)
       }, { deep: true, immediate: true }
     )
 
     return {
       route,
+      dtsRootCollectionId,
       rootCollectionIdentifier,
       isDocProjectIdInc,
       projectShortTitle,
+      collShortTitle,
       collectionDescription,
       collectionId,
       currCollection,

@@ -1,5 +1,6 @@
 {
   "genericConf": {
+    "mediaTypeEndpoint": "",
     "homePageSettings": {
       "collectionsPerPage": 3,
       "collectionAltTitle": "",
@@ -16,6 +17,8 @@
       "tableOfContentDepth": 5,
       "editByLevel": 1,
       "editByCiteType": [
+      ],
+      "countByCiteType": [
       ],
       "displayTopToc": false
     },
@@ -48,6 +51,7 @@
         "tableOfContentDepth": 5,
         "editByLevel": 0,
         "editByCiteType": [
+          "article"
         ],
         "displayTopToc": false
       },
@@ -72,7 +76,7 @@
       },
       "tableOfContentsSettings": {
         "tableOfContentDepth": 5,
-        "editByLevel": 0,
+        "editByLevel": 2,
         "editByCiteType": [
         ],
         "displayTopToc": false
@@ -103,6 +107,9 @@
           "partie",
           "acte"
         ],
+        "countByCiteType": [
+          "acte"
+        ],
         "displayTopToc": false
       },
       "aboutPageSettings": [
@@ -110,6 +117,7 @@
     },
     {
       "collectionId": "ENCPOS",
+      "mediaTypeEndpoint": "html",
       "homePageSettings": {
         "collectionAltTitle": "Ze positions de l'ENC",
         "collectionShortTitle": "Thèses",

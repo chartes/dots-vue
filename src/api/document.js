@@ -9,9 +9,9 @@ async function getCoverDataFromApi (id, options = {}) {
 
 async function getMetadataFromApi (id, options = {}) {
   let response_metadata = {}
-  if (id === 'elec' || id === 'dots_demo_root') {
+  /*if (id === 'elec' || id === 'dots_demo_root') {
     response_metadata = await fetch(`${_baseApiURL}/collection`, { mode: 'cors', ...options })
-  } else if (!id) {
+  } else */if (!id) {
     response_metadata = await fetch(`${_baseApiURL}/collection`, { mode: 'cors', ...options })
   } else {
     response_metadata = await fetch(`${_baseApiURL}/collection?id=${id}`, { mode: 'cors', ...options })
@@ -21,6 +21,7 @@ async function getMetadataFromApi (id, options = {}) {
 }
 
 async function getDocumentFromApi (id, excludeFragments = false, options = {}) {
+  // TODO : default is document route without mediatype and if mediatype is provided include it
   console.log('Document.vue', `${_baseApiURL}/document?resource=${id}&mediaType=html&excludeFragments=${excludeFragments}`)
   const response = await fetch(`${_baseApiURL}/document?resource=${id}&mediaType=html&excludeFragments=${excludeFragments}`, { mode: 'cors', ...options })
   // const response = await fetch(`${_baseApiURL}/document?resource=${id}&mediaType=html`, {mode: 'cors', ...options})

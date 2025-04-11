@@ -15,14 +15,14 @@
             active-class="active"
             class="level-item-external"
             :to="{ name: 'Home' }"
-            >{{ rootCollectionId }}
+            >{{ rootCollectionId !== dtsRootCollectionId ? projectShortTitle ? projectShortTitle : rootCollectionId : rootCollectionId }}
           </router-link><!-- {{ projectShortTitle ? projectShortTitle : rootCollectionId }} -->
           <router-link
             v-if="isDocProjectIdInc && collectionId && collectionId !== rootCollectionId"
             class="level-item-external"
             active-class="active"
             :to="{ name: 'Home', params: {collId: collectionId} }"
-            >{{ projectShortTitle ? projectShortTitle :collectionId }}
+            >{{ collShortTitle ? collShortTitle : collectionId }}
           </router-link>
           <!--<router-link
             v-else-if="route.path.includes(rootCollectionId)"
@@ -63,11 +63,19 @@ export default {
       type: Boolean,
       required: true
     },
+    dtsRootCollectionIdentifier: {
+      type: String,
+      required: true
+    },
     rootCollectionIdentifier: {
       type: String,
       required: true
     },
     rootCollectionShortTitle: {
+      type: String,
+      required: true
+    },
+    collectionShortTitle: {
       type: String,
       required: true
     },
@@ -86,13 +94,15 @@ export default {
     const isMenuOpened = ref(false)
     const rootURL = ref(import.meta.env.VITE_APP_APP_ROOT_URL.length > 0 ? `${import.meta.env.VITE_APP_APP_ROOT_URL.slice(1, import.meta.env.VITE_APP_APP_ROOT_URL.length)}` : '')
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
+    const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const projectShortTitle = ref(props.rootCollectionShortTitle)
+    const collShortTitle = ref(props.collectionShortTitle)
     const collectionId = ref(props.collectionIdentifier)
     console.log('AppNavbar setup props.rootCollectionIdentifier', props.rootCollectionIdentifier)
     console.log('AppNavbar setup rootCollectionId', rootCollectionId.value)
     console.log('AppNavbar props.collectionIdentifier', props.collectionIdentifier)
-
+    console.log('AppNavbar props.rootCollectionShortTitle', props.rootCollectionShortTitle)
     // Computed property
     const menuCssClass = computed(() => {
       return state.isMenuOpened ? 'is-opened' : ''
@@ -117,8 +127,10 @@ export default {
     })
     watch(props, (newProps) => {
       console.log('AppNavbar watch props : ', newProps)
+      dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
       projectShortTitle.value = newProps.rootCollectionShortTitle
+      collShortTitle.value = newProps.collectionShortTitle
       collectionId.value = newProps.collectionIdentifier
     }, { deep: true, immediate: true })
 
@@ -129,8 +141,10 @@ export default {
       menuCssClass,
       rootURL,
       isDocProjectIdInc,
+      dtsRootCollectionId,
       rootCollectionId,
       projectShortTitle,
+      collShortTitle,
       collectionId,
       burgerChanged,
       closeMenu
