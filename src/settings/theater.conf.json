@@ -1,0 +1,25 @@
+{
+  "collectionId": "theater",
+  "homePageSettings": {
+    "collectionAltTitle": "",
+    "collectionShortTitle": "",
+    "collectionDescription": "",
+    "customCollectionDescription": { "compName": "HomePageContent" },
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/6/61/Frontispiece_to_Moli%C3%A8re%27s_Dom_Juan_by_P_Brissart_1682_-_c%C3%A9sar.jpg"
+  },
+  "footerSettings": {
+    "footerTitle": "Theater footerTitle",
+    "footerSubtitles": [
+      "Theater subTitle1",
+      "Theater subTitle2"
+    ],
+    "footerDescription": ""
+  },
+  "tableOfContentsSettings": {
+    "tableOfContentDepth": 5,
+    "editByLevel": 2,
+    "editByCiteType": [
+    ],
+    "displayTopToc": false
+  }
+}

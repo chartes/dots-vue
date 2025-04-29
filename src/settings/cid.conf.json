@@ -1,0 +1,27 @@
+{
+  "collectionId": "cid",
+  "homePageSettings": {
+    "collectionAltTitle": "",
+    "collectionShortTitle": "",
+    "collectionDescription": "",
+    "logo": "Logo_cid.svg"
+  },
+  "footerSettings": {
+    "footerTitle": "CID footerTitle",
+    "footerSubtitles": [
+      "CID subTitle1",
+      "CID subTitle2"
+    ],
+    "footerDescription": ""
+  },
+  "tableOfContentsSettings": {
+    "tableOfContentDepth": 5,
+    "editByLevel": 0,
+    "editByCiteType": [
+      "article"
+    ],
+    "displayTopToc": false
+  },
+  "aboutPageSettings": [
+  ]
+}

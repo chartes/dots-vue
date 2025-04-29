@@ -1,12 +1,15 @@
 <template>
-  <div class="layout-grid-container">
+  <div
+    v-if="Object.keys(collConfig).length > 0"
+    class="layout-grid-container"
+  >
     <app-navbar
       class="layout-navbar"
       :is-doc-projectId-included="isDocProjectIdInc"
       :dts-root-collection-identifier="dtsRootCollectionId"
       :root-collection-identifier="rootCollectionIdentifier"
       :root-collection-short-title="projectShortTitle"
-      :collection-short-title="collShortTitle"
+      :collection-config="collConfig"
       :collection-identifier="collectionId"
       :key="currCollection+route.fullPath"
     />
@@ -16,8 +19,8 @@
           :is-doc-projectId-included="isDocProjectIdInc"
           :dts-root-collection-identifier="dtsRootCollectionId"
           :root-collection-identifier="rootCollectionIdentifier"
-          :collection-alternative-title="collectionAltTitle"
-          :collection-config="collectionConfig"
+          :application-config="appConfig"
+          :collection-config="collConfig"
           :collection-identifier="collectionId"
           :current-collection="currCollection"
           :key="currCollection+route.name"
@@ -28,19 +31,18 @@
       class="layout-footer"
       :root-collection-identifier="rootCollectionIdentifier"
       :collection-identifier="collectionId"
-      v-bind="collectionConfig.footerSettings"
+      :footer-settings="collConfig.footerSettings"
       :current-collection="currCollection"
       :key="currCollection"
-    />
+    /><!--  v-bind="collConfig.footerSettings" not working : props missing -->
   </div>
 </template>
 
 <script>
-import { ref, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import router from '@/router'
-import _ from "lodash"
-import settings from '@/settings/dots_vue.conf.json'
+import _ from 'lodash'
 
 import AppNavbar from '@/components/AppNavbar'
 import AppFooter from '@/components/AppFooter.vue'
@@ -69,7 +71,7 @@ function getSimpleObject (obj) {
 }
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     BackToTopButton,
     AppNavbar,
@@ -79,17 +81,34 @@ export default {
   setup () {
     const route = useRoute()
     const collectionId = ref('')
-    const collectionConfig = ref({})
+    const collConfig = ref({})
     const currCollection = ref({})
-    const appConfig = settings
+    const appConfig = ref({})
     const collShortTitle = ref('')
     // const projectShortTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_SHORT_TITLE}`
-    const dtsRootCollectionId = ref(null)
-    const rootCollectionIdentifier = ref(null)
-    const projectShortTitle = ref('');
-    const isDocProjectIdInc = `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID}`.toLowerCase() === 'true'
+    const dtsRootCollectionId = ref('')
+    const rootCollectionIdentifier = ref('')
+    const projectShortTitle = ref('')
+    const isDocProjectIdInc = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0 ? true : `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID}`.toLowerCase() === 'true'
     console.log('App.vue setup route / route.params.collId / collectionId.value : ', route, route.params.collId ? route.params.collId : 'no param collId', collectionId)
     // getting and formatting collection details
+
+    const mergeSettings = () => {
+      const appSettings = import.meta.glob('./settings/*.conf.json', { eager: true })
+      console.log('App.vue setup appSettings', appSettings)
+      const defaultMatch = appSettings['./settings/default.conf.json'].default
+      Object.assign(appConfig.value, defaultMatch)
+      console.log('App.vue setup defaultMatch', defaultMatch)
+      console.log('App.vue setup appConfig.value', appConfig.value)
+      delete appSettings['./settings/default.conf.json']
+      console.log('App.vue setup appSettings after update', appSettings)
+      appConfig.value.collectionsConf = []
+      for (let i = 0; i < Object.keys(appSettings).length; i += 1) {
+        console.log('App.vue setup appSettings collection iteration', appSettings[Object.keys(appSettings)[i]])
+        appConfig.value.collectionsConf.push(appSettings[Object.keys(appSettings)[i]])
+      }
+      console.log('App.vue setup appConfig.value after update', appConfig.value)
+    }
 
     const getDtsRootResponse = async () => {
       const dtsRootResponse = await getMetadataFromApi()
@@ -101,17 +120,18 @@ export default {
     const getCurrentCollection = async (route) => {
       console.log('App.vue getCurrentCollection origin route', origin, route)
       console.log('this is where it fails')
+      mergeSettings()
       let metadataResponse = {}
       if (rootCollectionIdentifier.value === dtsRootCollectionId.value && rootCollectionIdentifier.value === collectionId.value) {
         metadataResponse = await fetchMetadata('app.vue', '', 'Collection', route)
       } else {
         metadataResponse = await fetchMetadata('app.vue', collectionId.value, 'Collection', route)
       }
-      //const metadataResponse = await fetchMetadata('app.vue', collectionId.value, 'Collection', route)
+      // const metadataResponse = await fetchMetadata('app.vue', collectionId.value, 'Collection', route)
       console.log('yes it has failed ', collectionId.value)
       console.log('App.vue metadataResponse', metadataResponse)
-      if (appConfig.excludeCollectionIds.length > 0) {
-        metadataResponse.member = metadataResponse.member.filter(m => !appConfig.excludeCollectionIds.includes(m['@id']))
+      if (appConfig.value.excludeCollectionIds.length > 0) {
+        metadataResponse.member = metadataResponse.member.filter(m => !appConfig.value.excludeCollectionIds.includes(m['@id']))
       }
       let formatedResponse = getSimpleObject(metadataResponse)
       console.log('App.vue formatedResponse', formatedResponse)
@@ -125,6 +145,9 @@ export default {
     watch(
       router.currentRoute, async (newRoute, oldRoute) => {
         console.log('App.vue watch change in route : ', oldRoute, newRoute)
+        await getDtsRootResponse()
+        await getCurrentCollection
+        console.log('App.vue watch getDtsRootResponse : ', dtsRootCollectionId.value)
         if (isDocProjectIdInc) {
           if (newRoute && oldRoute && newRoute.params.collId === oldRoute.params.collId) {
             console.log('App.vue watch no change in route')
@@ -162,18 +185,30 @@ export default {
           console.log('App.vue watch currCollection.value : ', currCollection.value)
         }
         // Collection is loaded
-        console.log('App.vue watch appConfig.collectionsConf & type : ', appConfig.collectionsConf, Array.isArray(appConfig.collectionsConf), collectionId.value)
+        console.log('App.vue watch appConfig.collectionsConf & type : ', appConfig.value.collectionsConf, Array.isArray(appConfig.value.collectionsConf), collectionId.value)
 
-        const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
-        const rootCollectionConfig = _.merge({},  appConfig.genericConf, rootCollectionOverrides)
-        projectShortTitle.value = rootCollectionConfig ? rootCollectionConfig.homePageSettings.collectionShortTitle : appConfig.genericConf.homePageSettings.collectionShortTitle
+        const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
+        const rootCollectionConfig = _.merge({}, appConfig.value.genericConf, rootCollectionOverrides)
+        console.log('App.vue watch rootCollectionConfig, rootCollectionOverrides : ', rootCollectionConfig, rootCollectionOverrides)
+        projectShortTitle.value = rootCollectionConfig ? rootCollectionConfig.homePageSettings.collectionShortTitle : appConfig.value.genericConf.homePageSettings.collectionShortTitle
 
-        const collectionOverrides = appConfig.collectionsConf.find(coll => coll.collectionId === collectionId.value);
-        collectionConfig.value = _.merge({}, rootCollectionConfig, collectionOverrides)
-
+        let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
+        console.log('App.vue watch collectionOverrides : ', collectionOverrides)
+        if (!collectionOverrides) {
+          collectionOverrides = {
+            "collectionId": collectionId.value,
+            "mediaTypeEndpoint": "html",
+            "homePageSettings": {
+              "collectionAltTitle": "",
+              "collectionShortTitle": "",
+              "collectionDescription": "",
+              "logo": ""
+            }
+          }
+        }
+        collConfig.value = _.merge({}, rootCollectionConfig, collectionOverrides)
       }, { deep: true, immediate: true }
     )
-    
 
     return {
       route,
@@ -184,9 +219,10 @@ export default {
       collShortTitle,
       collectionId,
       currCollection,
-      collectionConfig,
+      collConfig,
       appConfig,
-      getCurrentCollection
+      getCurrentCollection,
+      mergeSettings
     }
   }
 }

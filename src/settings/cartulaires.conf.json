@@ -1,0 +1,31 @@
+{
+  "collectionId": "cartulaires",
+  "homePageSettings": {
+    "collectionAltTitle": "Ze cartulaires de l'ENC",
+    "collectionShortTitle": "Carts",
+    "collectionDescription": "",
+    "logo": "Logo_cartulaires.png"
+  },
+  "footerSettings": {
+    "footerTitle": "Cartulaires footerTitle",
+    "footerSubtitles": [
+      "Cartulaires subTitle1",
+      "Cartulaires subTitle2"
+    ],
+    "footerDescription": "Le projet d'édition des CARTULAIRES a été développé par la Mission projets numériques de l'École nationale des chartes – PSL avec le soutien de Biblissima+. Biblissima+ bénéficie d’une aide de l'Etat gérée par l'ANR au titre du Programme d’investissements d’avenir intégré à France 2030, portant la référence ANR-21-ESRE-0005."
+  },
+  "tableOfContentsSettings": {
+    "tableOfContentDepth": 5,
+    "editByLevel": null,
+    "editByCiteType": [
+      "partie",
+      "acte"
+    ],
+    "countByCiteType": [
+      "acte"
+    ],
+    "displayTopToc": false
+  },
+  "aboutPageSettings": [
+  ]
+}

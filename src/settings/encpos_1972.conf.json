@@ -1,0 +1,29 @@
+{
+  "collectionId": "ENCPOS_1972",
+  "mediaTypeEndpoint": "html",
+  "homePageSettings": {
+    "collectionAltTitle": "Ze positions de l'ENC de 1972",
+    "collectionShortTitle": "Thèses de 1972",
+    "collectionDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla eget euismod erat. Praesent dictum nulla nibh, non vulputate odio finibus sed. Curabitur vestibulum, ligula eget."
+  },
+  "footerSettings": {
+    "footerTitle": "Positions footerTitle",
+    "footerSubtitles": [
+      "Positions subTitle1",
+      "Positions subTitle2"
+    ],
+    "footerDescription": "Le projet d'édition des POSITIONS a été développé par la Mission projets numériques de l'École nationale des chartes – PSL avec le soutien de Biblissima+. Biblissima+ bénéficie d’une aide de l'Etat gérée par l'ANR au titre du Programme d’investissements d’avenir intégré à France 2030, portant la référence ANR-21-ESRE-0005."
+  },
+  "tableOfContentsSettings": {
+    "tableOfContentDepth": 5,
+    "editByLevel": null,
+    "editByCiteType": ["Resource"
+    ],
+    "displayTopToc": true
+  },
+  "aboutPageSettings": [
+    { "tabName": "Les thèses", "compName": "about1" },
+    { "tabName": "Les positions", "compName": "about2" },
+    { "tabName": "Consultation", "compName": "about3" }
+  ]
+}

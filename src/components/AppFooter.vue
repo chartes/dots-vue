@@ -94,7 +94,11 @@ export default {
       type: String,
       required: true
     },
-    footerTitle: {
+    footerSettings: {
+      type: Object,
+      required: true
+    },
+    /*footerTitle: {
       type: String,
       required: true
     },
@@ -105,7 +109,7 @@ export default {
     footerDescription: {
       type: String,
       required: true
-    },
+    },*/
     currentCollection: {
       type: Object,
       required: true
@@ -116,9 +120,9 @@ export default {
     // const footerTitle = `${import.meta.env.VITE_APP_APP_FOOTER_TITLE}`
     // const footerSubtitles = `${import.meta.env.VITE_APP_APP_FOOTER_SUBTITLES}` === 'undefined' ? undefined : `${import.meta.env.VITE_APP_APP_FOOTER_SUBTITLES}`.split(',')
     // const footerDescription = `${import.meta.env.VITE_APP_APP_FOOTER_DESC}`
-    const footTitle = ref(props.footerTitle)
-    const footSubtitles = ref(props.footerSubtitles)
-    const footDescription = ref(props.footerDescription)
+    const footTitle = ref(props.footerSettings.footerTitle)
+    const footSubtitles = ref(props.footerSettings.footerSubtitles)
+    const footDescription = ref(props.footerSettings.footerDescription)
     const collectionId = ref(props.collectionIdentifier)
     const currCollection = ref(props.currentCollection)
     console.log('Footer setup footerDescription : ', `${import.meta.env.VITE_APP_APP_FOOTER_DESC}` === 'undefined')
@@ -128,9 +132,9 @@ export default {
 
     watch(props, (newProps) => {
       collectionId.value = newProps.collectionIdentifier
-      footTitle.value = newProps.footerTitle
-      footSubtitles.value = newProps.footerSubtitles
-      footDescription.value = newProps.footerDescription
+      footTitle.value = newProps.footerSettings.footerTitle
+      footSubtitles.value = newProps.footerSettings.footerSubtitles
+      footDescription.value = newProps.footerSettings.footerDescription
       currCollection.value = newProps.currentCollection
     })
 

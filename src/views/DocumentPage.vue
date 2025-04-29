@@ -5,6 +5,7 @@
       v-if="isLoading && isModalOpened"
       :isOpen="isModalOpened ? isModalOpened : false"
       :is-doc-projectId-included="isDocProjectIdInc"
+      :dts-root-collection-identifier="dtsRootCollectionId"
       :collectionIdentifier="selectedCollectionId"
       :currentItem="selectedCollection"
       :toc="flatTOC"
@@ -252,7 +253,6 @@ import CollectionModal from '@/components/CollectionModal.vue'
 import { useStore } from 'vuex'
 import useMirador from '@/composables/use-mirador'
 import { getMetadataFromApi, getParentFromApi, getTOCFromApi } from '@/api/document'
-import _ from 'lodash'
 
 import {
   computed,
@@ -269,7 +269,6 @@ import { useRoute } from 'vue-router'
 import router from '@/router/index.js'
 import fetchMetadata from '@/composables/get-metadata.js'
 import store from '@/store'
-
 
 /* const sources = [
   { name: 'databnf', ext: 'data.bnf.fr', type: 'author_link' },
@@ -361,6 +360,10 @@ export default {
       type: Boolean,
       required: true
     },
+    dtsRootCollectionIdentifier: {
+      type: String,
+      required: true
+    },
     rootCollectionIdentifier: {
       type: String,
       required: true
@@ -374,6 +377,7 @@ export default {
     // const topTOCDisplayIndicator = `${import.meta.env.VITE_APP_APP_DISPLAY_TOP_TOC}`.toLowerCase() !== 'false'
     const topTOCDisplayIndicator = ref(false)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
+    const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const docProjectId = ref('')
     console.log('topTOCDisplayIndicator test : ', topTOCDisplayIndicator)
@@ -609,7 +613,9 @@ export default {
               })
               appendParentInTOC.children = []
 
-              appendParentInTOC.children = appendParentInTOC.member.filter(item => item.identifier !== node.identifier).map(obj => {
+              appendParentInTOC.children = await Promise.all(appendParentInTOC.member.filter(item => item.identifier !== node.identifier).map(async (obj) => {
+                const updatedMemberParentResp = await getParentFromApi(obj.identifier)
+                const updatedMemberParent = updatedMemberParentResp.member ? updatedMemberParentResp.member.map(p => p['@id']) : undefined
                 const updatedMember = {
                   identifier: obj.identifier ? obj.identifier : obj['@id'],
                   citeType: obj['@type'] ? obj['@type'] : obj.citeType,
@@ -621,14 +627,18 @@ export default {
                   totalDescendants: obj.totalDescendants,
                   children: obj.children ? obj.children : [],
                   member: obj.member ? obj.member : [],
-                  parent: node.parent,
+                  parent: updatedMemberParent,
                   dublincore: obj.dublincore,
                   extensions: obj.extensions
                 }
                 return updatedMember
-              })
+              }))
               if (appendParentInTOC.member.filter(item => item.identifier === node.identifier).length > 0) {
-                appendParentInTOC.children.push(getSimpleObject(appendParentInTOC.member.filter(item => item.identifier === node.identifier)[0]))
+                const updatedCurrentNode = appendParentInTOC.member.filter(item => item.identifier === node.identifier)[0]
+                updatedCurrentNode.parent = node.parent
+                updatedCurrentNode.level = node.level
+                updatedCurrentNode.member = node.member ? node.member : []
+                appendParentInTOC.children.push(getSimpleObject(updatedCurrentNode))
               }
               // appendParentInTOC.member = appendParentInTOC.member.map(m => { return getSimpleObject(m)})
               // appendParentInTOC.children = appendParentInTOC.member
@@ -668,7 +678,9 @@ export default {
             })
             appendParentInTOC.children = []
 
-            appendParentInTOC.children = appendParentInTOC.member.filter(item => item.identifier !== node.identifier).map(obj => {
+            appendParentInTOC.children = await Promise.all(appendParentInTOC.member.filter(item => item.identifier !== node.identifier).map(async (obj) => {
+              const updatedMemberParentResp = await getParentFromApi(obj.identifier)
+              const updatedMemberParent = updatedMemberParentResp.member ? updatedMemberParentResp.member.map(p => p['@id']) : undefined
               const updatedMember = {
                 identifier: obj.identifier ? obj.identifier : obj['@id'],
                 citeType: obj['@type'] ? obj['@type'] : obj.citeType,
@@ -680,14 +692,18 @@ export default {
                 totalDescendants: obj.totalDescendants,
                 children: obj.children ? obj.children : [],
                 member: obj.member ? obj.member : [],
-                parent: node.parent,
+                parent: updatedMemberParent,
                 dublincore: obj.dublincore,
                 extensions: obj.extensions
               }
               return updatedMember
-            })
+            }))
             if (appendParentInTOC.member.filter(item => item.identifier === node.identifier).length > 0) {
-              appendParentInTOC.children.push(getSimpleObject(appendParentInTOC.member.filter(item => item.identifier === node.identifier)[0]))
+              const updatedCurrentNode = appendParentInTOC.member.filter(item => item.identifier === node.identifier)[0]
+              updatedCurrentNode.parent = node.parent
+              updatedCurrentNode.level = node.level
+              updatedCurrentNode.member = node.member ? node.member : []
+              appendParentInTOC.children.push(getSimpleObject(updatedCurrentNode))
             }
 
             // appendParentInTOC.member = appendParentInTOC.member.map(m => { return getSimpleObject(m)})
@@ -747,13 +763,11 @@ export default {
         : Math.max(...processFlatTOC.filter(i => !titleMissing(i)).map(item => item.level)) - 1
       console.log('document DoTS maxTocDepth : ', maxTocDepth)
 
-      // check if there is an editorial level set up by the user in dots_vue.conf.json
-
-
+      // check if there is an editorial level set up by the user in the collection configuration
       editorialLevel.value = collConfig.value.tableOfContentsSettings.editByLevel
-      /*if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByLevel !== '' && collConfig.value[0].tableOfContentsSettings.editByLevel >= 0) {
+      /* if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByLevel !== '' && collConfig.value[0].tableOfContentsSettings.editByLevel >= 0) {
         editorialLevel.value = collConfig.value[0].tableOfContentsSettings.editByLevel
-      }*/
+      } */
 
       console.log('USER editorialLevel.value / typeof : ', editorialLevel.value, typeof (editorialLevel.value))
       editorialLevel.value = editorialLevel.value > maxTocDepth ? maxTocDepth : editorialLevel.value
@@ -1210,13 +1224,13 @@ export default {
             if (refId.value) {
               // select flatTOC elements between the current matching refId and the last element belonging to the same parent
               const followingElementInTreeLimb = flatTOC.value.findIndex(i => i.identifier === refId.value) + 1
-              //console.log('watch query : bottomTOC debug followingElementInTreeLimb', followingElementInTreeLimb)
+              // console.log('watch query : bottomTOC debug followingElementInTreeLimb', followingElementInTreeLimb)
               const allFollowingElementsInTOC = flatTOC.value.slice(followingElementInTreeLimb, flatTOC.value.length)
-              //console.log('watch query : bottomTOC debug allFollowingElementsInTOC', allFollowingElementsInTOC)
+              // console.log('watch query : bottomTOC debug allFollowingElementsInTOC', allFollowingElementsInTOC)
               const lastElementInTreeLimb = allFollowingElementsInTOC.findIndex(i => i.parent === flatTOC.value.find(i => i.identifier === refId.value).parent) !== -1 ? allFollowingElementsInTOC.findIndex(i => i.parent === flatTOC.value.find(i => i.identifier === refId.value).parent) + 1 : allFollowingElementsInTOC.length
-              //console.log('watch query : bottomTOC debug lastElementInTreeLimb', lastElementInTreeLimb)
+              // console.log('watch query : bottomTOC debug lastElementInTreeLimb', lastElementInTreeLimb)
               const currentMatchingElementIndex = flatTOC.value.findIndex(i => i.identifier === refId.value)
-              //console.log('watch query : bottomTOC debug currentMatchingElementIndex', currentMatchingElementIndex)
+              // console.log('watch query : bottomTOC debug currentMatchingElementIndex', currentMatchingElementIndex)
               // assign portion of topTOC to the bottomTOC and unlink the variables
               bottomTOC.value = JSON.parse(JSON.stringify(flatTOC.value.slice(followingElementInTreeLimb, lastElementInTreeLimb + currentMatchingElementIndex)))
             } else {
@@ -1264,9 +1278,8 @@ export default {
       console.log('layout on leave', layout, layout.isTOCMenuOpened.value)
       if (layout.isTOCMenuOpened.value === true) {
         console.log('closing TOC on leave')
-        layout.isTOCMenuOpened.value === false
+        layout.isTOCMenuOpened.value = false
       }
-      layout.isTOCMenuOpened.value = false
       appView.removeEventListener('scroll', updateMiradorTopPosition)
       window.removeEventListener('scroll', updateMiradorTopPosition)
     })
@@ -1288,6 +1301,7 @@ export default {
       resourceId,
       collection,
       isDocProjectIdInc,
+      dtsRootCollectionId,
       rootCollectionId,
       collConfig,
       docProjectId,

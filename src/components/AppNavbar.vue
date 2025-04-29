@@ -5,11 +5,17 @@
       :class="menuCssClass"
     >
       <div class="level-left">
-        <router-link
+        <a
+          class="logo-header"
+          href="https://www.chartes.psl.eu"
+          target="_blank"
+        >
+        </a>
+        <!--<router-link
           class="logo-header"
           active-class="active"
           :to="{ name: 'Home' }"
-        />
+        />-->
         <span class="level-item">
           <router-link
             active-class="active"
@@ -76,8 +82,8 @@ export default {
       type: String,
       required: true
     },
-    collectionShortTitle: {
-      type: String,
+    collectionConfig: {
+      type: Object,
       required: true
     },
     collectionIdentifier: {
@@ -98,12 +104,13 @@ export default {
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const projectShortTitle = ref(props.rootCollectionShortTitle)
-    const collShortTitle = ref(props.collectionShortTitle)
+    console.log('AppNavbar setup props.collectionConfig', props.collectionConfig)
+    const collShortTitle = ref(props.collectionConfig.homePageSettings.collectionShortTitle)
     const collectionId = ref(props.collectionIdentifier)
     console.log('AppNavbar setup props.rootCollectionIdentifier', props.rootCollectionIdentifier)
     console.log('AppNavbar setup rootCollectionId', rootCollectionId.value)
     console.log('AppNavbar props.collectionIdentifier', props.collectionIdentifier)
-    console.log('AppNavbar props.rootCollectionShortTitle', props.rootCollectionShortTitle)
+    console.log('AppNavbar collShortTitle', collShortTitle.value)
     // Computed property
     const menuCssClass = computed(() => {
       return state.isMenuOpened ? 'is-opened' : ''
@@ -131,7 +138,7 @@ export default {
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
       projectShortTitle.value = newProps.rootCollectionShortTitle
-      collShortTitle.value = newProps.collectionShortTitle
+      collShortTitle.value = newProps.collectionConfig.homePageSettings.collectionShortTitle
       collectionId.value = newProps.collectionIdentifier
     }, { deep: true, immediate: true })
 
@@ -191,7 +198,7 @@ nav span.level-item:not(:last-child)::after {
   width: 45px;
   height: 50px;
   margin:0 40px 0 2px;
-  background: url(../assets/images/home-mobile.png) center / contain no-repeat;
+  background: url(../assets/images/logo-enc-white.png) center / contain no-repeat;
 }
 .level-left {
   display: flex;

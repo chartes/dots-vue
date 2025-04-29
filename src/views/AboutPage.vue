@@ -46,6 +46,10 @@ import { shallowRef, defineAsyncComponent, ref, watch } from 'vue'
 export default {
   name: 'AboutPage',
   props: {
+    rootCollectionIdentifier: {
+      type: String,
+      required: true
+    },
     collectionConfig: {
       type: Object,
       required: true
@@ -61,8 +65,10 @@ export default {
   },
 
   setup (props) {
+    const rootCollectionId = ref(props.rootCollectionIdentifier)
     const collConfig = ref(props.collectionConfig)
     const aboutSettings = ref([])
+    // todo : update collectionAltTitle from collConfig
     const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
     const collectionId = ref(props.collectionIdentifier)
     const currCollection = ref(props.currentCollection)
@@ -73,20 +79,37 @@ export default {
     let tabs = []
     let currentTab = shallowRef('')
     const getTabs = async () => {
-      // TODO: ensure that tabs are loaded even after a page reload
       // const tabs = []
       for (let i = 0; i < aboutSettings.value.length; i += 1) {
         console.log('AboutPage setup comp : ', aboutSettings.value[i], '\n comp.tabName : ', aboutSettings.value[i].tabName, '\n comp.compName : ', aboutSettings.value[i].compName)
         let component
-        if (collConfig.value && collConfig.value.aboutPageSettings.length > 0) {
-          component = defineAsyncComponent(() => import(`./about/${collectionId.value}/${aboutSettings.value[i].compName}.vue`)
+        console.log('AboutPage collConfig.value.collectionId', collConfig.value.collectionId)
+        console.log('AboutPage collConfig.value.aboutPageSettings', collConfig.value.aboutPageSettings)
+        const comps = import.meta.glob('../settings/**/*.vue')
+        const match = comps[`../settings/${collConfig.value.collectionId}/${aboutSettings.value[i].compName}.vue`]
+        const matchRootCollection = comps[`../settings/${rootCollectionId.value}/${aboutSettings.value[i].compName}.vue`]
+        // matching About pages for exact collection if defined
+        if (match) {
+          component = defineAsyncComponent(() => import(`../settings/${collConfig.value.collectionId}/${aboutSettings.value[i].compName}.vue`)
             .then((comp) => {
               return comp
             })
             .catch((error) => {
-              console.log(`error loading ${aboutSettings.value[i].compName}.vue : `, error)
+              console.log(`error loading ../settings/${collConfig.value.collectionId}/${aboutSettings.value[i].compName}.vue : `, error)
             })
           )
+        // matching About pages for root collection if defined
+        } else if (matchRootCollection) {
+          component = defineAsyncComponent(() => import(`../settings/${rootCollectionId.value}/${aboutSettings.value[i].compName}.vue`)
+            .then((comp) => {
+              return comp
+            })
+            .catch((error) => {
+              console.log(`error loading ../settings/${rootCollectionId.value}/${aboutSettings.value[i].compName}.vue : `, error)
+            })
+          )
+        // matching About pages as default
+        // TODO : replace tabName by the default tabNames if incorrectly set
         } else {
           component = defineAsyncComponent(() => import(`./about/${aboutSettings.value[i].compName}.vue`)
             .then((comp) => {
@@ -105,17 +128,18 @@ export default {
     }
     watch(props, async (newProps) => {
       tabs = []
+      rootCollectionId.value = newProps.rootCollectionIdentifier
       collectionId.value = newProps.collectionIdentifier
       currCollection.value = newProps.currentCollection
-      console.log("About page newProps.collectionConfig", newProps.collectionConfig)
+      console.log('AboutPage watch newProps.collectionConfig', newProps.collectionConfig)
       collConfig.value = newProps.collectionConfig
-      console.error("collConfig", collConfig.value)
+      console.log('AboutPage watch collConfig', collConfig.value)
       if (collConfig.value && collConfig.value.aboutPageSettings && collConfig.value.aboutPageSettings.length > 0) {
         aboutSettings.value = collConfig.value.aboutPageSettings
       } else {
         aboutSettings.value = []
       }
-      console.log('HomePageDefault watch collConfig aboutSettings : ', collConfig, aboutSettings.value)
+      console.log('AboutPage watch collConfig aboutSettings : ', collConfig.value, aboutSettings.value)
       await getTabs()
     }, { deep: true, immediate: true })
 
@@ -125,7 +149,7 @@ export default {
       collectionAltTitle,
       getTabs,
       tabs,
-      currentTab,
+      currentTab
     }
   }
 }

@@ -30,6 +30,7 @@
           <div v-if="expandedById[collectionId] && collectionTOC.filter(item => item.identifier === collectionId)[0].children.length > 0">
             <CollectionTOC
               :is-doc-projectId-included="isDocProjectIdInc"
+              :dts-root-collection-identifier="dtsRootCollectionId"
               :margin="0"
               :toc="collectionTOC.filter(item => item.identifier === collectionId)[0].children"
             />
@@ -56,6 +57,10 @@ export default {
       type: Boolean,
       required: true
     },
+    dtsRootCollectionIdentifier: {
+      type: String,
+      required: true
+    },
     collectionIdentifier: {
       type: String,
       required: true
@@ -79,6 +84,7 @@ export default {
 
     const isModalOpened = ref(props.isOpen)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
+    const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const collectionTOC = ref(props.toc)
     console.log('CollectionModal props.toc : ', props.toc)
 
@@ -206,6 +212,7 @@ export default {
       modalCssClass,
       isModalOpened,
       isDocProjectIdInc,
+      dtsRootCollectionId,
       appendMissingChildren,
       toggleContent,
       target,
