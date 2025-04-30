@@ -59,8 +59,9 @@ import { defineAsyncComponent, ref } from 'vue'
 import { getCoverDataFromApi, getDocumentFromApi } from '@/api/document'
 import { useRoute } from 'vue-router'
 import TOC from '@/components/TOC.vue'
-import router from "@/router";
+import router from '@/router'
 
+// TODO: VITE_APP_IIIF_URL may vary from collection to collection (now based on ENCPOS only)
 const VITE_APP_IIIF_URL = `${import.meta.env.VITE_APP_IIIF_URL}`
 
 export default {

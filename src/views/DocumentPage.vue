@@ -374,7 +374,6 @@ export default {
     }
   },
   async setup (props) {
-    // const topTOCDisplayIndicator = `${import.meta.env.VITE_APP_APP_DISPLAY_TOP_TOC}`.toLowerCase() !== 'false'
     const topTOCDisplayIndicator = ref(false)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
@@ -571,15 +570,6 @@ export default {
 
       // Fetch editorial level document parts if any (based on citeType)
       let editorialTypes = []
-      /*
-      if (import.meta.env.VITE_APP_APP_EDITORIAL_TYPE && import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.length > 0) {
-        editorialTypes = import.meta.env.VITE_APP_APP_EDITORIAL_TYPE.replace(/\s/g, '').split(',')
-      }
-      if (collConfig.value.length > 0 && collConfig.value.tableOfContentsSettings.editByCiteType.length > 0) {
-        editorialTypes = collConfig.value.tableOfContentsSettings.editByCiteType
-      }
-      */
-
       console.log('TOC collConfig.value for editorialTypes : ', collConfig.value)
       editorialTypes = collConfig.value.tableOfContentsSettings.editByCiteType
 

@@ -94,6 +94,10 @@ import { ref, watch } from 'vue'
 export default {
   name: 'TermsOfServiceView',
   props: {
+    collectionConfig: {
+      type: Object,
+      required: true
+    },
     collectionIdentifier: {
       type: String,
       required: true
@@ -104,12 +108,13 @@ export default {
     }
   },
   setup (props) {
-    const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
+    const collectionAltTitle = ref(props.collectionConfig.homePageSettings.collectionAltTitle)
     const currCollection = ref(props.currentCollection)
     const websiteURL = window.location.origin
     const lastModified = new Intl.DateTimeFormat('fr-FR', { year: 'numeric', month: 'numeric', day: 'numeric' }).format(new Date(document.lastModified)).replace(/\./g, '-')
 
     watch(props, (newProps) => {
+      collectionAltTitle.value = newProps.collectionConfig.homePageSettings.collectionAltTitle
       currCollection.value = newProps.currentCollection
     }, { deep: true, immediate: true })
 

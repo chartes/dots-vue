@@ -306,7 +306,6 @@ export default {
     const layout = inject('variable-layout')
 
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
-    // const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const appConfig = ref(props.applicationConfig)
@@ -318,7 +317,6 @@ export default {
     const collectionAltTitle = ref(props.collectionConfig.homePageSettings.collectionAltTitle)
     const collectionId = ref(props.collectionIdentifier)
     console.log('HomePage setup collectionId', collectionId.value)
-    // const HomeDefaultContent = HomePageDefaultContent
 
     const componentTOC = ref([])
     const currCollection = ref(props.currentCollection)

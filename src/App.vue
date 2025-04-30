@@ -85,7 +85,6 @@ export default {
     const currCollection = ref({})
     const appConfig = ref({})
     const collShortTitle = ref('')
-    // const projectShortTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_SHORT_TITLE}`
     const dtsRootCollectionId = ref('')
     const rootCollectionIdentifier = ref('')
     const projectShortTitle = ref('')

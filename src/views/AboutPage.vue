@@ -68,8 +68,7 @@ export default {
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const collConfig = ref(props.collectionConfig)
     const aboutSettings = ref([])
-    // todo : update collectionAltTitle from collConfig
-    const collectionAltTitle = `${import.meta.env.VITE_APP_APP_ROOT_COLLECTION_ALT_TITLE}`
+    const collectionAltTitle = ref(props.collectionConfig.homePageSettings.collectionAltTitle)
     const collectionId = ref(props.collectionIdentifier)
     const currCollection = ref(props.currentCollection)
     // const tabs = ref([])
@@ -133,6 +132,7 @@ export default {
       currCollection.value = newProps.currentCollection
       console.log('AboutPage watch newProps.collectionConfig', newProps.collectionConfig)
       collConfig.value = newProps.collectionConfig
+      collectionAltTitle.value = collConfig.value.homePageSettings.collectionAltTitle
       console.log('AboutPage watch collConfig', collConfig.value)
       if (collConfig.value && collConfig.value.aboutPageSettings && collConfig.value.aboutPageSettings.length > 0) {
         aboutSettings.value = collConfig.value.aboutPageSettings

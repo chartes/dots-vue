@@ -117,15 +117,11 @@ export default {
   },
 
   setup (props) {
-    // const footerTitle = `${import.meta.env.VITE_APP_APP_FOOTER_TITLE}`
-    // const footerSubtitles = `${import.meta.env.VITE_APP_APP_FOOTER_SUBTITLES}` === 'undefined' ? undefined : `${import.meta.env.VITE_APP_APP_FOOTER_SUBTITLES}`.split(',')
-    // const footerDescription = `${import.meta.env.VITE_APP_APP_FOOTER_DESC}`
     const footTitle = ref(props.footerSettings.footerTitle)
     const footSubtitles = ref(props.footerSettings.footerSubtitles)
     const footDescription = ref(props.footerSettings.footerDescription)
     const collectionId = ref(props.collectionIdentifier)
     const currCollection = ref(props.currentCollection)
-    console.log('Footer setup footerDescription : ', `${import.meta.env.VITE_APP_APP_FOOTER_DESC}` === 'undefined')
     console.log('Footer setup props.collectionIdentifier / collectionId.value : ', props.collectionIdentifier, collectionId.value)
     console.log('Footer setup props.currentCollection / currCollection.value : ', props.currentCollection, currCollection.value)
     console.log('Footer setup footSubtitles', footSubtitles)
