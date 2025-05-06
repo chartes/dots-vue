@@ -31,6 +31,7 @@
       </div>
     </div>
     <section class="main app-width-margin">
+      <!-- DTS collection description available -->
       <div
         v-if="currCollection.description"
         id="article"
@@ -39,21 +40,25 @@
         <h1>La collection</h1>
           {{ currCollection.description }}
       </div>
+      <!-- no DTS description, use user settings description (homePageSettings.collectionDescription) -->
       <div
         v-else-if="collectionDescription"
         id="article"
         class="article app-width-margin"
       >
         <h1>La collection</h1>
-          {{ collectionDescription }}
+        {{ collectionDescription }}
+        <p class="texte no-dts-description">This collection provides no DTS default description.</p>
       </div>
+      <!-- no DTS description, no homePageSettings.collectionDescription settings, use homePageSettings.customCollectionDescription -->
       <div
         v-else
         id="article"
         class="article app-width-margin"
       >
+        <h1>La collection</h1>
         <component v-if="customCollectionDescription" :is="customDescription"/>
-        <p class="texte">This collection provides no DTS default description.</p>
+        <p class="texte no-dts-description">This collection provides no DTS default description.</p>
       </div>
     </section>
     <div
@@ -232,6 +237,7 @@
       </div>
     </div>
     <section class="main app-width-margin">
+      <!-- DTS collection description available -->
       <div
         v-if="currCollection.description"
         id="article"
@@ -240,28 +246,32 @@
         <h1>La collection</h1>
           {{ currCollection.description }}
       </div>
+      <!-- no DTS description, use user settings description (homePageSettings.collectionDescription) -->
       <div
         v-else-if="collectionDescription"
         id="article"
         class="article app-width-margin"
       >
         <h1>La collection</h1>
-          {{ collectionDescription }}
+        {{ collectionDescription }}
+        <p class="texte no-dts-description">This collection provides no DTS default description.</p>
       </div>
+      <!-- no DTS description, no homePageSettings.collectionDescription settings, use homePageSettings.customCollectionDescription -->
       <div
         v-else
         id="article"
         class="article app-width-margin"
       >
+        <h1>La collection</h1>
         <component v-if="customCollectionDescription" :is="customDescription"/>
-        <p class="texte">This collection provides no DTS default description.</p>
+        <p class="texte no-dts-description">This collection provides no DTS default description.</p>
       </div>
     </section>
   </div>
 </template>
 
 <script>
-import {computed, defineAsyncComponent, inject, reactive, ref, shallowRef, watch} from 'vue'
+import { computed, defineAsyncComponent, inject, reactive, ref, shallowRef, watch } from 'vue'
 
 import { getMetadataFromApi } from '@/api/document.js'
 import CollectionTOC from '@/components/CollectionTOC.vue'
@@ -731,6 +741,9 @@ a {
   margin-right: auto;
   color: #b9192f;
   border: none;
+}
+.no-dts-description {
+  margin: 25px auto 25px;
 }
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
