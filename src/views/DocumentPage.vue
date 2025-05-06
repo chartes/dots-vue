@@ -1164,9 +1164,10 @@ export default {
         }
       }
     )
-    /* watch(props, (newProps) => {
-      appConfig.value = newProps.collectionsSettings
-    }, { deep: true, immediate: true }) */
+    watch(props, (newProps) => {
+      collConfig.value = newProps.collectionConfig
+      console.log('Document page watch newProps.collectionConfig / collConfig.value : ', collConfig.value)
+    }, { deep: true, immediate: true })
 
     watch(
       router.currentRoute, async (newRoute, oldRoute) => {

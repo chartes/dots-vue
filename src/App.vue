@@ -206,6 +206,7 @@ export default {
           }
         }
         collConfig.value = _.merge({}, rootCollectionConfig, collectionOverrides)
+        console.log('App.vue watch final collConfig.value : ', collConfig.value)
       }, { deep: true, immediate: true }
     )
 
