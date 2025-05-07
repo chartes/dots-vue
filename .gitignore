@@ -1,3 +1,7 @@
+# Ignore custom Project settings
+src/settings/*
+!src/settings/default.conf.json
+
 # Logs
 logs
 *.log
