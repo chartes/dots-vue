@@ -399,6 +399,7 @@ export default {
       const comps = import.meta.glob('../settings/**/*.vue')
       const match = comps[`../settings/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`]
       const matchRootCollection = comps[`../settings/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`]
+      const defaultCollection = comps['../settings/default/HomePageContent.vue']
       if (match) {
         component = defineAsyncComponent(() => import(`../settings/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`)
           .then((comp) => {
@@ -419,6 +420,15 @@ export default {
         )
       // matching About pages as default
       // TODO : replace tabName by the default tabNames if incorrectly set
+      } else if (defaultCollection) {
+        component = defineAsyncComponent(() => import('../settings/default/HomePageContent.vue')
+          .then((comp) => {
+            return comp
+          })
+          .catch((error) => {
+            console.log('error loading \'../settings/default/HomePageContent.vue\' : ', error)
+          })
+        )
       } else {
         console.log('nothing')
         component = {}

@@ -1,6 +1,10 @@
 # Ignore custom Project settings
 src/settings/*
 !src/settings/default.conf.json
+!src/settings/default/
+
+src/settings/default/*
+!src/settings/default/HomePageContent.vue
 
 # Logs
 logs
