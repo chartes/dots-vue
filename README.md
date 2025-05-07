@@ -23,7 +23,7 @@ Frontend application to browse the ENC Cartularies editions ([Cartulaires d'Île
 ### Clone the GitHub repository:  
 in a local folder dedicated to the project
   ```bash
-  git clone https://github.com/chartes/DoTS-vue-generic.git
+  git clone https://github.com/chartes/dots-vue.git
   ```
 
 From the app folder (`cd path/to/cartulaires`)
