@@ -325,6 +325,7 @@ export default {
     console.log('HomePage setup customCollectionDescription', customCollectionDescription.value)
     const customDescription = shallowRef('')
     const collectionAltTitle = ref(props.collectionConfig.homePageSettings.collectionAltTitle)
+    console.log('HomePage setup collectionAltTitle', collectionAltTitle.value)
     const collectionId = ref(props.collectionIdentifier)
     console.log('HomePage setup collectionId', collectionId.value)
 

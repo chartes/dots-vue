@@ -6,7 +6,11 @@
       "collectionAltTitle": "",
       "collectionShortTitle": "",
       "collectionDescription": "",
-      "customCollectionDescription": { "compName": "HomePageContent.vue" },
+      "customCollectionDescription": { "compName": "HomePageContent" },
+      "appNavBarLogo": {
+        "imgName": "favicon-dots-circle.drawio.png",
+        "href": "/"
+      },
       "logo": ""
     },
     "footerSettings": {

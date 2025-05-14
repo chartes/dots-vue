@@ -6,22 +6,34 @@
     >
       <div class="level-left">
         <a
-          class="logo-header"
-          href="https://www.chartes.psl.eu"
+          v-if="imgHref !== '/'"
+          :href="imgHref"
           target="_blank"
         >
+          <img
+            class="logo-header"
+            v-if="ImgUrl(collectionId)"
+            :src="ImgUrl(collectionId)"
+          />
         </a>
-        <!--<router-link
+        <router-link
+          v-else
           class="logo-header"
           active-class="active"
           :to="{ name: 'Home' }"
-        />-->
+        >
+          <img
+            class="logo-header"
+            v-if="ImgUrl(collectionId)"
+            :src="ImgUrl(collectionId)"
+          />
+        </router-link>
         <span class="level-item">
           <router-link
             active-class="active"
             class="level-item-external"
             :to="{ name: 'Home' }"
-            >{{ rootCollectionId !== dtsRootCollectionId ? projectShortTitle ? projectShortTitle : rootCollectionId : rootCollectionId }}
+            >{{ projectShortTitle ? projectShortTitle : rootCollectionId }}
           </router-link><!-- {{ projectShortTitle ? projectShortTitle : rootCollectionId }} -->
           <!--TODO: troubleshoot subcollection not showing when on document-->
           <router-link
@@ -82,6 +94,10 @@ export default {
       type: String,
       required: true
     },
+    applicationConfig: {
+      type: Object,
+      required: true
+    },
     collectionConfig: {
       type: Object,
       required: true
@@ -103,6 +119,9 @@ export default {
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
+    const appConfig = ref(props.applicationConfig)
+    const collConfig = ref(props.collectionConfig)
+    const imgHref = ref('')
     const projectShortTitle = ref(props.rootCollectionShortTitle)
     console.log('AppNavbar setup props.collectionConfig', props.collectionConfig)
     const collShortTitle = ref(props.collectionConfig.homePageSettings.collectionShortTitle)
@@ -125,6 +144,24 @@ export default {
       isMenuOpened.value = false
     }
 
+    const ImgUrl = (source) => {
+      // TODO: provide a logo object with url AND legend ?
+
+      const sourceConfig = collConfig.value
+      if (sourceConfig && Object.keys(sourceConfig.homePageSettings).includes('appNavBarLogo') && sourceConfig.homePageSettings.appNavBarLogo.imgName.length) {
+        console.log('AppNavbar ImgUrl found : ', sourceConfig.homePageSettings.appNavBarLogo.imgName)
+        if (sourceConfig.homePageSettings.appNavBarLogo.imgName.includes('https')) {
+          imgHref.value = sourceConfig.homePageSettings.appNavBarLogo.href
+          return sourceConfig.homePageSettings.appNavBarLogo.imgName
+        } else {
+          imgHref.value = sourceConfig.homePageSettings.appNavBarLogo.href
+          return new URL(`/src/assets/images/${sourceConfig.homePageSettings.appNavBarLogo.imgName}`, import.meta.url).href
+        }
+      } else {
+        return false
+      }
+    }
+
     // Lifecycle hooks
     onMounted(() => {
       document.body.addEventListener('click', closeMenu)
@@ -137,6 +174,8 @@ export default {
       console.log('AppNavbar watch props : ', newProps)
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
+      appConfig.value = newProps.applicationConfig
+      collConfig.value = newProps.collectionConfig
       projectShortTitle.value = newProps.rootCollectionShortTitle
       collShortTitle.value = newProps.collectionConfig.homePageSettings.collectionShortTitle
       collectionId.value = newProps.collectionIdentifier
@@ -151,11 +190,15 @@ export default {
       isDocProjectIdInc,
       dtsRootCollectionId,
       rootCollectionId,
+      appConfig,
+      collConfig,
       projectShortTitle,
       collShortTitle,
       collectionId,
       burgerChanged,
-      closeMenu
+      closeMenu,
+      ImgUrl,
+      imgHref
     }
   }
 }
@@ -198,7 +241,7 @@ nav span.level-item:not(:last-child)::after {
   width: 45px;
   height: 50px;
   margin:0 40px 0 2px;
-  background: url(../assets/images/logo-enc-white.png) center / contain no-repeat;
+  //background: url(../assets/images/logo-enc-white.png) center / contain no-repeat;
 }
 .level-left {
   display: flex;

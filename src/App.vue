@@ -9,6 +9,7 @@
       :dts-root-collection-identifier="dtsRootCollectionId"
       :root-collection-identifier="rootCollectionIdentifier"
       :root-collection-short-title="projectShortTitle"
+      :application-config="appConfig"
       :collection-config="collConfig"
       :collection-identifier="collectionId"
       :key="currCollection+route.fullPath"
@@ -99,9 +100,12 @@ export default {
       Object.assign(appConfig.value, defaultMatch)
       console.log('App.vue setup defaultMatch', defaultMatch)
       console.log('App.vue setup appConfig.value', appConfig.value)
-      delete appSettings['./settings/default.conf.json']
+      //delete appSettings['./settings/default.conf.json']
       console.log('App.vue setup appSettings after update', appSettings)
       appConfig.value.collectionsConf = []
+      appConfig.value.collectionsConf.push(appSettings['./settings/default.conf.json'].default.genericConf)
+      delete appSettings['./settings/default.conf.json']
+      console.log('App.vue setup appSettings after update', appSettings)
       for (let i = 0; i < Object.keys(appSettings).length; i += 1) {
         console.log('App.vue setup appSettings collection iteration', appSettings[Object.keys(appSettings)[i]])
         appConfig.value.collectionsConf.push(appSettings[Object.keys(appSettings)[i]])
@@ -186,14 +190,21 @@ export default {
         // Collection is loaded
         console.log('App.vue watch appConfig.collectionsConf & type : ', appConfig.value.collectionsConf, Array.isArray(appConfig.value.collectionsConf), collectionId.value)
 
-        const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
-        const rootCollectionConfig = _.merge({}, appConfig.value.genericConf, rootCollectionOverrides)
+        // first, try to find if the root Collection has a configuration based on id
+        let rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value)
+        // second, try to find if a rootCollection (without id) has been defined
+        if (!rootCollectionOverrides) {
+          rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === 'rootCollection')
+        }
+        //const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
+        console.log('App.vue watch appConfig.value.genericConf : ', appConfig.value.genericConf)
+        const rootCollectionConfig = rootCollectionOverrides ? _.merge({}, appConfig.value.genericConf, rootCollectionOverrides) : appConfig.value.genericConf
         console.log('App.vue watch rootCollectionConfig, rootCollectionOverrides : ', rootCollectionConfig, rootCollectionOverrides)
         projectShortTitle.value = rootCollectionConfig ? rootCollectionConfig.homePageSettings.collectionShortTitle : appConfig.value.genericConf.homePageSettings.collectionShortTitle
 
         let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
         console.log('App.vue watch collectionOverrides : ', collectionOverrides)
-        if (!collectionOverrides) {
+        if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value) {
           collectionOverrides = {
             "collectionId": collectionId.value,
             "mediaTypeEndpoint": "html",
