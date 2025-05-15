@@ -138,10 +138,7 @@
                 </div>
               </div>
               <div class="card-image is-flex is-justify-content-center">
-                <a
-                  target="_blank"
-                  href=""
-                >
+                <router-link :to="{ name: 'Home', params: { collId: c.identifier }}">
                   <img
                     v-if="ImgUrl(c.identifier)"
                     :src="ImgUrl(c.identifier)"
@@ -151,7 +148,7 @@
                     src="https://api.nakala.fr/iiif/10.34847/nkl.c6f1p2z6/6aaa23488c374a4f1996b4210d1ad5f61cca95f7/full/180,/0/default.jpg"
                     alt=""
                   />
-                </a>
+                </router-link>
               </div>
             </div>
 
