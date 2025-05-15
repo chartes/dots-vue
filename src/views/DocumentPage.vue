@@ -1,4 +1,4 @@
-<template xmlns:TOC="http://www.w3.org/1999/html">
+<template>
   <div class="is-flex is-flex-direction-column" :class="viewModeCssClass"><!-- v-if="!isModalOpened" -->
     <CollectionModal
       class="modal-area"
@@ -448,6 +448,7 @@ export default {
 
     const isLoading = ref(false)
     const TOC_DEPTH = ref(props.collectionConfig.tableOfContentsSettings.tableOfContentDepth)
+    console.log('DocumentPage setup TOC_DEPTH : ', TOC_DEPTH.value)
     const editorialTypesIsValid = ref(false)
     const countEditorialTypes = ref([])
     const currentLevelIndicator = ref(false)
@@ -559,7 +560,7 @@ export default {
 
       response.member.filter(item => !item.title).forEach(m => {
         m.title = m.dublincore && m.dublincore.title && m.dublincore.title.length ? m.dublincore.title : ''
-        m.title = m.title.length ? m.title : m.extensions && m.extensions['tei:role'] ? m.extensions['tei:num'] ? m.extensions['tei:role'] + ' ' + m.extensions['tei:num'] :  m.extensions['tei:role'] + ' ' + m.identifier : ''
+        m.title = m.title.length ? m.title : m.extensions && m.extensions['tei:role'] ? m.extensions['tei:num'] ? m.extensions['tei:role'] + ' ' + m.extensions['tei:num'] : m.extensions['tei:role'] + ' ' + m.identifier : ''
         m.title = m.title.length ? m.title : m.extensions && m.citeType && m.extensions['tei:num'] ? m.citeType + ' ' + m.extensions['tei:num'] : ''
         m.title = m.title.length ? m.title : m.citeType + ' ' + m.identifier
       })
@@ -1166,6 +1167,8 @@ export default {
     )
     watch(props, (newProps) => {
       collConfig.value = newProps.collectionConfig
+      TOC_DEPTH.value = newProps.collectionConfig.tableOfContentsSettings.tableOfContentDepth
+      editorialLevel.value = newProps.collectionConfig.tableOfContentsSettings.editByLevel
       console.log('Document page watch newProps.collectionConfig / collConfig.value : ', collConfig.value)
     }, { deep: true, immediate: true })
 
