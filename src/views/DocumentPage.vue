@@ -578,6 +578,11 @@ export default {
       editorialTypesIsValid.value = processFlatTOC.some(item => editorialTypes.some(l => l === item.citeType))
       console.log('editorialTypes editorialTypesIsValid.value', editorialTypes, editorialTypesIsValid.value)
 
+      // Validate the max depth of editorialTypes items and update the depth of the TOC accordingly
+      const minTocDepth = Math.max(Math.max(...processFlatTOC.filter(item => editorialTypes.includes(item.citeType)).map(i => i.level)), TOC_DEPTH.value)
+      TOC_DEPTH.value = minTocDepth
+      console.log('document DoTS minTocDepth : ', minTocDepth)
+
       console.log('initial3 processFlatTOC', processFlatTOC)
 
       async function parentLoop (node) {
