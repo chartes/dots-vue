@@ -394,26 +394,31 @@ export default {
       let component
       console.log('HomePage getCustomHomeDescription collConfig.value.collectionId', collConfig.value.collectionId)
       console.log('HomePage getCustomHomeDescription collConfig.value.aboutPageSettings', collConfig.value.homePageSettings)
-      const comps = import.meta.glob('../settings/**/*.vue')
-      const match = comps[`../settings/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`]
-      const matchRootCollection = comps[`../settings/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`]
+      const comps = import.meta.glob('confs/**/*.vue')
+
+      const defaultSettings = import.meta.glob('../settings/default/HomePageContent.vue', { eager: true })
+      comps['../settings/default/HomePageContent.vue'] = defaultSettings['../settings/default/HomePageContent.vue']
+
+      const match = comps[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`]
+      const matchRootCollection = comps[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`]
       const defaultCollection = comps['../settings/default/HomePageContent.vue']
+
       if (match) {
-        component = defineAsyncComponent(() => import(`../settings/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`)
+        component = defineAsyncComponent(() => import(`confs/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`)
           .then((comp) => {
             return comp
           })
           .catch((error) => {
-            console.log(`error loading ../settings/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue : `, error)
+            console.log(`error loading confs/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue : `, error)
           })
         )
       } else if (matchRootCollection) {
-        component = defineAsyncComponent(() => import(`../settings/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`)
+        component = defineAsyncComponent(() => import(`confs/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`)
           .then((comp) => {
             return comp
           })
           .catch((error) => {
-            console.log(`error loading ../settings/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue : `, error)
+            console.log(`error loading confs/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue : `, error)
           })
         )
       // matching About pages as default
@@ -429,7 +434,7 @@ export default {
         )
       } else {
         console.log('nothing')
-        component = {}
+        component = null
       }
       return component
     }
@@ -643,7 +648,7 @@ a {
     & > .collection-metadata {
       width: 80%;
       & > .collection-description {
-        width: 80%;
+        width: 100%;
         text-align: justify;
         text-transform: none;
       }
@@ -651,7 +656,7 @@ a {
   }
 }
 .document-card .card-image {
-  margin-left: auto;
+  margin: auto;
   & > a {
     align-content: center;
     > img {

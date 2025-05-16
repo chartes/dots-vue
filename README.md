@@ -1,8 +1,8 @@
 # dots-vue-generic
 
-Frontend application to browse the ENC Cartularies editions ([Cartulaires d'Île-de-France](https://dev.chartes.psl.eu/elec/cartulaires)).
+Frontend application to browse a DoTS endpoint ([DoTS](https://github.com/chartes/dots)).
 
->:warning: Install / Launch first the DTS API (or ensure to point to deployed service) :  
+>:warning: Install / Launch first the DTS API (or ensure to point to deployed service):  
 > See the [API Readme](https://github.com/chartes/dots)
 
 **Master dependencies**:
@@ -26,7 +26,7 @@ in a local folder dedicated to the project
   git clone https://github.com/chartes/dots-vue.git
   ```
 
-From the app folder (`cd path/to/cartulaires`)
+From the app folder (`cd path/to/dots-vue`)
 ### Install
 ```
 yarn
@@ -34,10 +34,18 @@ yarn
 
 ### Compiles and hot-reloads for development
 
-For a local development server, reads `.env.development` variables:
-
+>:warning: if collections'settings have been defined, a relative path `CUSTOM_SETTINGS_PATH` environment variable has to be set as below :
 ```
-yarn serve
+projects_folder/					# Folder where your apps are deployed
+	dots-vue/						# This cloned project
+	dots-vue-my-custom-settings/	# OPTIONAL. Configuration files for a given deployed dots-vue
+		configurations_files    	# See an example at [dots-vue-demo-settings](https://github.com/chartes/dots-vue-demo-settings)
+```
+> in this case CUSTOM_SETTINGS_PATH=../dots-vue-my-custom-settings
+
+For a local development server, reads `.env.development` variables:
+```
+(CUSTOM_SETTINGS_PATH=../relative/path/to/custom/settings/folder) yarn serve
 ```
 
 ### Compiles and minifies for staging
@@ -45,7 +53,7 @@ yarn serve
 For a staging server (preproduction), reads `.env.staging` variables:
 
 ```
-yarn build:staging
+(CUSTOM_SETTINGS_PATH=../relative/path/to/custom/settings/folder) yarn build:staging
 ```
 
 ### Compiles and minifies for production
@@ -53,7 +61,7 @@ yarn build:staging
 For a production server, reads `.env.production` variables:
 
 ```
-yarn build:prod
+(CUSTOM_SETTINGS_PATH=../relative/path/to/custom/settings/folder) yarn build:prod
 ```
 
 ### Run preview server

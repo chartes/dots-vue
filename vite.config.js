@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
+        confs: path.resolve(__dirname, env.VITE_APP_CUSTOM_SETTINGS_PATH),
         vue: 'vue/dist/vue.esm-bundler.js'
       },
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']

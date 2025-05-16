@@ -84,27 +84,29 @@ export default {
         let component
         console.log('AboutPage collConfig.value.collectionId', collConfig.value.collectionId)
         console.log('AboutPage collConfig.value.aboutPageSettings', collConfig.value.aboutPageSettings)
-        const comps = import.meta.glob('../settings/**/*.vue')
-        const match = comps[`../settings/${collConfig.value.collectionId}/${aboutSettings.value[i].compName}.vue`]
-        const matchRootCollection = comps[`../settings/${rootCollectionId.value}/${aboutSettings.value[i].compName}.vue`]
+        const comps = import.meta.glob('confs/**/*.vue')
+        console.log('comps test : ', comps)
+        const match = comps[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/${aboutSettings.value[i].compName}.vue`]
+        const matchRootCollection = comps[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/${aboutSettings.value[i].compName}.vue`]
         // matching About pages for exact collection if defined
+        console.log('match test : ', match)
         if (match) {
-          component = defineAsyncComponent(() => import(`../settings/${collConfig.value.collectionId}/${aboutSettings.value[i].compName}.vue`)
+          component = defineAsyncComponent(() => import(`confs/${collConfig.value.collectionId}/${aboutSettings.value[i].compName}.vue`)
             .then((comp) => {
               return comp
             })
             .catch((error) => {
-              console.log(`error loading ../settings/${collConfig.value.collectionId}/${aboutSettings.value[i].compName}.vue : `, error)
+              console.log(`error loading confs/${collConfig.value.collectionId}/${aboutSettings.value[i].compName}.vue : `, error)
             })
           )
         // matching About pages for root collection if defined
         } else if (matchRootCollection) {
-          component = defineAsyncComponent(() => import(`../settings/${rootCollectionId.value}/${aboutSettings.value[i].compName}.vue`)
+          component = defineAsyncComponent(() => import(`confs/${rootCollectionId.value}/${aboutSettings.value[i].compName}.vue`)
             .then((comp) => {
               return comp
             })
             .catch((error) => {
-              console.log(`error loading ../settings/${rootCollectionId.value}/${aboutSettings.value[i].compName}.vue : `, error)
+              console.log(`error loading ..confs/${rootCollectionId.value}/${aboutSettings.value[i].compName}.vue : `, error)
             })
           )
         // matching About pages as default

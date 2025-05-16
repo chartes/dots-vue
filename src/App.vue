@@ -94,13 +94,15 @@ export default {
     // getting and formatting collection details
 
     const mergeSettings = () => {
-      const appSettings = import.meta.glob('./settings/*.conf.json', { eager: true })
+      const appSettings = import.meta.glob('confs/*.conf.json', { eager: true })
       console.log('App.vue setup appSettings', appSettings)
+      const defaultSettings = import.meta.glob('./settings/default.conf.json', { eager: true })
+      appSettings['./settings/default.conf.json'] = defaultSettings['./settings/default.conf.json']
       const defaultMatch = appSettings['./settings/default.conf.json'].default
       Object.assign(appConfig.value, defaultMatch)
       console.log('App.vue setup defaultMatch', defaultMatch)
       console.log('App.vue setup appConfig.value', appConfig.value)
-      //delete appSettings['./settings/default.conf.json']
+      // delete appSettings['./settings/default.conf.json']
       console.log('App.vue setup appSettings after update', appSettings)
       appConfig.value.collectionsConf = []
       appConfig.value.collectionsConf.push(appSettings['./settings/default.conf.json'].default.genericConf)
@@ -196,7 +198,7 @@ export default {
         if (!rootCollectionOverrides) {
           rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === 'rootCollection')
         }
-        //const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
+        // const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
         console.log('App.vue watch appConfig.value.genericConf : ', appConfig.value.genericConf)
         const rootCollectionConfig = rootCollectionOverrides ? _.merge({}, appConfig.value.genericConf, rootCollectionOverrides) : appConfig.value.genericConf
         console.log('App.vue watch rootCollectionConfig, rootCollectionOverrides : ', rootCollectionConfig, rootCollectionOverrides)
