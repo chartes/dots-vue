@@ -1,5 +1,5 @@
 <template>
-  <div class="is-flex is-flex-direction-column" :class="viewModeCssClass"><!-- v-if="!isModalOpened" -->
+  <div class="is-flex is-flex-direction-column" :class="viewModeCssClass">
     <CollectionModal
       class="modal-area"
       v-if="isLoading && isModalOpened"
@@ -245,8 +245,6 @@ import Document from '@/components/Document.vue'
 import TOC from '@/components/TOC.vue'
 import ToPreviousButton from '@/components/ToPreviousButton.vue'
 import ToNextButton from '@/components/ToNextButton.vue'
-/* import ListeTheseAnnee from '@/components/ListeTheseAnnee.vue'
-import ModalDocumentMetadata from '@/components/ModalDocumentMetadata.vue' */
 import DocumentMetadata from '@/components/DocumentMetadata.vue'
 import CollectionModal from '@/components/CollectionModal.vue'
 
@@ -354,7 +352,7 @@ export default {
     ToPreviousButton,
     ToNextButton,
     CollectionModal
-  }, // ListeTheseAnnee, ModalDocumentMetadata
+  },
   props: {
     isDocProjectIdIncluded: {
       type: Boolean,
