@@ -366,11 +366,15 @@ export default {
       // TODO: provide a logo object with url AND legend ?
       const sourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
       if (sourceConfig && Object.keys(sourceConfig.homePageSettings).includes('logo') && sourceConfig.homePageSettings.logo.length) {
-        console.log('ImgUrl found : ', sourceConfig.homePageSettings.logo)
+        console.log('HomePage ImgUrl found : ', sourceConfig.homePageSettings.logo)
+        const images = import.meta.glob('confs/images/*.*', { eager: true })
+        console.log('HomePage ImgUrl images: ', images)
+        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/images/${sourceConfig.homePageSettings.logo}`]
+        console.log('HomePage ImgUrl match: ', match)
         if (sourceConfig.homePageSettings.logo.includes('https')) {
           return sourceConfig.homePageSettings.logo
         } else {
-          return new URL(`/src/assets/images/${sourceConfig.homePageSettings.logo}`, import.meta.url).href
+          return match.default // new URL(`/src/assets/images/${sourceConfig.homePageSettings.logo}`, import.meta.url).href
         }
       } else {
         return false
@@ -451,7 +455,7 @@ export default {
       collectionDescription.value = newProps.collectionConfig.homePageSettings.collectionDescription
       customCollectionDescription.value = newProps.collectionConfig.homePageSettings.customCollectionDescription
       componentTOC.value = [...currCollection.value.member].sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
-      console.log('HomePageDefault watch collectionConfig collectionDescription : ', collConfig.value, collectionDescription)
+      console.log('HomePageDefault watch collectionConfig collectionDescription : ', collConfig.value, collectionDescription.value)
       paginated()
       if (customCollectionDescription.value) {
         customDescription.value = await getCustomHomeDescription()
