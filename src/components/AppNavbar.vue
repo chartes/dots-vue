@@ -282,12 +282,6 @@ nav span.level-item:not(:last-child)::after {
 .mobile-button {
   display: none;
 }
-.home-button {
-  display: inline-block;
-  width: 31px;
-  height: 34px;
-  background: url(../assets/images/home-mobile.png) center / contain no-repeat;
-}
 
 @media screen and (max-width: 800px) {
   .logo-header {
