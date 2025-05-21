@@ -31,16 +31,29 @@
       </div>
     </div>
     <section class="main app-width-margin">
-      <!-- DTS collection description available -->
+      <!-- homePageSettings.customCollectionDescription, use it and pass DTS description and homePageSettings.collectionDescription settings if available -->
       <div
-        v-if="currCollection.description"
+        v-if="customCollectionDescription"
+        id="article"
+        class="article app-width-margin"
+      >
+        <component
+          :is="customDescription"
+          :dts-collection-description="currCollection.description"
+          :custom-collection-description="collectionDescription"
+        />
+        <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
+      </div>
+      <!-- no homePageSettings.customCollectionDescription : use DTS API collection description if available -->
+      <div
+        v-else-if="currCollection.description"
         id="article"
         class="article app-width-margin"
       >
         <h1>La collection</h1>
           {{ currCollection.description }}
       </div>
-      <!-- no DTS description, use user settings description (homePageSettings.collectionDescription) -->
+      <!-- no homePageSettings.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
       <div
         v-else-if="collectionDescription"
         id="article"
@@ -48,17 +61,7 @@
       >
         <h1>La collection</h1>
         {{ collectionDescription }}
-        <p class="texte no-dts-description">This collection provides no DTS default description.</p>
-      </div>
-      <!-- no DTS description, no homePageSettings.collectionDescription settings, use homePageSettings.customCollectionDescription -->
-      <div
-        v-else
-        id="article"
-        class="article app-width-margin"
-      >
-        <h1>La collection</h1>
-        <component v-if="customCollectionDescription" :is="customDescription"/>
-        <p class="texte no-dts-description">This collection provides no DTS default description.</p>
+        <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
     </section>
     <div
@@ -234,16 +237,29 @@
       </div>
     </div>
     <section class="main app-width-margin">
-      <!-- DTS collection description available -->
+      <!-- homePageSettings.customCollectionDescription, use it and pass DTS description and homePageSettings.collectionDescription settings if available -->
       <div
-        v-if="currCollection.description"
+        v-if="customCollectionDescription"
+        id="article"
+        class="article app-width-margin"
+      >
+        <component
+          :is="customDescription"
+          :dts-collection-description="currCollection.description"
+          :custom-collection-description="collectionDescription"
+        />
+        <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
+      </div>
+      <!-- no homePageSettings.customCollectionDescription : use DTS API collection description if available -->
+      <div
+        v-else-if="currCollection.description"
         id="article"
         class="article app-width-margin"
       >
         <h1>La collection</h1>
           {{ currCollection.description }}
       </div>
-      <!-- no DTS description, use user settings description (homePageSettings.collectionDescription) -->
+      <!-- no homePageSettings.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
       <div
         v-else-if="collectionDescription"
         id="article"
@@ -251,17 +267,7 @@
       >
         <h1>La collection</h1>
         {{ collectionDescription }}
-        <p class="texte no-dts-description">This collection provides no DTS default description.</p>
-      </div>
-      <!-- no DTS description, no homePageSettings.collectionDescription settings, use homePageSettings.customCollectionDescription -->
-      <div
-        v-else
-        id="article"
-        class="article app-width-margin"
-      >
-        <h1>La collection</h1>
-        <component v-if="customCollectionDescription" :is="customDescription"/>
-        <p class="texte no-dts-description">This collection provides no DTS default description.</p>
+        <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
     </section>
   </div>
