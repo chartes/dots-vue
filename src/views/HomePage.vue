@@ -367,9 +367,9 @@ export default {
       const sourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
       if (sourceConfig && Object.keys(sourceConfig.homePageSettings).includes('logo') && sourceConfig.homePageSettings.logo.length) {
         console.log('HomePage ImgUrl found : ', sourceConfig.homePageSettings.logo)
-        const images = import.meta.glob('confs/images/*.*', { eager: true })
+        const images = import.meta.glob('confs/*/assets/images/*.*', { eager: true })
         console.log('HomePage ImgUrl images: ', images)
-        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/images/${sourceConfig.homePageSettings.logo}`]
+        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.logo}`]
         console.log('HomePage ImgUrl match: ', match)
         if (sourceConfig.homePageSettings.logo.includes('https')) {
           return sourceConfig.homePageSettings.logo

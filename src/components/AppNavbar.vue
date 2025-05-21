@@ -151,13 +151,13 @@ export default {
       if (sourceConfig && Object.keys(sourceConfig.homePageSettings).includes('appNavBarLogo') && sourceConfig.homePageSettings.appNavBarLogo.imgName.length) {
         console.log('AppNavbar ImgUrl found : ', sourceConfig.homePageSettings.appNavBarLogo.imgName)
 
-        const images = import.meta.glob('confs/images/*.*', { eager: true })
+        const images = import.meta.glob('confs/*/assets/images/*.*', { eager: true })
         console.log('AppNavbar ImgUrl images: ', images)
         const defaultSettings = import.meta.glob('/src/assets/images/Logo_dots_circle.svg')
         console.log('AppNavbar ImgUrl defaultSettings: ', defaultSettings)
         images['/src/assets/images/Logo_dots_circle.svg'] = defaultSettings['/src/assets/images/Logo_dots_circle.svg']
 
-        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/images/${sourceConfig.homePageSettings.appNavBarLogo.imgName}`]
+        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.appNavBarLogo.imgName}`]
         console.log('AppNavbar ImgUrl match: ', match)
         const defaultImg = images['/src/assets/images/Logo_dots_circle.svg']
 
@@ -177,7 +177,7 @@ export default {
             return sourceConfig.homePageSettings.appNavBarLogo.imgName
           } else {
             imgHref.value = sourceConfig.homePageSettings.appNavBarLogo.href
-            console.log('AppNavbar ImgUrl new URL ref : ', `confs/images/${sourceConfig.homePageSettings.appNavBarLogo.imgName}`)
+            console.log('AppNavbar ImgUrl appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBarLogo.imgName}`)
             console.log('AppNavbar ImgUrl imgHref.value : ', imgHref.value)
             console.log('AppNavbar ImgUrl defaultImg : ', defaultImg)
             return defaultImg.name
