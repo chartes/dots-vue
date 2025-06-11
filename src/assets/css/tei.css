@@ -342,7 +342,7 @@ $LastChangedDate$, $LastChangedRevision$, $LastChangedBy$
   funder {
     display: block;
     margin-bottom: 0.5em;
-    background-color: red;
+    /* used for test :background-color: red; */
   }
   gap {
     display: none;
