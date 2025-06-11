@@ -191,7 +191,10 @@
           </div>
           <div class="wrapper">
             <div class="toc-area app-width-margin">
-              <div class="toc-area-header">
+              <div
+                class="toc-area-header"
+                :class="expandedById[collectionId] ? 'expanded': ''"
+              >
                 <a href="#">Browse</a>
                 <a href="#" class="toggle-btn" v-on:click.prevent="toggleExpanded(collectionId)"></a>
               </div>
@@ -517,6 +520,9 @@ a {
   background-color: #f1f1f1;
   border-radius: 6px;
   position: relative;
+  &.expanded {
+    border-radius: 6px 6px 0 0;
+  }
 }
 .toc-area-header > a {
   text-transform: uppercase;
