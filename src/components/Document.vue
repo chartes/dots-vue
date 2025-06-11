@@ -70,17 +70,20 @@ export default {
     TOC
   },
 
-  props: ['id', 'level', 'editoriallevel', 'bottomtoc', 'maxcitedepth', 'documenttype', 'editorialLevelIndicator', 'isDocProjectIdIncluded', 'mediaTypeEndpoint'],
+  props: ['id', 'level', 'editoriallevel', 'bottomtoc', 'maxcitedepth', 'documenttype', 'editorialLevelIndicator', 'isDocProjectIdIncluded', 'mediaTypeEndpoint', 'collectionCss'],
 
   async setup (props) {
     // Declare route to capture route hash (used in scrollTo()) to display selected Table Of Content items below the editorial level
     const route = useRoute()
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const mediaType = ref(props.mediaTypeEndpoint)
+    const collCss = ref(props.collectionCss)
     console.log('Document.vue mediaType', mediaType.value)
+    console.log('Document.vue collCss', collCss.value)
     // The parentId will the id used for the DoTS API, it is either the resourceId or the resourceId + '&ref=' + refId
     // TODO: rename to a more appropriate name : it is the id used for Dots API : dotsID ?
     const parentId = ref(props.id)
+
     console.log('Document.vue const props.id / parentId', props.id, parentId)
     // Content fetched here will depend on the selected TOC item vs editorial level
     const currentLevelIndicator = ref(props.editorialLevelIndicator)
@@ -283,6 +286,7 @@ export default {
     return {
       isDocProjectIdInc,
       mediaType,
+      collCss,
       parentId,
       currentLevelIndicator,
       currentLevel,

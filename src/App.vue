@@ -85,6 +85,9 @@ export default {
     const collConfig = ref({})
     const currCollection = ref({})
     const appConfig = ref({})
+    const appCssConfig = ref({})
+    const isRedTheme = ref(`${import.meta.env.VITE_APP_THEME}`.length === 0 ? 'red' : `${import.meta.env.VITE_APP_THEME}`)
+    const theme = ref('')
     const collShortTitle = ref('')
     const dtsRootCollectionId = ref('')
     const rootCollectionIdentifier = ref('')
@@ -93,9 +96,18 @@ export default {
     console.log('App.vue setup route / route.params.collId / collectionId.value : ', route, route.params.collId ? route.params.collId : 'no param collId', collectionId)
     // getting and formatting collection details
 
+    document.documentElement.setAttribute('data-theme', isRedTheme.value)
+    //localStorage.setItem('theme', isRedTheme.value)
+    console.log('App.vue setup theme : ', isRedTheme.value)
+
     const mergeSettings = () => {
       const appSettings = import.meta.glob('confs/*.conf.json', { eager: true })
       console.log('App.vue setup appSettings', appSettings)
+      const appCssSettings = import.meta.glob('confs/*.conf.css', { eager: true })
+      console.log('App.vue setup appCssSettings', appCssSettings)
+      /*appCssConfig.value = appCssSettings[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/customCss.conf.css`]
+      console.log('App.vue setup appCssConfig', appCssConfig)*/
+
       const defaultSettings = import.meta.glob('./settings/default.conf.json', { eager: true })
       appSettings['./settings/default.conf.json'] = defaultSettings['./settings/default.conf.json']
       const defaultMatch = appSettings['./settings/default.conf.json'].default
@@ -224,6 +236,9 @@ export default {
     )
 
     return {
+      isRedTheme,
+      theme,
+      appCssConfig,
       route,
       dtsRootCollectionId,
       rootCollectionIdentifier,
@@ -372,8 +387,8 @@ p.header-baseline span {
 }
 .app-width-padding {
   margin: 0;
-  padding-left: calc( 50% - 550px );
-  padding-right: calc( 50% - 550px );
+  padding-left: calc( 50% - 600px );
+  padding-right: calc( 50% - 600px );
 }
 
 @media screen and (max-width: 1150px) {

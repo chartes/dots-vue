@@ -54,21 +54,30 @@ export default {
 }
 </script>
 <style scoped>
-#article h1 {
+.about {
+  font-family: "Barlow", sans-serif;
+}
+.about h1 {
   padding-top: 20px;
   padding-bottom: 20px;
+  text-align: left;
   font-size: 25px;
   font-weight: 500;
   line-height: 33px;
   text-transform: none;
-  color: #971716;
+  color: var(--text-color);
 }
-#article h2 {
+.about h2 {
   padding-top: 20px;
   padding-bottom: 20px;
+  text-align: left;
   font-size: 20px;
   font-weight: 500;
   line-height: 33px;
   text-transform: none;
+}
+.about p {
+  text-align: left;
+  text-indent: 0;
 }
 </style>

@@ -210,6 +210,7 @@
           <document
             :is-doc-projectId-included="isDocProjectIdInc"
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
+            :collection-css="customCss.default"
             :id="resourceId"
             :level="currentLevel"
             :editorialLevelIndicator="currentLevelIndicator"
@@ -262,7 +263,7 @@ import {
   reactive,
   provide,
   ref,
-  inject, nextTick
+  inject, nextTick, shallowRef, onBeforeUnmount
 } from 'vue'
 
 import { useRoute } from 'vue-router'
@@ -470,6 +471,9 @@ export default {
     const selectedCollectionId = ref('')
     const selectedCollection = reactive({})
     const isModalOpened = ref(false)
+
+    let customCss = shallowRef({})
+    const cssPath = ref('')
 
     const miradorInstance = useMirador(miradorContainer, manifest)
     // provide an uninitialized instance of Mirador
@@ -1157,6 +1161,38 @@ export default {
           manifestIsAvailable.value = false
         })
     }
+    const getCustomCss = async () => {
+
+      if (collConfig.value.collectionCustomCss) {
+        // const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: true })
+        const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: false })
+        console.log('Document page getCustomCss appCssConfs', appCssConfs)
+        console.log('Document page getCustomCss collConfig.value.collectionCustomCss', collConfig.value.collectionCustomCss)
+        console.log('Document page getCustomCss get in if')
+        /* const match = appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css`]
+        console.log('Document page getCustomCss match path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css`)
+        console.log('Document page getCustomCss match', match) */
+        cssPath.value = `confs/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css`
+        console.log('Document page getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css`)
+        // (`confs/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css`)
+        //let cssComp
+        customCss.value = await import(`confs/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css?raw`)
+        /* cssComp = defineAsyncComponent(() => import('../components/AppNavbar.vue')
+          .then((comp) => {
+            console.log('Document page getCustomCss comp : ', comp)
+            return comp
+          })
+          .catch((error) => {
+            console.log(`error loading ${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css : `, error)
+          })
+        )*/
+
+        document.head.appendChild(customCss.value)
+        /*customCss = shallowRef(cssComp)
+        cssComp = undefined*/
+        console.log('Document page customCss.value / cssComp : ', customCss.value, cssComp)
+      }
+    }
 
     watch(
       () => metadata.iiifManifestUrl,
@@ -1170,11 +1206,15 @@ export default {
         }
       }
     )
-    watch(props, (newProps) => {
+
+    watch(props, async (newProps) => {
       collConfig.value = newProps.collectionConfig
       TOC_DEPTH.value = newProps.collectionConfig.tableOfContentsSettings.tableOfContentDepth
       editorialLevel.value = newProps.collectionConfig.tableOfContentsSettings.editByLevel
       console.log('Document page watch newProps.collectionConfig / collConfig.value : ', collConfig.value)
+      if (collConfig.value.collectionCustomCss) {
+        await getCustomCss()
+      }
     }, { deep: true, immediate: true })
 
     watch(
@@ -1270,6 +1310,17 @@ export default {
       window.addEventListener('scroll', updateMiradorTopPosition)
       layout.isTOCMenuOpened.value = false
     })
+    onBeforeUnmount(() => {
+      const styleTags = [...document.querySelectorAll('style')]
+      console.log('Document page getCustomCss styleTags ', styleTags)
+      styleTags.forEach((tag) => {
+        console.log('Document page getCustomCss tag.textContent ', tag.textContent)
+        if (tag.id === 'customCss') {
+          console.log('Document page getCustomCss tag.id ', tag.id)
+          tag.remove()
+        }
+      })
+    })
 
     onUnmounted(() => {
       const appView = document.getElementById('app')
@@ -1332,12 +1383,14 @@ export default {
       selectedCollectionId,
       selectedCollection,
       currentItem,
-      setText
+      setText,
+      getCustomCss,
+      customCss,
+      cssPath
     }
   }
 }
 </script>
-
 <style>
 .modal-area {
   width: 100%;

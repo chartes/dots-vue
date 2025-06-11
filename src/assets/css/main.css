@@ -1,3 +1,15 @@
+:root {
+}
+[data-theme="orange"] {
+	--text-color: orange;
+}
+[data-theme="red"] {
+    --text-color: red;
+}
+h1 {
+    color: var(--text-color)
+}
+
 .hidden-nav:hover {
     cursor: pointer;
     color: rgb(50, 115, 220);
