@@ -24,11 +24,18 @@ export default {
     const goToCanvas = function () {
       if (mirador) {
         console.log(props.canvasId)
-        mirador.setCanvasId(props.canvasId)
-        // if (layout.miradorVisible != true) {
-        // layout.setMiradorVisible(true);
-        layout.changeViewMode('text-and-images-mode')
-        // }
+        const currentCanvasId = Object.values(mirador.miradorStore.getState().windows)[0].canvasId
+        console.log('currentCanvasId / props.canvasId', currentCanvasId, props.canvasId)
+        if (currentCanvasId === props.canvasId) {
+          layout.changeViewMode('text-mode')
+          mirador.setCanvasId(props.canvasId.substring(0, props.canvasId.lastIndexOf('/f') + 1) + '/f1')
+        } else {
+          mirador.setCanvasId(props.canvasId)
+          // if (layout.miradorVisible != true) {
+          // layout.setMiradorVisible(true);
+          layout.changeViewMode('text-and-images-mode')
+          // }
+        }
       }
     }
 
