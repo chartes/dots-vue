@@ -11,6 +11,10 @@
         "imgName": "Logo_dots_circle.svg",
         "href": "/"
       },
+      "appNavBarApiLogo": {
+        "imgName": "",
+        "href": "/"
+      },
       "logo": ""
     },
     "footerSettings": {

@@ -56,10 +56,22 @@
        <div class="level-right">
        <div class="level-item menu">
          <a
+          v-if="apiImgUrl(collectionId)"
           target="_blank"
-          href="https://chartes.github.io/dots_documentation/api/"
+          :href="apiImgHref"
          >
-          API <b>{ }</b>
+          <img
+            class="logo-api"
+            :src="apiImgUrl(collectionId)"
+            alt="Logo API"
+          />
+         </a>
+         <a
+           v-else
+           target="_blank"
+           href="https://chartes.github.io/dots_documentation/api/"
+         >
+           API <b>{ }</b>
          </a>
         </div>
       </div>
@@ -122,6 +134,7 @@ export default {
     const appConfig = ref(props.applicationConfig)
     const collConfig = ref(props.collectionConfig)
     const imgHref = ref('')
+    const apiImgHref = ref('')
     const projectShortTitle = ref(props.rootCollectionShortTitle)
     console.log('AppNavbar setup props.collectionConfig', props.collectionConfig)
     const collShortTitle = ref(props.collectionConfig.homePageSettings.collectionShortTitle)
@@ -215,6 +228,76 @@ export default {
         return false
       }
     }
+    const apiImgUrl = (source) => {
+      // TODO: provide a logo object with url AND legend ?
+      const sourceConfig = collConfig.value
+      if (sourceConfig && Object.keys(sourceConfig.homePageSettings).includes('appNavBarApiLogo') && sourceConfig.homePageSettings.appNavBarApiLogo.imgName.length) {
+        console.log('AppNavbar apiImgUrl found : ', sourceConfig.homePageSettings.appNavBarApiLogo.imgName)
+        // Get all images from the settings repo
+        const images = import.meta.glob('confs/*/assets/images/*.*', { eager: true })
+        console.log('AppNavbar apiImgUrl images: ', images)
+
+        // If the AppNavBar image is not defined on the collection, need to identify the root collection image path where it may be defined
+        let rootCollImg = null
+        // Identify the root collection config to find its AppNavBar image settings
+        const rootCollConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === rootCollectionId.value)[0]
+        console.log('AppNavbar apiImgUrl appConfig.value.collectionsConf : ', appConfig.value.collectionsConf, rootCollectionId.value)
+        console.log('AppNavbar apiImgUrl rootCollConfig : ', rootCollConfig)
+        // If an AppNavBar image is set on the root collection, set it as rootCollImg to be used
+        if (rootCollConfig) {
+          console.log('AppNavbar apiImgUrl rootCollConfig : ', rootCollConfig)
+          rootCollImg = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/assets/images/${rootCollConfig.homePageSettings.appNavBarApiLogo.imgName}`]
+          console.log('AppNavbar apiImgUrl rootCollImg : ', rootCollImg)
+        }
+        // Setting the default AppNavBar image (dots) if none is defined at root or collection level
+        const defaultSettings = import.meta.glob('/src/assets/images/Logo_dots_circle.svg')
+        console.log('AppNavbar apiImgUrl defaultSettings: ', defaultSettings)
+        images['/src/assets/images/Logo_dots_circle.svg'] = defaultSettings['/src/assets/images/Logo_dots_circle.svg']
+
+        // Match the collection AppNavBar image if any
+        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.appNavBarApiLogo.imgName}`]
+        console.log('AppNavbar apiImgUrl match: ', match)
+        const defaultImg = images['/src/assets/images/Logo_dots_circle.svg']
+        // Use the collection AppNavBar image if any
+        if (match) {
+          if (sourceConfig.homePageSettings.appNavBarApiLogo.imgName.includes('https')) {
+            apiImgHref.value = sourceConfig.homePageSettings.appNavBarApiLogo.href
+            return sourceConfig.homePageSettings.appNavBarApiLogo.imgName
+          } else {
+            apiImgHref.value = sourceConfig.homePageSettings.appNavBarApiLogo.href
+            console.log('AppNavbar apiImgUrl apiImgHref.value : ', apiImgHref.value)
+            console.log('AppNavbar apiImgUrl match : ', match)
+            return match.default
+          }
+        // Otherwise use the root collection AppNavBar image if any
+        } else if (rootCollImg) {
+          if (rootCollConfig.homePageSettings.appNavBarApiLogo.imgName.includes('https')) {
+            apiImgHref.value = rootCollConfig.homePageSettings.appNavBarApiLogo.href
+            return rootCollConfig.homePageSettings.appNavBarApiLogo.imgName
+          } else {
+            apiImgHref.value = rootCollConfig.homePageSettings.appNavBarApiLogo.href
+            console.log('AppNavbar apiImgUrl appNavBarLogo.imgName : ', `${rootCollConfig.homePageSettings.appNavBarApiLogo.imgName}`)
+            console.log('AppNavbar apiImgUrl apiImgHref.value : ', apiImgHref.value)
+            console.log('AppNavbar apiImgUrl rootCollImg : ', rootCollImg)
+            return rootCollImg.default
+          }
+        // Otherwise use the default (dots) AppNavBar image
+        } else if (defaultImg) {
+          if (sourceConfig.homePageSettings.appNavBarApiLogo.imgName.includes('https')) {
+            apiImgHref.value = sourceConfig.homePageSettings.appNavBarApiLogo.href
+            return sourceConfig.homePageSettings.appNavBarApiLogo.imgName
+          } else {
+            apiImgHref.value = sourceConfig.homePageSettings.appNavBarApiLogo.href
+            console.log('AppNavbar apiImgUrl appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBarApiLogo.imgName}`)
+            console.log('AppNavbar apiImgUrl apiImgHref.value : ', apiImgHref.value)
+            console.log('AppNavbar apiImgUrl defaultImg : ', defaultImg)
+            return defaultImg.name
+          }
+        }
+      } else {
+        return false
+      }
+    }
 
     // Lifecycle hooks
     onMounted(() => {
@@ -252,7 +335,9 @@ export default {
       burgerChanged,
       closeMenu,
       ImgUrl,
-      imgHref
+      imgHref,
+      apiImgUrl,
+      apiImgHref
     }
   }
 }
@@ -264,7 +349,7 @@ nav {
   font-size: 18px;
   line-height: 1;
   color: #FFFFFF;
-  background-color: #B9192F;
+  background-color: #8f0e21;
   padding-top: 10px;
   padding-bottom: 10px;
 }
@@ -295,7 +380,12 @@ nav span.level-item:not(:last-child)::after {
   width: 45px;
   height: 50px;
   margin:0 40px 0 2px;
-  //background: url(../assets/images/logo-enc-white.png) center / contain no-repeat;
+}
+.logo-api {
+  display: inline-block;
+  width: 45px;
+  height: 50px;
+  margin:0 40px 0 2px;
 }
 .level-left {
   display: flex;
