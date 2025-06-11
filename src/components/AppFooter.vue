@@ -98,7 +98,7 @@ export default {
       type: Object,
       required: true
     },
-    /*footerTitle: {
+    /* footerTitle: {
       type: String,
       required: true
     },
@@ -109,7 +109,7 @@ export default {
     footerDescription: {
       type: String,
       required: true
-    },*/
+    }, */
     currentCollection: {
       type: Object,
       required: true
@@ -146,6 +146,7 @@ export default {
 </script>
 <style>
 .footer {
+  font-family: "Barlow", sans-serif;
   background-color: #4C4949;
   border-top: #BA0F29 solid 4px;
   /* max-height: 400px; */
@@ -169,6 +170,8 @@ export default {
     margin-top: 12px;
     margin-bottom: 12px;
     text-align: left;
+    font-style: normal;
+    font-size: 100%;
     color: white;
   }
 }
@@ -311,5 +314,4 @@ export default {
     height: 40px;
   }
 }
-
 </style>
