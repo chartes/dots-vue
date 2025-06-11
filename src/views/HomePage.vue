@@ -6,18 +6,18 @@
     <div class="tiles">
       <div class="tile page-header app-width-padding">
         <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center wrapper">
-          <div class="tile is-child">
+          <div class="tile is-child article app-width-margin">
             <div class="title-tile">
               <p class="title">{{ collectionAltTitle ? collectionAltTitle : currCollection.title }}</p>
             </div>
             <div class="project-tile">
               <router-link
                 v-if="collectionId !== rootCollectionId"
-                :to="{ name: 'About', params: {collId: collectionId}}"
+                :to="{ name: 'About', params: { collId: collectionId } }"
                 active-class="active"
               >
                 About
-              </router-link><!-- , params: {collId: collectionId}  -->
+              </router-link>
               <router-link
                 v-else
                 :to="{ name: 'About'}"
@@ -168,7 +168,7 @@
     <div class="tiles">
       <div class="tile page-header app-width-padding">
         <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center wrapper">
-          <div class="tile is-child">
+          <div class="tile is-child app-width-margin">
             <div class="title-tile">
               <p class="title">{{ collectionAltTitle ? collectionAltTitle : currCollection.title }}</p>
             </div>
@@ -391,15 +391,18 @@ export default {
 
       const match = comps[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`]
       const matchRootCollection = comps[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`]
+      console.log('match 1 : ', match)
+      console.log('matchRootCollection : ', matchRootCollection)
       const defaultCollection = comps['../settings/default/HomePageContent.vue']
 
       if (match) {
+        console.log('match 2 : ', match)
         component = defineAsyncComponent(() => import(`confs/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`)
           .then((comp) => {
             return comp
           })
           .catch((error) => {
-            console.log(`error loading confs/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue : `, error)
+            console.log(`error loading 1 confs/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue : `, error)
           })
         )
       } else if (matchRootCollection) {
@@ -408,7 +411,7 @@ export default {
             return comp
           })
           .catch((error) => {
-            console.log(`error loading confs/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue : `, error)
+            console.log(`error loading 2 confs/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue : `, error)
           })
         )
       // matching About pages as default
@@ -566,36 +569,57 @@ a {
 .wrapper {
   width: 100%;
 }
+.tile {
+  background-color: #FBF8F4;
+}
+.page-header {
+  background-color: #FBF8F4;
+  background: url(../assets/images/Designer.png) center 80% / cover no-repeat;
+  /* filter: invert(1); */
+}
 .tile.is-child {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: transparent;
+  width: 100%;
 }
 .title-tile {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  width: 100%;
   margin-top: 30px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #000000cc;
+  border-radius: 6px;
+  font-family: "Inter", sans-serif;
+  & > p {
+      color: white !important;
+  }
 }
 .project-tile {
   display: flex;
   width: fit-content;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   padding: 6px 10px;
-  border: #b9192f 1px solid;
+  background-color: #000000cc;
+  /* border: #b9192f 1px solid; */
   border-radius: 6px;
   & > a {
     font-family: "Barlow Semi Condensed", sans-serif;
     font-weight: 500;
     text-transform: uppercase;
     text-decoration: none;
-    color: #b9192f;
+    color: white;
+    /* color: #b9192f; */
   }
 }
 .collection-list {
-  background-color: #FBF8F4;
+  /* background-color: #FBF8F4; */
 }
 .document-list {
   display: flex;
