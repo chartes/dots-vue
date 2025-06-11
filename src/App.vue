@@ -209,7 +209,7 @@ export default {
         if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value) {
           collectionOverrides = {
             "collectionId": collectionId.value,
-            "mediaTypeEndpoint": "html",
+            "mediaTypeEndpoint": "tei",
             "homePageSettings": {
               "collectionAltTitle": "",
               "collectionShortTitle": "",

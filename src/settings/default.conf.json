@@ -1,6 +1,6 @@
 {
   "genericConf": {
-    "mediaTypeEndpoint": "",
+    "mediaTypeEndpoint": "tei",
     "homePageSettings": {
       "collectionsPerPage": 3,
       "collectionAltTitle": "",

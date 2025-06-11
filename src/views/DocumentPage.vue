@@ -209,6 +209,7 @@
         <div v-if="!refId || refId && refId.length === 0" class="text-view" id="text-view">
           <document
             :is-doc-projectId-included="isDocProjectIdInc"
+            :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :id="resourceId"
             :level="currentLevel"
             :editorialLevelIndicator="currentLevelIndicator"
@@ -222,6 +223,7 @@
         <div v-else class="text-view" id="text-view">
           <document
             :is-doc-projectId-included="isDocProjectIdInc"
+            :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :id="resourceId + '&ref=' + refId"
             :level="currentLevel"
             :editorialLevelIndicator="currentLevelIndicator"

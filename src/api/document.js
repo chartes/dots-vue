@@ -20,12 +20,12 @@ async function getMetadataFromApi (id, options = {}) {
   return metadata
 }
 
-async function getDocumentFromApi (id, excludeFragments = false, options = {}) {
+async function getDocumentFromApi (id, excludeFragments = false, mediaType, options = {}) {
   // TODO : default is document route without mediatype and if mediatype is provided include it
-  console.log('Document.vue', `${_baseApiURL}/document?resource=${id}&mediaType=html&excludeFragments=${excludeFragments}`)
-  const response = await fetch(`${_baseApiURL}/document?resource=${id}&mediaType=html&excludeFragments=${excludeFragments}`, { mode: 'cors', ...options })
+  console.log('Document.vue', `${_baseApiURL}/document?resource=${id}&mediaType=${mediaType}&excludeFragments=${excludeFragments}`)
+  const response = await fetch(`${_baseApiURL}/document?resource=${id}&mediaType=${mediaType}&excludeFragments=${excludeFragments}`, { mode: 'cors', ...options })
   // const response = await fetch(`${_baseApiURL}/document?resource=${id}&mediaType=html`, {mode: 'cors', ...options})
-  const document = await response.text()
+  const document = response.text()
   // console.log("Document.vue document", document)
   return document
 }
