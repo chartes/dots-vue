@@ -148,7 +148,7 @@
                   />
                   <img
                     v-else
-                    src="https://api.nakala.fr/iiif/10.34847/nkl.c6f1p2z6/6aaa23488c374a4f1996b4210d1ad5f61cca95f7/full/180,/0/default.jpg"
+                    src="@/assets/images/dots-logo-retro.drawio.svg"
                     alt=""
                   />
                 </router-link>
@@ -157,29 +157,6 @@
 
           </div>
         </div>
-        <!--<div class="card-image is-flex is-justify-content-center">
-          <a
-            target="_blank"
-            href=""
-          >
-            <img
-              src="https://api.nakala.fr/iiif/10.34847/nkl.c6f1p2z6/6aaa23488c374a4f1996b4210d1ad5f61cca95f7/full/180,/0/default.jpg"
-              alt=""
-            />
-          </a>
-        </div>
-        <div class="card-content">
-          <div
-            class="content"
-          >
-            <p class="title">
-              {{ c.title }}
-            </p>
-            <p class="subtitle">
-              Les monarques enjoignent la ville de Tolède d’accorder foi aux paroles de leur envoyé Juan Niño
-            </p>
-          </div>
-        </div>-->
       </div>
     </div>
   </div>
