@@ -1,4 +1,21 @@
 /* =============================================================
+  This stylesheet consists of two parts:
+  - first, the TEI consortium TEI.css stylesheet embed within
+  the page div displaying the TEI DTS API response if applicable
+  (class .document-views)
+  - second, additional custom rules to adapt the TEI.css
+  stylesheet if necessary (in particular for fragments or tags
+  conflicting with HTML)
+  =========================================================== */
+
+/* =============================================================
+  PART 1: TEI consortium TEI.css stylesheet embed within
+  the page div displaying the TEI DTS API response if applicable
+  (class .document-views)
+  =========================================================== */
+
+
+/* =============================================================
     CSS2 specification for TEI in oXygen.
  derived from stylesheet by
     Author: Adrian Edwards (adrian_edwards@yahoo.com)
@@ -373,18 +390,6 @@ $LastChangedDate$, $LastChangedRevision$, $LastChangedBy$
   group {
     display: block;
     margin-bottom: 1em;
-  }
-  head {
-    display: block;
-    font-size: larger;
-    padding-top: 14px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    color: inherit;
-    background-color: #BBBBBB;
-    font-weight: bold;
-    margin-bottom: 0.5em;
-    margin-top: 1em;
   }
   body > div > head {
     display: block;
@@ -997,5 +1002,30 @@ $LastChangedDate$, $LastChangedRevision$, $LastChangedBy$
     display: block;
     font-weight: bold;
     margin-bottom: 0.5em;
+  }
+}
+
+/* =============================================================
+  PART 2: CUSTOM RULES
+  =========================================================== */
+.document-views {
+  /* for frgaments, head might not be included inside a body > div
+   (only scenario covered by the default TEI stylesheet) but is
+   inside the fragment wrapper and a div, without a body element */
+  head {
+    display: block;
+    font-size: larger;
+    padding-top: 14px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    color: inherit;
+    background-color: #BBBBBB;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    margin-top: 1em;
+  }
+  /* HTML s element has an intrinsic text-decoration, which needs to be disabled in TEI */
+  s {
+    text-decoration: none;
   }
 }
