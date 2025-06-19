@@ -2,21 +2,21 @@
   <article class="about">
     <div class="about-content app-width-padding">
       <h1>A custom default title</h1>
-      <h2>In the default custom component, you can use either : </h2>
+      <h2>In the default custom component, you can use either: </h2>
       <p>
-        <b>a DTS API collection description if available :</b>
+        <b>a DTS API collection description if available:</b>
       </p>
       <p>
         {{ dtsCollDescription ? dtsCollDescription : 'No DTS API collection description available' }}
       </p>
       <p>
-        <b>a custom collection description (homePageSettings.collectionDescription) if available :</b>
+        <b>a custom collection description (homePageSettings.descriptionSection.collectionDescription) if available:</b>
       </p>
       <p>
-        {{ customCollDescription ? customCollDescription : 'No homePageSettings.collectionDescription available' }}
+        {{ customCollDescription ? customCollDescription : 'No homePageSettings.descriptionSection.collectionDescription available' }}
       </p>
       <p>
-        <b>...or use a complete custom default description.</b>
+        <b>...or use a complete custom default description:</b>
       </p>
     </div>
   </article>

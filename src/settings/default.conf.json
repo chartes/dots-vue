@@ -2,20 +2,31 @@
   "genericConf": {
     "mediaTypeEndpoint": "tei",
     "homePageSettings": {
-      "collectionsPerPage": 3,
-      "collectionAltTitle": "",
-      "collectionShortTitle": "",
-      "collectionDescription": "",
-      "customCollectionDescription": { "compName": "HomePageContent" },
-      "appNavBarLogo": {
+      "appNavBar": {
+        "appNavBarLogo": {
         "imgName": "Logo_dots_circle.svg",
         "href": "/"
+        },
+        "collectionShortTitle": "",
+        "appNavBarApiLogo": {
+          "imgName": "",
+          "href": "/"
+        }
       },
-      "appNavBarApiLogo": {
-        "imgName": "",
-        "href": "/"
+      "pageHeader": {
+        "collectionAltTitle": "",
+        "aboutButtonText": "about"
       },
-      "logo": ""
+      "descriptionSection": {
+        "collectionDescription": "",
+        "customCollectionDescription": { "compName": "HomePageContent" }
+      },
+      "listSection": {
+        "displayAs": "",
+        "collectionsPerPage": 3,
+        "logo": "",
+        "browseButtonText": "Browse the collection"
+      }
     },
     "footerSettings": {
       "footerTitle": "",

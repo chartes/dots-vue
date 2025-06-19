@@ -1172,29 +1172,38 @@ export default {
         console.log('Document page getCustomCss appCssConfs', appCssConfs)
         console.log('Document page getCustomCss collConfig.value.collectionCustomCss', collConfig.value.collectionCustomCss)
         console.log('Document page getCustomCss get in if')
-        /* const match = appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css`]
-        console.log('Document page getCustomCss match path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css`)
+        /* const match = appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`]
+        console.log('Document page getCustomCss match path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
         console.log('Document page getCustomCss match', match) */
-        cssPath.value = `confs/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css`
-        console.log('Document page getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css`)
-        // (`confs/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css`)
-        //let cssComp
-        customCss.value = await import(`confs/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css?raw`)
-        /* cssComp = defineAsyncComponent(() => import('../components/AppNavbar.vue')
-          .then((comp) => {
-            console.log('Document page getCustomCss comp : ', comp)
-            return comp
-          })
-          .catch((error) => {
-            console.log(`error loading ${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/css/${collConfig.value.collectionId}.customCss.css : `, error)
-          })
-        )*/
+        cssPath.value = `confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`
+        console.log('Document page getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
 
-        document.head.appendChild(customCss.value)
-        /*customCss = shallowRef(cssComp)
-        cssComp = undefined*/
-        console.log('Document page customCss.value / cssComp : ', customCss.value, cssComp)
+        /* customCss.value = await import(`confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css?raw`) */
+
+        if (collConfig.value.collectionCustomCss && appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`]) {
+          console.log('Document page getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`])
+          customCss.value = await import(`confs/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css?raw`)
+          const style = document.createElement('style')
+          style.textContent = customCss.value.default
+          style.id = 'customCss'
+          document.head.append(style)
+          console.log('Document page customCss.value / cssComp : ', customCss.value)
+        }
       }
+    }
+
+    const removeCustomCss = () => {
+      console.log('Document page watch store.state.collectionId', store.state.collectionId)
+      const styleTags = [...document.querySelectorAll('style')]
+      console.log('Document page watch store.state.collectionId getCustomCss styleTags ', styleTags)
+      styleTags.forEach((tag) => {
+        //console.log('Document page watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
+        if (tag.id === 'customCss') {
+          console.log('Document page watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
+          console.log('Document page watch store.state.collectionId getCustomCss tag.id ', tag.id)
+          tag.remove()
+        }
+      })
     }
 
     watch(
@@ -1217,6 +1226,8 @@ export default {
       console.log('Document page watch newProps.collectionConfig / collConfig.value : ', collConfig.value)
       if (collConfig.value.collectionCustomCss) {
         await getCustomCss()
+      } else {
+        removeCustomCss()
       }
     }, { deep: true, immediate: true })
 
@@ -1297,6 +1308,26 @@ export default {
         }
       }, { deep: true, immediate: true }
     )
+    /*watch(
+      () => store.state.collectionId, async function () {
+        console.log('Document page watch store.state.collectionId', store.state.collectionId)
+        const styleTags = [...document.querySelectorAll('style')]
+        console.log('Document page watch store.state.collectionId getCustomCss styleTags ', styleTags)
+        styleTags.forEach((tag) => {
+          console.log('Document page watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
+          if (tag.id === 'customCss') {
+            console.log('Document page watch store.state.collectionId getCustomCss tag.id ', tag.id)
+            tag.remove()
+          }
+        })
+      }, { immediate: true }
+    )*/
+    /*watch(
+      () => store.state.collectionId, function () {
+        console.log('Document page watch store.state.collectionId', store.state.collectionId)
+        removeCustomCss()
+      }, { immediate: true }
+    )*/
 
     function scrollTo () {
       nextTick(() => {
@@ -1313,7 +1344,7 @@ export default {
       window.addEventListener('scroll', updateMiradorTopPosition)
       layout.isTOCMenuOpened.value = false
     })
-    onBeforeUnmount(() => {
+    /* onBeforeUnmount(() => {
       const styleTags = [...document.querySelectorAll('style')]
       console.log('Document page getCustomCss styleTags ', styleTags)
       styleTags.forEach((tag) => {
@@ -1323,7 +1354,7 @@ export default {
           tag.remove()
         }
       })
-    })
+    })*/
 
     onUnmounted(() => {
       const appView = document.getElementById('app')
@@ -1388,6 +1419,7 @@ export default {
       currentItem,
       setText,
       getCustomCss,
+      removeCustomCss,
       customCss,
       cssPath
     }

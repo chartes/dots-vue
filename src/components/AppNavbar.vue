@@ -137,7 +137,7 @@ export default {
     const apiImgHref = ref('')
     const projectShortTitle = ref(props.rootCollectionShortTitle)
     console.log('AppNavbar setup props.collectionConfig', props.collectionConfig)
-    const collShortTitle = ref(props.collectionConfig.homePageSettings.collectionShortTitle)
+    const collShortTitle = ref(props.collectionConfig.homePageSettings.appNavBar.collectionShortTitle)
     const collectionId = ref(props.collectionIdentifier)
     console.log('AppNavbar setup props.rootCollectionIdentifier', props.rootCollectionIdentifier)
     console.log('AppNavbar setup rootCollectionId', rootCollectionId.value)
@@ -161,8 +161,11 @@ export default {
       // TODO: provide a logo object with url AND legend ?
 
       const sourceConfig = collConfig.value
-      if (sourceConfig && Object.keys(sourceConfig.homePageSettings).includes('appNavBarLogo') && sourceConfig.homePageSettings.appNavBarLogo.imgName.length) {
-        console.log('AppNavbar ImgUrl found : ', sourceConfig.homePageSettings.appNavBarLogo.imgName)
+      if (sourceConfig && sourceConfig.homePageSettings && Object.keys(sourceConfig.homePageSettings).includes('appNavBar')
+          && sourceConfig.homePageSettings.appNavBar && Object.keys(sourceConfig.homePageSettings.appNavBar).includes('appNavBarLogo')
+          && sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName.length
+        ) {
+        console.log('AppNavbar ImgUrl found : ', sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName)
         // Get all images from the settings repo
         const images = import.meta.glob('confs/*/assets/images/*.*', { eager: true })
         console.log('AppNavbar ImgUrl images: ', images)
@@ -176,7 +179,7 @@ export default {
         // If an AppNavBar image is set on the root collection, set it as rootCollImg to be used
         if (rootCollConfig) {
           console.log('AppNavbar ImgUrl rootCollConfig : ', rootCollConfig)
-          rootCollImg = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/assets/images/${rootCollConfig.homePageSettings.appNavBarLogo.imgName}`]
+          rootCollImg = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/assets/images/${rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.imgName}`]
           console.log('AppNavbar ImgUrl rootCollImg : ', rootCollImg)
         }
         // Setting the default AppNavBar image (dots) if none is defined at root or collection level
@@ -185,40 +188,40 @@ export default {
         images['/src/assets/images/Logo_dots_circle.svg'] = defaultSettings['/src/assets/images/Logo_dots_circle.svg']
 
         // Match the collection AppNavBar image if any
-        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.appNavBarLogo.imgName}`]
+        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName}`]
         console.log('AppNavbar ImgUrl match: ', match)
         const defaultImg = images['/src/assets/images/Logo_dots_circle.svg']
         // Use the collection AppNavBar image if any
         if (match) {
-          if (sourceConfig.homePageSettings.appNavBarLogo.imgName.includes('https')) {
-            imgHref.value = sourceConfig.homePageSettings.appNavBarLogo.href
-            return sourceConfig.homePageSettings.appNavBarLogo.imgName
+          if (sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName.includes('https')) {
+            imgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarLogo.href
+            return sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName
           } else {
-            imgHref.value = sourceConfig.homePageSettings.appNavBarLogo.href
+            imgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarLogo.href
             console.log('AppNavbar ImgUrl imgHref.value : ', imgHref.value)
             console.log('AppNavbar ImgUrl match : ', match)
             return match.default
           }
         // Otherwise use the root collection AppNavBar image if any
         } else if (rootCollImg) {
-          if (rootCollConfig.homePageSettings.appNavBarLogo.imgName.includes('https')) {
-            imgHref.value = rootCollConfig.homePageSettings.appNavBarLogo.href
-            return rootCollConfig.homePageSettings.appNavBarLogo.imgName
+          if (rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.imgName.includes('https')) {
+            imgHref.value = rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.href
+            return rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.imgName
           } else {
-            imgHref.value = rootCollConfig.homePageSettings.appNavBarLogo.href
-            console.log('AppNavbar ImgUrl appNavBarLogo.imgName : ', `${rootCollConfig.homePageSettings.appNavBarLogo.imgName}`)
+            imgHref.value = rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.href
+            console.log('AppNavbar ImgUrl appNavBarLogo.imgName : ', `${rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.imgName}`)
             console.log('AppNavbar ImgUrl imgHref.value : ', imgHref.value)
             console.log('AppNavbar ImgUrl rootCollImg : ', rootCollImg)
             return rootCollImg.default
           }
         // Otherwise use the default (dots) AppNavBar image
         } else if (defaultImg) {
-          if (sourceConfig.homePageSettings.appNavBarLogo.imgName.includes('https')) {
-            imgHref.value = sourceConfig.homePageSettings.appNavBarLogo.href
-            return sourceConfig.homePageSettings.appNavBarLogo.imgName
+          if (sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName.includes('https')) {
+            imgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarLogo.href
+            return sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName
           } else {
-            imgHref.value = sourceConfig.homePageSettings.appNavBarLogo.href
-            console.log('AppNavbar ImgUrl appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBarLogo.imgName}`)
+            imgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarLogo.href
+            console.log('AppNavbar ImgUrl appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName}`)
             console.log('AppNavbar ImgUrl imgHref.value : ', imgHref.value)
             console.log('AppNavbar ImgUrl defaultImg : ', defaultImg)
             return defaultImg.name
@@ -231,8 +234,11 @@ export default {
     const apiImgUrl = (source) => {
       // TODO: provide a logo object with url AND legend ?
       const sourceConfig = collConfig.value
-      if (sourceConfig && Object.keys(sourceConfig.homePageSettings).includes('appNavBarApiLogo') && sourceConfig.homePageSettings.appNavBarApiLogo.imgName.length) {
-        console.log('AppNavbar apiImgUrl found : ', sourceConfig.homePageSettings.appNavBarApiLogo.imgName)
+      if (sourceConfig && sourceConfig.homePageSettings && Object.keys(sourceConfig.homePageSettings).includes('appNavBar')
+          && sourceConfig.homePageSettings.appNavBar && Object.keys(sourceConfig.homePageSettings.appNavBar).includes('appNavBarApiLogo')
+          && sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName.length
+      ) {
+        console.log('AppNavbar apiImgUrl found : ', sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName)
         // Get all images from the settings repo
         const images = import.meta.glob('confs/*/assets/images/*.*', { eager: true })
         console.log('AppNavbar apiImgUrl images: ', images)
@@ -246,7 +252,7 @@ export default {
         // If an AppNavBar image is set on the root collection, set it as rootCollImg to be used
         if (rootCollConfig) {
           console.log('AppNavbar apiImgUrl rootCollConfig : ', rootCollConfig)
-          rootCollImg = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/assets/images/${rootCollConfig.homePageSettings.appNavBarApiLogo.imgName}`]
+          rootCollImg = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/assets/images/${rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`]
           console.log('AppNavbar apiImgUrl rootCollImg : ', rootCollImg)
         }
         // Setting the default AppNavBar image (dots) if none is defined at root or collection level
@@ -255,40 +261,40 @@ export default {
         images['/src/assets/images/Logo_dots_circle.svg'] = defaultSettings['/src/assets/images/Logo_dots_circle.svg']
 
         // Match the collection AppNavBar image if any
-        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.appNavBarApiLogo.imgName}`]
+        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`]
         console.log('AppNavbar apiImgUrl match: ', match)
         const defaultImg = images['/src/assets/images/Logo_dots_circle.svg']
         // Use the collection AppNavBar image if any
         if (match) {
-          if (sourceConfig.homePageSettings.appNavBarApiLogo.imgName.includes('https')) {
-            apiImgHref.value = sourceConfig.homePageSettings.appNavBarApiLogo.href
-            return sourceConfig.homePageSettings.appNavBarApiLogo.imgName
+          if (sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName.includes('https')) {
+            apiImgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
+            return sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName
           } else {
-            apiImgHref.value = sourceConfig.homePageSettings.appNavBarApiLogo.href
+            apiImgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
             console.log('AppNavbar apiImgUrl apiImgHref.value : ', apiImgHref.value)
             console.log('AppNavbar apiImgUrl match : ', match)
             return match.default
           }
         // Otherwise use the root collection AppNavBar image if any
         } else if (rootCollImg) {
-          if (rootCollConfig.homePageSettings.appNavBarApiLogo.imgName.includes('https')) {
-            apiImgHref.value = rootCollConfig.homePageSettings.appNavBarApiLogo.href
-            return rootCollConfig.homePageSettings.appNavBarApiLogo.imgName
+          if (rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName.includes('https')) {
+            apiImgHref.value = rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
+            return rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName
           } else {
-            apiImgHref.value = rootCollConfig.homePageSettings.appNavBarApiLogo.href
-            console.log('AppNavbar apiImgUrl appNavBarLogo.imgName : ', `${rootCollConfig.homePageSettings.appNavBarApiLogo.imgName}`)
+            apiImgHref.value = rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
+            console.log('AppNavbar apiImgUrl appNavBarLogo.imgName : ', `${rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`)
             console.log('AppNavbar apiImgUrl apiImgHref.value : ', apiImgHref.value)
             console.log('AppNavbar apiImgUrl rootCollImg : ', rootCollImg)
             return rootCollImg.default
           }
         // Otherwise use the default (dots) AppNavBar image
         } else if (defaultImg) {
-          if (sourceConfig.homePageSettings.appNavBarApiLogo.imgName.includes('https')) {
-            apiImgHref.value = sourceConfig.homePageSettings.appNavBarApiLogo.href
-            return sourceConfig.homePageSettings.appNavBarApiLogo.imgName
+          if (sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName.includes('https')) {
+            apiImgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
+            return sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName
           } else {
-            apiImgHref.value = sourceConfig.homePageSettings.appNavBarApiLogo.href
-            console.log('AppNavbar apiImgUrl appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBarApiLogo.imgName}`)
+            apiImgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
+            console.log('AppNavbar apiImgUrl appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`)
             console.log('AppNavbar apiImgUrl apiImgHref.value : ', apiImgHref.value)
             console.log('AppNavbar apiImgUrl defaultImg : ', defaultImg)
             return defaultImg.name
@@ -314,7 +320,7 @@ export default {
       appConfig.value = newProps.applicationConfig
       collConfig.value = newProps.collectionConfig
       projectShortTitle.value = newProps.rootCollectionShortTitle
-      collShortTitle.value = newProps.collectionConfig.homePageSettings.collectionShortTitle
+      collShortTitle.value = newProps.collectionConfig.homePageSettings.appNavBar.collectionShortTitle
       collectionId.value = newProps.collectionIdentifier
     }, { deep: true, immediate: true })
 

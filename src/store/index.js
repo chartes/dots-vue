@@ -3,13 +3,17 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     resourceId: undefined,
+    collectionId: undefined,
     currentItem: {},
     TOC: [],
     arianeDocument: undefined
   },
   mutations: {
-    setResourceId (state, id) {
-      state.resourceId = id
+    setResourceId (state, resourceId) {
+      state.resourceId = resourceId
+    },
+    setCollectionId (state, collectionId) {
+      state.collectionId = collectionId
     },
     setCurrentItem (state, item) {
       state.currentItem = item

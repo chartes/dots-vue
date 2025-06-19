@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="rootCollectionId === dtsRootCollectionId && collectionId === rootCollectionId"
+    v-if="(rootCollectionId === dtsRootCollectionId && collectionId === rootCollectionId && displayOpt !== 'list') || displayOpt === 'cards'"
     class="collection-list"
   ><!-- && currCollection.member.every(m => m.citeType === 'Collection') -->
     <div class="tiles">
@@ -16,14 +16,14 @@
                 :to="{ name: 'About', params: { collId: collectionId } }"
                 active-class="active"
               >
-                About
+                {{ aboutBttnTxt }}
               </router-link>
               <router-link
                 v-else
                 :to="{ name: 'About'}"
                 active-class="active"
               >
-                About
+                {{ aboutBttnTxt }}
               </router-link>
             </div>
           </div>
@@ -31,7 +31,7 @@
       </div>
     </div>
     <section class="main app-width-margin">
-      <!-- homePageSettings.customCollectionDescription, use it and pass DTS description and homePageSettings.collectionDescription settings if available -->
+      <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
       <div
         v-if="customCollectionDescription"
         id="article"
@@ -44,7 +44,7 @@
         />
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
-      <!-- no homePageSettings.customCollectionDescription : use DTS API collection description if available -->
+      <!-- no homePageSettings.descriptionSection.customCollectionDescription : use DTS API collection description if available -->
       <div
         v-else-if="currCollection.description"
         id="article"
@@ -53,7 +53,7 @@
         <h1>La collection</h1>
           {{ currCollection.description }}
       </div>
-      <!-- no homePageSettings.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
+      <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
       <div
         v-else-if="collectionDescription"
         id="article"
@@ -94,7 +94,7 @@
                 class="current-page"
                 @change.prevent="currentPage = parseInt(p)"
               >
-              <span class="label-sur-page">sur</span>
+              <span class="label-sur-page">/</span>
               <span class="total-pages">{{ totalPages }}</span>
               <a
                 :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
@@ -106,58 +106,19 @@
               />
             </div>
           </div>
-        </div>
-      <div
-        v-for="(c, index) in currentPageData" :key="index"
-        class="document-card"
-      >
-        <div class="card-header">
-          <div class="document-folder">
-            <div class="card-header-first-line">
-              <!--<span class="collection-elec-id">
-                ID
-              </span>-->
-              <div class="collection-metadata is-flex-direction-column">
-                <div
-                  class=""
-                >
-                  <router-link :to="{ name: 'Home', params: { collId: c.identifier }}">
-                    {{ c.title }}
-                  </router-link>
-                </div><!-- card-header-first-line -->
-                <div class="is-flex is-flex-direction-column">
-                  <span>
-                    {{ c.author }} {{ c.dublincore.creator }}
-                  </span>
-                  <span
-                  >
-                    {{ c.dublincore.date }}
-                  </span><!-- v-if="c.date" -->
-                </div>
-                <div class="collection-description">
-                  <span>
-                    {{ c.description }}
-                  </span><!-- v-if="c.date" -->
-                </div>
-              </div>
-              <div class="card-image is-flex is-justify-content-center">
-                <router-link :to="{ name: 'Home', params: { collId: c.identifier }}">
-                  <img
-                    v-if="ImgUrl(c.identifier)"
-                    :src="ImgUrl(c.identifier)"
-                  />
-                  <img
-                    v-else
-                    src="@/assets/images/dots-logo-retro.drawio.svg"
-                    alt=""
-                  />
-                </router-link>
-              </div>
-            </div>
-
-          </div>
-        </div>
       </div>
+      <div>
+        <CollectionTOC
+          :is-doc-projectId-included="isDocProjectIdInc"
+          :display-option="displayOpt"
+          :current-collection="currCollection"
+          :dts-root-collection-identifier="dtsRootCollectionId"
+          :root-collection-identifier="rootCollectionId"
+          :toc="componentTOC"
+          :margin="0"
+        />
+      </div>
+
     </div>
   </div>
   <div
@@ -178,46 +139,22 @@
                 :to="{ name: 'About', params: {collId: collectionId}}"
                 active-class="active"
               >
-                About
+                {{ aboutBttnTxt }}
               </router-link><!-- , params: {collId: collectionId}  -->
               <router-link
                 v-else
                 :to="{ name: 'About'}"
                 active-class="active"
               >
-                About
+                {{ aboutBttnTxt }}
               </router-link>
-            </div>
-          </div>
-          <div class="wrapper">
-            <div class="toc-area app-width-margin">
-              <div
-                class="toc-area-header"
-                :class="expandedById[collectionId] ? 'expanded': ''"
-              >
-                <a href="#">Browse</a>
-                <a href="#" class="toggle-btn" v-on:click.prevent="toggleExpanded(collectionId)"></a>
-              </div>
-              <div v-if="componentTOC.length > 0"
-                class="menu app-width-margin"
-                :class="expandedById[collectionId] ? 'expanded': ''"
-              >
-                <div v-if="expandedById[collectionId] && componentTOC.length > 0">
-                  <CollectionTOC
-                    :is-doc-projectId-included="isDocProjectIdInc"
-                    :dts-root-collection-identifier="dtsRootCollectionId"
-                    :toc="componentTOC"
-                    :margin="0"
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <section class="main app-width-margin">
-      <!-- homePageSettings.customCollectionDescription, use it and pass DTS description and homePageSettings.collectionDescription settings if available -->
+      <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
       <div
         v-if="customCollectionDescription"
         id="article"
@@ -230,7 +167,7 @@
         />
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
-      <!-- no homePageSettings.customCollectionDescription : use DTS API collection description if available -->
+      <!-- no homePageSettings.descriptionSection.customCollectionDescription : use DTS API collection description if available -->
       <div
         v-else-if="currCollection.description"
         id="article"
@@ -239,7 +176,7 @@
         <h1>La collection</h1>
           {{ currCollection.description }}
       </div>
-      <!-- no homePageSettings.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
+      <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.descriptionSection.collectionDescription) -->
       <div
         v-else-if="collectionDescription"
         id="article"
@@ -250,6 +187,38 @@
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
     </section>
+    <div class="wrapper">
+      <div class="toc-area app-width-margin">
+        <div
+          class="toc-area-header"
+          :class="expandedById[collectionId] ? 'expanded': ''"
+        >
+          <a href="#">{{ browseBttnTxt }}</a>
+          <a
+            href="#"
+            class="toggle-btn"
+            :class="expandedById[collectionId] ? 'expanded': ''"
+            v-on:click.prevent="toggleExpanded(collectionId)"
+          />
+        </div>
+        <div v-if="componentTOC.length > 0"
+          class="menu app-width-margin"
+          :class="expandedById[collectionId] ? 'expanded': ''"
+        >
+          <div v-if="(expandedById[collectionId] && componentTOC.length > 0)">
+            <CollectionTOC
+              :is-doc-projectId-included="isDocProjectIdInc"
+              :display-option="displayOpt"
+              :current-collection="currCollection"
+              :dts-root-collection-identifier="dtsRootCollectionId"
+              :root-collection-identifier="rootCollectionId"
+              :toc="componentTOC"
+              :margin="0"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -258,6 +227,7 @@ import { computed, defineAsyncComponent, inject, reactive, ref, shallowRef, watc
 
 import { getMetadataFromApi } from '@/api/document.js'
 import CollectionTOC from '@/components/CollectionTOC.vue'
+import store from '@/store'
 
 export default {
   name: 'HomePage',
@@ -304,13 +274,18 @@ export default {
     const appConfig = ref(props.applicationConfig)
     const collConfig = ref(props.collectionConfig)
     const collectionDescription = ref('')
-    const customCollectionDescription = ref(props.collectionConfig.homePageSettings.customCollectionDescription ? props.collectionConfig.homePageSettings.customCollectionDescription : {})
+    const customCollectionDescription = ref(props.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription ? props.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription : {})
     console.log('HomePage setup customCollectionDescription', customCollectionDescription.value)
     const customDescription = shallowRef('')
-    const collectionAltTitle = ref(props.collectionConfig.homePageSettings.collectionAltTitle)
+    const collectionAltTitle = ref(props.collectionConfig.homePageSettings.pageHeader.collectionAltTitle)
     console.log('HomePage setup collectionAltTitle', collectionAltTitle.value)
+    const aboutBttnTxt = ref(props.collectionConfig.homePageSettings.pageHeader.aboutButtonText)
+    const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
     const collectionId = ref(props.collectionIdentifier)
     console.log('HomePage setup collectionId', collectionId.value)
+
+    let customCss = shallowRef({})
+    const cssPath = ref('')
 
     const componentTOC = ref([])
     const currCollection = ref(props.currentCollection)
@@ -319,6 +294,7 @@ export default {
     console.log('HomePageDefault currentCollection.value / componentTOC.value : ', currCollection.value, componentTOC.value)
     console.log('HomePageDefault componentTOC / collectionId : ', Object.fromEntries(componentTOC.value.map(col => [col.identifier, false])), componentTOC.value, collectionId, currCollection)
 
+    const displayOpt = ref(props.collectionConfig.homePageSettings.listSection.displayAs)
     const currentPage = ref(1)
     const pageSize = ref(0)
     const totalPages = ref(1)
@@ -348,17 +324,60 @@ export default {
       return state.isTreeOpened ? 'is-tree-opened' : ''
     })
 
+    const getCustomCss = async () => {
+
+      if (collConfig.value.collectionCustomCss) {
+        // const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: true })
+        const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: false })
+        console.log('HomePage getCustomCss appCssConfs', appCssConfs)
+        console.log('HomePage getCustomCss collConfig.value.collectionCustomCss', collConfig.value.collectionCustomCss)
+        console.log('HomePage getCustomCss get in if')
+        /* const match = appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`]
+        console.log('HomePage getCustomCss match path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
+        console.log('HomePage getCustomCss match', match) */
+        cssPath.value = `confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`
+        console.log('HomePage getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
+
+        /* customCss.value = await import(`confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css?raw`) */
+
+        if (collConfig.value.collectionCustomCss && appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`]) {
+          console.log('HomePage getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`])
+          customCss.value = await import(`confs/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css?raw`)
+          const style = document.createElement('style')
+          style.textContent = customCss.value.default
+          style.id = 'customCss'
+          document.head.append(style)
+          console.log('HomePage customCss.value / cssComp : ', customCss.value)
+        }
+      }
+    }
+    const removeCustomCss = () => {
+      console.log('HomePage watch store.state.collectionId', store.state.collectionId)
+      const styleTags = [...document.querySelectorAll('style')]
+      console.log('HomePage watch store.state.collectionId getCustomCss styleTags ', styleTags)
+      styleTags.forEach((tag) => {
+        //console.log('HomePage watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
+        if (tag.id === 'customCss') {
+          console.log('HomePage watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
+          console.log('HomePage watch store.state.collectionId getCustomCss tag.id ', tag.id)
+          tag.remove()
+        }
+      })
+    }
+
     const ImgUrl = (source) => {
       // TODO: provide a logo object with url AND legend ?
       const sourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
-      if (sourceConfig && Object.keys(sourceConfig.homePageSettings).includes('logo') && sourceConfig.homePageSettings.logo.length) {
-        console.log('HomePage ImgUrl found : ', sourceConfig.homePageSettings.logo)
+      if (sourceConfig && sourceConfig.homePageSettings && Object.keys(sourceConfig.homePageSettings).includes('listSection')
+          && sourceConfig.homePageSettings.listSection && Object.keys(sourceConfig.homePageSettings.listSection).includes('logo')
+          && sourceConfig.homePageSettings.listSection.logo.length) {
+        console.log('HomePage ImgUrl found : ', sourceConfig.homePageSettings.listSection.logo)
         const images = import.meta.glob('confs/*/assets/images/*.*', { eager: true })
         console.log('HomePage ImgUrl images: ', images)
-        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.logo}`]
+        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.listSection.logo}`]
         console.log('HomePage ImgUrl match: ', match)
-        if (sourceConfig.homePageSettings.logo.includes('https')) {
-          return sourceConfig.homePageSettings.logo
+        if (sourceConfig.homePageSettings.listSection.logo.includes('https')) {
+          return sourceConfig.homePageSettings.listSection.logo
         } else {
           return match.default // new URL(`/src/assets/images/${sourceConfig.homePageSettings.logo}`, import.meta.url).href
         }
@@ -433,19 +452,31 @@ export default {
     }
 
     watch(props, async (newProps) => {
+      componentTOC.value = []
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
       collectionId.value = newProps.collectionIdentifier
       appConfig.value = newProps.applicationConfig
       collConfig.value = newProps.collectionConfig
-      pageSize.value = newProps.collectionConfig.homePageSettings.collectionsPerPage
+      displayOpt.value = newProps.collectionConfig.homePageSettings.listSection.displayAs
+      pageSize.value = newProps.collectionConfig.homePageSettings.listSection.collectionsPerPage
+      browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
       currCollection.value = newProps.currentCollection
-      collectionAltTitle.value = newProps.collectionConfig.homePageSettings.collectionAltTitle
-      collectionDescription.value = newProps.collectionConfig.homePageSettings.collectionDescription
-      customCollectionDescription.value = newProps.collectionConfig.homePageSettings.customCollectionDescription
+      collectionAltTitle.value = newProps.collectionConfig.homePageSettings.pageHeader.collectionAltTitle
+      aboutBttnTxt.value = newProps.collectionConfig.homePageSettings.pageHeader.aboutButtonText
+      collectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.collectionDescription
+      customCollectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription
       componentTOC.value = [...currCollection.value.member].sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
-      console.log('HomePageDefault watch collectionConfig collectionDescription : ', collConfig.value, collectionDescription.value)
+      console.log('HomePage watch collectionConfig collectionDescription : ', collConfig.value, collectionDescription.value)
       paginated()
+      console.log('HomePage watch collConfig.value.collectionCustomCss : ', collConfig.value, collConfig.value.collectionCustomCss)
+      if (collConfig.value.collectionCustomCss) {
+        console.log('HomePage watch collConfig.value.collectionCustomCss IF: ', collConfig.value.collectionCustomCss)
+        await getCustomCss()
+      } else if (customCss.value) {
+        console.log('HomePage watch collConfig.value.collectionCustomCss ELSE: ', customCss.value)
+        removeCustomCss()
+      }
       if (customCollectionDescription.value) {
         customDescription.value = await getCustomHomeDescription()
       } else {
@@ -456,6 +487,14 @@ export default {
     watch(currentPage, () => {
       paginated()
     })
+    watch(
+      () => store.state.collectionId, function () {
+        console.log('HomePage watch store.state.collectionId', store.state.collectionId)
+        if (store.state.collectionId && store.state.collectionId !== collectionId.value && customCss.value) {
+          removeCustomCss()
+        }
+      }, { immediate: true }
+    )
 
     return {
       appConfig,
@@ -464,6 +503,7 @@ export default {
       dtsRootCollectionId,
       rootCollectionId,
       collectionAltTitle,
+      aboutBttnTxt,
       collectionDescription,
       homeCssClass,
       tocCssClass: layout.tocCssClass,
@@ -474,13 +514,19 @@ export default {
       toggleExpanded,
       expandedById,
       currentPage,
+      displayOpt,
       pageSize,
+      browseBttnTxt,
       totalPages,
       paginated,
       currentPageData,
       customCollectionDescription,
       getCustomHomeDescription,
-      customDescription
+      customDescription,
+      getCustomCss,
+      removeCustomCss,
+      customCss,
+      cssPath
     }
   }
 }
@@ -541,7 +587,7 @@ a {
     margin-right: 47px; */
   }
 }
-.is-tree-opened .menu {
+.expanded.menu {
   display: flex;
   flex-direction: column;
   padding: 0px 20px 0px;
@@ -559,10 +605,11 @@ a {
   background: url(../assets/images/chevron_rouge.svg) center top -7px / cover no-repeat;
   border: none;
   text-decoration: none;
+  &.expanded {
+    background: url(../assets/images/croix.svg) center / cover no-repeat;
+  }
 }
-.is-tree-opened .toggle-btn {
-  background: url(../assets/images/croix.svg) center / cover no-repeat;
-}
+
 #article {
   margin-bottom: 30px !important;
   padding: 10px 0 10px !important;
@@ -672,6 +719,9 @@ a {
         text-transform: none;
       }
     }
+  }
+  & > .wrapper > .toc-area {
+    margin-bottom: 0 !important;
   }
 }
 .document-card .card-image {

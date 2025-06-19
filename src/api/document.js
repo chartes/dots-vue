@@ -49,6 +49,40 @@ async function getParentFromApi (id, options = {}) {
   return document
 }
 
+async function getProjectFromApi (id, options = {}) {
+  let rootCollection = {}
+  let rootCollectionId = ''
+  let projectId = ''
+  if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`) {
+    rootCollectionId = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
+    rootCollection = await getMetadataFromApi()
+  } else {
+    rootCollectionId = await getMetadataFromApi().then((response) => { return response['@id'] })
+    rootCollection = await getMetadataFromApi()
+  }
+  console.log('document.js get getProjectFromApi rootCollection', rootCollection)
+  console.log('document.js get getProjectFromApi rootCollectionId', rootCollectionId)
+  let loopId = id
+  while (rootCollectionId !== loopId) {
+    const response = await fetch(`${_baseApiURL}/collection?id=${loopId}&nav=parents`, { mode: 'cors', ...options })
+    const document = await response.json()
+    console.log('document.js get getProjectFromApi document', document)
+    if (document.member) {
+      loopId = document.member[0]['@id']
+    } else {
+      loopId = document['@id']
+      console.log('document.js get getProjectFromApi loopId = document[\'@id\']', document['@id'])
+      break
+    }
+  }
+  projectId = loopId
+  console.log('document.js get getProjectFromApi projectId', projectId)
+  /*const response = await fetch(`${_baseApiURL}/collection?id=${id}&nav=parents`, { mode: 'cors', ...options })
+  const document = await response.json()
+  console.log('document.js getParentFromApi response', document)*/
+  return projectId
+}
+
 // remove ENCPOS for theatre `${_baseApiURL}/collection?id=ENCPOS_${id}
 async function getPositionAnneeFromApi (id, options = {}) {
   const response = await fetch(`${_baseApiURL}/collection?id=ENCPOS_${id}`, { mode: 'cors', ...options })
@@ -69,6 +103,7 @@ export {
   getMetadataFromApi,
   getTOCFromApi,
   getParentFromApi,
+  getProjectFromApi,
   getPositionAnneeFromApi,
   getMetadataENCPOSFromApi
 }

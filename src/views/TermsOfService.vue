@@ -108,13 +108,13 @@ export default {
     }
   },
   setup (props) {
-    const collectionAltTitle = ref(props.collectionConfig.homePageSettings.collectionAltTitle)
+    const collectionAltTitle = ref(props.collectionConfig.homePageSettings.pageHeader.collectionAltTitle)
     const currCollection = ref(props.currentCollection)
     const websiteURL = window.location.origin
     const lastModified = new Intl.DateTimeFormat('fr-FR', { year: 'numeric', month: 'numeric', day: 'numeric' }).format(new Date(document.lastModified)).replace(/\./g, '-')
 
     watch(props, (newProps) => {
-      collectionAltTitle.value = newProps.collectionConfig.homePageSettings.collectionAltTitle
+      collectionAltTitle.value = newProps.collectionConfig.homePageSettings.pageHeader.collectionAltTitle
       currCollection.value = newProps.currentCollection
     }, { deep: true, immediate: true })
 

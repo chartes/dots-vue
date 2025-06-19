@@ -68,7 +68,7 @@ export default {
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const collConfig = ref(props.collectionConfig)
     const aboutSettings = ref([])
-    const collectionAltTitle = ref(props.collectionConfig.homePageSettings.collectionAltTitle)
+    const collectionAltTitle = ref(props.collectionConfig.homePageSettings.pageHeader.collectionAltTitle)
     const collectionId = ref(props.collectionIdentifier)
     const currCollection = ref(props.currentCollection)
     // const tabs = ref([])
@@ -134,7 +134,7 @@ export default {
       currCollection.value = newProps.currentCollection
       console.log('AboutPage watch newProps.collectionConfig', newProps.collectionConfig)
       collConfig.value = newProps.collectionConfig
-      collectionAltTitle.value = collConfig.value.homePageSettings.collectionAltTitle
+      collectionAltTitle.value = collConfig.value.homePageSettings.pageHeader.collectionAltTitle
       console.log('AboutPage watch collConfig', collConfig.value)
       if (collConfig.value && collConfig.value.aboutPageSettings && collConfig.value.aboutPageSettings.length > 0) {
         aboutSettings.value = collConfig.value.aboutPageSettings

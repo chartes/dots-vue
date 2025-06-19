@@ -1,5 +1,205 @@
 <template>
-  <ul class="tree">
+  <div
+    v-if="(currentCollection.identifier === rootCollectionId && displayOpt !== 'list') || displayOpt === 'cards'"
+  >
+    <div
+      v-for="(item, index) in componentTOC" :key="index"
+      class="document-card"
+    >
+      <template v-if="item['@type'] === 'Collection' || item.citeType === 'Collection'">
+        <div
+          v-if="isDocProjectIdInc && item.parent === rootCollectionId"
+          class="card-header"
+        >
+          <div class="document-folder">
+            <div class="card-header-first-line">
+              <!--<span class="collection-elec-id">
+                ID
+              </span>-->
+              <div class="collection-metadata is-flex-direction-column">
+                <div
+                  class=""
+                >
+                  <router-link :to="{ name: 'Home', params: { collId: item.identifier }}">
+                    {{ item.title }}
+                  </router-link>
+                </div><!-- card-header-first-line -->
+                <div class="is-flex is-flex-direction-column">
+                  <span>
+                    {{ item.author }} {{ item.dublincore.creator }} test 1a
+                  </span>
+                  <span
+                  >
+                    {{ item.dublincore.date }}
+                  </span><!-- v-if="c.date" -->
+                </div>
+                <div class="collection-description">
+                  <span>
+                    {{ item.description }}
+                  </span><!-- v-if="c.date" -->
+                </div>
+              </div>
+              <!--<div class="card-image is-flex is-justify-content-center">
+                <router-link :to="{ name: 'Home', params: { collId: c.identifier }}">
+                  <img
+                    v-if="ImgUrl(c.identifier)"
+                    :src="ImgUrl(c.identifier)"
+                  />
+                  <img
+                    v-else
+                    src="@/assets/images/dots-logo-retro.drawio.svg"
+                    alt=""
+                  />
+                </router-link>
+              </div>-->
+            </div>
+          </div>
+        </div>
+        <div
+          v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId"
+          class="card-header"
+        >
+          <div class="document-folder">
+            <div class="card-header-first-line">
+              <!--<span class="collection-elec-id">
+                ID
+              </span>-->
+              <div class="collection-metadata is-flex-direction-column">
+                <div
+                  class=""
+                >
+                  <router-link :to="{ name: 'Home', params: { collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] : item.extensions['dots:dotsProjectId'] }}">
+                    {{ item.title }}
+                  </router-link>
+                </div><!-- card-header-first-line -->
+                <div class="is-flex is-flex-direction-column">
+                  <span>
+                    {{ item.author }} {{ item.dublincore.creator }} test 1b
+                  </span>
+                  <span
+                  >
+                    {{ item.dublincore.date }}
+                  </span><!-- v-if="c.date" -->
+                </div>
+                <div class="collection-description">
+                  <span>
+                    {{ item.description }}
+                  </span><!-- v-if="c.date" -->
+                </div>
+              </div>
+              <!--<div class="card-image is-flex is-justify-content-center">
+                <router-link :to="{ name: 'Home', params: { collId: c.extensions ? Array.isArray(c.extensions['dots:dotsProjectId']) ? c.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : c.extensions['dots:dotsProjectId'] : c.extensions['dots:dotsProjectId'] }}">
+                  <img
+                    v-if="ImgUrl(c.identifier)"
+                    :src="ImgUrl(c.identifier)"
+                  />
+                  <img
+                    v-else
+                    src="@/assets/images/dots-logo-retro.drawio.svg"
+                    alt=""
+                  />
+                </router-link>
+              </div>-->
+            </div>
+          </div>
+        </div>
+        <div
+          v-if="isDocProjectIdInc && item.parent !== rootCollectionId && !componentTOC.map(i => i['@type']).every(t => t === 'Resource')"
+          class="wrapper"
+        >
+          <div class="toc-area">
+            <div
+              class="toc-area-header"
+              :class="expandedById[item.identifier] ? 'expanded': ''"
+            >
+              <a href="#">Parcourir</a>
+              <a
+                href="#"
+                class="toggle-btn"
+                :class="expandedById[item.identifier] ? 'expanded': ''"
+                v-on:click.prevent="toggleExpanded(item.identifier)"
+              />
+            </div>
+            <div v-if="expandedById[item.identifier] && item.totalChildren > 0 && item.children?.length > 0
+                || item.expanded === true && item.totalChildren > 0 && item.children?.length > 0"
+            >
+              <div v-if="expandedById[item.identifier] && item.totalChildren > 0 && item.children?.length > 0
+                || item.expanded === true && item.totalChildren > 0 && item.children?.length > 0"
+                class="menu app-width-margin expanded"
+              >
+                <CollectionTOC
+                  :is-doc-projectId-included="isDocProjectIdInc"
+                  :current-collection="item"
+                  :dts-root-collection-identifier="dtsRootCollectionId"
+                  :root-collection-identifier="rootCollectionId"
+                  :margin="$props.margin"
+                  :toc="item.children"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <div class="card-header">
+          <div class="document-folder">
+            <div class="card-header-first-line">
+              <!--<span class="collection-elec-id">
+                ID
+              </span>-->
+              <div class="collection-metadata is-flex-direction-column">
+                <div
+                  v-if="!isDocProjectIdInc"
+                >
+                  <router-link :to="{ name: 'Document', params: { id: item.identifier }}">
+                    {{ item.title }}
+                  </router-link>
+                </div><!-- card-header-first-line -->
+                <div
+                  v-else
+                >
+                  <router-link :to="{ name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }">
+                    {{ item.title }}
+                  </router-link>
+                </div>
+                <div class="is-flex is-flex-direction-column">
+                  <span>
+                    {{ item.author }} {{ item.dublincore.creator }} test 1a
+                  </span>
+                  <span
+                  >
+                    {{ item.dublincore.date }}
+                  </span><!-- v-if="c.date" -->
+                </div>
+                <div class="collection-description">
+                  <span>
+                    {{ item.description }}
+                  </span><!-- v-if="c.date" -->
+                </div>
+              </div>
+              <!--<div class="card-image is-flex is-justify-content-center">
+                <router-link :to="{ name: 'Home', params: { collId: c.identifier }}">
+                  <img
+                    v-if="ImgUrl(c.identifier)"
+                    :src="ImgUrl(c.identifier)"
+                  />
+                  <img
+                    v-else
+                    src="@/assets/images/dots-logo-retro.drawio.svg"
+                    alt=""
+                  />
+                </router-link>
+              </div>-->
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+  <ul
+    v-else
+    class="tree"
+  >
     <template v-for="(item, index) in componentTOC" :key="index">
       <li
         :style="`margin-left: ${ $props.margin }px;`"
@@ -28,7 +228,7 @@
               :class="route.params.id === item.identifier ? 'is-current' : ''"
               :to="{ name: 'Home', params: {collId: item.identifier} }"
             >
-              {{ item.citeType }}
+              {{ item.citeType }} test1
               {{ item.title }}
             </router-link>
             <router-link
@@ -36,7 +236,7 @@
               :class="route.params.id === item.identifier ? 'is-current' : ''"
               :to="{ name: 'Home', params: {collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] !== item.parent ? item.extensions['dots:dotsProjectId'] : item.identifier : item.identifier} }"
             >
-              {{ item.citeType }}
+              {{ item.citeType }} test2
               {{ item.title }}
             </router-link>
             <span
@@ -44,7 +244,7 @@
               :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
               @click="toggleExpanded(item.identifier)"
             >
-              {{ item.citeType }}
+              {{ item.citeType }} test3
               {{ item.title }}
             </span>
           </template>
@@ -76,8 +276,9 @@
             v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId && item.extensions['dots:dotsProjectId'] === route.params.collId"
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }"
+            @click.prevent="setStateCollection(selectedParent)"
           >
-            {{ item.citeType }}
+            {{ item.citeType ? item.citeType : item['@type'] }} test4
             {{ item.title }}
           </router-link>
           <router-link
@@ -85,7 +286,7 @@
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Document', params: { collId: Array.isArray(item.parent) ? item.parent.find(p => p === route.params.collId) ? route.params.collId : item.parent[0] : item.parent, id: item.identifier } }"
           >
-            {{ item.citeType }}
+            {{ item.citeType }} test5
             {{ item.title }}
           </router-link>
           <router-link
@@ -93,17 +294,19 @@
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Document', params: { id: item.identifier } }"
           >
-            {{ item.citeType }}
+            {{ item.citeType }} test6
             {{ item.title }}
           </router-link>
-
         </div>
         <div v-if="expandedById[item.identifier] && item.totalChildren > 0 && item.children?.length > 0
-                  || item.expanded === true && item.totalChildren > 0 && item.children?.length > 0">
-
+                  || item.expanded === true && item.totalChildren > 0 && item.children?.length > 0"
+        class="is-tree-opened menu app-width-margin expanded"
+        >
           <CollectionTOC
             :is-doc-projectId-included="isDocProjectIdInc"
+            :current-collection="item"
             :dts-root-collection-identifier="dtsRootCollectionId"
+            :root-collection-identifier="rootCollectionId"
             :margin="$props.margin + 23"
             :toc="item.children"
           />
@@ -115,9 +318,10 @@
 
 <script>
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getMetadataFromApi } from '@/api/document.js'
+import store from '@/store'
 
 function getSimpleObject (obj) {
   // console.log("getSimpleObject / obj", obj)
@@ -149,9 +353,20 @@ export default {
       type: Boolean,
       required: true
     },
+    displayOption: {
+      type: String,
+      required: false
+    },
     dtsRootCollectionIdentifier: {
       type: String,
       required: true
+    },
+    rootCollectionIdentifier: {
+      type: String,
+      required: true
+    },
+    currentCollection: {
+      type: Object
     },
     toc: {
       required: true,
@@ -167,21 +382,22 @@ export default {
   async setup (props) {
     const route = useRoute()
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
+    const displayOpt = ref(props.displayOption)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
-    const rootCollectionId = ref('')
+    const rootCollectionId = ref(props.rootCollectionIdentifier)
 
-    if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
+    /*if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
       const rootResponse = await getMetadataFromApi()
       rootCollectionId.value = rootResponse['@id']
       console.log('App.vue get rootCollectionId', rootCollectionId.value)
     } else {
       rootCollectionId.value = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
       console.log('App.vue set rootCollectionId as .env', rootCollectionId.value)
-    }
+    }*/
 
     const expandedById = ref({})
 
-    const selectedParent = ref('')
+    const selectedParent = ref(props.currentCollection ? props.currentCollection.identifier : '')
 
     const componentTOC = ref(props.toc)
     componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
@@ -213,16 +429,30 @@ export default {
       expandedById.value[collId] = !expandedById.value[collId]
       console.log('CollectionTOC after expandedById[collectionId] : ', collId, expandedById.value)
     }
+    const setStateCollection = (collId) => {
+      store.commit('setCollectionId', collId)
+    }
+
+    watch(props, async (newProps) => {
+      isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
+      componentTOC.value = []
+      componentTOC.value = newProps.toc
+      displayOpt.value = newProps.displayOption
+      dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
+      rootCollectionId.value = newProps.rootCollectionIdentifier
+    }, { deep: true, immediate: true })
 
     return {
       route,
       isDocProjectIdInc,
+      displayOpt,
       dtsRootCollectionId,
       rootCollectionId,
       toggleExpanded,
       expandedById,
       selectedParent,
-      componentTOC
+      componentTOC,
+      setStateCollection
     }
   }
 }
@@ -243,7 +473,7 @@ export default {
   &::before {
     margin-left: -8px;
     margin-right: 11px;
-    content: '○';
+    content: '●';
     font-size: 10px;
     color: #999;
     float: left;
@@ -289,4 +519,143 @@ button {
   /* color: #971716 !important; */
   color: var(--text-color) !important;
 }
+.document-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-content: center;
+  width: 100%;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  &:hover {
+    /* border: 1px solid #b9192f; */
+    border: 1px solid var(--text-color);
+  }
+  & > .wrapper {
+    width: 100%;
+    & > .toc-area {
+      margin-bottom: 0 !important;
+      & > .toc-area-header {
+        display: flex;
+        width: 100%;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        padding-left: 10px;
+        padding-right: 10px;
+        background-color: #f1f1f1;
+        border: 1px solid transparent;
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+        position: relative;
+        &.expanded {
+          border-radius: 0;
+        }
+
+        & > a {
+          text-transform: uppercase;
+          font-family: "Barlow Semi Condensed", sans-serif;
+          font-weight: 500;
+          color: #4a4a4a !important;
+          text-decoration: none;
+          border: none;
+
+          &:first-child {
+            text-transform: none;
+            /* margin-left: auto;
+            margin-right: 47px; */
+          }
+          /* toggle */
+          &.toggle-btn {
+            position: absolute;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            background: url(../assets/images/chevron_rouge.svg) center / cover no-repeat;
+            border: none;
+            text-decoration: none;
+            &.expanded {
+              margin-top: 3px;
+              background: url(../assets/images/croix.svg) center / cover no-repeat;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.document-card .card-header .document-folder {
+  width: 100%;
+  /*border-top: 6px solid #e4e4e4;*/
+  border-radius: 6px;
+  font-size: 14px;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+  & > .card-header-first-line {
+    display: flex;
+    flex-direction: row;
+    & > .collection-elec-id {
+      margin: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #b9192f;
+    }
+    & > .collection-metadata {
+      width: 80%;
+      & > .collection-description {
+        width: 100%;
+        text-align: justify;
+        text-transform: none;
+      }
+    }
+  }
+}
+.card-header {
+  box-shadow: none;
+}
+.document-card .card-image {
+  margin: auto;
+  & > a {
+    align-content: center;
+    > img {
+      height: auto;
+      width: 75px;
+    }
+  }
+}
+.document-card .card-content {
+  color: #000;
+  padding: 1.5rem 0;
+  border-bottom: 7px solid #e8e7e0;
+}
+
+
+
+.toc-area-header > a {
+  text-transform: uppercase;
+  font-family: "Barlow Semi Condensed", sans-serif;
+  font-weight: 500;
+  color: #4a4a4a !important;
+  text-decoration: none;
+  border: none;
+  &:first-child {
+    text-transform: none;
+    /* margin-left: auto;
+    margin-right: 47px; */
+  }
+}
+.expanded.menu {
+  display: flex;
+  flex-direction: column;
+  padding: 0px 20px 0px;
+  /* border-top: solid 2px #fcfcfc; */
+  background-color: #e4e4e4;
+  border: 1px solid #e4e4e4;
+  border-radius: 0 0 6px 6px;
+}
+
 </style>

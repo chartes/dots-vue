@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getProjectFromApi } from '@/api/document'
 
 // import { getTOCFromApi } from '@/api/document'
 
@@ -116,12 +117,22 @@ if (isDocProjectIdIncluded) {
   }
 }) */
 if (isDocProjectIdIncluded) {
-  router.afterEach((to, from, next) => {
+  router.beforeEach(async (to, from) => {
     console.log(`Navigating to: ${to.name}, with params.collId: ${to.params.collId}, with params.id: ${to.params.id}, with query: ${to.query.refId}, with hash: ${to.hash}`)
+    if (to.params.collId) {
+      const projectId = await getProjectFromApi(to.params.collId)
+      console.log('router.beforeEach projectId', projectId)
+      if (to.params.collId !== projectId) {
+        return { name: to.name, params: { collId: projectId, id: to.params.id } }
+      }
+    }
+  })
+  router.afterEach((to, from, next) => {
+    console.log(`Navigated to: ${to.name}, with params.collId: ${to.params.collId}, with params.id: ${to.params.id}, with query: ${to.query.refId}, with hash: ${to.hash}`)
   })
 } else {
   router.afterEach((to, from, next) => {
-    console.log(`Navigating to: ${to.name}, NO params.collId, with params.id: ${to.params.id}, with query: ${to.query.refId}, with hash: ${to.hash}`)
+    console.log(`Navigated to: ${to.name}, NO params.collId, with params.id: ${to.params.id}, with query: ${to.query.refId}, with hash: ${to.hash}`)
   })
 }
 

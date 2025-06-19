@@ -31,6 +31,7 @@
             <CollectionTOC
               :is-doc-projectId-included="isDocProjectIdInc"
               :dts-root-collection-identifier="dtsRootCollectionId"
+              :current-collection="currentCollection"
               :margin="0"
               :toc="collectionTOC.filter(item => item.identifier === collectionId)[0].children"
             />
