@@ -336,7 +336,8 @@ div.bottom-toc {
 }
 
 .is-current {
-  color: #971716 !important;
+  /* color: #971716 !important; */
+  color: var(--text-color) !important;
 }
 button {
   flex-shrink: 0;

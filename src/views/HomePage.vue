@@ -509,9 +509,10 @@ a {
   font-weight: 500;
   line-height: 33px;
   text-transform: none;
-  color: #971716;
+  /* color: #971716; */
+  color: var(--text-color);
 }
-.toc-area {
+.home-mask > .wrapper > .toc-area {
   width: 100%;
   font-family: "Barlow", sans-serif !important;
   margin-bottom: 30px !important;
@@ -536,8 +537,8 @@ a {
   border: none;
   &:first-child {
     text-transform: none;
-    margin-left: auto;
-    margin-right: 47px;
+    /* margin-left: auto;
+    margin-right: 47px; */
   }
 }
 .is-tree-opened .menu {
@@ -640,7 +641,8 @@ a {
   border-radius: 6px;
   border: 1px solid transparent;
   &:hover {
-    border: 1px solid #b9192f;
+    /* border: 1px solid #b9192f; */
+    border: 1px solid var(--text-color);
   }
 }
 .document-card .card-header .document-folder {
@@ -723,12 +725,14 @@ a {
   & > input.current-page {
     height: 38px !important;
     padding: 0 !important;
-    border: 1px solid #C00055;
+    /* border: 1px solid #C00055; */
+    border: 1px solid var(--text-color);
     border-radius: 3.2px;
 
     font-family: inherit;
     font-size: 18px;
-    color: #CB2158;
+    /* color: #CB2158; */
+    color: var(--text-color);
     font-weight: 800;
     text-align: center;
     text-decoration: none;
@@ -765,11 +769,13 @@ a {
   width: 100%;
   margin: 0;
   padding-bottom: 5px;
-  border-bottom: solid 1px #b9192f;
+  /* border-bottom: solid 1px #b9192f; */
+  border-bottom: solid 1px var(--text-color)
 }
 .pagination-documents-count {
   margin-right: auto;
-  color: #b9192f;
+  /* color: #b9192f; */
+  color: var(--text-color);
   border: none;
 }
 .no-dts-description {

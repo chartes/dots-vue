@@ -349,7 +349,8 @@ nav {
   font-size: 18px;
   line-height: 1;
   color: #FFFFFF;
-  background-color: #8f0e21;
+  /* background-color: #8f0e21; */
+  background-color: var(--fill-color);
   padding-top: 10px;
   padding-bottom: 10px;
 }

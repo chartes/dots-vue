@@ -155,7 +155,8 @@ a {
   font-weight: 500;
   line-height: 33px;
   text-transform: none;
-  color: #971716;
+  /* color: #971716; */
+  color: var(--text-color);
 }
 #article h2 {
   padding-top: 15px;

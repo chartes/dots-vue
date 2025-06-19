@@ -86,7 +86,7 @@ export default {
     const currCollection = ref({})
     const appConfig = ref({})
     const appCssConfig = ref({})
-    const isRedTheme = ref(`${import.meta.env.VITE_APP_THEME}`.length === 0 ? 'red' : `${import.meta.env.VITE_APP_THEME}`)
+    const whichTheme = ref(`${import.meta.env.VITE_APP_THEME}`.length === 0 ? 'red' : `${import.meta.env.VITE_APP_THEME}`)
     const theme = ref('')
     const collShortTitle = ref('')
     const dtsRootCollectionId = ref('')
@@ -96,9 +96,9 @@ export default {
     console.log('App.vue setup route / route.params.collId / collectionId.value : ', route, route.params.collId ? route.params.collId : 'no param collId', collectionId)
     // getting and formatting collection details
 
-    document.documentElement.setAttribute('data-theme', isRedTheme.value)
-    //localStorage.setItem('theme', isRedTheme.value)
-    console.log('App.vue setup theme : ', isRedTheme.value)
+    document.documentElement.setAttribute('data-theme', whichTheme.value)
+    //localStorage.setItem('theme', whichTheme.value)
+    console.log('App.vue setup theme : ', whichTheme.value)
 
     const mergeSettings = () => {
       const appSettings = import.meta.glob('confs/*.conf.json', { eager: true })
@@ -236,7 +236,7 @@ export default {
     )
 
     return {
-      isRedTheme,
+      whichTheme,
       theme,
       appCssConfig,
       route,

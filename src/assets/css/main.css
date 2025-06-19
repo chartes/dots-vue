@@ -4,10 +4,13 @@
 	--text-color: orange;
 }
 [data-theme="red"] {
-    --text-color: red;
+    --text-color: #8f0e21;
+    --fill-color: #8f0e21;
 }
-h1 {
-    color: var(--text-color)
+.about-content {
+    & > h1 {
+        color: var(--text-color)
+    }
 }
 
 .hidden-nav:hover {

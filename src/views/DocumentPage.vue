@@ -1522,7 +1522,8 @@ export default {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  border-top: #b9192f 1px dashed;
+  /* border-top: #b9192f 1px dashed; */
+  border-top: 1px dashed var(--text-color);
   border-bottom: #b8b8b8 1px solid;
   padding: 12px 0 9px;
 }
@@ -1686,7 +1687,8 @@ div.remove-bottom-padding #article {
   font-weight: 500;
   line-height: 33px;
   text-transform: none;
-  color: #971716;
+  /* color: #971716; */
+  color: var(--text-color);
 }
 
 #article .titlepage {
@@ -1740,7 +1742,8 @@ div.remove-bottom-padding #article {
 
 #article section.div h2.head {
   line-height: 115%;
-  color: #971716;
+  /* color: #971716; */
+  color: var(--text-color);
   border-bottom: none;
   padding: 1em 0 0 0;
   margin: 35px 0 43px 0px;

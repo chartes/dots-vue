@@ -684,7 +684,7 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    align-items: baseline;
+    /* align-items: baseline; */
     width: 100%;
   }
 }
@@ -713,7 +713,7 @@ export default {
   margin-right: 40px;
   font-size: 20px;
   font-weight: 500;
-  color: #971716;
+  color: var(--text-color);
 }
 .document-metadata-header span.metadata-header-author {
   color: #929292;
@@ -777,6 +777,9 @@ aside.menu > .columns > .column:nth-child(3) {
   margin-bottom: 0;
   color: #4a4a4a;
 }
+td > span.title > b {
+  white-space: nowrap;
+}
 h2.title {
   text-align: left;
   margin: 0 0 20px 0;
@@ -790,19 +793,6 @@ figure {
   margin: 0 !important;
   padding: 0 !important;
   border: none;
-}
-.author-default-thumbnail {
-  display: block;
-  width: 120px;
-  height: 158px;
-  background: url(../assets/images/fantome.png) center / contain no-repeat;
-}
-.thesis-infos,
-.thesis-links > div {
-  gap: 40px;
-}
-.thesis-links .column {
-  padding: 15px 0 0 0;
 }
 
 @media screen and (max-width: 1150px) {
@@ -823,9 +813,6 @@ figure {
   }
   aside.menu > .columns > .column:nth-child(3) {
     max-width: 75% !important;
-  }
-  .thesis-links {
-    margin-top: 40px;
   }
 }
 @media screen and (max-width: 800px) {

@@ -148,7 +148,8 @@ export default {
 .footer {
   font-family: "Barlow", sans-serif;
   background-color: #4C4949;
-  border-top: #BA0F29 solid 4px;
+  /* border-top: #BA0F29 solid 4px; */
+  border-top: solid 4px var(--text-color);
   /* max-height: 400px; */
   width: 100%;
   text-align: center;
