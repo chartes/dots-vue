@@ -210,6 +210,7 @@
           <document
             :is-doc-projectId-included="isDocProjectIdInc"
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
+            :project-identifier="docProjectId"
             :collection-css="customCss.default"
             :id="resourceId"
             :level="currentLevel"
@@ -225,6 +226,8 @@
           <document
             :is-doc-projectId-included="isDocProjectIdInc"
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
+            :project-identifier="docProjectId"
+            :collection-css="customCss.default"
             :id="resourceId + '&ref=' + refId"
             :level="currentLevel"
             :editorialLevelIndicator="currentLevelIndicator"

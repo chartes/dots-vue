@@ -70,13 +70,14 @@ export default {
     TOC
   },
 
-  props: ['id', 'level', 'editoriallevel', 'bottomtoc', 'maxcitedepth', 'documenttype', 'editorialLevelIndicator', 'isDocProjectIdIncluded', 'mediaTypeEndpoint', 'collectionCss'],
+  props: ['id', 'level', 'editoriallevel', 'bottomtoc', 'maxcitedepth', 'documenttype', 'editorialLevelIndicator', 'isDocProjectIdIncluded', 'mediaTypeEndpoint', 'collectionCss', 'projectIdentifier'],
 
   async setup (props) {
     // Declare route to capture route hash (used in scrollTo()) to display selected Table Of Content items below the editorial level
     const route = useRoute()
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const mediaType = ref(props.mediaTypeEndpoint)
+    const docProjectId = ref(props.projectIdentifier)
     const collCss = ref(props.collectionCss)
     console.log('Document.vue mediaType', mediaType.value)
     console.log('Document.vue collCss', collCss.value)
@@ -161,7 +162,7 @@ export default {
       tmpDom.querySelectorAll('a.pb.facs').forEach((a) => {
         const container = document.createElement('div')
         // TODO: gérer ce lowercase un peu gênant
-        const canvadId = `${VITE_APP_IIIF_URL}/${props.id.toLowerCase()}/canvas/f${frameNum}`
+        const canvadId = `${VITE_APP_IIIF_URL}/${docProjectId.value.slice(0, -1).toLowerCase()}/${props.id.split('&ref')[0].toLowerCase()}/canvas/f${frameNum}`
         container.innerHTML = `<page-break canvas-id="${canvadId}" canvas-num="${frameNum}" image="${a.href}"/>`
         frameNum += 1
         // Replace the link with a PageBreak component
@@ -279,12 +280,15 @@ export default {
       }
     }
     watch(props, (newProps) => {
+      docProjectId.value = newProps.projectIdentifier
       mediaType.value = newProps.mediaTypeEndpoint
+      console.log('Document.vue watch newProps.projectIdentifier / docProjectId.value : ', docProjectId.value)
       console.log('Document.vue watch newProps.mediaTypeEndpoint / mediaType.value : ', mediaType.value)
     }, { immediate: true })
 
     return {
       isDocProjectIdInc,
+      docProjectId,
       mediaType,
       collCss,
       parentId,
