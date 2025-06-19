@@ -183,12 +183,13 @@ export default {
 
         // Get all <pb> elements (page breaks)
         console.log('finding pbs tei', xmlDoc.getElementsByTagName('pb'))
-        const firstPb = xmlDoc.getElementsByTagName('pb').length > 0 ? Array.from(xmlDoc.getElementsByTagName('pb'))[0].getAttribute('n') : null
-        const lastPb = xmlDoc.getElementsByTagName('pb').length > 0 ? Array.from(xmlDoc.getElementsByTagName('pb')).slice(-1)[0].getAttribute('n') : null
-        console.log('finding pbs tei', firstPb, lastPb)
-        let frameNum = 1
-        const pbElements = Array.from(xmlDoc.getElementsByTagName('pb'))
+        console.log('finding pbs tei with IIIF facs', Array.from(xmlDoc.querySelectorAll('pb[facs]')).filter(el => el.getAttribute('facs').includes('iiif')))
+        const pbElements = Array.from(xmlDoc.querySelectorAll('pb[facs]')).filter(el => el.getAttribute('facs').includes('iiif'))
         console.log('pbElements :', pbElements)
+        const firstPb = pbElements.length ? pbElements[0].getAttribute('n') : null
+        const lastPb = pbElements.length ? pbElements.slice(-1)[0].getAttribute('n') : null
+        console.log('finding pbs tei with IIIF facs first and last pb', firstPb, lastPb)
+        let frameNum = 1
         pbElements.forEach((pb, index) => {
           const facs = pb.getAttribute('facs')
           let canvasId = ''
