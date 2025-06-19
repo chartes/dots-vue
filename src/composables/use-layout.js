@@ -42,6 +42,10 @@ export default function useLayout () {
     viewMode.value = v
   }
 
+  const getViewMode = function () {
+    return viewMode.value
+  }
+
   return {
     rawSearchedTerm,
     isTOCMenuOpened,
@@ -52,6 +56,7 @@ export default function useLayout () {
     toggleTOCMenu,
     TOCMenuBtnCssClass,
     viewModeCssClass,
-    changeViewMode
+    changeViewMode,
+    getViewMode
   }
 }
