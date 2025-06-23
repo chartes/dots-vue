@@ -325,7 +325,7 @@ export default {
     })
 
     const getCustomCss = async () => {
-
+      removeCustomCss()
       if (collConfig.value.collectionCustomCss) {
         // const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: true })
         const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: false })
@@ -347,19 +347,19 @@ export default {
           style.textContent = customCss.value.default
           style.id = 'customCss'
           document.head.append(style)
-          console.log('HomePage customCss.value / cssComp : ', customCss.value)
+          console.log('HomePage getCustomCss customCss.value : ', customCss.value)
         }
       }
     }
     const removeCustomCss = () => {
-      console.log('HomePage watch store.state.collectionId', store.state.collectionId)
+      console.log('HomePage removeCustomCss store.state.collectionId', store.state.collectionId)
       const styleTags = [...document.querySelectorAll('style')]
-      console.log('HomePage watch store.state.collectionId getCustomCss styleTags ', styleTags)
+      console.log('HomePage removeCustomCss styleTags ', styleTags)
       styleTags.forEach((tag) => {
         //console.log('HomePage watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
         if (tag.id === 'customCss') {
-          console.log('HomePage watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
-          console.log('HomePage watch store.state.collectionId getCustomCss tag.id ', tag.id)
+          console.log('HomePage removeCustomCss tag.textContent ', tag.textContent)
+          console.log('HomePage removeCustomCss tag.id ', tag.id)
           tag.remove()
         }
       })
@@ -469,6 +469,11 @@ export default {
       componentTOC.value = [...currCollection.value.member].sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
       console.log('HomePage watch collectionConfig collectionDescription : ', collConfig.value, collectionDescription.value)
       paginated()
+      if (customCollectionDescription.value) {
+        customDescription.value = await getCustomHomeDescription()
+      } else {
+        customDescription.value = {}
+      }
       console.log('HomePage watch collConfig.value.collectionCustomCss : ', collConfig.value, collConfig.value.collectionCustomCss)
       if (collConfig.value.collectionCustomCss) {
         console.log('HomePage watch collConfig.value.collectionCustomCss IF: ', collConfig.value.collectionCustomCss)
@@ -476,11 +481,6 @@ export default {
       } else if (customCss.value) {
         console.log('HomePage watch collConfig.value.collectionCustomCss ELSE: ', customCss.value)
         removeCustomCss()
-      }
-      if (customCollectionDescription.value) {
-        customDescription.value = await getCustomHomeDescription()
-      } else {
-        customDescription.value = {}
       }
     }, { deep: true, immediate: true })
 

@@ -163,6 +163,7 @@ export default {
     }
     watch(
       () => store.state.collectionId, async function () {
+        collConfig.value = {}
         if (store.state.collectionId && store.state.collectionId !== collectionId.value) {
           collectionId.value = store.state.collectionId
           console.log('App.vue watch store.state.collectionId', store.state.collectionId)
@@ -213,6 +214,7 @@ export default {
     )
     watch(
       router.currentRoute, async (newRoute, oldRoute) => {
+        collConfig.value = {}
         console.log('App.vue watch change in route : ', oldRoute, newRoute)
         await getDtsRootResponse()
         await getCurrentCollection
