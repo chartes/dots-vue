@@ -114,7 +114,7 @@
           :current-collection="currCollection"
           :dts-root-collection-identifier="dtsRootCollectionId"
           :root-collection-identifier="rootCollectionId"
-          :toc="componentTOC"
+          :toc="currentPageData"
           :margin="0"
         />
       </div>
