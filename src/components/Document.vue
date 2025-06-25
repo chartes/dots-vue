@@ -61,16 +61,13 @@ import { useRoute } from 'vue-router'
 import TOC from '@/components/TOC.vue'
 import router from '@/router'
 
-// TODO: VITE_APP_IIIF_URL may vary from collection to collection (now based on ENCPOS only)
-const VITE_APP_IIIF_URL = `${import.meta.env.VITE_APP_IIIF_URL}`
-
 export default {
   name: 'Document',
   components: {
     TOC
   },
 
-  props: ['id', 'level', 'editoriallevel', 'bottomtoc', 'maxcitedepth', 'documenttype', 'editorialLevelIndicator', 'isDocProjectIdIncluded', 'mediaTypeEndpoint', 'collectionCss', 'projectIdentifier'],
+  props: ['id', 'level', 'editoriallevel', 'bottomtoc', 'maxcitedepth', 'documenttype', 'editorialLevelIndicator', 'isDocProjectIdIncluded', 'mediaTypeEndpoint', 'collectionCss', 'projectIdentifier', 'iiifManifest'],
 
   async setup (props) {
     // Declare route to capture route hash (used in scrollTo()) to display selected Table Of Content items below the editorial level
@@ -78,6 +75,7 @@ export default {
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const mediaType = ref(props.mediaTypeEndpoint)
     const docProjectId = ref(props.projectIdentifier)
+    const manifest = ref(props.iiifManifest)
     const collCss = ref(props.collectionCss)
     console.log('Document.vue mediaType', mediaType.value)
     console.log('Document.vue collCss', collCss.value)
@@ -158,13 +156,13 @@ export default {
 
       // Generate PageBreak components for each iiif canvas link encoded in the DoTS response
       console.log('finding last pb', tmpDom.querySelectorAll('a.pb.facs'))
-      let frameNum = 1
+
       tmpDom.querySelectorAll('a.pb.facs').forEach((a) => {
         const container = document.createElement('div')
-        // TODO: gérer ce lowercase un peu gênant
-        const canvadId = `${VITE_APP_IIIF_URL}/${docProjectId.value.slice(0, -1).toLowerCase()}/${props.id.split('&ref')[0].toLowerCase()}/canvas/f${frameNum}`
-        container.innerHTML = `<page-break canvas-id="${canvadId}" canvas-num="${frameNum}" image="${a.href}"/>`
-        frameNum += 1
+        console.log('Document.vue manifest : ', manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === a.href)[0].id)
+        const canvasId = manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === a.href)[0].id
+        const frameNum = manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === a.href)
+        container.innerHTML = `<page-break canvas-id="${canvasId}" canvas-num="${frameNum}" image="${a.href}"/>`
         // Replace the link with a PageBreak component
         a.parentNode.replaceChild(container.firstChild, a)
       })
@@ -189,25 +187,17 @@ export default {
         const firstPb = pbElements.length ? pbElements[0].getAttribute('n') : null
         const lastPb = pbElements.length ? pbElements.slice(-1)[0].getAttribute('n') : null
         console.log('finding pbs tei with IIIF facs first and last pb', firstPb, lastPb)
-        let frameNum = 1
+
         pbElements.forEach((pb, index) => {
           const facs = pb.getAttribute('facs')
-          let canvasId = ''
-          if (firstPb) {
-            canvasId = `${VITE_APP_IIIF_URL}/${props.id.split('&ref')[0].toLowerCase()}/canvas/f${pb.getAttribute('n') - firstPb + 1}`
-          } else {
-            canvasId = `${VITE_APP_IIIF_URL}/${props.id.split('&ref')[0].toLowerCase()}/canvas/f${frameNum}`
-          }
-          frameNum += 1
+          console.log('Document.vue tei test manifest.value: ', manifest.value)
+          const canvasId = manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === facs)[0].id
+          const frameNum = manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === facs)
 
           // Create the <page-break> element in the XML document
           const pageBreak = xmlDoc.createElement('page-break')
           pageBreak.setAttribute('canvas-id', canvasId)
-          if (firstPb) {
-            pageBreak.setAttribute('canvas-num', pb.getAttribute('n') - firstPb)
-          } else {
-            pageBreak.setAttribute('canvas-num', frameNum)
-          }
+          pageBreak.setAttribute('canvas-num', frameNum)
           pageBreak.setAttribute('image', facs)
           pb.parentNode.replaceChild(pageBreak, pb)
         })
@@ -282,6 +272,7 @@ export default {
     }
     watch(props, (newProps) => {
       docProjectId.value = newProps.projectIdentifier
+      manifest.value = newProps.iiifManifest
       mediaType.value = newProps.mediaTypeEndpoint
       console.log('Document.vue watch newProps.projectIdentifier / docProjectId.value : ', docProjectId.value)
       console.log('Document.vue watch newProps.mediaTypeEndpoint / mediaType.value : ', mediaType.value)
@@ -290,6 +281,7 @@ export default {
     return {
       isDocProjectIdInc,
       docProjectId,
+      manifest,
       mediaType,
       collCss,
       parentId,

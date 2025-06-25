@@ -211,6 +211,7 @@
             :is-doc-projectId-included="isDocProjectIdInc"
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :project-identifier="docProjectId"
+            :iiif-manifest="manifest"
             :collection-css="customCss.default"
             :id="resourceId"
             :level="currentLevel"
@@ -227,6 +228,7 @@
             :is-doc-projectId-included="isDocProjectIdInc"
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :project-identifier="docProjectId"
+            :iiif-manifest="manifest"
             :collection-css="customCss.default"
             :id="resourceId + '&ref=' + refId"
             :level="currentLevel"
@@ -1303,6 +1305,7 @@ export default {
           await getTOC('watch query')
           await getMetadata()
           getNewRefId()
+          isLoading.value = true
         } else {
           console.log('Document page watch TEST : oldRoute, newRoute ', oldRoute, newRoute)
         }
@@ -1381,6 +1384,7 @@ export default {
       miradorContainer,
       metadata,
       manifestIsAvailable,
+      manifest,
       layout,
       resourceId,
       collection,
