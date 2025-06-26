@@ -566,7 +566,9 @@ export default {
         response.member.forEach(m => { m.level = store.state.currentItem.level + 1 })
         response.member.forEach(m => { m.identifier = m['@id'] })
       }
-
+      if (!response.member) {
+        response.member = []
+      }
       response.member.filter(item => !item.title).forEach(m => {
         m.title = m.dublincore && m.dublincore.title && m.dublincore.title.length ? m.dublincore.title : ''
         m.title = m.title.length ? m.title : m.extensions && m.extensions['tei:role'] ? m.extensions['tei:num'] ? m.extensions['tei:role'] + ' ' + m.extensions['tei:num'] : m.extensions['tei:role'] + ' ' + m.identifier : ''
