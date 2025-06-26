@@ -146,7 +146,7 @@ export default async function fetchMetadata (source, resourceId, documentType, r
     }
 
     try {
-      metadata.iiifManifestUrl = extensions['dct:source'][0]['@id']
+      metadata.iiifManifestUrl = extensions['dots:iiifManifestId'] ? extensions['dots:iiifManifestId'] : extensions['dct:source'][0]['@id']
       // layout.imageIsAvailable.value = true
     } catch {
       metadata.iiifManifestUrl = null
