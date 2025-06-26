@@ -26,7 +26,7 @@
                 </div><!-- card-header-first-line -->
                 <div class="is-flex is-flex-direction-column">
                   <span>
-                    {{ item.author }} {{ item.dublincore.creator }} test 1a
+                    {{ item.author }} {{ item.dublincore.creator }}
                   </span>
                   <span
                   >
@@ -74,7 +74,7 @@
                 </div><!-- card-header-first-line -->
                 <div class="is-flex is-flex-direction-column">
                   <span>
-                    {{ item.author }} {{ item.dublincore.creator }} test 1b
+                    {{ item.author }} {{ item.dublincore.creator }}
                   </span>
                   <span
                   >
@@ -139,6 +139,12 @@
             </div>
           </div>
         </div>
+        <div
+          v-else-if="!isDocProjectIdInc"
+          class="wrapper"
+        >
+          TO DO : VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID=false && VITE_APP_ROOT_DTS_COLLECTION_ID n'est pas DTS root
+        </div><!-- && item.parent !== rootCollectionId && !componentTOC.map(i => i['@type']).every(t => t === 'Resource')-->
       </template>
       <template v-else>
         <div class="card-header">
@@ -164,7 +170,7 @@
                 </div>
                 <div class="is-flex is-flex-direction-column">
                   <span>
-                    {{ item.author }} {{ item.dublincore.creator }} test 1a
+                    {{ item.author }} {{ item.dublincore.creator }}
                   </span>
                   <span
                   >
@@ -228,7 +234,7 @@
               :class="route.params.id === item.identifier ? 'is-current' : ''"
               :to="{ name: 'Home', params: {collId: item.identifier} }"
             >
-              {{ item.citeType }} test1
+              {{ item.citeType }}
               {{ item.title }}
             </router-link>
             <router-link
@@ -236,7 +242,7 @@
               :class="route.params.id === item.identifier ? 'is-current' : ''"
               :to="{ name: 'Home', params: {collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] !== item.parent ? item.extensions['dots:dotsProjectId'] : item.identifier : item.identifier} }"
             >
-              {{ item.citeType }} test2
+              {{ item.citeType }}
               {{ item.title }}
             </router-link>
             <span
@@ -244,7 +250,7 @@
               :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
               @click="toggleExpanded(item.identifier)"
             >
-              {{ item.citeType }} test3
+              {{ item.citeType }}
               {{ item.title }}
             </span>
           </template>
@@ -278,7 +284,7 @@
             :to="{ name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }"
             @click.prevent="setStateCollection(selectedParent)"
           >
-            {{ item.citeType ? item.citeType : item['@type'] }} test4
+            {{ item.citeType ? item.citeType : item['@type'] }}
             {{ item.title }}
           </router-link>
           <router-link
@@ -286,7 +292,7 @@
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Document', params: { collId: Array.isArray(item.parent) ? item.parent.find(p => p === route.params.collId) ? route.params.collId : item.parent[0] : item.parent, id: item.identifier } }"
           >
-            {{ item.citeType }} test5
+            {{ item.citeType }}
             {{ item.title }}
           </router-link>
           <router-link
@@ -294,7 +300,7 @@
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Document', params: { id: item.identifier } }"
           >
-            {{ item.citeType }} test6
+            {{ item.citeType }}
             {{ item.title }}
           </router-link>
         </div>
@@ -459,49 +465,54 @@ export default {
 </script>
 
 <style scoped>
-.tree {
-  /* list-style: none;*/
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.tree li {
-  font-family: "Barlow Semi Condensed", sans-serif;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 22px;
-  &::before {
-    margin-left: -8px;
-    margin-right: 11px;
-    content: '●';
-    font-size: 10px;
-    color: #999;
-    float: left;
+.wrapper {
+  .tree {
+    /* list-style: none;*/
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
-  & .li.container {
-      display: flex;
-      margin: 0;
-    & > a {
-      border-bottom: none;
-      color: #4a4a4a !important;
-      &.is-current {
-        font-weight: bold !important;
+
+  .tree li {
+    font-family: "Barlow Semi Condensed", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 22px;
+    padding: 0;
+    &::before {
+      font-family: "Barlow Semi Condensed", sans-serif;
+      margin-left: -8px;
+      margin-right: 11px;
+      content: '●';
+      font-size: 10px;
+      color: #999;
+      float: left;
+    }
+    & .li.container {
+        display: flex;
+        margin: 0;
+      & > a {
+        border-bottom: none;
+        color: #4a4a4a !important;
+        &.is-current {
+          font-weight: bold !important;
+        }
+      }
+    }
+
+    &.more {
+      padding-left: 0px !important;
+
+      &.li.container > a, span {
+        margin-top: 4px;
+      }
+
+      &::before {
+        content: none !important;
       }
     }
   }
-
-  &.more {
-    padding-left: 0px !important;
-
-    &.li.container > a, span {
-      margin-top: 4px;
-    }
-
-    &::before {
-      content: none !important;
-    }
-  }
 }
+
 
 button {
   width:30px;
@@ -595,6 +606,10 @@ button {
   padding-right: 10px;
   padding-bottom: 10px;
   text-transform: uppercase;
+  & a {
+    border: none;
+    color: #485fc7;
+  }
   & > .card-header-first-line {
     display: flex;
     flex-direction: row;
