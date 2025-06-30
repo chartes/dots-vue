@@ -117,7 +117,7 @@ if (isDocProjectIdIncluded) {
   }
 }) */
 if (isDocProjectIdIncluded) {
-  router.beforeEach(async (to, from) => {
+  /*router.beforeEach(async (to, from) => {
     console.log(`Navigating to: ${to.name}, with params.collId: ${to.params.collId}, with params.id: ${to.params.id}, with query: ${to.query.refId}, with hash: ${to.hash}`)
     if (to.params.collId) {
       const projectId = await getProjectFromApi(to.params.collId)
@@ -126,7 +126,7 @@ if (isDocProjectIdIncluded) {
         return { name: to.name, params: { collId: projectId, id: to.params.id } }
       }
     }
-  })
+  })*/
   router.afterEach((to, from, next) => {
     console.log(`Navigated to: ${to.name}, with params.collId: ${to.params.collId}, with params.id: ${to.params.id}, with query: ${to.query.refId}, with hash: ${to.hash}`)
   })
