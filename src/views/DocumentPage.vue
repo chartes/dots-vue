@@ -6,6 +6,7 @@
       :isOpen="isModalOpened ? isModalOpened : false"
       :is-doc-projectId-included="isDocProjectIdInc"
       :dts-root-collection-identifier="dtsRootCollectionId"
+      :root-collection-identifier="rootCollectionId"
       :collectionIdentifier="selectedCollectionId"
       :currentItem="selectedCollection"
       :toc="flatTOC"

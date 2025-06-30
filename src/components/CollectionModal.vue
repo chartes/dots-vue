@@ -31,6 +31,7 @@
             <CollectionTOC
               :is-doc-projectId-included="isDocProjectIdInc"
               :dts-root-collection-identifier="dtsRootCollectionId"
+              :root-collection-identifier="rootCollectionId"
               :current-collection="currentCollection"
               :margin="0"
               :toc="collectionTOC.filter(item => item.identifier === collectionId)[0].children"
@@ -62,6 +63,10 @@ export default {
       type: String,
       required: true
     },
+    rootCollectionIdentifier: {
+      type: String,
+      required: true
+    },
     collectionIdentifier: {
       type: String,
       required: true
@@ -86,6 +91,7 @@ export default {
     const isModalOpened = ref(props.isOpen)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
+    const rootCollectionId = ref(props.rootCollectionIdentifier)
     const collectionTOC = ref(props.toc)
     console.log('CollectionModal props.toc : ', props.toc)
 
@@ -214,6 +220,7 @@ export default {
       isModalOpened,
       isDocProjectIdInc,
       dtsRootCollectionId,
+      rootCollectionId,
       appendMissingChildren,
       toggleContent,
       target,
