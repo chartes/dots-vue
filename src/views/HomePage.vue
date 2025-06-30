@@ -193,7 +193,12 @@
           class="toc-area-header"
           :class="expandedById[collectionId] ? 'expanded': ''"
         >
-          <a href="#">{{ browseBttnTxt }}</a>
+          <a
+            href="#"
+            class="collBrowseButton"
+          >
+            {{ browseBttnTxt }}
+          </a>
           <a
             href="#"
             class="toggle-btn"
@@ -581,6 +586,9 @@ a {
   color: #4a4a4a !important;
   text-decoration: none;
   border: none;
+  &.collBrowseButton {
+    margin-left: 0;
+  }
   &:first-child {
     text-transform: none;
     /* margin-left: auto;
