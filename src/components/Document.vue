@@ -191,8 +191,8 @@ export default {
         pbElements.forEach((pb, index) => {
           const facs = pb.getAttribute('facs')
           console.log('Document.vue tei test manifest.value: ', manifest.value)
-          const canvasId = manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === facs)[0].id
-          const frameNum = manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === facs)
+          const canvasId = manifest.value ? manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === facs)[0].id : ''
+          const frameNum = manifest.value ? manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === facs) : 1
 
           // Create the <page-break> element in the XML document
           const pageBreak = xmlDoc.createElement('page-break')
