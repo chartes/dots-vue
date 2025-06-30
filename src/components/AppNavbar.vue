@@ -33,24 +33,25 @@
             active-class="active"
             class="level-item-external"
             :to="{ name: 'Home' }"
-            >{{ projectShortTitle ? projectShortTitle : rootCollectionId }}
-          </router-link><!-- {{ projectShortTitle ? projectShortTitle : rootCollectionId }} -->
+            >{{ rootShortTitle ? rootShortTitle : rootCollectionId }}
+          </router-link>
           <!--TODO: troubleshoot subcollection not showing when on document-->
+          <template v-for="item in breadCrumb.slice().reverse()">
+            <router-link
+              class="level-item-external"
+              active-class="active"
+              :to="{ name: 'Home', params: {collId: Object.keys(item)[0]} }"
+              >{{ Object.values(item)[0] }}
+            </router-link>
+          </template>
+          <!-- replaced by the above breadcrum to have sub-collections
           <router-link
             v-if="isDocProjectIdInc && collectionId && collectionId !== rootCollectionId"
             class="level-item-external"
             active-class="active"
             :to="{ name: 'Home', params: {collId: collectionId} }"
             >{{ collShortTitle ? collShortTitle : collectionId }}
-          </router-link>
-          <!--<router-link
-            v-else-if="route.path.includes(rootCollectionId)"
-            class="level-item-external"
-            active-class="active"
-            :to="{ name: 'Home' }"
-            >{{ rootCollectionId }}
-          </router-link>
-          {{route.path}}-->
+          </router-link> -->
         </span>
       </div>
        <div class="level-right">
@@ -102,13 +103,21 @@ export default {
       type: String,
       required: true
     },
-    rootCollectionShortTitle: {
-      type: String,
+    collectionBreadcrumb: {
+      type: Object,
       required: true
     },
     applicationConfig: {
       type: Object,
       required: true
+    },
+    rootCollectionConfig: {
+      type: Object,
+      required: true
+    },
+    projectCollectionConfig: {
+      type: Object,
+      required: false
     },
     collectionConfig: {
       type: Object,
@@ -132,17 +141,22 @@ export default {
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const appConfig = ref(props.applicationConfig)
+    const rootCollConfig = ref(props.rootCollectionConfig)
+    const projectCollConfig = ref(props.projectCollectionConfig)
     const collConfig = ref(props.collectionConfig)
     const imgHref = ref('')
     const apiImgHref = ref('')
-    const projectShortTitle = ref(props.rootCollectionShortTitle)
+    const rootShortTitle = ref(props.rootCollectionConfig.homePageSettings.appNavBar.collectionShortTitle)
     console.log('AppNavbar setup props.collectionConfig', props.collectionConfig)
-    const collShortTitle = ref(props.collectionConfig.homePageSettings.appNavBar.collectionShortTitle)
+    // const collShortTitle = ref(props.collectionConfig.homePageSettings.appNavBar.collectionShortTitle)
+    const breadCrumb = ref(props.collectionBreadcrumb)
     const collectionId = ref(props.collectionIdentifier)
     console.log('AppNavbar setup props.rootCollectionIdentifier', props.rootCollectionIdentifier)
     console.log('AppNavbar setup rootCollectionId', rootCollectionId.value)
     console.log('AppNavbar props.collectionIdentifier', props.collectionIdentifier)
-    console.log('AppNavbar collShortTitle', collShortTitle.value)
+    // Replaced by breadcrumb :
+    // console.log('AppNavbar collShortTitle', collShortTitle.value)
+
     // Computed property
     const menuCssClass = computed(() => {
       return state.isMenuOpened ? 'is-opened' : ''
@@ -173,13 +187,13 @@ export default {
         // If the AppNavBar image is not defined on the collection, need to identify the root collection image path where it may be defined
         let rootCollImg = null
         // Identify the root collection config to find its AppNavBar image settings
-        const rootCollConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === rootCollectionId.value)[0]
+        //const rootCollConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === rootCollectionId.value)[0]
         console.log('AppNavbar ImgUrl appConfig.value.collectionsConf : ', appConfig.value.collectionsConf, rootCollectionId.value)
-        console.log('AppNavbar ImgUrl rootCollConfig : ', rootCollConfig)
+        console.log('AppNavbar ImgUrl rootCollConfig.value : ', rootCollConfig.value)
         // If an AppNavBar image is set on the root collection, set it as rootCollImg to be used
-        if (rootCollConfig) {
+        if (rootCollConfig.value) {
           console.log('AppNavbar ImgUrl rootCollConfig : ', rootCollConfig)
-          rootCollImg = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/assets/images/${rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.imgName}`]
+          rootCollImg = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/assets/images/${rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.imgName}`]
           console.log('AppNavbar ImgUrl rootCollImg : ', rootCollImg)
         }
         // Setting the default AppNavBar image (dots) if none is defined at root or collection level
@@ -204,12 +218,12 @@ export default {
           }
         // Otherwise use the root collection AppNavBar image if any
         } else if (rootCollImg) {
-          if (rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.imgName.includes('https')) {
-            imgHref.value = rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.href
-            return rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.imgName
+          if (rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.imgName.includes('https')) {
+            imgHref.value = rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.href
+            return rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.imgName
           } else {
-            imgHref.value = rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.href
-            console.log('AppNavbar ImgUrl appNavBarLogo.imgName : ', `${rootCollConfig.homePageSettings.appNavBar.appNavBarLogo.imgName}`)
+            imgHref.value = rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.href
+            console.log('AppNavbar ImgUrl appNavBarLogo.imgName : ', `${rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.imgName}`)
             console.log('AppNavbar ImgUrl imgHref.value : ', imgHref.value)
             console.log('AppNavbar ImgUrl rootCollImg : ', rootCollImg)
             return rootCollImg.default
@@ -246,13 +260,13 @@ export default {
         // If the AppNavBar image is not defined on the collection, need to identify the root collection image path where it may be defined
         let rootCollImg = null
         // Identify the root collection config to find its AppNavBar image settings
-        const rootCollConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === rootCollectionId.value)[0]
+        //const rootCollConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === rootCollectionId.value)[0]
         console.log('AppNavbar apiImgUrl appConfig.value.collectionsConf : ', appConfig.value.collectionsConf, rootCollectionId.value)
         console.log('AppNavbar apiImgUrl rootCollConfig : ', rootCollConfig)
         // If an AppNavBar image is set on the root collection, set it as rootCollImg to be used
-        if (rootCollConfig) {
-          console.log('AppNavbar apiImgUrl rootCollConfig : ', rootCollConfig)
-          rootCollImg = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/assets/images/${rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`]
+        if (rootCollConfig.value) {
+          console.log('AppNavbar apiImgUrl rootCollConfig.value : ', rootCollConfig.value)
+          rootCollImg = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/assets/images/${rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`]
           console.log('AppNavbar apiImgUrl rootCollImg : ', rootCollImg)
         }
         // Setting the default AppNavBar image (dots) if none is defined at root or collection level
@@ -277,12 +291,12 @@ export default {
           }
         // Otherwise use the root collection AppNavBar image if any
         } else if (rootCollImg) {
-          if (rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName.includes('https')) {
-            apiImgHref.value = rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
-            return rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName
+          if (rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.imgName.includes('https')) {
+            apiImgHref.value = rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.href
+            return rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.imgName
           } else {
-            apiImgHref.value = rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
-            console.log('AppNavbar apiImgUrl appNavBarLogo.imgName : ', `${rootCollConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`)
+            apiImgHref.value = rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.href
+            console.log('AppNavbar apiImgUrl appNavBarLogo.imgName : ', `${rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`)
             console.log('AppNavbar apiImgUrl apiImgHref.value : ', apiImgHref.value)
             console.log('AppNavbar apiImgUrl rootCollImg : ', rootCollImg)
             return rootCollImg.default
@@ -318,9 +332,12 @@ export default {
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
       appConfig.value = newProps.applicationConfig
+      rootCollConfig.value = newProps.rootCollectionConfig
       collConfig.value = newProps.collectionConfig
-      projectShortTitle.value = newProps.rootCollectionShortTitle
-      collShortTitle.value = newProps.collectionConfig.homePageSettings.appNavBar.collectionShortTitle
+      rootShortTitle.value = newProps.rootCollectionConfig.homePageSettings.appNavBar.collectionShortTitle
+      // Replaced by breadcrumb :
+      // collShortTitle.value = newProps.collectionConfig.homePageSettings.appNavBar.collectionShortTitle
+      breadCrumb.value = newProps.collectionBreadcrumb
       collectionId.value = newProps.collectionIdentifier
     }, { deep: true, immediate: true })
 
@@ -334,9 +351,11 @@ export default {
       dtsRootCollectionId,
       rootCollectionId,
       appConfig,
+      rootCollConfig,
+      projectCollConfig,
       collConfig,
-      projectShortTitle,
-      collShortTitle,
+      rootShortTitle,
+      breadCrumb,
       collectionId,
       burgerChanged,
       closeMenu,
