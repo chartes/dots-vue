@@ -130,9 +130,9 @@ export default {
       // Check if a default custom collection exists in Custom settings
       let defaultCustomSettings = {}
       if (`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}`.length > 0) {
-        defaultCustomSettings = import.meta.glob('confs/defaultCustom.conf.json', { eager: true })
+        defaultCustomSettings = import.meta.glob('confs/custom.conf.json', { eager: true })
         console.log('App.vue setup defaultCustomSettings', defaultCustomSettings)
-        appSettings['./settings/default.conf.json'] = defaultCustomSettings ? _.merge({}, appSettings['./settings/default.conf.json'], defaultCustomSettings[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/defaultCustom.conf.json`]) : appSettings['./settings/default.conf.json']
+        appSettings['./settings/default.conf.json'] = defaultCustomSettings ? _.merge({}, appSettings['./settings/default.conf.json'], defaultCustomSettings[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/custom.conf.json`]) : appSettings['./settings/default.conf.json']
         console.log('App.vue setup appSettings[\'./settings/default.conf.json\'] updated with custom default', appSettings['./settings/default.conf.json'])
       }
       const defaultMatch = appSettings['./settings/default.conf.json'].default
