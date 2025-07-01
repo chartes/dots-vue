@@ -126,7 +126,7 @@
             v-for="(item, index) in arianeCollection.value" :key="index"
             :class="item.length > 1 ? 'several-parent' : refId ? item[0].identifier === refId ? 'is-current' : '' : item[0].identifier === resourceId ? 'is-current' : ''"
           >
-            <template v-for="(ancestor, index) in item" v-bind:key="index">
+            <template v-for="(ancestor, index) in item.sort((a,b)=>store.state.collectionId.indexOf(b.identifier)-store.state.collectionId.indexOf(a.identifier))" v-bind:key="index">
               <router-link
                 v-if="isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
                 :to="{ name: 'Home', params: {collId: ancestor.identifier} }"
@@ -2022,10 +2022,12 @@ div.remove-bottom-padding #article {
   flex-direction: row;
   justify-content: center;
   & > a:first-child {
-    justify-content: right !important;
+    max-width: fit-content;
+    /*justify-content: right !important;*/
   }
   & > a:not(:first-child) {
-    justify-content: left !important;
+    max-width: fit-content;
+    /*justify-content: left !important;*/
     color: #929292 !important;
 
     &:before {
