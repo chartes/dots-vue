@@ -223,6 +223,26 @@ export default {
           // Remove the now-empty <dts:wrapper> tag
           parent.removeChild(wrapper)
         })
+
+        // 2. Create a namespace resolver
+        const nsResolver = function (prefix) {
+          const ns = {
+            xml: 'http://www.w3.org/XML/1998/namespace'
+          }
+          return ns[prefix] || null
+        }
+
+        // 3. Use XPath to select all elements with an xml:id attribute
+        const xpathResult = xmlDoc.evaluate('//*[@xml:id]', xmlDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+
+        // 4. Loop through matching nodes and copy xml:id to id
+        for (let i = 0; i < xpathResult.snapshotLength; i++) {
+          const node = xpathResult.snapshotItem(i)
+          const xmlId = node.getAttributeNS('http://www.w3.org/XML/1998/namespace', 'id')
+          if (xmlId) {
+            node.setAttribute('id', xmlId) // for anchor navigation
+          }
+        }
         datatei = xmlDoc
       }
       // Remove the xslt generated left-hand side TOC (used in other ENC's apps but not here)
