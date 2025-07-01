@@ -464,7 +464,7 @@ export default {
       appConfig.value = newProps.applicationConfig
       collConfig.value = newProps.collectionConfig
       displayOpt.value = newProps.collectionConfig.homePageSettings.listSection.displayAs
-      pageSize.value = newProps.collectionConfig.homePageSettings.listSection.collectionsPerPage
+      pageSize.value = newProps.collectionConfig.homePageSettings.listSection.cardCollectionsPerPage
       browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
       currCollection.value = newProps.currentCollection
       collectionAltTitle.value = newProps.collectionConfig.homePageSettings.pageHeader.collectionAltTitle
