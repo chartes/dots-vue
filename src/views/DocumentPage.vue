@@ -142,7 +142,7 @@
               <a
                 v-else
                 href="#"
-                v-on:click="toggleCollection($event, ancestor.router)"
+                v-on:click.prevent="toggleCollection(ancestor.router)"
               >
                 {{ ancestor.title }}
               </a>
@@ -1087,12 +1087,12 @@ export default {
       isModalOpened.value = false
       selectedCollectionId.value = ''
       Object.assign(selectedCollection, {})
+      store.commit('setCollectionModalId', false)
       console.log(' Collection modal was closed : ', selectedCollectionId.value, selectedCollection)
     }
 
-    const toggleCollection = (event, collectionId) => {
+    const toggleCollection = (collectionId) => {
       console.log('toggleCollection collectionId : ', collectionId)
-      event.preventDefault()
       isModalOpened.value = true
       selectedCollectionId.value = collectionId
       Object.assign(selectedCollection, flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0])
@@ -1313,6 +1313,14 @@ export default {
           console.log('Document page watch TEST : oldRoute, newRoute ', oldRoute, newRoute)
         }
       }, { deep: true, immediate: true }
+    )
+    watch(
+      () => store.state.collectionModalCollectionId, (newVal, oldVal) => {
+        if (newVal) {
+          toggleCollection(newVal)
+        }
+        console.log('CollectionModal watch state isModalOpen.value : ')
+      }, { immediate: true }
     )
     /*watch(
       () => store.state.collectionId, async function () {

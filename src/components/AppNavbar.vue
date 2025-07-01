@@ -35,14 +35,20 @@
             :to="{ name: 'Home' }"
             >{{ rootShortTitle ? rootShortTitle : rootCollectionId }}
           </router-link>
-          <!--TODO: troubleshoot subcollection not showing when on document-->
-          <template v-for="item in breadCrumb.slice().reverse()">
+          <template v-for="(item, index) in breadCrumb.slice().reverse()">
             <router-link
+              v-if="index === 0"
               class="level-item-external"
               active-class="active"
               :to="{ name: 'Home', params: {collId: Object.keys(item)[0]} }"
               >{{ Object.values(item)[0] }}
             </router-link>
+            <a
+              v-else
+              class="level-item-external"
+              @click.prevent="openCollectionModal(Object.keys(item)[0])"
+              >{{ Object.values(item)[0] }}
+            </a>
           </template>
           <!-- replaced by the above breadcrum to have sub-collections
           <router-link
@@ -86,6 +92,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
 import Burger from './Burger.vue'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 
 export default {
   name: 'AppNavbar',
@@ -130,6 +137,7 @@ export default {
   },
 
   setup (props) {
+    const store = useStore()
     // State
     const state = reactive({
       isMenuOpened: false
@@ -169,6 +177,11 @@ export default {
 
     const closeMenu = () => {
       isMenuOpened.value = false
+    }
+
+    const openCollectionModal = (collId) => {
+      store.commit('setCollectionModalId', collId)
+      console.log('AppNavBar click below ProjectId open collection modal ', collId)
     }
 
     const ImgUrl = (source) => {
@@ -357,6 +370,7 @@ export default {
       rootShortTitle,
       breadCrumb,
       collectionId,
+      openCollectionModal,
       burgerChanged,
       closeMenu,
       ImgUrl,

@@ -6,7 +6,8 @@ export default createStore({
     collectionId: undefined,
     currentItem: {},
     TOC: [],
-    arianeDocument: undefined
+    arianeDocument: undefined,
+    collectionModalCollectionId: false
   },
   mutations: {
     setResourceId (state, resourceId) {
@@ -26,6 +27,9 @@ export default createStore({
       state.arianeDocument = []
       // Fill the array with the items from the payload array
       state.arianeDocument = list
+    },
+    setCollectionModalId (state, id) {
+      state.collectionModalCollectionId = id
     }
   }
 })
