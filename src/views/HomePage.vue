@@ -459,6 +459,7 @@ export default {
     }
 
     watch(props, async (newProps) => {
+      isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
       componentTOC.value = []
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
