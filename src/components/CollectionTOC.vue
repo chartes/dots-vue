@@ -12,19 +12,15 @@
           class="card-header"
         >
           <div class="document-folder">
-            <div class="card-header-first-line">
-              <!--<span class="collection-elec-id">
-                ID
-              </span>-->
+            <router-link
+              class="card-header-first-line"
+              :to="{ name: 'Home', params: { collId: item.identifier }}"
+            >
               <div class="collection-metadata is-flex-direction-column">
-                <div
-                  class=""
-                >
-                  <router-link :to="{ name: 'Home', params: { collId: item.identifier }}">
-                    {{ item.title }}
-                  </router-link>
-                </div><!-- card-header-first-line -->
-                <div class="is-flex is-flex-direction-column">
+                <div class="collection-metadata-title">
+                  {{ item.title }}
+                </div>
+                <div class="collection-metadata-author-date is-flex is-flex-direction-column">
                   <span>
                     {{ item.author }} {{ item.dublincore.creator }}
                   </span>
@@ -52,7 +48,7 @@
                   />
                 </router-link>
               </div>-->
-            </div>
+            </router-link>
           </div>
         </div>
         <div
@@ -61,17 +57,10 @@
         >
           <div class="document-folder">
             <div class="card-header-first-line">
-              <!--<span class="collection-elec-id">
-                ID
-              </span>-->
               <div class="collection-metadata is-flex-direction-column">
-                <div
-                  class=""
-                >
-                  <router-link :to="{ name: 'Home', params: { collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] : item.extensions['dots:dotsProjectId'] }}">
-                    {{ item.title }}
-                  </router-link>
-                </div><!-- card-header-first-line -->
+                <span class="collection-metadata-title">
+                  {{ item.title }}
+                </span>
                 <div class="is-flex is-flex-direction-column">
                   <span>
                     {{ item.author }} {{ item.dublincore.creator }}
@@ -107,9 +96,12 @@
           v-if="isDocProjectIdInc && item.parent !== rootCollectionId && !componentTOC.map(i => i['@type']).every(t => t === 'Resource')"
           class="wrapper"
         >
-          <div class="toc-area">
+          <div
+            class="collection-toc-area"
+            @click.prevent="toggleExpanded(item.identifier)"
+          >
             <div
-              class="toc-area-header"
+              class="collection-toc-area-header"
               :class="expandedById[item.identifier] ? 'expanded': ''"
             >
               <a href="#">{{ browseBttnTxt }}</a>
@@ -117,7 +109,6 @@
                 href="#"
                 class="toggle-btn"
                 :class="expandedById[item.identifier] ? 'expanded': ''"
-                v-on:click.prevent="toggleExpanded(item.identifier)"
               />
             </div>
             <div v-if="expandedById[item.identifier] && item.totalChildren > 0 && item.children?.length > 0
@@ -150,25 +141,14 @@
       <template v-else>
         <div class="card-header">
           <div class="document-folder">
-            <div class="card-header-first-line">
-              <!--<span class="collection-elec-id">
-                ID
-              </span>-->
+            <router-link
+              class="card-header-first-line"
+              :to="!isDocProjectIdInc ? { name: 'Document', params: { id: item.identifier }} : { name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }"
+            >
               <div class="collection-metadata is-flex-direction-column">
-                <div
-                  v-if="!isDocProjectIdInc"
-                >
-                  <router-link :to="{ name: 'Document', params: { id: item.identifier }}">
-                    {{ item.title }}
-                  </router-link>
-                </div><!-- card-header-first-line -->
-                <div
-                  v-else
-                >
-                  <router-link :to="{ name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }">
-                    {{ item.title }}
-                  </router-link>
-                </div>
+                <span class="collection-metadata-title">
+                  {{ item.title }} {{ !isDocProjectIdInc }}
+                </span>
                 <div class="is-flex is-flex-direction-column">
                   <span>
                     {{ item.author }} {{ item.dublincore.creator }}
@@ -197,7 +177,7 @@
                   />
                 </router-link>
               </div>-->
-            </div>
+            </router-link>
           </div>
         </div>
       </template>
@@ -455,7 +435,8 @@ export default {
       rootCollectionId.value = newProps.rootCollectionIdentifier
       collConfig.value = newProps.collectionConfig
       browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
-    }, { deep: true, immediate: true })
+    }, { deep: true, immediate: true }
+    )
 
     return {
       route,
@@ -476,7 +457,7 @@ export default {
 </script>
 
 <style scoped>
-.wrapper {
+.wrapper, .modal-wrapper {
   .tree {
     /* list-style: none;*/
     padding-top: 10px;
@@ -557,9 +538,9 @@ button {
   }
   & > .wrapper {
     width: 100%;
-    & > .toc-area {
+    & > .collection-toc-area {
       margin-bottom: 0 !important;
-      & > .toc-area-header {
+      & > .collection-toc-area-header {
         display: flex;
         width: 100%;
         padding-top: 3px;
@@ -632,10 +613,17 @@ button {
     }
     & > .collection-metadata {
       width: 80%;
+      & > .collection-metadata-title {
+        color: #485fc7;
+      }
+      & > .collection-metadata-author-date {
+        color: #4a4a4a;
+      }
       & > .collection-description {
         width: 100%;
         text-align: justify;
         text-transform: none;
+        color: #4a4a4a;
       }
     }
   }
@@ -661,7 +649,7 @@ button {
 
 
 
-.toc-area-header > a {
+.collection-toc-area-header > a {
   text-transform: uppercase;
   font-family: "Barlow Semi Condensed", sans-serif;
   font-weight: 500;

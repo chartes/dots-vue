@@ -189,10 +189,11 @@
       </div>
     </section>
     <div class="wrapper">
-      <div class="toc-area app-width-margin">
+      <div class="collection-toc-area app-width-margin">
         <div
-          class="toc-area-header"
+          class="collection-toc-area-header"
           :class="expandedById[collectionId] ? 'expanded': ''"
+          @click.prevent="toggleExpanded(collectionId)"
         >
           <a
             href="#"
@@ -204,7 +205,6 @@
             href="#"
             class="toggle-btn"
             :class="expandedById[collectionId] ? 'expanded': ''"
-            v-on:click.prevent="toggleExpanded(collectionId)"
           />
         </div>
         <div v-if="componentTOC.length > 0"
@@ -565,12 +565,12 @@ a {
   /* color: #971716; */
   color: var(--text-color);
 }
-.home-mask > .wrapper > .toc-area {
+.home-mask > .wrapper > .collection-toc-area {
   width: 100%;
   font-family: "Barlow", sans-serif !important;
   margin-bottom: 30px !important;
 }
-.toc-area-header {
+.collection-toc-area-header {
   display: flex;
   width: 100%;
   padding: 20px;
@@ -581,7 +581,7 @@ a {
     border-radius: 6px 6px 0 0;
   }
 }
-.toc-area-header > a {
+.collection-toc-area-header > a {
   text-transform: uppercase;
   font-family: "Barlow Semi Condensed", sans-serif;
   font-weight: 500;
@@ -730,7 +730,7 @@ a {
       }
     }
   }
-  & > .wrapper > .toc-area {
+  & > .wrapper > .collection-toc-area {
     margin-bottom: 0 !important;
   }
 }
