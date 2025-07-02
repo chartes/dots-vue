@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="(rootCollectionId === dtsRootCollectionId && collectionId === rootCollectionId && displayOpt !== 'list') || displayOpt === 'cards'"
+    v-if="(rootCollectionId === dtsRootCollectionId && collectionId === rootCollectionId && displayOpt !== 'list') || displayOpt === 'card'"
     class="collection-list"
   ><!-- && currCollection.member.every(m => m.citeType === 'Collection') -->
     <div class="tiles">
@@ -114,6 +114,7 @@
           :current-collection="currCollection"
           :dts-root-collection-identifier="dtsRootCollectionId"
           :root-collection-identifier="rootCollectionId"
+          :collection-config="collConfig"
           :toc="currentPageData"
           :margin="0"
         />
@@ -217,6 +218,7 @@
               :current-collection="currCollection"
               :dts-root-collection-identifier="dtsRootCollectionId"
               :root-collection-identifier="rootCollectionId"
+              :collection-config="collConfig"
               :toc="componentTOC"
               :margin="0"
             />
@@ -299,7 +301,7 @@ export default {
     console.log('HomePageDefault currentCollection.value / componentTOC.value : ', currCollection.value, componentTOC.value)
     console.log('HomePageDefault componentTOC / collectionId : ', Object.fromEntries(componentTOC.value.map(col => [col.identifier, false])), componentTOC.value, collectionId, currCollection)
 
-    const displayOpt = ref(props.collectionConfig.homePageSettings.listSection.displayAs)
+    const displayOpt = ref(props.collectionConfig.homePageSettings.listSection.displayMode)
     const currentPage = ref(1)
     const pageSize = ref(0)
     const totalPages = ref(1)
@@ -463,8 +465,8 @@ export default {
       collectionId.value = newProps.collectionIdentifier
       appConfig.value = newProps.applicationConfig
       collConfig.value = newProps.collectionConfig
-      displayOpt.value = newProps.collectionConfig.homePageSettings.listSection.displayAs
-      pageSize.value = newProps.collectionConfig.homePageSettings.listSection.cardCollectionsPerPage
+      displayOpt.value = newProps.collectionConfig.homePageSettings.listSection.displayMode
+      pageSize.value = newProps.collectionConfig.homePageSettings.listSection.cardCollectionPerPage
       browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
       currCollection.value = newProps.currentCollection
       collectionAltTitle.value = newProps.collectionConfig.homePageSettings.pageHeader.collectionAltTitle
@@ -668,7 +670,7 @@ a {
   & > a {
     font-family: "Barlow Semi Condensed", sans-serif;
     font-weight: 500;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     text-decoration: none;
     color: white;
     /* color: #b9192f; */

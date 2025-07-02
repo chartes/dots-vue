@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="(currentCollection.identifier === rootCollectionId && displayOpt !== 'list') || displayOpt === 'cards'"
+    v-if="(currentCollection.identifier === rootCollectionId && displayOpt !== 'list') || displayOpt === 'card'"
   >
     <div
       v-for="(item, index) in componentTOC" :key="index"
@@ -112,7 +112,7 @@
               class="toc-area-header"
               :class="expandedById[item.identifier] ? 'expanded': ''"
             >
-              <a href="#">Parcourir</a>
+              <a href="#">{{ browseBttnTxt }}</a>
               <a
                 href="#"
                 class="toggle-btn"
@@ -132,6 +132,7 @@
                   :current-collection="item"
                   :dts-root-collection-identifier="dtsRootCollectionId"
                   :root-collection-identifier="rootCollectionId"
+                  :collection-config="collConfig"
                   :margin="$props.margin"
                   :toc="item.children"
                 />
@@ -313,6 +314,7 @@
             :current-collection="item"
             :dts-root-collection-identifier="dtsRootCollectionId"
             :root-collection-identifier="rootCollectionId"
+            :collection-config="collConfig"
             :margin="$props.margin + 23"
             :toc="item.children"
           />
@@ -371,6 +373,9 @@ export default {
       type: String,
       required: true
     },
+    collectionConfig: {
+      type: Object
+    },
     currentCollection: {
       type: Object
     },
@@ -391,6 +396,8 @@ export default {
     const displayOpt = ref(props.displayOption)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
+    const collConfig = ref(props.collectionConfig)
+    const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
 
     /*if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
       const rootResponse = await getMetadataFromApi()
@@ -446,6 +453,8 @@ export default {
       displayOpt.value = newProps.displayOption
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
+      collConfig.value = newProps.collectionConfig
+      browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
     }, { deep: true, immediate: true })
 
     return {
@@ -454,6 +463,8 @@ export default {
       displayOpt,
       dtsRootCollectionId,
       rootCollectionId,
+      collConfig,
+      browseBttnTxt,
       toggleExpanded,
       expandedById,
       selectedParent,

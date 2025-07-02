@@ -22,8 +22,8 @@
         "customCollectionDescription": { "compName": "HomePageContent" }
       },
       "listSection": {
-        "displayAs": "",
-        "cardCollectionsPerPage": 3,
+        "displayMode": "",
+        "cardCollectionPerPage": 3,
         "logo": "",
         "browseButtonText": "Browse the collection"
       }
