@@ -172,7 +172,7 @@ export default {
         console.log('App.vue breadcrumb loopCollId', loopCollId)
         let parentsResponse = await getParentFromApi(loopCollId)
         let parentCollIds = parentsResponse.member ? parentsResponse.member.map(p => ({ [p['@id']]: p.title })) : []
-        console.log('App.vue breadcrumb parentsResponse.member', parentsResponse.member, parentsResponse.member.map(p => ({ [p['@id']]: p.title })))
+        console.log('App.vue breadcrumb parentsResponse.member', parentsResponse.member ? parentsResponse.member + '/n' + parentsResponse.member.map(p => ({ [p['@id']]: p.title })) : 'no parent')
         console.log('App.vue breadcrumb parentCollIds', parentCollIds)
         if (Array.isArray(parentCollIds) && parentCollIds.length > 1) {
           parentCollId = store.state.collectionId && Object.keys(parentCollIds).includes(store.state.collectionId) && store.state.collectionId !== loopCollId ? store.state.collectionId : parentCollIds[0]
@@ -181,7 +181,7 @@ export default {
           parentCollId = parentCollIds.map(p => Object.keys(p)[0])[0]
           console.log('App.vue breadcrumb parentCollId cas 2', parentCollId)
         }
-        if (parentCollId !== rootCollectionIdentifier.value && !breadCrumb.value.map(m => Object.keys(m)[0]).includes(parentCollId)) {
+        if (parentCollId && parentCollId !== rootCollectionIdentifier.value && !breadCrumb.value.map(m => Object.keys(m)[0]).includes(parentCollId)) {
           let parentBreadcrumb = {}
           parentBreadcrumb[parentCollId] = parentsResponse.member.find(p => p['@id'] === parentCollId).title
           breadCrumb.value.push(parentBreadcrumb)
@@ -231,7 +231,7 @@ export default {
     }
     watch(
       () => store.state.collectionId, async function () {
-        if (watcherRoute.value === false) {
+        if (watcherRoute.value === false && dtsRootCollectionId.value && rootCollectionIdentifier.value) {
           watcherState.value = true
           collConfig.value = {}
           if (store.state.collectionId && store.state.collectionId !== collectionId.value) {
