@@ -155,17 +155,19 @@ export default {
       // Customize the template with some vue components and code
 
       // Generate PageBreak components for each iiif canvas link encoded in the DoTS response
-      console.log('finding last pb', tmpDom.querySelectorAll('a.pb.facs'))
+      console.log('Document.vue finding pb facs with iiif', tmpDom.querySelectorAll('a.pb[href*="iiif"]'))
 
-      tmpDom.querySelectorAll('a.pb.facs').forEach((a) => {
-        const container = document.createElement('div')
-        console.log('Document.vue manifest : ', manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === a.href)[0].id)
-        const canvasId = manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === a.href)[0].id
-        const frameNum = manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === a.href)
-        container.innerHTML = `<page-break canvas-id="${canvasId}" canvas-num="${frameNum}" image="${a.href}"/>`
-        // Replace the link with a PageBreak component
-        a.parentNode.replaceChild(container.firstChild, a)
-      })
+      if (mediaType.value === 'html' && manifest.value) {
+        tmpDom.querySelectorAll('a.pb[href*="iiif"]').forEach((a) => {
+          const container = document.createElement('div')
+          console.log('Document.vue html manifest : ', manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === a.href)[0].id)
+          const canvasId = manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === a.href)[0].id
+          const frameNum = manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === a.href)
+          container.innerHTML = `<page-break canvas-id="${canvasId}" canvas-num="${frameNum}" image="${a.href}"/>`
+          // Replace the link with a PageBreak component
+          a.parentNode.replaceChild(container.firstChild, a)
+        })
+      }
 
       // Treat api tei as tei and transform it as xml:
       if (mediaType.value === 'tei' && currentLevelIndicator.value === 'toEdit') {
@@ -190,16 +192,21 @@ export default {
 
         pbElements.forEach((pb, index) => {
           const facs = pb.getAttribute('facs')
-          console.log('Document.vue tei test manifest.value: ', manifest.value)
+          console.log('Document.vue tei iiif test manifest.value / facs: ', manifest.value, facs)
           const canvasId = manifest.value ? manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === facs)[0].id : ''
+          console.log('Document.vue tei iiif canvasId : ', canvasId)
           const frameNum = manifest.value ? manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === facs) : 1
 
           // Create the <page-break> element in the XML document
-          const pageBreak = xmlDoc.createElement('page-break')
+          /* const pageBreak = xmlDoc.createElement('page-break')
           pageBreak.setAttribute('canvas-id', canvasId)
           pageBreak.setAttribute('canvas-num', frameNum)
           pageBreak.setAttribute('image', facs)
-          pb.parentNode.replaceChild(pageBreak, pb)
+          pb.parentNode.replaceChild(pageBreak, pb) */
+
+          const container = xmlDoc.createElement('div')
+          container.innerHTML = `<page-break canvas-id="${canvasId}" canvas-num="${frameNum}" image="${facs}"/>`
+          pb.parentNode.replaceChild(container.firstChild, pb)
         })
 
         const titleElements = Array.from(xmlDoc.getElementsByTagName('title'))
