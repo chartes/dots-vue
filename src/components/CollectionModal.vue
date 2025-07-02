@@ -19,7 +19,7 @@
         <div class="modal-body">
           <div class="modal-body-header">
             <span class="modal-body-header-section">Sommaire </span>
-            <span class="modal-body-header-title">Parcourir la collection </span>
+            <span class="modal-body-header-title">{{ browseBttnTxt }} {{ currentCollection.title }}</span>
             <a href="#" class="toggle-btn" v-on:click.prevent="toggleExpanded(collectionId)"></a>
           </div>
         </div>
@@ -32,6 +32,7 @@
               :is-doc-projectId-included="isDocProjectIdInc"
               :dts-root-collection-identifier="dtsRootCollectionId"
               :root-collection-identifier="rootCollectionId"
+              :collection-config="collConfig"
               :current-collection="currentCollection"
               :margin="0"
               :toc="collectionTOC.filter(item => item.identifier === collectionId)[0].children"
@@ -71,6 +72,9 @@ export default {
       type: String,
       required: true
     },
+    collectionConfig: {
+      type: Object
+    },
     toc: {
       type: Object,
       required: true
@@ -92,6 +96,8 @@ export default {
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
+    const collConfig = ref(props.collectionConfig)
+    const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
     const collectionTOC = ref(props.toc)
     console.log('CollectionModal props.toc : ', props.toc)
 
@@ -212,8 +218,11 @@ export default {
 
     watch(props, (newProps) => {
       isModalOpened.value = newProps.isOpen
+      collConfig.value = newProps.collectionConfig
+      browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
       console.log('CollectionModal watch isOpen props isModalOpened.value : ', isModalOpened.value)
-    })
+    }, { deep: true, immediate: true }
+    )
 
     return {
       modalCssClass,
@@ -221,6 +230,8 @@ export default {
       isDocProjectIdInc,
       dtsRootCollectionId,
       rootCollectionId,
+      collConfig,
+      browseBttnTxt,
       appendMissingChildren,
       toggleContent,
       target,

@@ -8,6 +8,7 @@
       :dts-root-collection-identifier="dtsRootCollectionId"
       :root-collection-identifier="rootCollectionId"
       :collectionIdentifier="selectedCollectionId"
+      :collection-config="collConfig"
       :currentItem="selectedCollection"
       :toc="flatTOC"
       @change="closeModal"
