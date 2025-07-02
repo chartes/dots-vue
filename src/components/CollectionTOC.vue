@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="(currentCollection.identifier === rootCollectionId && displayOpt !== 'list') || displayOpt === 'card'"
+    v-if="(currentCollection.identifier === rootCollectionId && displayOpt !== 'list' && currentCollection.member.every(item => item.citeType === 'Collection')) || (displayOpt === 'card' && currentCollection.member.every(item => item.citeType === 'Collection'))"
   >
     <div
       v-for="(item, index) in componentTOC" :key="index"

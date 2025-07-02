@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="(rootCollectionId === dtsRootCollectionId && collectionId === rootCollectionId && displayOpt !== 'list') || displayOpt === 'card'"
+    v-if="(rootCollectionId === dtsRootCollectionId && collectionId === rootCollectionId && displayOpt !== 'list' && currentCollection.member.every(item => item.citeType === 'Collection')) || (displayOpt === 'card' && currentCollection.member.every(item => item.citeType === 'Collection'))"
     class="collection-list"
   ><!-- && currCollection.member.every(m => m.citeType === 'Collection') -->
     <div class="tiles">
