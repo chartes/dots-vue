@@ -253,10 +253,19 @@ export default {
             console.log('App.vue watch rootCollConfig.value, rootCollectionOverrides : ', rootCollConfig.value, rootCollectionOverrides)
             rootShortTitle.value = rootCollConfig.value ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : appConfig.value.genericConf.homePageSettings.appNavBar.collectionShortTitle
 
+            // Set the project config
+            let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
+            projectCollConfig.value = projectCollectionOverrides ? _.merge({}, rootCollConfig.value, projectCollectionOverrides) : rootCollConfig.value
+            console.log('App.vue watch projectCollConfig.value, projectCollectionOverrides : ', projectCollConfig.value, projectCollectionOverrides)
+            // Replaced by breadcrumb :
+            // projectShortTitle.value = projectCollConfig.value ? projectCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : ''
+
             let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
-            console.log('App.vue watch collectionOverrides : ', collectionOverrides)
-            if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value) {
-              collectionOverrides = {
+            console.log('App.vue watch collectionId.value / collectionOverrides : ', collectionId.value, collectionOverrides)
+            if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value && collectionId.value !== projectCollId.value) {
+              collectionOverrides = projectCollConfig.value
+              collectionOverrides.collectionId = collectionId.value
+              /*collectionOverrides = {
                 "collectionId": collectionId.value,
                 "mediaTypeEndpoint": "tei",
                 "homePageSettings": {
@@ -275,9 +284,9 @@ export default {
                     "logo": ""
                   }
                 }
-              }
+              }*/
             }
-            collConfig.value = _.merge({}, rootCollConfig.value, collectionOverrides)
+            collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
             console.log('App.vue watch final collConfig.value : ', collConfig.value)
           }
           watcherState.value = false
