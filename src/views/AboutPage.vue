@@ -32,6 +32,7 @@
           <component
             class="content"
             :is="currentTab"
+            :application-base-url="appBaseUrl"
           >
           </component>
         </keep-alive>
@@ -65,6 +66,8 @@ export default {
   },
 
   setup (props) {
+    const appBaseUrl = ref(`${import.meta.env.VITE_APP_APP_ROOT_URL}`)
+    console.log('AboutPage setup appBaseUrl : ', appBaseUrl)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const collConfig = ref(props.collectionConfig)
     const aboutSettings = ref([])
@@ -146,6 +149,7 @@ export default {
     }, { deep: true, immediate: true })
 
     return {
+      appBaseUrl,
       collConfig,
       currCollection,
       collectionAltTitle,
