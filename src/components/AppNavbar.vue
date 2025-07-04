@@ -210,7 +210,7 @@ export default {
           console.log('AppNavbar ImgUrl rootCollImg : ', rootCollImg)
         }
         // Setting the default AppNavBar image (dots) if none is defined at root or collection level
-        const defaultSettings = import.meta.glob('/src/assets/images/Logo_dots_circle.svg')
+        const defaultSettings = import.meta.glob('@/assets/images/Logo_dots_circle.svg', { eager: true })
         console.log('AppNavbar ImgUrl defaultSettings: ', defaultSettings)
         images['/src/assets/images/Logo_dots_circle.svg'] = defaultSettings['/src/assets/images/Logo_dots_circle.svg']
 
@@ -248,10 +248,10 @@ export default {
             return sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName
           } else {
             imgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarLogo.href
-            console.log('AppNavbar ImgUrl appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName}`)
-            console.log('AppNavbar ImgUrl imgHref.value : ', imgHref.value)
-            console.log('AppNavbar ImgUrl defaultImg : ', defaultImg)
-            return defaultImg.name
+            console.log('AppNavbar ImgUrl default appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName}`)
+            console.log('AppNavbar ImgUrl default imgHref.value : ', imgHref.value)
+            console.log('AppNavbar ImgUrl default defaultImg : ', defaultImg)
+            return defaultImg.default
           }
         }
       } else {
@@ -283,7 +283,7 @@ export default {
           console.log('AppNavbar apiImgUrl rootCollImg : ', rootCollImg)
         }
         // Setting the default AppNavBar image (dots) if none is defined at root or collection level
-        const defaultSettings = import.meta.glob('/src/assets/images/Logo_dots_circle.svg')
+        const defaultSettings = import.meta.glob('@/assets/images/Logo_dots_circle.svg')
         console.log('AppNavbar apiImgUrl defaultSettings: ', defaultSettings)
         images['/src/assets/images/Logo_dots_circle.svg'] = defaultSettings['/src/assets/images/Logo_dots_circle.svg']
 
@@ -321,10 +321,10 @@ export default {
             return sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName
           } else {
             apiImgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
-            console.log('AppNavbar apiImgUrl appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`)
-            console.log('AppNavbar apiImgUrl apiImgHref.value : ', apiImgHref.value)
-            console.log('AppNavbar apiImgUrl defaultImg : ', defaultImg)
-            return defaultImg.name
+            console.log('AppNavbar apiImgUrl default appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`)
+            console.log('AppNavbar apiImgUrl default apiImgHref.value : ', apiImgHref.value)
+            console.log('AppNavbar apiImgUrl default defaultImg : ', defaultImg)
+            return defaultImg.default
           }
         }
       } else {
