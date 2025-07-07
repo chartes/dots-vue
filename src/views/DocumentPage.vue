@@ -222,7 +222,7 @@
             :documenttype="documentType"
             :bottomtoc="bottomTOC"
             :maxcitedepth="TOC_DEPTH"
-            :key="resourceId + currentLevelIndicator"
+            :key="resourceId + currentLevelIndicator + manifest"
           />
         </div>
         <div v-else class="text-view" id="text-view">
@@ -239,7 +239,7 @@
             :documenttype="documentType"
             :bottomtoc="bottomTOC"
             :maxcitedepth="TOC_DEPTH"
-            :key="refId + editorialLevel"
+            :key="refId + editorialLevel + manifest"
           />
         </div>
         <div v-if="isLoading" class="mirador-view" id="mirador-view" :style="miradorViewCssStyle">
