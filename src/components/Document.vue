@@ -293,14 +293,17 @@ export default {
       console.log('Document.vue scrollTo on resolve hash : ', hash)
       console.log('Document.vue scrollTo on resolve route : ', route)
       console.log('Document.vue scrollTo on resolve router : ', router)
-      // bump the hash to ensure change detection
-      history.replaceState(null, '', `${router.currentRoute.value.fullPath.split('#')[0]}#${hash}`)
+      if (hash.length > 0) {
+        // bump the hash to ensure change detection
+        const bumpPath = `${import.meta.env.VITE_APP_APP_ROOT_URL}`.length <= 1 ? `${router.currentRoute.value.fullPath.split('#')[0]}#${hash}` : `${import.meta.env.VITE_APP_APP_ROOT_URL}${router.currentRoute.value.fullPath.split('#')[0]}#${hash}`
+        history.replaceState(null, '', bumpPath)
 
-      // target element and scroll
-      const el = document.getElementById(hash)
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' })
-      }
+        // target element and scroll
+        const el = document.getElementById(hash)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' })
+        }
+      } else return
     }
     watch(props, (newProps) => {
       docProjectId.value = newProps.projectIdentifier
