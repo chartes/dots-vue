@@ -35,11 +35,12 @@
                   </span><!-- v-if="c.date" -->
                 </div>
               </div>
-              <!--<div class="card-image is-flex is-justify-content-center">
-                <router-link :to="{ name: 'Home', params: { collId: c.identifier }}">
+              <div class="card-image is-flex is-justify-content-center">
+                <router-link :to="{ name: 'Home', params: { collId: item.identifier }}">
                   <img
-                    v-if="ImgUrl(c.identifier)"
-                    :src="ImgUrl(c.identifier)"
+                    v-if="ImgUrl(item.identifier)"
+                    :src="ImgUrl(item.identifier)"
+                    alt=""
                   />
                   <img
                     v-else
@@ -47,7 +48,7 @@
                     alt=""
                   />
                 </router-link>
-              </div>-->
+              </div>
             </router-link>
           </div>
         </div>
@@ -76,19 +77,23 @@
                   </span><!-- v-if="c.date" -->
                 </div>
               </div>
-              <!--<div class="card-image is-flex is-justify-content-center">
-                <router-link :to="{ name: 'Home', params: { collId: c.extensions ? Array.isArray(c.extensions['dots:dotsProjectId']) ? c.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : c.extensions['dots:dotsProjectId'] : c.extensions['dots:dotsProjectId'] }}">
+              <div class="card-image is-flex is-justify-content-center">
+                <a
+                  href=""
+                  class="disabled"
+                >
                   <img
-                    v-if="ImgUrl(c.identifier)"
-                    :src="ImgUrl(c.identifier)"
+                    v-if="ImgUrl(item.identifier)"
+                    :src="ImgUrl(item.identifier)"
+                    alt=""
                   />
                   <img
                     v-else
                     src="@/assets/images/dots-logo-retro.drawio.svg"
                     alt=""
                   />
-                </router-link>
-              </div>-->
+                </a><!-- router-link :to="{ name: 'Home', params: { collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] : item.extensions['dots:dotsProjectId'] }}" -->
+              </div>
             </div>
           </div>
         </div>
@@ -123,6 +128,7 @@
                   :current-collection="item"
                   :dts-root-collection-identifier="dtsRootCollectionId"
                   :root-collection-identifier="rootCollectionId"
+                  :application-config="appConfig"
                   :collection-config="collConfig"
                   :margin="$props.margin"
                   :toc="item.children"
@@ -138,6 +144,7 @@
           TO DO : VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID=false && VITE_APP_ROOT_DTS_COLLECTION_ID n'est pas DTS root
         </div><!-- && item.parent !== rootCollectionId && !componentTOC.map(i => i['@type']).every(t => t === 'Resource')-->
       </template>
+      <!-- ELSE resource is a resource of type (@type / citeType) resource  -->
       <template v-else>
         <div class="card-header">
           <div class="document-folder">
@@ -164,19 +171,7 @@
                   </span><!-- v-if="c.date" -->
                 </div>
               </div>
-              <!--<div class="card-image is-flex is-justify-content-center">
-                <router-link :to="{ name: 'Home', params: { collId: c.identifier }}">
-                  <img
-                    v-if="ImgUrl(c.identifier)"
-                    :src="ImgUrl(c.identifier)"
-                  />
-                  <img
-                    v-else
-                    src="@/assets/images/dots-logo-retro.drawio.svg"
-                    alt=""
-                  />
-                </router-link>
-              </div>-->
+              <!-- no image planned at resource level for now -->
             </router-link>
           </div>
         </div>
@@ -284,6 +279,7 @@
             :current-collection="item"
             :dts-root-collection-identifier="dtsRootCollectionId"
             :root-collection-identifier="rootCollectionId"
+            :application-config="appConfig"
             :collection-config="collConfig"
             :margin="$props.margin + 23"
             :toc="item.children"
@@ -343,6 +339,9 @@ export default {
       type: String,
       required: true
     },
+    applicationConfig: {
+      type: Object
+    },
     collectionConfig: {
       type: Object
     },
@@ -366,6 +365,7 @@ export default {
     const displayOpt = ref(props.displayOption)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
+    const appConfig = ref(props.applicationConfig)
     const collConfig = ref(props.collectionConfig)
     const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
 
@@ -416,6 +416,27 @@ export default {
       store.commit('setCollectionId', collId)
     }
 
+    const ImgUrl = (source) => {
+      // TODO: provide a logo object with url AND legend ?
+      const sourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
+      if (sourceConfig && sourceConfig.homePageSettings && Object.keys(sourceConfig.homePageSettings).includes('listSection')
+          && sourceConfig.homePageSettings.listSection && Object.keys(sourceConfig.homePageSettings.listSection).includes('logo')
+          && sourceConfig.homePageSettings.listSection.logo.length) {
+        console.log('HomePage ImgUrl found : ', sourceConfig.homePageSettings.listSection.logo)
+        const images = import.meta.glob('confs/*/assets/images/*.*', { eager: true })
+        console.log('HomePage ImgUrl images: ', images)
+        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.listSection.logo}`]
+        console.log('HomePage ImgUrl match: ', match)
+        if (sourceConfig.homePageSettings.listSection.logo.includes('https')) {
+          return sourceConfig.homePageSettings.listSection.logo
+        } else {
+          return match.default // new URL(`/src/assets/images/${sourceConfig.homePageSettings.logo}`, import.meta.url).href
+        }
+      } else {
+        return false
+      }
+    }
+
     watch(props, async (newProps) => {
       isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
       componentTOC.value = []
@@ -423,6 +444,7 @@ export default {
       displayOpt.value = newProps.displayOption
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
+      appConfig.value = newProps.applicationConfig
       collConfig.value = newProps.collectionConfig
       browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
     }, { deep: true, immediate: true }
@@ -434,9 +456,11 @@ export default {
       displayOpt,
       dtsRootCollectionId,
       rootCollectionId,
+      appConfig,
       collConfig,
       browseBttnTxt,
       toggleExpanded,
+      ImgUrl,
       expandedById,
       selectedParent,
       componentTOC,
@@ -624,6 +648,14 @@ button {
 .document-card .card-image {
   margin: auto;
   & > a {
+    align-content: center;
+    > img {
+      height: auto;
+      width: 75px;
+    }
+  }
+  & > a.disabled {
+    pointer-events: none;
     align-content: center;
     > img {
       height: auto;
