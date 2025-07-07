@@ -293,8 +293,13 @@ export default {
       console.log('Document.vue scrollTo on resolve hash : ', hash)
       console.log('Document.vue scrollTo on resolve route : ', route)
       console.log('Document.vue scrollTo on resolve router : ', router)
-      if (hash.length) {
-        location.hash = hash
+      // bump the hash to ensure change detection
+      history.replaceState(null, '', `${router.currentRoute.value.fullPath.split('#')[0]}#${hash}`)
+
+      // target element and scroll
+      const el = document.getElementById(hash)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
       }
     }
     watch(props, (newProps) => {
