@@ -1214,7 +1214,7 @@ export default {
 
     watch(
       () => metadata.iiifManifestUrl,
-      async () => {
+      () => {
         if (metadata.iiifManifestUrl) {
           console.log('metadata.iiifManifestUrl is now available !!! : ', metadata.iiifManifestUrl, manifestIsAvailable.value)
           layout.imageIsAvailable.value = true
@@ -1222,7 +1222,7 @@ export default {
         } else {
           layout.imageIsAvailable.value = false
         }
-      }
+      }, { immediate: true }
     )
 
     watch(props, async (newProps) => {
