@@ -207,7 +207,6 @@
               :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
               @click="toggleExpanded(item.identifier)"
             >
-              {{ item.citeType }}
               {{ item.title }}
             </span>
             <router-link
@@ -215,7 +214,6 @@
               :class="route.params.id === item.identifier ? 'is-current' : ''"
               :to="{ name: 'Home', params: {collId: item.identifier} }"
             >
-              {{ item.citeType }}
               {{ item.title }}
             </router-link>
             <router-link
@@ -223,7 +221,6 @@
               :class="route.params.id === item.identifier ? 'is-current' : ''"
               :to="{ name: 'Home', params: {collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] !== item.parent ? item.extensions['dots:dotsProjectId'] : item.identifier : item.identifier} }"
             >
-              {{ item.citeType }}
               {{ item.title }}
             </router-link>
             <span
@@ -231,7 +228,6 @@
               :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
               @click="toggleExpanded(item.identifier)"
             >
-              {{ item.citeType }}
               {{ item.title }}
             </span>
           </template>
@@ -240,7 +236,6 @@
             :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
             @click="toggleExpanded(item.identifier)"
           >
-            {{ item.citeType }}
             {{ item.title }}
           </span>
           <router-link
@@ -248,7 +243,6 @@
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Home', params: {collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] !== item.parent ? item.extensions['dots:dotsProjectId'] : item.identifier : item.identifier} }"
           >
-            {{ item.citeType }}
             {{ item.title }}
           </router-link>
           <span
@@ -256,7 +250,6 @@
             :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
             @click="toggleExpanded(item.identifier)"
           >
-            {{ item.citeType }}
             {{ item.title }}
           </span>-->
           <router-link
@@ -265,7 +258,6 @@
             :to="{ name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }"
             @click.prevent="setStateCollection(selectedParent)"
           >
-            {{ item.citeType ? item.citeType : item['@type'] }}
             {{ item.title }}
           </router-link>
           <router-link
@@ -273,7 +265,6 @@
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Document', params: { collId: Array.isArray(item.parent) ? item.parent.find(p => p === route.params.collId) ? route.params.collId : item.parent[0] : item.parent, id: item.identifier } }"
           >
-            {{ item.citeType }}
             {{ item.title }}
           </router-link>
           <router-link
@@ -281,7 +272,6 @@
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Document', params: { id: item.identifier } }"
           >
-            {{ item.citeType }}
             {{ item.title }}
           </router-link>
         </div>
