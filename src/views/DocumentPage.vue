@@ -518,6 +518,7 @@ export default {
           }
           currentItem.value.editorialLevelIndicator = editorialTypes.includes(currentItem.value.citeType) ? 'toEdit' : 'renderToc'
           store.commit('setCurrentItem', currentItem.value)
+          document.title = currentItem.value.title
           console.log('init type : ', documentType.value)
           console.log('set currentItem.value : ', currentItem.value)
           isModalOpened.value = false
@@ -528,7 +529,6 @@ export default {
           currentItem.value.parent = parentResponse.member ? parentResponse.member[0]['@id'] : null
           currentItem.value.level = -1
           currentItem.value.editorialLevelIndicator = 'renderToc'
-          store.commit('setCurrentItem', currentItem.value)
           console.log('init type : ', documentType.value)
           isModalOpened.value = true
         }

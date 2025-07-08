@@ -288,15 +288,15 @@ export default {
             }
             collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
             console.log('App.vue watch final collConfig.value : ', collConfig.value)
-            if (store.state.currentItem || route.params.id ) {
-              document.title = store.state.currentItem.title
-              console.log('App.vue watch Title state resource : ', store.state.currentItem, store.state.collectionId, route.params)
-            } else if (store.state.collectionId && route.params.id) {
-              console.log('App.vue watch Title statecollection : ', store.state.currentItem, store.state.collectionId, route.params, breadCrumb.value, collConfig.value.homePageSettings.appNavBar.collectionShortTitle ? collConfig.value.homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title)
-              document.title = appConfig.value && appConfig.value.collectionsConf && appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId) ? appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId).homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title
-            } else {
-              console.log('App.vue watch Title state root : ', store.state.currentItem, store.state.collectionId, route.params, breadCrumb.value)
-              document.title = rootCollConfig.value && rootCollConfig.value.homePageSettings ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : document.title
+            // updating html document title for collections (when on document, managed in DocumentPage)
+            if (!route.params.id) {
+              if (store.state.collectionId) {
+                console.log('App.vue watch Title state collection : ', store.state.currentItem, store.state.collectionId, route.params, breadCrumb.value, collConfig.value.homePageSettings.appNavBar.collectionShortTitle ? collConfig.value.homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title)
+                document.title = appConfig.value && appConfig.value.collectionsConf && appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId) ? appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId).homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title
+              } else {
+                console.log('App.vue watch Title state root : ', store.state.currentItem, store.state.collectionId, route.params, breadCrumb.value)
+                document.title = rootCollConfig.value && rootCollConfig.value.homePageSettings ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : document.title
+              }
             }
           }
           watcherState.value = false
@@ -335,11 +335,13 @@ export default {
                 store.commit('setResourceId', newRoute.params.id)
                 store.commit('setCollectionId', collectionId.value)
               } else if (newRoute.params.collId) {
+                store.commit('setCurrentItem', {})
                 collectionId.value = newRoute.params.collId
                 store.commit('setCollectionId', collectionId.value)
                 console.log('App.vue watch newRoute.params.collId getProjectFromApi', await getProjectFromApi(collectionId.value))
                 console.log('App.vue watch collectionId.value as route.params.collId : ', collectionId.value)
               } else {
+                store.commit('setCurrentItem', {})
                 collectionId.value = rootCollectionIdentifier.value
                 store.commit('setCollectionId', collectionId.value)
                 console.log('App.vue watch NO route.params.collId -> collectionId.value = rootCollectionIdentifier.value : ', collectionId.value, rootCollectionIdentifier.value)
@@ -364,6 +366,8 @@ export default {
               console.log('App.vue watch newRoute.params.id', newRoute.params.id)
               const currResource = await fetchMetadata('app.vue', newRoute.params.id, 'Resource', newRoute)
               console.log('App.vue watch currResource', currResource)
+            } else {
+              store.commit('setCurrentItem', {})
             }
             collectionId.value = rootCollectionIdentifier.value
             console.log('App.vue watch collectionId.value : ', collectionId.value)
@@ -420,15 +424,15 @@ export default {
           }
           collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
           console.log('App.vue watch final collConfig.value : ', collConfig.value)
-          if (newRoute.params.id) {
-            document.title = store.state.currentItem.title
-            console.log('App.vue watch Title resource : ', store.state.currentItem, store.state.collectionId, newRoute.params)
-          } else if (store.state.collectionId && !newRoute.params.id) {
-            console.log('App.vue watch Title collection : ', store.state.currentItem, store.state.collectionId, newRoute.params, breadCrumb.value, collConfig.value.homePageSettings.appNavBar.collectionShortTitle ? collConfig.value.homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title)
-            document.title = appConfig.value && appConfig.value.collectionsConf && appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId) ? appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId).homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title
-          } else {
-            console.log('App.vue watch Title root : ', store.state.currentItem, store.state.collectionId, newRoute.params, breadCrumb.value)
-            document.title = rootCollConfig.value && rootCollConfig.value.homePageSettings ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : document.title
+          // updating html document title for collections (when on document, managed in DocumentPage)
+          if (!newRoute.params.id) {
+            if (store.state.collectionId && newRoute.params.collId) {
+              console.log('App.vue watch Title collection : ', store.state.currentItem, store.state.collectionId, newRoute.params, breadCrumb.value, collConfig.value.homePageSettings.appNavBar.collectionShortTitle ? collConfig.value.homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title)
+              document.title = appConfig.value && appConfig.value.collectionsConf && appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId) ? appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId).homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title
+            } else {
+              console.log('App.vue watch Title root : ', store.state.currentItem, store.state.collectionId, newRoute.params, breadCrumb.value)
+              document.title = rootCollConfig.value && rootCollConfig.value.homePageSettings ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : document.title
+            }
           }
           watcherRoute.value = false
         }
