@@ -1,4 +1,10 @@
-/* TODO working in dev but not  in build :
+/*=============================================================
+ PART 1
+ Updating the css color schema for:
+  - default DoTS-vue app
+  - its collections & children (unless otherwise specified)
+ =============================================================*/
+/* Using themes TODO working in dev but not in build :
 [data-theme="orange"] {
 	--text-color: orange;
 }
@@ -6,25 +12,30 @@
     --text-color: #8f0e21;
     --fill-color: #8f0e21;
 }*/
+/* Using css variables */
 :root {
     --text-color: #8f0e21;
     --fill-color: #8f0e21;
 }
+
+/*=============================================================
+ PART 2
+ Updating the css of specific elements (HTML) for:
+  - default DoTS-vue app
+  - its collections & children (unless otherwise specified)
+ =============================================================*/
 .about-content {
     & > h1 {
         color: var(--text-color)
     }
 }
-
 .hidden-nav:hover {
     cursor: pointer;
     color: rgb(50, 115, 220);
 }
-
 .api-link {
     border-bottom: none;
 }
-
 header.card-header {
     clear: initial;
     padding: initial;
@@ -33,24 +44,20 @@ header.card-header {
     -moz-border-radius: initial;
     border-radius: initial;
 }
-
 .card-content {
     overflow: auto;
 }
-
 cite.title {
     font-size: inherit;
     font-weight: inherit;
     line-height: inherit;
 }
-
 .container p {
     text-indent: inherit !important;
 }
 .container li {
     line-height: inherit;
 }
-
 .card-header {
     background:  hsl(0, 0%, 96%)  !important;
 }
@@ -59,9 +66,16 @@ cite.title {
     padding: 0;
     margin: 7px;
 }
-
 .hljs {
     background: inherit !important;
     white-space: pre-wrap !important;
 }
 
+/*=============================================================
+ PART 3
+ Updating the css of the DTS API tei response for:
+  - default DoTS-vue app
+  - its collections & children (unless otherwise specified)
+
+ -> see PART 2: CUSTOM RULES in tei.css
+ =============================================================*/

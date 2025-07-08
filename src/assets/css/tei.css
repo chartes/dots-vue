@@ -1009,7 +1009,7 @@ $LastChangedDate$, $LastChangedRevision$, $LastChangedBy$
   PART 2: CUSTOM RULES
   =========================================================== */
 .document-views {
-  /* for frgaments, head might not be included inside a body > div
+  /* for fragments, head might not be included inside a body > div
    (only scenario covered by the default TEI stylesheet) but is
    inside the fragment wrapper and a div, without a body element */
   head {
