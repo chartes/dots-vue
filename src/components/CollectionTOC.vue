@@ -248,7 +248,7 @@
             {{ item.title }}
           </span>-->
           <router-link
-            v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId && item.extensions['dots:dotsProjectId'] === route.params.collId"
+            v-else-if="isDocProjectIdInc && selectedParent !== rootCollectionId && item.extensions['dots:dotsProjectId'] === route.params.collId"
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }"
             @click.prevent="setStateCollection(selectedParent)"
@@ -256,9 +256,10 @@
             {{ item.title }}
           </router-link>
           <router-link
-            v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId"
+            v-else-if="isDocProjectIdInc && selectedParent !== rootCollectionId"
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Document', params: { collId: Array.isArray(item.parent) ? item.parent.find(p => p === route.params.collId) ? route.params.collId : item.parent[0] : item.parent, id: item.identifier } }"
+            @click.prevent="setStateCollection(selectedParent)"
           >
             {{ item.title }}
           </router-link>

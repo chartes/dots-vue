@@ -44,10 +44,11 @@
   </div>
 </template>
 <script>
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, onUnmounted, reactive, ref, watch } from 'vue'
 import DocumentMetadata from '@/components/DocumentMetadata.vue'
 import { getMetadataFromApi } from '@/api/document.js'
 import CollectionTOC from '@/components/CollectionTOC.vue'
+import store from '@/store'
 
 export default {
   components: { CollectionTOC, DocumentMetadata },
@@ -223,6 +224,10 @@ export default {
       console.log('CollectionModal watch isOpen props isModalOpened.value : ', isModalOpened.value)
     }, { deep: true, immediate: true }
     )
+
+    onUnmounted(() => {
+      store.commit('setCollectionModalId', false)
+    })
 
     return {
       modalCssClass,
