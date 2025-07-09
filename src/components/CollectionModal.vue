@@ -328,8 +328,8 @@ export default {
   .toggle-btn {
     position: absolute;
     right: 20px;
-    width: 27px;
-    height: 27px;
+    width: 25px;
+    height: 25px;
     background: url(../assets/images/chevron_rouge.svg) center top -7px / cover no-repeat;
     border: none;
     text-decoration: none;
@@ -347,6 +347,11 @@ export default {
     border: none;
     text-decoration: none;
   }
+  /* toggle-btn in metadata */
+  ::v-deep .metadata-area .toggle-btn {
+    bottom: unset;
+    top: 15px;
+  }
 
   @media screen and (max-width: 1100px) {
     .modal-wrapper {
@@ -359,6 +364,35 @@ export default {
       max-height: 100% !important;
       margin: 10px 10px;
       padding: 20px 10px;
+    }
+  }
+
+  @media screen and (max-width: 500px) {
+
+    .modal-header {
+      position: relative;
+      flex-direction: column;
+
+      & > span {
+        margin-left: 0 !important;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-size: 25px auto;
+      }
+    }
+
+    .modal-body-header {
+      display: flex;
+      flex-direction: column;
+
+      .close-btn {
+        top: 15px;
+        bottom: unset;
+      }
     }
   }
 

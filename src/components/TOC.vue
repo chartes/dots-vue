@@ -222,6 +222,20 @@ div.toc-area-content.toc-content {
     overflow-y: hidden;
     ;
   }
+
+  @media screen and (max-width: 1150px) {
+    .tree {
+      columns: 3;
+    }
+  }
+
+  @media screen and (max-width: 500px) {
+    .tree {
+      columns: 2;
+      gap: 15px;
+    }
+  }
+
   .tree li {
     /*margin-left: 10px;*/
     font-family: "Barlow Semi Condensed", sans-serif;
@@ -246,8 +260,10 @@ div.toc-area-content.toc-content {
 
     &.more {
       /*margin-left: 0px;*/
-      display:inline-block;
+      display: block;
       padding-left: 0px;
+      break-inside: avoid;
+
       & .li.container > a, span {
       margin-top: 4px;
     }

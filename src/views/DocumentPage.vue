@@ -1577,6 +1577,7 @@ export default {
   border-top: 1px dashed var(--text-color);
   border-bottom: #b8b8b8 1px solid;
   padding: 12px 0 9px;
+  overflow-x: hidden;
 }
 .controls a {
   display: inline;
@@ -1608,7 +1609,7 @@ export default {
   display: inline-block;
   width: 42px;
   height: 42px;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 .controls ul > li > a.access_link {
   vertical-align: center;
@@ -2076,11 +2077,14 @@ div.remove-bottom-padding #article {
   visibility: hidden;
 } */
 
-
 @media screen and (max-width: 500px) {
   .several-parent {
     flex-direction: column;
     align-items: center;
+  }
+  .document-area {
+    overflow-x: hidden;
+    position: relative;
   }
 
 }

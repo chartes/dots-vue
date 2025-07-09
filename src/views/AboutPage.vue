@@ -194,6 +194,7 @@ article.about {
       color: #B9192F;
       font-size: 16px;
       text-transform: uppercase;
+      text-align: right;
       &:hover {
         background-color: rgba(185, 25, 47, 15%);
       }
@@ -210,6 +211,7 @@ article.about {
   }
 }
 .about .content {
+  max-width: 100%;
   font-family: "Libre Baskerville", serif !important;
   font-size: 16px;
   text-align: left;
@@ -266,6 +268,11 @@ article.about {
     text-decoration: underline !important;
   }
 }
+.about .content table,
+.about .content pre,
+.about .content blockquote {
+  margin: 20px 0;
+}
 
 @media screen and (max-width: 800px) {
   .about .content {
@@ -320,6 +327,7 @@ article.about {
           color: #B9192F;
           font-size: 10px;
           text-transform: uppercase;
+          text-align: center;
 
           &:hover {
             background-color: rgba(185, 25, 47, 15%);
@@ -341,10 +349,12 @@ article.about {
       width: 100%;
       margin: 20px 0 50px;
       & >.about.content {
+        width: 100%;
         padding: 0;
         & > .title {
           text-align: center;
           font-size: 20px;
+          line-height: 1.45;
         }
         & > .about-content > p {
           text-align: justify;
