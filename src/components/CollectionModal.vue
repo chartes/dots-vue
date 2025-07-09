@@ -161,6 +161,9 @@ export default {
       console.log('Modal toggleExpanded', collectionTOC.value.filter(item => item.identifier === collId)[0].children)
       // Add all members to the expanded collection
       const response = await getMetadataFromApi(collId)
+      if (collConfig.value.excludeCollectionIds && collConfig.value.excludeCollectionIds.length > 0) {
+        response.member = response.member.filter(m => !collConfig.value.excludeCollectionIds.includes(m['@id'] || m.identifier))
+      }
       console.log('Modal toggleExpanded response', response, response.member.forEach((i) => { i.identifier = i['@id'] }))
       response.member.forEach(m => {
         const index = collectionTOC.value.filter(item => item.identifier === collId)[0].children.findIndex(o => o.identifier === m.identifier)
