@@ -2082,9 +2082,11 @@ div.remove-bottom-padding #article {
     flex-direction: column;
     align-items: center;
   }
-  .document-area {
-    overflow-x: hidden;
+  .document-views {
+    /* overflow-x: hidden; */
+    max-width: 100%;
     position: relative;
+
   }
 
 }
