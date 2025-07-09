@@ -1681,6 +1681,7 @@ export default {
   position: relative;
   min-height: 80vh;
   max-height: 100vh;
+  max-width: 100vw;
 }
 .text-mode .text-view,
 .images-mode .mirador-view {
@@ -2016,6 +2017,10 @@ div.remove-bottom-padding #article {
   width: 100%;
   height: 100%;
 }
+.navigation-document-top a span {
+  line-height: 1.25;
+}
+
 .navigation-document-bottom {
   display: flex;
   flex-direction: row;
@@ -2070,4 +2075,14 @@ div.remove-bottom-padding #article {
 /* .hideAsideToc {
   visibility: hidden;
 } */
+
+
+@media screen and (max-width: 500px) {
+  .several-parent {
+    flex-direction: column;
+    align-items: center;
+  }
+
+}
+
 </style>

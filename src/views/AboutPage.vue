@@ -260,6 +260,12 @@ article.about {
   line-height: 34px;
   color: #B9192F;
 }
+.about .content a {
+  color: #B9192F;
+  &:hover {
+    text-decoration: underline !important;
+  }
+}
 
 @media screen and (max-width: 800px) {
   .about .content {
@@ -333,7 +339,7 @@ article.about {
       align-content: center;
       height: 100%;
       width: 100%;
-      margin: 20px 0 20px;
+      margin: 20px 0 50px;
       & >.about.content {
         padding: 0;
         & > .title {

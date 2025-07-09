@@ -107,6 +107,7 @@ export default {
   & > span {
     font-family: "Barlow", sans-serif;
     font-size: 14px;
+    text-align: right;
     &:not(.b_next) {
       margin-left: auto;
     }

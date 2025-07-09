@@ -13,7 +13,7 @@
           <document-metadata
             :ispopup="true"
             :metadataprop="currentCollection"
-            class="metadata-area app-width-margin"
+            class="metadata-area"
           />
         </div>
         <div class="modal-body">
@@ -282,6 +282,7 @@ export default {
   }
   .modal-header span.modal-header-section {
     color: #4a4a4a;
+    white-space: nowrap;
   }
   .modal-header span.modal-header-title {
     margin-left: 40px;
@@ -346,5 +347,20 @@ export default {
     border: none;
     text-decoration: none;
   }
+
+  @media screen and (max-width: 1100px) {
+    .modal-wrapper {
+      width: 100vw;
+      height: 100vh !important;
+    }
+    .modal-container {
+      max-width: calc(100vw - 20px) !important;
+      height: calc(100vh - 20px) !important;
+      max-height: 100% !important;
+      margin: 10px 10px;
+      padding: 20px 10px;
+    }
+  }
+
 
 </style>

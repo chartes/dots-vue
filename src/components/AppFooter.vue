@@ -155,6 +155,7 @@ export default {
   text-align: center;
   padding: 50px;
   transform: rotateZ(0);
+  margin-top: 20px !important;
 }
 .footer .title-container {
   display: flex;

@@ -829,8 +829,21 @@ figure {
 }
 @media screen and (max-width: 640px) {
   .toggle-btn {
-    width: 20px;
-    right: 15px;
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    width: 25px;
+    background-position: center top -3px;
+    background-size: 48px auto;
+  }
+  .document-metadata-header > .resource {
+    padding-bottom: 40px;
+  }
+  .document-metadata-header span.metadata-header-label.resource {
+    position: absolute;
+    right: 53px;
+    bottom: 15px;
+    margin-right: 0;
   }
 }
 table {
