@@ -348,7 +348,7 @@ export default {
     text-decoration: none;
   }
   /* toggle-btn in metadata */
-  ::v-deep .metadata-area .toggle-btn {
+  :deep(.metadata-area .toggle-btn) {
     bottom: unset;
     top: 15px;
   }
