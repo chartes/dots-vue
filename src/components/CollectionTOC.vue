@@ -291,7 +291,6 @@
 </template>
 
 <script>
-
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getMetadataFromApi } from '@/api/document.js'
@@ -369,22 +368,49 @@ export default {
     const collConfig = ref(props.collectionConfig)
     const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
 
-    /*if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
+    /* if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
       const rootResponse = await getMetadataFromApi()
       rootCollectionId.value = rootResponse['@id']
       console.log('App.vue get rootCollectionId', rootCollectionId.value)
     } else {
       rootCollectionId.value = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
       console.log('App.vue set rootCollectionId as .env', rootCollectionId.value)
-    }*/
+    } */
 
     const expandedById = ref({})
 
     const selectedParent = ref(props.currentCollection ? props.currentCollection.identifier : '')
 
-    const componentTOC = ref(props.toc)
-    componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
+    const customSort = (A, B) => {
+      const bIndex = new Map(B.map((val, index) => [val, index]))
 
+      return A.slice().sort((a, b) => {
+        const aId = a.identifier
+        const bId = b.identifier
+
+        const aInB = bIndex.has(aId)
+        const bInB = bIndex.has(bId)
+
+        if (aInB && bInB) {
+          return bIndex.get(aId) - bIndex.get(bId)
+        } else if (aInB) {
+          return -1
+        } else if (bInB) {
+          return 1
+        } else {
+          return a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1 // alphabetical sort
+        }
+      })
+    }
+
+    const componentTOC = ref([])
+    if (collConfig.value.homePageSettings && collConfig.value.homePageSettings.listSection && collConfig.value.homePageSettings.listSection.displaySort && collConfig.value.homePageSettings.listSection.displaySort.length > 0) {
+      // console.log('CollectionTOC setup displaySort', collConfig.value.homePageSettings.listSection.displaySort)
+      componentTOC.value = customSort(props.toc, collConfig.value.homePageSettings.listSection.displaySort)
+    } else {
+      componentTOC.value = props.toc
+      componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
+    }
     console.log('componentTOC.value props.toc : ', componentTOC.value)
 
     /* expandedById.value = componentTOC.value.filter(item => item.expanded === true).map(col => [col.identifier, true])
@@ -440,7 +466,13 @@ export default {
     watch(props, async (newProps) => {
       isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
       componentTOC.value = []
-      componentTOC.value = newProps.toc
+      if (collConfig.value.homePageSettings && collConfig.value.homePageSettings.listSection && collConfig.value.homePageSettings.listSection.displaySort && collConfig.value.homePageSettings.listSection.displaySort.length > 0) {
+        // console.log('CollectionTOC watch displaySort', collConfig.value.homePageSettings.listSection.displaySort)
+        componentTOC.value = customSort(newProps.toc, collConfig.value.homePageSettings.listSection.displaySort)
+      } else {
+        componentTOC.value = newProps.toc
+        componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
+      }
       displayOpt.value = newProps.displayOption
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
@@ -458,6 +490,7 @@ export default {
       rootCollectionId,
       appConfig,
       collConfig,
+      customSort,
       browseBttnTxt,
       toggleExpanded,
       ImgUrl,

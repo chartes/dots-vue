@@ -299,9 +299,36 @@ export default {
     const componentTOC = ref([])
     const currCollection = ref(props.currentCollection)
 
-    componentTOC.value = [...currCollection.value.member].sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
-    console.log('HomePageDefault currentCollection.value / componentTOC.value : ', currCollection.value, componentTOC.value)
-    console.log('HomePageDefault componentTOC / collectionId : ', Object.fromEntries(componentTOC.value.map(col => [col.identifier, false])), componentTOC.value, collectionId, currCollection)
+    const customSort = (A, B) => {
+      const bIndex = new Map(B.map((val, index) => [val, index]))
+
+      return A.slice().sort((a, b) => {
+        const aId = a.identifier
+        const bId = b.identifier
+
+        const aInB = bIndex.has(aId)
+        const bInB = bIndex.has(bId)
+
+        if (aInB && bInB) {
+          return bIndex.get(aId) - bIndex.get(bId)
+        } else if (aInB) {
+          return -1
+        } else if (bInB) {
+          return 1
+        } else {
+          return a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1 // alphabetical sort
+        }
+      })
+    }
+
+    if (collConfig.value.homePageSettings && collConfig.value.homePageSettings.listSection && collConfig.value.homePageSettings.listSection.displaySort && collConfig.value.homePageSettings.listSection.displaySort.length > 0) {
+      // console.log('HomePage setup displaySort', collConfig.value.homePageSettings.listSection.displaySort)
+      componentTOC.value = customSort([...currCollection.value.member], collConfig.value.homePageSettings.listSection.displaySort)
+    } else {
+      componentTOC.value = [...currCollection.value.member].sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
+    }
+    console.log('HomePage currentCollection.value / componentTOC.value : ', currCollection.value, componentTOC.value)
+    console.log('HomePage componentTOC / collectionId : ', Object.fromEntries(componentTOC.value.map(col => [col.identifier, false])), componentTOC.value, collectionId, currCollection)
 
     const displayOpt = ref(props.collectionConfig.homePageSettings.listSection.displayMode)
     const currentPage = ref(1)
@@ -322,11 +349,11 @@ export default {
           m.parent = collId
         })
         componentTOC.value = response.member
-        // console.log('HomePageDefault toggleExpanded componentTOC', componentTOC.value)
+        // console.log('HomePage toggleExpanded componentTOC', componentTOC.value)
       }
       expandedById.value[collId] = !expandedById.value[collId]
       state.isTreeOpened = !state.isTreeOpened
-      // console.log('HomePageDefault toggleExpanded after expandedById[collectionId] : ', collId, expandedById.value)
+      // console.log('HomePage toggleExpanded after expandedById[collectionId] : ', collId, expandedById.value)
     }
 
     const homeCssClass = computed(() => {
@@ -365,7 +392,7 @@ export default {
       const styleTags = [...document.querySelectorAll('style')]
       console.log('HomePage removeCustomCss styleTags ', styleTags)
       styleTags.forEach((tag) => {
-        //console.log('HomePage watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
+        // console.log('HomePage watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
         if (tag.id === 'customCss') {
           console.log('HomePage removeCustomCss tag.textContent ', tag.textContent)
           console.log('HomePage removeCustomCss tag.id ', tag.id)
@@ -476,7 +503,12 @@ export default {
       aboutBttnTxt.value = newProps.collectionConfig.homePageSettings.pageHeader.aboutButtonText
       collectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.collectionDescription
       customCollectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription
-      componentTOC.value = [...currCollection.value.member].sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
+      if (collConfig.value.homePageSettings && collConfig.value.homePageSettings.listSection && collConfig.value.homePageSettings.listSection.displaySort && collConfig.value.homePageSettings.listSection.displaySort.length > 0) {
+        // console.log('HomePage watch displaySort', collConfig.value.homePageSettings.listSection.displaySort)
+        componentTOC.value = customSort([...currCollection.value.member], collConfig.value.homePageSettings.listSection.displaySort)
+      } else {
+        componentTOC.value = [...currCollection.value.member].sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
+      }
       console.log('HomePage watch collectionConfig collectionDescription : ', collConfig.value, collectionDescription.value)
       paginated()
       if (customCollectionDescription.value) {
@@ -509,6 +541,7 @@ export default {
     return {
       appConfig,
       collConfig,
+      customSort,
       isDocProjectIdInc,
       dtsRootCollectionId,
       rootCollectionId,
