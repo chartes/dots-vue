@@ -599,6 +599,18 @@ export default {
       console.log('initial3 processFlatTOC', processFlatTOC)
 
       async function parentLoop (node) {
+        if (node.parent && node.parent.length > 0 && collConfig.value.excludeCollectionIds && collConfig.value.excludeCollectionIds.length > 0) {
+          if (Array.isArray(node.parent)) {
+            node.parent = node.parent.filter(p => !collConfig.value.excludeCollectionIds.includes(p))
+            if (node.parent.length === 1) {
+              node.parent = node.parent[0]
+            }
+          } else {
+            if (collConfig.value.excludeCollectionIds.includes(node.parent)) {
+              node.parent = ''
+            }
+          }
+        }
         if (node.parent && node.parent.length > 0) {
           if (Array.isArray(node.parent)) {
             // multiple parents
@@ -613,6 +625,11 @@ export default {
               appendParentInTOC.level = parentResponse.level
               appendParentInTOC.editorialLevelIndicator = 'renderToc'
               // Complete the list of children of the parent
+              if (collConfig.value.excludeCollectionIds && collConfig.value.excludeCollectionIds.length > 0) {
+                appendParentInTOC.member = appendParentInTOC.member.filter(m => !collConfig.value.excludeCollectionIds.includes(m['@id'] || m.identifier))
+                appendParentInTOC.totalChildren = appendParentInTOC.member.filter(m => !collConfig.value.excludeCollectionIds.includes(m['@id'] || m.identifier)).length
+              }
+
               appendParentInTOC.member = appendParentInTOC.member.map(obj => {
                 const updatedMember = {
                   identifier: obj.identifier ? obj.identifier : obj['@id'],
@@ -678,6 +695,10 @@ export default {
             appendParentInTOC.level = parentResponse.level
             appendParentInTOC.editorialLevelIndicator = 'renderToc'
             // Complete the list of children of the parent
+            if (collConfig.value.excludeCollectionIds && collConfig.value.excludeCollectionIds.length > 0) {
+              appendParentInTOC.member = appendParentInTOC.member.filter(m => !collConfig.value.excludeCollectionIds.includes(m['@id'] || m.identifier))
+              appendParentInTOC.totalChildren = appendParentInTOC.member.filter(m => !collConfig.value.excludeCollectionIds.includes(m['@id'] || m.identifier)).length
+            }
             appendParentInTOC.member = appendParentInTOC.member.map(obj => {
               const updatedMember = {
                 identifier: obj.identifier ? obj.identifier : obj['@id'],

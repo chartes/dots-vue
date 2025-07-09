@@ -210,10 +210,12 @@ export default {
         metadataResponse = await fetchMetadata('app.vue', collectionId.value, 'Collection', route)
       }
       // const metadataResponse = await fetchMetadata('app.vue', collectionId.value, 'Collection', route)
-      console.log('yes it has failed ', collectionId.value)
-      console.log('App.vue metadataResponse', metadataResponse)
-      if (appConfig.value.excludeCollectionIds.length > 0) {
-        metadataResponse.member = metadataResponse.member.filter(m => !appConfig.value.excludeCollectionIds.includes(m['@id']))
+      console.log('App.vue getCurrentCollection collectionId.value ', collectionId.value)
+      console.log('App.vue getCurrentCollection metadataResponse', metadataResponse)
+      console.log('App.vue getCurrentCollection excludeCollectionIds', collectionId.value, appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value))
+      const matchedCollectionConf = appConfig.value.collectionsConf && appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value).length > 0 ? appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value) : {}
+      if (matchedCollectionConf && matchedCollectionConf.excludeCollectionIds && matchedCollectionConf.excludeCollectionIds.length > 0) {
+        metadataResponse.member = metadataResponse.member.filter(m => !matchedCollectionConf.excludeCollectionIds.includes(m['@id']))
       }
       let formatedResponse = getSimpleObject(metadataResponse)
       console.log('App.vue formatedResponse', formatedResponse)
