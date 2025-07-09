@@ -240,6 +240,8 @@ article.about {
 }
 .about .content ul > li {
   margin-bottom: 0;
+  list-style-position: outside;
+  margin-left: 20px;
 }
 .about .content h1,
 .about .content h2 {
@@ -264,6 +266,7 @@ article.about {
 }
 .about .content a {
   color: #B9192F;
+  word-break: break-word;
   &:hover {
     text-decoration: underline !important;
   }
@@ -274,34 +277,6 @@ article.about {
   margin: 20px 0;
 }
 
-@media screen and (max-width: 800px) {
-  .about .content {
-    padding: 0 20px 50px;
-  }
-  .about .content p,
-  .about .content ul {
-    font-size: 16px;
-    line-height: 24px;
-  }
-  .about .content p {
-    margin: 0 0 !important;
-  }
-  .about .content ul {
-    list-style-position: inside;
-    margin: 20px 0 !important;
-  }
-  .about .content h1 {
-    width: 80%;
-    margin: 35px 0 !important;
-    font-size: 30px;
-    line-height: 36px;
-  }
-  .about .content h1,
-  .about .content h2 {
-    text-align: left;
-    width: 80%;
-  }
-}
 @media screen and (max-width: 1150px) {
   .about-page {
     display: flex;
@@ -361,6 +336,39 @@ article.about {
         }
       }
     }
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .about .content {
+    padding: 0 20px 50px;
+  }
+  .about .content p,
+  .about .content ul {
+    font-size: 16px;
+    line-height: 24px;
+    text-align: left !important;
+  }
+  .about .content p {
+    margin: 0 0 !important;
+  }
+  .about .content ul {
+    list-style-position: inside;
+    margin: 20px 0 !important;
+    & > li > ul {
+      margin: 10px 0 !important;
+    }
+  }
+  .about .content h1 {
+    width: 80%;
+    margin: 35px 0 !important;
+    font-size: 30px;
+    line-height: 36px;
+  }
+  .about .content h1,
+  .about .content h2 {
+    text-align: left;
+    width: 80%;
   }
 }
 </style>
