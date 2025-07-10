@@ -844,8 +844,18 @@ figure {
     margin-right: 0;
   }
   .document-metadata-header {
+    position: relative;
     & > div.resource {
       justify-content: space-between;
+    }
+    &::after {
+      content: "";
+      display: block;
+      width: 100%;
+      position: absolute;
+      bottom:45px;
+      left: 0;
+      border-top: 1px solid #CECECE;
     }
   }
   .document-metadata-header span.metadata-header-author {
