@@ -845,6 +845,15 @@ figure {
     bottom: 15px;
     margin-right: 0;
   }
+  .document-metadata-header {
+    & > div.resource {
+      justify-content: space-between;
+    }
+  }
+  .document-metadata-header span.metadata-header-author {
+    color: #929292;
+    text-align: right;
+  }
 }
 table {
   background-color: #f1f1f1;

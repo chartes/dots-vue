@@ -1827,114 +1827,6 @@ div.remove-bottom-padding #article {
   color: inherit;
 }
 
-@media screen and (max-width: 1150px) {
-  .toc-area .toc-area-content nav > ol.tree {
-    columns: 2;
-  }
-  .controls > a.toc-menu-toggle {
-    margin-left: 20px;
-  }
-  .controls ul > li > a.access_link {
-    margin-right: 20px;
-  }
-}
-@media screen and (max-width: 800px) {
-  #article {
-    padding: 40px 4% 120px;
-  }
-  .toc-area .toc-area-content aside {
-    padding: 20px 20px !important;
-  }
-
-  .l-n {
-    margin-left: -2.2rem;
-  }
-}
-
-@media screen and (max-width: 640px) {
-
-  #article {
-    padding: 40px 6% 120px;
-  }
-
-  .several-parent {
-    flex-direction: column;
-    align-items: center;
-  }
-  .document-views {
-    /* overflow-x: hidden; */
-    max-width: 100%;
-    position: relative;
-  }
-
-  .l-n {
-    margin-left: -1.5rem;
-  }
-
-  small {
-    font-size: 9px;
-  }
-
-  .pb,
-  .controls > a.toc-menu-toggle,
-  .toc-area-aside {
-    display: none !important;
-  }
-  .toc-area .toc-area-content nav > ol.tree {
-    columns: 1;
-  }
-  .toggle-btn {
-    width: 20px;
-    right: 15px;
-  }
-  .controls {
-    flex-wrap: wrap;
-  }
-  .controls ul:first-of-type {
-    order: 3;
-    flex: 100% 0 0;
-    width: 100%;
-    justify-content: center;
-    padding: 20px 0 10px;
-  }
-  .controls ul:last-of-type {
-    flex: 100% 0 0;
-    justify-content: center;
-  }
-  .controls ul:last-of-type > li > a {
-    width: 30px;
-    height: 30px;
-  }
-  .controls > ul:first-of-type > li:nth-child(2) {
-    display: none;
-  }
-  #article section.div {
-    font-size: 14px;
-    line-height: 24px;
-  }
-  #article h1 {
-    font-size: 20px;
-    line-height: 25px;
-  }
-  #article section.div h2.head,
-  #article section.div h3.head {
-    font-size: 14px;
-    line-height: 24px;
-  }
-  #article section.div {
-    padding-top: 10px;
-  }
-  #article p.p {
-    text-align: left;
-  }
-
-  .text-and-images-mode .document-views {
-    display: block !important;
-  }
-  .text-and-images-mode .text-view,
-  .text-and-images-mode .mirador-view {
-  }
-}
 * [class*="mirador-window-top-bar"] {
   border-top: none !important;
 }
@@ -2106,5 +1998,113 @@ div.remove-bottom-padding #article {
   visibility: hidden;
 } */
 
+
+@media screen and (max-width: 1150px) {
+  .toc-area .toc-area-content nav > ol.tree {
+    columns: 2;
+  }
+  .controls > a.toc-menu-toggle {
+    margin-left: 20px;
+  }
+  .controls ul > li > a.access_link {
+    margin-right: 20px;
+  }
+}
+@media screen and (max-width: 800px) {
+  #article {
+    padding: 40px 4% 120px;
+  }
+  .toc-area .toc-area-content aside {
+    padding: 20px 20px !important;
+  }
+
+  .l-n {
+    margin-left: -2.2rem;
+  }
+}
+@media screen and (max-width: 640px) {
+
+  #article {
+    padding: 40px 6% 120px;
+  }
+
+  .several-parent {
+    flex-direction: column;
+    align-items: center;
+  }
+  .document-views {
+    /* overflow-x: hidden; */
+    max-width: 100%;
+    position: relative;
+  }
+
+  .l-n {
+    margin-left: -1.5rem;
+  }
+
+  small {
+    font-size: 9px;
+  }
+
+  .pb,
+  .controls > a.toc-menu-toggle,
+  .toc-area-aside {
+    display: none !important;
+  }
+  .toc-area .toc-area-content nav > ol.tree {
+    columns: 1;
+  }
+  .toggle-btn {
+    width: 20px;
+    right: 15px;
+  }
+  .controls {
+    flex-wrap: wrap;
+  }
+  .controls ul:first-of-type {
+    order: 3;
+    flex: 100% 0 0;
+    width: 100%;
+    justify-content: center;
+    padding: 20px 0 10px;
+  }
+  .controls ul:last-of-type {
+    flex: 100% 0 0;
+    justify-content: center;
+  }
+  .controls ul:last-of-type > li > a {
+    width: 30px;
+    height: 30px;
+  }
+  .controls > ul:first-of-type > li:nth-child(2) {
+    display: none;
+  }
+  #article section.div {
+    font-size: 14px;
+    line-height: 24px;
+  }
+  #article h1 {
+    font-size: 20px;
+    line-height: 25px;
+  }
+  #article section.div h2.head,
+  #article section.div h3.head {
+    font-size: 14px;
+    line-height: 24px;
+  }
+  #article section.div {
+    padding-top: 10px;
+  }
+  #article p.p {
+    text-align: left;
+  }
+
+  .text-and-images-mode .document-views {
+    display: block !important;
+  }
+  .text-and-images-mode .text-view,
+  .text-and-images-mode .mirador-view {
+  }
+}
 
 </style>
