@@ -1845,8 +1845,36 @@ div.remove-bottom-padding #article {
   .toc-area .toc-area-content aside {
     padding: 20px 20px !important;
   }
+
+  .l-n {
+    margin-left: -2.2rem;
+  }
 }
+
 @media screen and (max-width: 640px) {
+
+  #article {
+    padding: 40px 6% 120px;
+  }
+
+  .several-parent {
+    flex-direction: column;
+    align-items: center;
+  }
+  .document-views {
+    /* overflow-x: hidden; */
+    max-width: 100%;
+    position: relative;
+  }
+
+  .l-n {
+    margin-left: -1.5rem;
+  }
+
+  small {
+    font-size: 9px;
+  }
+
   .pb,
   .controls > a.toc-menu-toggle,
   .toc-area-aside {
@@ -2078,18 +2106,5 @@ div.remove-bottom-padding #article {
   visibility: hidden;
 } */
 
-@media screen and (max-width: 500px) {
-  .several-parent {
-    flex-direction: column;
-    align-items: center;
-  }
-  .document-views {
-    /* overflow-x: hidden; */
-    max-width: 100%;
-    position: relative;
-
-  }
-
-}
 
 </style>
