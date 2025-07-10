@@ -70,8 +70,10 @@ export default {
     const currentRefId = ref(props.refid)
     const route = useRoute()
     const expandedById = ref({})
-    const componentTOC = ref(props.toc.filter(i => i.level <= props.maxcitedepth))
-    console.log('TOC componentTOC.value.length', componentTOC.value.length)
+    const maxCiteDepth = ref(props.maxcitedepth)
+    console.log('TOC setup maxCiteDepth.value ', maxCiteDepth.value)
+    const componentTOC = ref(props.toc.filter(i => i.level <= maxCiteDepth.value))
+    console.log('TOC setup componentTOC.value & length', componentTOC.value, componentTOC.value.length)
     // console.log('TOC setup props.toc :', props.toc)
     // console.log("TOC props.maxcitedepth :", props.maxcitedepth)
     // console.log("TOC props.refid :", props.refid)
@@ -101,7 +103,7 @@ export default {
       router.push({ path: route.path, query: { refId: ref } })
     }
 
-    const toggleExpanded = async (id) => {
+    const toggleExpanded = (id) => {
       console.log('TOC toggleExpanded id, expandedById.value, expandedById.value[id] : ', id, expandedById.value, expandedById.value[id])
       function hideDescendants (ident) {
         const node = componentTOC.value.find(item => item.identifier === ident)
@@ -110,7 +112,7 @@ export default {
           node.expanded = false
         }
         console.log('TOC toggleExpanded id hideDescendants node ident ', node, ident)
-        if (node.children && node.children.length > 0) {
+        if (node.children && node.children.length > 0 && node.level < maxCiteDepth.value) {
           for (let i = 0; i < node.children.length; i += 1) {
             if (expandedById.value[node.identifier]) {
               hideDescendants(node.children[i].identifier)
@@ -193,6 +195,7 @@ export default {
     return {
       route,
       isDocProjectIdInc,
+      maxCiteDepth,
       toggleBurger,
       currentRefId,
       goTo,
