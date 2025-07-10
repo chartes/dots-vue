@@ -102,11 +102,14 @@ export default {
     }
 
     const toggleExpanded = async (id) => {
-      console.log('TOC toggleExpanded id : ', id, expandedById.value)
+      console.log('TOC toggleExpanded id, expandedById.value, expandedById.value[id] : ', id, expandedById.value, expandedById.value[id])
       function hideDescendants (ident) {
         const node = componentTOC.value.find(item => item.identifier === ident)
         node.show = false
-        console.log('TOC toggleExpanded id hideDescendants (ident) node', node)
+        if (Object.keys(node).includes('expanded')) {
+          node.expanded = false
+        }
+        console.log('TOC toggleExpanded id hideDescendants node ident ', node, ident)
         if (node.children && node.children.length > 0) {
           for (let i = 0; i < node.children.length; i += 1) {
             if (expandedById.value[node.identifier]) {
@@ -114,8 +117,12 @@ export default {
             }
           }
         }
+        if (Object.keys(expandedById.value).includes(node.identifier)) {
+          expandedById.value[node.identifier] = node.expanded
+        }
       }
       expandedById.value[id] = !expandedById.value[id]
+      console.log('TOC toggleExpanded id updated : ', id, expandedById.value)
       componentTOC.value.find(n => n.identifier === id).expanded = expandedById.value[id]
       componentTOC.value.filter(n => n.parent === id).forEach((item) => {
         if (expandedById.value[id]) {
