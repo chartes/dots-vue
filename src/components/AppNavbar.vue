@@ -405,6 +405,17 @@ a:hover {
 .level {
   margin-bottom: 0 !important;
 }
+nav  {
+  display: flex;
+  margin-top: 0;
+  z-index: 10; /* cf documentation menu */
+
+  position: fixed;
+  top:0;
+  width: 100vw;
+  padding-right: 20px;
+}
+
 nav span.level-item:not(:last-child)::after {
   content: '|';
   display: inline-block;
