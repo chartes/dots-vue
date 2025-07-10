@@ -116,11 +116,13 @@ export default {
       text-decoration: underline;
     }
   }
-    & > span.b_previous {
+
+  & > span.b_previous {
+    flex: 10px 0 0;
     vertical-align: middle;
     width: 10px;
     height: 10px;
-    margin: 9px 5px 5px 5px;
+    margin: 5px 5px 5px 5px;
     background: url(../assets/images/b_previous.svg) center / cover no-repeat;
   }
 

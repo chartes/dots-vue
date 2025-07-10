@@ -1,6 +1,6 @@
 <template>
   <article class="about">
-    <div class="about-content app-width-padding">
+    <div class="about-content">
       <h1>A custom default title</h1>
       <h2>In the default custom component, you can use either: </h2>
       <p>
@@ -73,11 +73,24 @@ export default {
   text-align: left;
   font-size: 20px;
   font-weight: 500;
-  line-height: 33px;
+  line-height: 1.4;
   text-transform: none;
 }
 .about p {
   text-align: left;
   text-indent: 0;
+  word-break: break-word;
+}
+.about a {
+  color: #B9192F;
+  word-break: break-word;
+  &:hover {
+    text-decoration: underline !important;
+  }
+}
+.about table,
+.about pre,
+.about blockquote {
+  margin: 20px 0;
 }
 </style>

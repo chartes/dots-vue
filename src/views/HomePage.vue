@@ -592,6 +592,7 @@ a {
   font-family: "Barlow", sans-serif !important;
 }
 #article h1 {
+  margin: 1em 0 1em 0;
   padding-top: 20px;
   padding-bottom: 20px;
   font-size: 25px;
@@ -723,68 +724,6 @@ a {
   padding-top: 25px;
   padding-bottom: 25px;
 }
-.document-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-content: center;
-  width: 100%;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  &:hover {
-    /* border: 1px solid #b9192f; */
-    border: 1px solid var(--text-color);
-  }
-}
-.document-card .card-header .document-folder {
-  width: 100%;
-  /*border-top: 6px solid #e4e4e4;*/
-  border-radius: 6px;
-  font-size: 14px;
-  padding-top: 10px;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 10px;
-  text-transform: uppercase;
-  & > .card-header-first-line {
-    display: flex;
-    flex-direction: row;
-    & > .collection-elec-id {
-      margin: 10px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #b9192f;
-    }
-    & > .collection-metadata {
-      width: 80%;
-      & > .collection-description {
-        width: 100%;
-        text-align: justify;
-        text-transform: none;
-      }
-    }
-  }
-  & > .wrapper > .collection-toc-area {
-    margin-bottom: 0 !important;
-  }
-}
-.document-card .card-image {
-  margin: auto;
-  & > a {
-    align-content: center;
-    > img {
-      height: auto;
-      width: 75px;
-    }
-  }
-}
-.document-card .card-content {
-  color: #000;
-  padding: 1.5rem 0;
-  border-bottom: 7px solid #e8e7e0;
-}
 .pagination-controls {
   display: flex;
   align-items: center;
@@ -862,6 +801,7 @@ a {
   }
 }
 .pagination {
+  gap: 20px;
   width: 100%;
   margin: 0;
   padding-bottom: 5px;

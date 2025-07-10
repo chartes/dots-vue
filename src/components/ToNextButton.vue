@@ -107,6 +107,7 @@ export default {
   & > span {
     font-family: "Barlow", sans-serif;
     font-size: 14px;
+    text-align: right;
     &:not(.b_next) {
       margin-left: auto;
     }
@@ -116,9 +117,10 @@ export default {
   }
   & > span.b_next {
     vertical-align: middle;
+    flex: 10px 0 0;
     width: 10px;
     height: 10px;
-    margin: 9px 5px 5px 5px;
+    margin: 5px 5px 5px 5px;
     background: url(../assets/images/b_next.svg) center / cover no-repeat;
   }
 

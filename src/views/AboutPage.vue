@@ -194,6 +194,7 @@ article.about {
       color: #B9192F;
       font-size: 16px;
       text-transform: uppercase;
+      text-align: right;
       &:hover {
         background-color: rgba(185, 25, 47, 15%);
       }
@@ -210,6 +211,7 @@ article.about {
   }
 }
 .about .content {
+  max-width: 100%;
   font-family: "Libre Baskerville", serif !important;
   font-size: 16px;
   text-align: left;
@@ -238,20 +240,24 @@ article.about {
 }
 .about .content ul > li {
   margin-bottom: 0;
+  list-style-position: outside;
+  margin-left: 20px;
 }
 .about .content h1,
 .about .content h2 {
   padding-top: 0;
   text-align: left;
 }
+.about .about-content h1,
 .about .content h1 {
   margin: 30px 0 !important;
-  font-family: "Noto Serif", serif;
+  font-family: "Noto Serif", serif !important;
   font-weight: 400;
   font-style: normal;
   font-size: 30px;
   line-height: 42px;
 }
+.about .about-content h2,
 .about .content h2 {
   margin: 70px 0 30px !important;
   font-family: "Barlow", sans-serif;
@@ -260,35 +266,20 @@ article.about {
   line-height: 34px;
   color: #B9192F;
 }
-
-@media screen and (max-width: 800px) {
-  .about .content {
-    padding: 0 20px 50px;
-  }
-  .about .content p,
-  .about .content ul {
-    font-size: 16px;
-    line-height: 24px;
-  }
-  .about .content p {
-    margin: 0 0 !important;
-  }
-  .about .content ul {
-    list-style-position: inside;
-    margin: 20px 0 !important;
-  }
-  .about .content h1 {
-    width: 80%;
-    margin: 35px 0 !important;
-    font-size: 30px;
-    line-height: 36px;
-  }
-  .about .content h1,
-  .about .content h2 {
-    text-align: left;
-    width: 80%;
+.about .about-content a,
+.about .content a {
+  color: #B9192F;
+  word-break: break-word;
+  &:hover {
+    text-decoration: underline !important;
   }
 }
+.about .content table,
+.about .content pre,
+.about .content blockquote {
+  margin: 20px 0;
+}
+
 @media screen and (max-width: 1150px) {
   .about-page {
     display: flex;
@@ -314,6 +305,7 @@ article.about {
           color: #B9192F;
           font-size: 10px;
           text-transform: uppercase;
+          text-align: center;
 
           &:hover {
             background-color: rgba(185, 25, 47, 15%);
@@ -333,12 +325,14 @@ article.about {
       align-content: center;
       height: 100%;
       width: 100%;
-      margin: 20px 0 20px;
+      margin: 20px 0 50px;
       & >.about.content {
+        width: 100%;
         padding: 0;
         & > .title {
           text-align: center;
           font-size: 20px;
+          line-height: 1.45;
         }
         & > .about-content > p {
           text-align: justify;
@@ -346,5 +340,158 @@ article.about {
       }
     }
   }
+}
+
+@media screen and (max-width: 800px) {
+  .about .content {
+    padding: 0 20px 50px;
+  }
+  .about .content p,
+  .about .content ul {
+    font-size: 16px;
+    line-height: 24px;
+    text-align: left !important;
+  }
+  .about .content p {
+    margin: 0 0 !important;
+  }
+  .about .content ul {
+    list-style-position: inside;
+    margin: 20px 0 !important;
+    & > li > ul {
+      margin: 10px 0 !important;
+    }
+  }
+  .about .content h1 {
+    width: 80%;
+    margin: 35px 0 !important;
+    font-size: 30px;
+    line-height: 36px;
+  }
+  .about .content h1,
+  .about .content h2 {
+    text-align: left;
+    width: 80%;
+  }
+  /*
+  .about table thead tr:has(:nth-child(8)) {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    th {
+      padding: 10px 2px 0;
+    }
+    th:nth-child(1) {
+      width: 130px;
+      flex: 130px 0 0;
+    }
+    th:nth-child(2) {
+      width: calc(100% - 130px);
+      text-indent: -9999px;
+      border-left: none;
+    }
+    th:nth-child(3),
+    th:nth-child(4),
+    th:nth-child(5),
+    th:nth-child(6),
+    th:nth-child(7),
+    th:nth-child(8) {
+      display: none;
+    }
+  }
+
+  .about_ table tbody tr:has(:nth-child(8)) {
+    display: grid;
+    gap: 0;
+    grid-template-columns: 130px auto;
+    grid-template-rows: auto;
+    grid-template-areas:
+        "parameter col2"
+        "parameter col3"
+        "parameter col4"
+        "parameter col5"
+        "parameter col6"
+        "parameter col7"
+        "parameter example"
+    ;
+    border-bottom: solid 1px #CCC;
+
+    td {
+      padding: 10px 6px 0;
+      border-top: none;
+      border-bottom: none;
+      border-left: none;
+      line-height: 1.4;
+      text-align: left;
+
+      &::before {
+        font-weight: bold;
+        margin-right: 8px;
+      }
+
+      &:empty {
+        display: none;
+      }
+    }
+    td:nth-child(1) {
+      grid-area: parameter;
+      padding: 10px 0 0;
+      border-left: solid 1px #CCC;
+      text-align: center;
+      &:empty {
+        display: block;
+      }
+    }
+    td:nth-child(2) {
+      grid-area: col2;
+      &::before {
+        content: "default";
+      }
+    }
+    td:nth-child(3) {
+      grid-area: col3;
+      &::before {
+        content: "custom";
+      }
+    }
+    td:nth-child(4) {
+      grid-area: col4;
+      &::before {
+        content: "dots_cookbook";
+      }
+    }
+    td:nth-child(5) {
+      grid-area: col5;
+      &::before {
+        content: "encpos";
+      }
+    }
+    td:nth-child(6) {
+      grid-area: col6;
+      padding-bottom: 10px;
+      &::before {
+        content: " last coll.";
+      }
+    }
+    td:nth-child(7) {
+      grid-area: col7;
+      padding-bottom: 10px;
+      &::before {
+        content: "last coll. ids";
+        display: block;
+      }
+    }
+    td:nth-child(8) {
+      grid-area: example;
+      padding-bottom: 20px;
+      &::before {
+        content: "example";
+        display: block;
+      }
+    }
+
+  }
+
+   */
 }
 </style>

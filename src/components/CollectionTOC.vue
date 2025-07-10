@@ -518,6 +518,8 @@ export default {
     font-weight: 500;
     line-height: 22px;
     padding: 0;
+    margin-bottom: 4px;
+
     &::before {
       font-family: "Barlow Semi Condensed", sans-serif;
       margin-left: -8px;
@@ -640,7 +642,12 @@ button {
   width: 100%;
   /*border-top: 6px solid #e4e4e4;*/
   border-radius: 6px;
-  font-size: 14px;
+
+  font-family: "Barlow", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+
   padding-top: 10px;
   padding-left: 10px;
   padding-right: 10px;
@@ -648,11 +655,13 @@ button {
   text-transform: uppercase;
   & a {
     border: none;
-    color: #485fc7;
+    color: #333333; /* #485fc7; */
   }
   & > .card-header-first-line {
     display: flex;
     flex-direction: row;
+    gap: 20px;
+
     & > .collection-elec-id {
       margin: 10px;
       font-size: 20px;
@@ -662,7 +671,9 @@ button {
     & > .collection-metadata {
       width: 80%;
       & > .collection-metadata-title {
-        color: #485fc7;
+        font-weight: 500;
+        color: #000; /* #485fc7; */
+        margin-bottom: 10px;
       }
       & > .collection-metadata-author-date {
         color: #4a4a4a;
@@ -726,6 +737,15 @@ button {
   background-color: #e4e4e4;
   border: 1px solid #e4e4e4;
   border-radius: 0 0 6px 6px;
+}
+
+@media screen and (max-width: 800px) {
+  .wrapper, .modal-wrapper {
+    .tree li {
+      margin-left: 15px !important;
+      margin-bottom: 8px;
+    }
+  }
 }
 
 </style>
