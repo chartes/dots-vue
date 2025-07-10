@@ -316,5 +316,17 @@ export default {
   .dots-logo {
     height: 40px;
   }
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .footer-links li:not(:last-child) {
+    padding-right: 0;
+    margin-right: 0;
+  }
+  .footer-links li:not(:last-child)::after {
+    display: none;
+  }
 }
 </style>

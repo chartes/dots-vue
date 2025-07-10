@@ -1561,7 +1561,7 @@ export default {
   right: 20px;
   width: 27px;
   height: 27px;
-  background: url(../assets/images/chevron_rouge.svg) center top -7px / cover no-repeat;
+  background: url(../assets/images/chevron_rouge.svg) center top -8px / cover no-repeat;
   border: none;
   text-decoration: none;
 }
@@ -2102,9 +2102,13 @@ div.remove-bottom-padding #article {
   .text-and-images-mode .document-views {
     display: block !important;
   }
-  .text-and-images-mode .text-view,
-  .text-and-images-mode .mirador-view {
+  .toc-area-header {
+    & > a:first-child {
+      margin-left: 0;
+      margin-right: 25px;
+    }
   }
+
 }
 
 </style>

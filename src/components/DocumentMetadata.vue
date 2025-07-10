@@ -724,7 +724,7 @@ export default {
   right: 20px;
   width: 27px;
   height: 27px;
-  background: url(../assets/images/chevron_rouge.svg) center top -4px / cover no-repeat;
+  background: url(../assets/images/chevron_rouge.svg) center top -8px / cover no-repeat;
   border: none;
   text-decoration: none;
 }
@@ -831,17 +831,15 @@ figure {
   .toggle-btn {
     position: absolute;
     bottom: 10px;
-    right: 20px;
-    width: 25px;
-    background-position: center top -3px;
-    background-size: 48px auto;
+    right: 15px;
+    width: 20px;
   }
   .document-metadata-header > .resource {
     padding-bottom: 40px;
   }
   .document-metadata-header span.metadata-header-label.resource {
     position: absolute;
-    right: 53px;
+    left: 20px;
     bottom: 15px;
     margin-right: 0;
   }
