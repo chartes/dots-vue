@@ -1682,7 +1682,7 @@ export default {
   position: relative;
   min-height: 80vh;
   max-height: 100vh;
-  max-width: 100vw;
+  max-width: calc(100vw - 20px);
 }
 .text-mode .text-view,
 .images-mode .mirador-view {
