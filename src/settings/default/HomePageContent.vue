@@ -81,4 +81,16 @@ export default {
   text-indent: 0;
   word-break: break-word;
 }
+.about a {
+  color: #B9192F;
+  word-break: break-word;
+  &:hover {
+    text-decoration: underline !important;
+  }
+}
+.about table,
+.about pre,
+.about blockquote {
+  margin: 20px 0;
+}
 </style>

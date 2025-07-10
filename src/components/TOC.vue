@@ -231,7 +231,7 @@ div.toc-area-content.toc-content {
 
   @media screen and (max-width: 500px) {
     .tree {
-      columns: 2;
+      columns: 1;
       gap: 15px;
     }
   }

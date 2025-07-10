@@ -172,6 +172,7 @@ export default {
     margin-top: 12px;
     margin-bottom: 12px;
     text-align: left;
+    font-family: "Barlow", sans-serif ;
     font-style: normal;
     font-size: 100%;
     color: white;

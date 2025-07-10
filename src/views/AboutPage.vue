@@ -248,14 +248,16 @@ article.about {
   padding-top: 0;
   text-align: left;
 }
+.about .about-content h1,
 .about .content h1 {
   margin: 30px 0 !important;
-  font-family: "Noto Serif", serif;
+  font-family: "Noto Serif", serif !important;
   font-weight: 400;
   font-style: normal;
   font-size: 30px;
   line-height: 42px;
 }
+.about .about-content h2,
 .about .content h2 {
   margin: 70px 0 30px !important;
   font-family: "Barlow", sans-serif;
@@ -264,6 +266,7 @@ article.about {
   line-height: 34px;
   color: #B9192F;
 }
+.about .about-content a,
 .about .content a {
   color: #B9192F;
   word-break: break-word;
