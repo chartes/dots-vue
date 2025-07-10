@@ -1695,6 +1695,7 @@ export default {
   width: 500px;
   height: 700px;
   visibility: hidden;
+  max-width: calc(100vw - 20px);
 }
 .text-mode .mirador-view {
   flex: 100% 0 0;
