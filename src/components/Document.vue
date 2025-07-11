@@ -301,7 +301,10 @@ export default {
         // target element and scroll
         const el = document.getElementById(hash)
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth' })
+          const yOffset = -70
+          const y = el.getBoundingClientRect().top + window.scrollY + yOffset
+          window.scrollTo({ top: y, behavior: 'smooth' })
+          // el.scrollIntoView({ behavior: 'smooth' })
         }
       } else return
     }
