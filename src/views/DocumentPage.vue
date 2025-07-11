@@ -954,14 +954,17 @@ export default {
         currentLevelIndicator.value = flatTOC.value.find(i => i.identifier === refId.value).editorialLevelIndicator
         console.log('there is a refId , updated currentLevelIndicator.value', currentLevelIndicator.value)
 
-        console.log('search RefId item in TOC and return children : ', findById(topTOC.value, refId.value).children)
+        console.log('bottomTOC cas 2 search RefId item in TOC and return children : ', findById(topTOC.value, refId.value).children)
         // select flatTOC elements between the current matching refId and the last element belonging to the same parent
         const followingElementInTreeLimb = flatTOC.value.findIndex(i => i.identifier === refId.value) + 1
         const allFollowingElementsInTOC = flatTOC.value.slice(followingElementInTreeLimb, flatTOC.value.length)
-        const lastElementInTreeLimb = allFollowingElementsInTOC.findIndex(i => i.parent === flatTOC.value.find(i => i.identifier === refId.value).parent) + 1
+        const lastElementInTreeLimb = allFollowingElementsInTOC.findIndex(i => i.parent === flatTOC.value.find(i => i.identifier === refId.value).parent) === -1
+          ? flatTOC.value.length
+          : allFollowingElementsInTOC.findIndex(i => i.parent === flatTOC.value.find(i => i.identifier === refId.value).parent) + 1
         const currentMatchingElementIndex = flatTOC.value.findIndex(i => i.identifier === refId.value)
         // assign portion of topTOC to the bottomTOC and unlink the variables
         bottomTOC.value = JSON.parse(JSON.stringify(flatTOC.value.slice(followingElementInTreeLimb, lastElementInTreeLimb + currentMatchingElementIndex)))
+        console.log('bottomTOC cas 2 :', bottomTOC.value, topTOC.value)
       } else {
         console.log('there is NO refId , update currentLevelIndicator.value', currentLevelIndicator.value)
         currentLevelIndicator.value = flatTOC.value.find(i => i.identifier === resourceId.value).editorialLevelIndicator
