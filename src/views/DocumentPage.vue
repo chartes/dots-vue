@@ -1580,7 +1580,7 @@ export default {
 .toggle-btn {
   position: absolute;
   right: 20px;
-  width: 27px;
+  width: 20px;
   height: 27px;
   background: url(../assets/images/chevron_rouge.svg) center top -8px / cover no-repeat;
   border: none;
