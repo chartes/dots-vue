@@ -226,11 +226,7 @@ div.toc-area-content.toc-content {
     columns: 4;
     gap: 40px;
     min-height: 100px;
-    max-height: 300px;
     width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    ;
   }
 
   @media screen and (max-width: 1150px) {
@@ -243,6 +239,7 @@ div.toc-area-content.toc-content {
     .tree {
       columns: 1;
       gap: 15px;
+      overflow: auto;
     }
   }
 

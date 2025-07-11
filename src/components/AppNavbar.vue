@@ -405,6 +405,17 @@ a:hover {
 .level {
   margin-bottom: 0 !important;
 }
+nav  {
+  display: flex;
+  margin-top: 0;
+  z-index: 10; /* cf documentation menu */
+
+  position: fixed;
+  top:0;
+  width: 100vw;
+  padding-right: 20px;
+}
+
 nav span.level-item:not(:last-child)::after {
   content: '|';
   display: inline-block;
@@ -439,10 +450,6 @@ nav span.level-item:not(:last-child)::after {
 
 @media screen and (max-width: 800px) {
   .logo-header {
-    /*
-    transform-origin: left center;
-    transform: scale(0.8);
-     */
     margin-right: 10px !important;
   }
   nav {
@@ -496,16 +503,14 @@ nav span.level-item:not(:last-child)::after {
     left:0;
     width: 100vw;
     height: 71px;
-    /* background-color: #B9192F; */
   }
   nav {
-    /* background-color: rgba(185,25,47, 0.9); */
     padding: 0;
   }
   .logo-header {
     position: absolute;
-    left: 4px;
-    top: 6px;
+    left: 6px;
+    top: 5px;
     transform: scale(1);
     z-index: 1;
   }
@@ -515,6 +520,8 @@ nav span.level-item:not(:last-child)::after {
     z-index: 1;
     top: 0;
     left: 0;
+    height: 70px;
+    overflow: hidden;
   }
   .level .level-item {
     flex-direction: column;
@@ -522,17 +529,32 @@ nav span.level-item:not(:last-child)::after {
     align-items: flex-start;
     gap: 20px;
     padding: 20px;
-    display: none !important;
 
     & > a.level-item-external {
       line-height: 1.2;
+      &:not(:first-child) {
+        display: none !important;
+      }
+      &:first-child {
+        top: 22px;
+        position: fixed;
+        left: 63px;
+      }
       &::after {
         display: none;
       }
     }
   }
-  .level.is-opened .level-item  {
-    display: flex !important;
+
+  .level.is-opened {
+    height: auto;
+    overflow: unset;
+
+    .level-item > a.level-item-external {
+      &:not(:first-child) {
+        display: block !important;
+      }
+    }
   }
 
   .level-left {
@@ -565,11 +587,9 @@ nav span.level-item:not(:last-child)::after {
   }
   .level-item {
     padding: 5px 0;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 400;
     line-height: 52px;
-  }
-  .level-left .level-item:first-of-type {
   }
   .level-right .level-item:last-of-type {
     padding-bottom: 10px;
