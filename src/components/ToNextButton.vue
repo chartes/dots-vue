@@ -25,7 +25,6 @@ export default {
     const route = useRoute()
     // console.log('ToNextButton currentDocId : ', props.docid)
     // console.log('ToNextButton nextdocid : ', props.nextdocid)
-    console.log('ToNextButton setup refid : ', props.refid)
     console.log('ToNextButton setup nextrefid : ', props.nextrefid)
     console.log('ToNextButton setup nextreftitle : ', props.nextreftitle)
 
@@ -43,14 +42,11 @@ export default {
     const goToNextFragment = function ($event, nextId, nextTitle) {
       $event.preventDefault()
       $event.stopPropagation()
-      console.log('goToNextFragment event', $event, nextId, nextTitle)
+      console.log('goToNextFragment event/nextId/nextTitle', $event, nextId, nextTitle)
       if (nextRefId.value && nextRefId.value.length > 0) {
-        // nextRefId.value = props.nextrefid
         console.log('NextButton nextRefId : ', $event, props.nextrefid)
         console.log('NextButton nextRefId : ', $event, props.nextreftitle)
         console.log('NextButton let route', route, route.path)
-        // nextRefId.value = props.nextrefid
-        // nextRefTitle.value = props.nextreftitle
         // Replace current querystring with the new one.
         router.push({ path: route.path, query: { refId: nextRefId.value } })
       }
@@ -87,13 +83,11 @@ export default {
     background: url(../assets/images/page_suivant.svg) center / cover no-repeat;
     transform: none;
   }
-  /* position: sticky; */
   margin-left: auto;
   margin-right: 0;
   margin-bottom: auto;
   margin-top: 5px;
 }
-
 .to-next.to-next-button-page-top, .to-next.to-next-button-page-bottom {
   display: flex;
   justify-content: center;
@@ -116,8 +110,8 @@ export default {
     }
   }
   & > span.b_next {
-    vertical-align: middle;
     flex: 10px 0 0;
+    vertical-align: middle;
     width: 10px;
     height: 10px;
     margin: 5px 5px 5px 5px;

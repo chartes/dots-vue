@@ -173,18 +173,15 @@
         <to-previous-button
           class="to-previous-button-page-top"
           :class="!refId || firstRef ? 'disabled' : ''"
-          :refid="refId"
           :previousrefid="previousRefId"
           :previousreftitle="previousRefTitle"
-          @click="getNewRefId"
-          :key="resourceId + refId"
         />
         <to-next-button
           class="to-next-button-page-top"
           :class="!refId || lastRef ? 'disabled' : ''"
           :nextrefid="nextRefId"
           :nextreftitle="nextRefTitle"
-        /><!--@click="getNewRefId" :key="resourceId + refId" :refid="refId"-->
+        />
       </div>
 
     </div>
