@@ -3,64 +3,20 @@
     <div class="title app-width-padding">About Title 2</div>
     <div class="about-content app-width-padding">
       <p>
-        Aussitôt arrêtés le principe et les modalités générales de la numérisation,
-        le parti de la cohérence géographique du corpus retenu s'imposa de lui-même. Et presque
-        aussitôt le choix se porta sur Paris et l'Ile-de-France&nbsp;: d'abord parce que l'entreprise
-        permettait de couvrir une région, très paradoxalement, délaissée par les éditeurs de
-        chartes&nbsp;; ensuite parce que l'ouverture parallèle du chantier d'<a href="http://elec.enc.sorbonne.fr/cartulaireblanc/">édition du chartrier de l'abbaye
-        de Saint-Denis</a> permettait de prolonger et d'enrichir les potentialités de
-        consultation.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ac eros vehicula, pulvinar est nec, consequat neque. Phasellus purus leo, faucibus ac tempor et, lobortis at mauris. In pulvinar porta purus non blandit. Proin hendrerit lacus odio, volutpat consectetur mauris auctor eget. Curabitur quis leo a metus congue ornare. In dapibus porta risus, id pharetra tellus commodo in. Nullam maximus viverra quam, vitae rhoncus lacus iaculis non. Duis quis iaculis lectus, tincidunt pharetra ante.
       </p>
-      <p>Paris, pourtant, était bien parti dans la course à l'édition, avec la
-          publication monumentale, foisonnante de trésors, juste un peu hâtive et, surtout,
-          négligeant les originaux, que Benjamin Guérard donnait, en 1850, des cartulaires du
-          chapitre cathédral, augmentés de pièces extraites du cartulaire de l'évêché, dans quatre
-          volumes de la prestigieuse, et jeune encore, collection des <em>Document inédits</em>.
-          L'évolution fut pourtant des plus contrastées. D'un côté, des érudits locaux de modèle
-          «&nbsp;provincial&nbsp;» avaient lancé dès les années 1840, avec non moins d'entrain, de désordre
-          et parfois de maladresse, une série d'éditions illustrant l'histoire de leur petite
-          patrie, autour de Rambouillet ou de Pontoise, et notre entreprise, par-delà les
-          appréciations critiques, rend aussi hommage à leurs efforts, à leur connaissance des
-          lieux et à leurs reconstitutions généalogiques commodes et précises dès que les
-          documents abondent. D'un autre côté, les érudits et historiens «&nbsp;parisiens&nbsp;», mal armés
-          en temps face à de gigantesques chartriers démembrés, dominés par l'urgence d'une
-          histoire nationale, négligèrent très largement les établissements de la ville et de ses
-          faubourgs.
+      <p>
+        Proin nec orci suscipit est aliquam dignissim. Etiam vitae facilisis nisl, fringilla ornare libero. Duis elit purus, iaculis quis nibh et, vehicula auctor nulla. Aliquam dictum varius gravida. Etiam eget ullamcorper augue, sit amet volutpat magna. Pellentesque dolor lorem, aliquet et erat ut, ultrices efficitur felis. Phasellus pharetra libero vitae tortor mattis pulvinar. Nam viverra ipsum sed odio eleifend, lobortis tristique sem semper.
       </p>
-      <p>On délaissa donc vite les grands cartulaires parisiens. Alors que Robert de
-            Lasteyrie renonçait à poursuivre au-delà de 1180 un solide recueil factice
-                (<em>Cartulaire général de Paris, ou recueil de documents relatifs à l'histoire et à
-                la topographie de Paris</em>, 1887), s'ouvrit, mais très péniblement, une autre
-            veine qui, selon les exigences nouvelles de la diplomatique, prenait en compte tous les
-            éléments de la tradition et non plus les seuls cartulaires. Mêmes causes, mêmes effets,
-            sans doute&nbsp;: à Paris et en Ile-de-France, les résultats restent encore faibles
-            numériquement, et rares sont les éditions disponibles pour de grands chartriers&nbsp;: le
-            riche corpus des <em>Archives de l'Hôtel-Dieu, 1157-1300</em> réuni par Léon Brièle et
-            achevé par Ernest Coyecque (1894)&nbsp;; les deux volumes du <em>Recueil des chartes de
-                l'abbaye de Saint-Germain-des-Prés des origines au début du XIII<sup>e</sup>&nbsp;siècle
-                par René Poupardin (1909-1932)</em>&nbsp;; plus remarquables encore par leur soin et par
-            leur souci de pousser dans le temps, les trois volumes des <em>Chartes et documents de
-                l'abbaye de Saint-Magloire</em> que Anne Terroine et Lucie Fossier ont menés de la
-            fin du X<sup>e</sup> au début du XV<sup>e</sup>&nbsp;siècle (1966-1998).</p>
-        <p>Cette relative atonie n'a pas interdit aux historiens de donner un
-            spectaculaire développement aux études de topographie urbaine, d'entamer une histoire
-            sociale et économique de la ville à compter du XIII<sup>e</sup>&nbsp;siècle. Elle est à coup
-            sûr responsable des grands vides de notre information sur le dense réseau des
-            seigneuries et des familles nobiliaires et chevaleresques, sur l'histoire de
-            l'occupation du sol dans la région parisienne au Moyen Âge central, voire sur les
-            précoces relations entre la ville et son «&nbsp;pays&nbsp;», thèmes qui eussent pu intéresser même
-            l'historien national, pour former la toile de fond du «&nbsp;miracle capétien&nbsp;».</p>
-        <p>Si la relance des entreprises d'édition se justifie d'elle-même, on reste
-            frappé de l'immensité du travail qui reste à accomplir, depuis la reprise du chantier
-            ouvert par Guérard à Notre-Dame de Paris (chapitre et mense épiscopale), jusqu'à la
-            prospection des terres inconnues (aussi illustres que le Temple ou Saint-Victor, plus
-            modestes comme Sainte-Opportune, Saint-Étienne-des-Grés, Saint-Germain-l'Auxerrois, les
-            Mathurins), parcourues par des éditions très partielles (Saint-Martin-des-Champs), ou
-            explorées par des thèses inédites (Saint-Maur-des-Fossés, Saint-Antoine-des-Champs)… Le
-            travail à accomplir reste gigantesque, même si les initiatives ne manquent pas (édition
-            des actes de Saint-Lazare par Simone Lefèvre en 2006, thèse d'École des Chartes de
-            Noémie Escher sur le chartrier de Sainte-Geneviève...).
-        </p>
+      <p>
+        Suspendisse maximus nisl auctor rhoncus sodales. Aliquam felis dui, finibus ut faucibus ut, porttitor vitae metus. In hac habitasse platea dictumst. Aliquam commodo ullamcorper pretium. Suspendisse ac pellentesque tortor. Duis et eros risus. Praesent tempor metus quis lorem scelerisque, porttitor facilisis ex fringilla. Sed laoreet lorem tellus. Aenean vitae turpis sed mauris fringilla egestas. Suspendisse consectetur euismod porttitor. Aenean tristique nisl tempus sapien eleifend, et sodales justo sodales. Integer convallis mollis luctus. Phasellus at lacinia nisl, ac ultrices lectus. Nullam tincidunt ex nulla, id mattis dui imperdiet nec. Vestibulum quis metus sed sapien mattis malesuada at vel mi. Suspendisse eget tellus quis tortor lobortis malesuada.
+      </p>
+      <p>
+        Suspendisse sit amet orci vel magna rhoncus dignissim. Sed porttitor nunc ac sollicitudin fermentum. Morbi id semper turpis, quis ornare nulla. Nam vulputate ac elit luctus pretium. Duis dapibus neque ut magna laoreet feugiat. Donec efficitur malesuada mauris at feugiat. Nullam urna libero, fringilla vitae tortor id, pharetra ornare turpis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer facilisis varius turpis non tempus. Fusce elementum fermentum ipsum. Vivamus lacus quam, commodo et fermentum ac, tincidunt quis libero. Pellentesque non commodo odio. Aenean id dignissim lorem, at pretium orci. Duis at ligula vehicula, lacinia eros sit amet, scelerisque enim.
+      </p>
+      <p>
+        Etiam maximus vehicula dolor, ut faucibus diam scelerisque sed. Vestibulum lorem erat, suscipit vitae massa nec, aliquam tempor augue. Nulla facilisi. Aenean porttitor eu elit efficitur accumsan. Suspendisse elementum fringilla interdum. Praesent augue est, viverra pellentesque nibh efficitur, vulputate dictum nisl. Nam in mauris vitae risus tristique pretium. Aliquam erat volutpat. Aliquam erat volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      </p>
     </div>
   </article>
 
