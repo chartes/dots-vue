@@ -102,7 +102,7 @@ export default async function fetchMetadata (source, resourceId, documentType, r
 
     if (listmetadata['@id']) {
       const source = findSource(window.location.origin)
-      metadata.citation = { source, url: `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}` }
+      metadata.citation = { source, url: `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}` }
       console.log('source found:', source, listmetadata['@id'])
     } else {
       metadata.citation = null
