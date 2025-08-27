@@ -206,14 +206,14 @@ export default {
           console.log('AppNavbar ImgUrl rootCollImg : ', rootCollImg)
         }
         // Setting the default AppNavBar image (dots) if none is defined at root or collection level
-        const defaultSettings = import.meta.glob('@/assets/images/Logo_dots_circle.svg', { eager: true })
+        const defaultSettings = import.meta.glob('@/assets/images/logo_dots_circle.svg', { eager: true })
         console.log('AppNavbar ImgUrl defaultSettings: ', defaultSettings)
-        images['/src/assets/images/Logo_dots_circle.svg'] = defaultSettings['/src/assets/images/Logo_dots_circle.svg']
+        images['/src/assets/images/logo_dots_circle.svg'] = defaultSettings['/src/assets/images/logo_dots_circle.svg']
 
         // Match the collection AppNavBar image if any
         const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName}`]
         console.log('AppNavbar ImgUrl match: ', match)
-        const defaultImg = images['/src/assets/images/Logo_dots_circle.svg']
+        const defaultImg = images['/src/assets/images/logo_dots_circle.svg']
         // Use the collection AppNavBar image if any
         if (match) {
           if (sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName.includes('https')) {
@@ -279,14 +279,14 @@ export default {
           console.log('AppNavbar apiImgUrl rootCollImg : ', rootCollImg)
         }
         // Setting the default AppNavBar image (dots) if none is defined at root or collection level
-        const defaultSettings = import.meta.glob('@/assets/images/Logo_dots_circle.svg')
+        const defaultSettings = import.meta.glob('@/assets/images/logo_dots_circle.svg')
         console.log('AppNavbar apiImgUrl defaultSettings: ', defaultSettings)
-        images['/src/assets/images/Logo_dots_circle.svg'] = defaultSettings['/src/assets/images/Logo_dots_circle.svg']
+        images['/src/assets/images/logo_dots_circle.svg'] = defaultSettings['/src/assets/images/logo_dots_circle.svg']
 
         // Match the collection AppNavBar image if any
         const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`]
         console.log('AppNavbar apiImgUrl match: ', match)
-        const defaultImg = images['/src/assets/images/Logo_dots_circle.svg']
+        const defaultImg = images['/src/assets/images/logo_dots_circle.svg']
         // Use the collection AppNavBar image if any
         if (match) {
           if (sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName.includes('https')) {

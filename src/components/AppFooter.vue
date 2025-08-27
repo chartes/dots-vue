@@ -38,7 +38,7 @@
               <img
               class="biblissima-logo"
               alt="Logo de Biblissima+"
-              src="@/assets/images/Logo_biblissima_footer_white.png"
+              src="@/assets/images/logo_biblissima_footer_white.png"
             />
           </a>
         </div>
@@ -54,7 +54,7 @@
             <!--<img
               class="dots-logo"
               alt="Logo de DoTS"
-              src="@/assets/images/Logo_dots.png"
+              src="@/assets/images/logo_dots.png"
             />-->
           </a>
         </div>
@@ -293,7 +293,7 @@ export default {
   display: inline-block;
   width: 70px;
   height: 70px;
-  background: url(../assets/images/Logo_dots.png) center / contain no-repeat;
+  background: url(../assets/images/logo_dots.png) center / contain no-repeat;
   &:hover {
     background: url(../assets/images/dots-logo-retro.drawio.svg) center / contain no-repeat;
   }
