@@ -16,7 +16,7 @@ const sources = [
   { name: 'biblissima', ext: 'biblissima.fr', type: 'document_link' },
   { name: 'creativecommons', ext: 'creativecommons.org', type: 'document_link' },
   { name: 'iiif', ext: 'manifest', type: 'other_link' },
-  { name: 'tei', ext: 'dots', type: 'other_link' },
+  { name: 'tei', ext: 'api/dts', type: 'other_link' },
   { name: 'dots', ext: window.location.origin, type: 'other_link' }
 ]
 
