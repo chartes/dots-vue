@@ -1175,7 +1175,7 @@ export default {
     }
 
     const setMirador = function () {
-      fetch(metadata.iiifManifestUrl, {
+      fetch(metadata.iiifManifestUrl.url, {
         method: 'GET'
       })
         .then((r) => {
