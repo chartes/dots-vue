@@ -81,17 +81,35 @@ export default {
     componentTOC.value.filter(i => i.parent === route.params.id).forEach((item) => {
       if (item.parent === route.params.id) {
         item.show = true
+        item.expanded = false
+      }
+    })
+    componentTOC.value.filter(i => i.ancestor_editorialLevel === route.params.id).forEach((item) => {
+      if (item.ancestor_editorialLevel === route.params.id) {
+        item.expanded = false
       }
     })
     if (store.state.arianeDocument && store.state.arianeDocument.length > 0) {
+      console.log('TOC setup store.state.arianeDocument', store.state.arianeDocument)
       store.state.arianeDocument.forEach(item => {
-        componentTOC.value.filter(i => i.identifier === item || i.parent === item).forEach((n) => {
+        componentTOC.value.filter(i => i.identifier === item).forEach((n) => {
+          n.show = true
+          n.expanded = true
+        })
+        componentTOC.value.filter(i => i.parent === item).forEach((n) => {
           n.show = true
         })
-        expandedById.value[item] = !expandedById.value[item]
+        expandedById.value[item] = expandedById.value[item] ? !expandedById.value[item] : true
+
+        if (item.children && item.children.length > 0 && item.level < maxCiteDepth.value) {
+          for (let i = 0; i < item.children.length; i += 1) {
+            item.children[i].show = true
+            expandedById.value[item.children[i]] = !expandedById.value[item.children[i]]
+          }
+        }
       })
     }
-    console.log('TOC componentTOC.value', componentTOC.value)
+    console.log('TOC componentTOC.value', store.state.arianeDocument, componentTOC.value)
     console.log('TOC setup expandedById.value :', expandedById.value)
 
     // remove when proved unneeded
@@ -110,6 +128,8 @@ export default {
         node.show = false
         if (Object.keys(node).includes('expanded')) {
           node.expanded = false
+        } else {
+          node['expanded'] = false
         }
         console.log('TOC toggleExpanded id hideDescendants node ident ', node, ident)
         if (node.children && node.children.length > 0 && node.level < maxCiteDepth.value) {
@@ -131,6 +151,7 @@ export default {
           item.show = true
         } else {
           item.show = false
+          item.expanded = false
           hideDescendants(item.identifier)
         }
       })
@@ -140,6 +161,68 @@ export default {
     const goTo = function (item) {
       // currentRefId.value = ref
       // console.log("TOC ref : ", $event, currentRefId.value)
+      function hideDescendants (ident) {
+        const node = componentTOC.value.find(item => item.identifier === ident)
+        node.show = false
+        if (Object.keys(node).includes('expanded')) {
+          node.expanded = false
+        } else {
+          node['expanded'] = false
+        }
+        console.log('TOC goTo id hideDescendants node ident ', node, ident)
+        if (node.children && node.children.length > 0 && node.level < maxCiteDepth.value) {
+          for (let i = 0; i < node.children.length; i += 1) {
+            if (expandedById.value[node.identifier]) {
+              hideDescendants(node.children[i].identifier)
+            }
+          }
+        }
+      }
+      if (item.ancestor_editorialLevel) {
+        console.log('TOC goTo / item / item.ancestor_editorialLevel ', item, expandedById.value)
+        componentTOC.value.filter(node => node.ancestor_editorialLevel && (node.ancestor_editorialLevel !== item.ancestor_editorialLevel)).forEach((n) => {
+          if (expandedById.value[n.identifier]) {
+            expandedById.value[n.identifier] = false
+          }
+          componentTOC.value.find(node => node.identifier === n.identifier).expanded = false
+          componentTOC.value.find(node => node.identifier === n.identifier).show = false
+          if (n.children && n.children.length > 0 && n.level < maxCiteDepth.value) {
+            for (let i = 0; i < n.children.length; i += 1) {
+              if (expandedById.value[n.identifier]) {
+                hideDescendants(n.children[i].identifier)
+              }
+            }
+          }
+        })
+        componentTOC.value.filter(node => !node.ancestor_editorialLevel && (node.identifier !== item.ancestor_editorialLevel)).forEach((n) => {
+          if (expandedById.value[n.identifier]) {
+            expandedById.value[n.identifier] = false
+          }
+          componentTOC.value.find(node => node.identifier === n.identifier).expanded = false
+          if (n.children && n.children.length > 0 && n.level < maxCiteDepth.value) {
+            for (let i = 0; i < n.children.length; i += 1) {
+              if (expandedById.value[n.identifier]) {
+                hideDescendants(n.children[i].identifier)
+              }
+            }
+          }
+        })
+      } else {
+        componentTOC.value.filter(node => node.ancestor_editorialLevel !== item.identifier).forEach((n) => {
+          if (expandedById.value[n.identifier]) {
+            expandedById.value[n.identifier] = false
+            componentTOC.value.find(node => node.identifier === n.identifier).expanded = false
+            if (n.children && n.children.length > 0 && n.level < maxCiteDepth.value) {
+              for (let i = 0; i < n.children.length; i += 1) {
+                if (expandedById.value[n.identifier]) {
+                  hideDescendants(n.children[i].identifier)
+                }
+              }
+            }
+          }
+        })
+      }
+
       if (isDocProjectIdInc.value) {
         if (item.router_hash) {
           if (item.router_refid) {
@@ -173,6 +256,7 @@ export default {
       function hideDescendants (id) {
         const node = componentTOC.value.filter(item => item.identifier === id)
         node.show = false
+        node.expanded = false
         console.log('TOC watch hideDescendants (id) node', node)
         if (node.children && node.children.length > 0) {
           for (let i = 0; i < node.children.length; i += 1) {
@@ -182,12 +266,13 @@ export default {
           }
         }
       }
-      expandedById.value.forEach((item) => {
+      Object.keys(expandedById.value).forEach((item) => {
         componentTOC.value.filter(n => n.parent === item).forEach((child) => {
-          if (expandedById.value[child.identifier]) {
+          console.log('TOC watch item', item, expandedById.value, expandedById.value[item])
+          if (expandedById.value[item]) {
             child.show = true
           } else {
-            hideDescendants(child.identifier)
+            hideDescendants(item)
           }
         })
       })

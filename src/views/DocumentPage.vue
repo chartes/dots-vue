@@ -156,7 +156,7 @@
         <div class="ariane">
           <ul class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center crumbs">
             <li
-              v-for="(ancestor, index) in arianeDocument" :key="index"
+              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator === 'toEdit')" :key="index"
               :class="refId ? ancestor.identifier === refId ? 'is-current' : '' : ancestor.identifier === resourceId ? 'is-current' : ''"
             >
                 <router-link
@@ -858,7 +858,7 @@ export default {
         processFlatTOC.filter(item => item.level === editorialLevel.value).forEach((node) => {
           node.editorialLevelIndicator = 'toEdit'
           if (node.level <= 0) {
-            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}/${node.identifier}`
+            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}/${node.identifier}`
             node.router = node.identifier
           } else {
             node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
@@ -902,7 +902,7 @@ export default {
       processFlatTOC.filter(item => !item.url).forEach(node => {
         node.editorialLevelIndicator = 'renderToc'
         if (node.level <= 0) {
-          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${node.identifier}`
+          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${node.identifier}`
           node.router = node.identifier
           node.router_params = node.identifier
           // console.log("addFlag on node.level <=0 :", node)
@@ -979,7 +979,7 @@ export default {
 
     const getAncestors = async () => {
       console.log('getAncestors start')
-      const currentItemId = refId.value ? refId.value : resourceId.value
+      const currentItemId = hash.value ? hash.value : refId.value ? refId.value : resourceId.value
       console.log('ancestors currentItemId : ', flatTOC.value, hash.value, refId.value, resourceId.value, currentItemId)
 
       function findAncestors (item, directory) {
@@ -1282,6 +1282,7 @@ export default {
             hash.value = newRoute.hash && newRoute.hash.length > 0 ? newRoute.hash.replace('#', '') : false
             isLoading.value = true
             if (newRoute.hash && newRoute.hash.length > 0) {
+              await getAncestors()
               console.log('watch scrollTo hash : ', hash.value)
               scrollTo()
             }
@@ -1366,13 +1367,27 @@ export default {
     )*/
 
     function scrollTo () {
-      nextTick(() => {
+      //await nextTick()
+      //nextTick(() => {
         // If the selected item is an anchor, capture and scroll to that anchor
-        // console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
-        if (hash.value.length) {
-          location.hash = hash.value
-        }
-      })
+        console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
+        if (hash.value.length > 0) {
+          // bump the hash to ensure change detection
+          const bumpPath = `${import.meta.env.VITE_APP_APP_ROOT_URL}`.length <= 1 ? `${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}` : `${import.meta.env.VITE_APP_APP_ROOT_URL}${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}`
+          history.replaceState(null, '', bumpPath)
+
+          // target element and scroll
+          const el = document.getElementById(hash.value)
+          console.log('DocumentPage.vue scrollTo el : ', el)
+          if (el) {
+            const yOffset = -70
+            const y = el.getBoundingClientRect().top + window.scrollY + yOffset
+            console.log('DocumentPage.vue scrollTo y : ', y)
+            window.scrollTo({ top: y, behavior: 'smooth' })
+            // el.scrollIntoView({ behavior: 'smooth' })
+          }
+        } else return
+      //})
     }
     onMounted(() => {
       const appView = document.getElementById('app')
