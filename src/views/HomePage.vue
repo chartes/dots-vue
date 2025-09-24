@@ -511,6 +511,9 @@ export default {
       }
       console.log('HomePage watch collectionConfig collectionDescription : ', collConfig.value, collectionDescription.value)
       paginated()
+      if (newProps.collectionConfig.homePageSettings.listSection.openState) {
+        await toggleExpanded(currCollection.value.identifier)
+      }
       if (customCollectionDescription.value) {
         customDescription.value = await getCustomHomeDescription()
       } else {

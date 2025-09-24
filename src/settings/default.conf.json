@@ -25,7 +25,8 @@
         "displayMode": "",
         "cardCollectionPerPage": 3,
         "logo": "",
-        "browseButtonText": "Browse the collection"
+        "browseButtonText": "Browse the collection",
+        "openState": false
       }
     },
     "footerSettings": {
