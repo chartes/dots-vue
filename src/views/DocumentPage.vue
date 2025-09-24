@@ -156,7 +156,7 @@
         <div class="ariane">
           <ul class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center crumbs">
             <li
-              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator === 'toEdit')" :key="index"
+              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')" :key="index"
               :class="refId ? ancestor.identifier === refId ? 'is-current' : '' : ancestor.identifier === resourceId ? 'is-current' : ''"
             >
                 <router-link
