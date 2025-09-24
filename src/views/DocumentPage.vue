@@ -1662,11 +1662,14 @@ export default {
 }
 .toc-aside-is-opened .toc-area-aside {
   display: flex;
-  width: 220px;
-
+  width: 230px;
   position: sticky;
   top: 40px;
   align-self: flex-start;
+  & > aside > nav {
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
 }
 .toc-aside-is-opened .document-views {
   flex: calc(100% - 220px);
