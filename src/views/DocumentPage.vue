@@ -267,7 +267,7 @@ import {
   reactive,
   provide,
   ref,
-  inject, nextTick, shallowRef, onBeforeUnmount
+  inject, shallowRef
 } from 'vue'
 
 import { useRoute } from 'vue-router'
@@ -275,39 +275,6 @@ import router from '@/router/index.js'
 import fetchMetadata from '@/composables/get-metadata.js'
 import store from '@/store'
 
-/* const sources = [
-  { name: 'databnf', ext: 'data.bnf.fr', type: 'author_link' },
-  { name: 'dbpedia', ext: 'dbpedia.org', type: 'author_link' },
-  { name: 'idref', ext: 'idref.fr', type: 'author_link' },
-  { name: 'cataloguebnf', ext: 'catalogue.bnf.fr', type: 'author_link' },
-  { name: 'wikidata', ext: 'wikidata', type: 'author_link' },
-  { name: 'wikipedia', ext: 'wikipedia', type: 'author_link' },
-  { name: 'thenca', ext: 'thenca', type: 'document_link' },
-  { name: 'hal', ext: 'hal', type: 'document_link' },
-  { name: 'benc', ext: 'koha', type: 'document_link' },
-  { name: 'sudoc', ext: 'sudoc.fr', type: 'document_link' },
-  { name: 'biblissima', ext: 'biblissima.fr', type: 'document_link' },
-  { name: 'creativecommons', ext: 'creativecommons.org', type: 'document_link' },
-  { name: 'enc', ext: 'manifest', type: 'other_link' }
-] */
-
-/* function findSource (id) {
-  let i = 0
-  let source = null
-
-  do {
-    source = id.toLowerCase().includes(sources[i].ext) ? sources[i] : null
-    i++
-  } while (i < sources.length && source === null)
-
-  if (source) {
-    console.log('findSource source.name :', source.name)
-    console.log('findSource source :', source)
-    return { name: source.name, type: source.type }
-  }
-
-  return null
-} */
 function getSimpleObject (obj) {
   // console.log("getSimpleObject / obj", obj)
   let simpleObject = {}
@@ -1367,27 +1334,24 @@ export default {
     )*/
 
     function scrollTo () {
-      //await nextTick()
-      //nextTick(() => {
-        // If the selected item is an anchor, capture and scroll to that anchor
-        console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
-        if (hash.value.length > 0) {
-          // bump the hash to ensure change detection
-          const bumpPath = `${import.meta.env.VITE_APP_APP_ROOT_URL}`.length <= 1 ? `${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}` : `${import.meta.env.VITE_APP_APP_ROOT_URL}${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}`
-          history.replaceState(null, '', bumpPath)
+      // If the selected item is an anchor, capture and scroll to that anchor
+      console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
+      if (hash.value.length > 0) {
+        // bump the hash to ensure change detection
+        const bumpPath = `${import.meta.env.VITE_APP_APP_ROOT_URL}`.length <= 1 ? `${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}` : `${import.meta.env.VITE_APP_APP_ROOT_URL}${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}`
+        history.replaceState(null, '', bumpPath)
 
-          // target element and scroll
-          const el = document.getElementById(hash.value)
-          console.log('DocumentPage.vue scrollTo el : ', el)
-          if (el) {
-            const yOffset = -70
-            const y = el.getBoundingClientRect().top + window.scrollY + yOffset
-            console.log('DocumentPage.vue scrollTo y : ', y)
-            window.scrollTo({ top: y, behavior: 'smooth' })
-            // el.scrollIntoView({ behavior: 'smooth' })
-          }
-        } else return
-      //})
+        // target element and scroll
+        const el = document.getElementById(hash.value)
+        console.log('DocumentPage.vue scrollTo el : ', el)
+        if (el) {
+          const yOffset = -70
+          const y = el.getBoundingClientRect().top + window.scrollY + yOffset
+          console.log('DocumentPage.vue scrollTo y : ', y)
+          window.scrollTo({ top: y, behavior: 'smooth' })
+          // el.scrollIntoView({ behavior: 'smooth' })
+        }
+      } else return
     }
     onMounted(() => {
       const appView = document.getElementById('app')
@@ -1395,17 +1359,6 @@ export default {
       window.addEventListener('scroll', updateMiradorTopPosition)
       layout.isTOCMenuOpened.value = false
     })
-    /* onBeforeUnmount(() => {
-      const styleTags = [...document.querySelectorAll('style')]
-      console.log('Document page getCustomCss styleTags ', styleTags)
-      styleTags.forEach((tag) => {
-        console.log('Document page getCustomCss tag.textContent ', tag.textContent)
-        if (tag.id === 'customCss') {
-          console.log('Document page getCustomCss tag.id ', tag.id)
-          tag.remove()
-        }
-      })
-    })*/
 
     onUnmounted(() => {
       const appView = document.getElementById('app')
