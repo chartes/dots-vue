@@ -113,7 +113,7 @@ export default {
     // getting and formatting collection details
 
     document.documentElement.setAttribute('data-theme', whichTheme.value)
-    //localStorage.setItem('theme', whichTheme.value)
+    // localStorage.setItem('theme', whichTheme.value)
     console.log('App.vue setup theme : ', whichTheme.value)
 
     const mergeSettings = () => {
@@ -121,8 +121,6 @@ export default {
       console.log('App.vue setup appSettings', appSettings)
       const appCssSettings = import.meta.glob('confs/*.conf.css', { eager: true })
       console.log('App.vue setup appCssSettings', appCssSettings)
-      /*appCssConfig.value = appCssSettings[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/customCss.conf.css`]
-      console.log('App.vue setup appCssConfig', appCssConfig)*/
 
       const defaultSettings = import.meta.glob('./settings/default.conf.json', { eager: true })
       appSettings['./settings/default.conf.json'] = defaultSettings['./settings/default.conf.json']
@@ -162,16 +160,16 @@ export default {
 
     const getBreadcrumb = async (collId) => {
       let loopCollId = collId
-      let initialBreadCrumb = {}
+      const initialBreadCrumb = {}
       initialBreadCrumb[collId] = currCollection.value.title
       console.log('App.vue breadcrumb initial initialBreadCrumb loopCollId rootCollectionIdentifier.value', initialBreadCrumb, loopCollId, breadCrumb.value)
       breadCrumb.value = loopCollId !== rootCollectionIdentifier.value ? [initialBreadCrumb] : []
       console.log('App.vue breadcrumb initial', breadCrumb.value)
       let parentCollId = ''
-      while (loopCollId !== projectCollId.value && loopCollId !== rootCollectionIdentifier.value) {
+      while (loopCollId && loopCollId !== projectCollId.value && loopCollId !== rootCollectionIdentifier.value) {
         console.log('App.vue breadcrumb loopCollId', loopCollId)
-        let parentsResponse = await getParentFromApi(loopCollId)
-        let parentCollIds = parentsResponse.member ? parentsResponse.member.map(p => ({ [p['@id']]: p.title })) : []
+        const parentsResponse = await getParentFromApi(loopCollId)
+        const parentCollIds = parentsResponse.member ? parentsResponse.member.map(p => ({ [p['@id']]: p.title })) : []
         console.log('App.vue breadcrumb parentsResponse.member', parentsResponse.member ? parentsResponse.member + '/n' + parentsResponse.member.map(p => ({ [p['@id']]: p.title })) : 'no parent')
         console.log('App.vue breadcrumb parentCollIds', parentCollIds)
         if (Array.isArray(parentCollIds) && parentCollIds.length > 1) {
@@ -182,7 +180,7 @@ export default {
           console.log('App.vue breadcrumb parentCollId cas 2', parentCollId)
         }
         if (parentCollId && parentCollId !== rootCollectionIdentifier.value && !breadCrumb.value.map(m => Object.keys(m)[0]).includes(parentCollId)) {
-          let parentBreadcrumb = {}
+          const parentBreadcrumb = {}
           parentBreadcrumb[parentCollId] = parentsResponse.member.find(p => p['@id'] === parentCollId).title
           breadCrumb.value.push(parentBreadcrumb)
         }
@@ -190,7 +188,7 @@ export default {
       }
       console.log('App.vue breadcrumb ', breadCrumb.value)
       for (const id of breadCrumb.value.map(p => Object.keys(p)[0])) {
-        let loopCollSettings = appConfig.value.collectionsConf.find(coll => coll.collectionId === id)
+        const loopCollSettings = appConfig.value.collectionsConf.find(coll => coll.collectionId === id)
         console.log('App.vue shortTitlesBreadcrumb id ', id, appConfig.value.collectionsConf.find(coll => coll.collectionId === id))
         if ((((loopCollSettings || {}).homePageSettings || {}).appNavBar || {}).collectionShortTitle) {
           breadCrumb.value.find(p => Object.keys(p)[0] === id)[id] = loopCollSettings.homePageSettings.appNavBar.collectionShortTitle
@@ -256,7 +254,7 @@ export default {
             rootShortTitle.value = rootCollConfig.value ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : appConfig.value.genericConf.homePageSettings.appNavBar.collectionShortTitle
 
             // Set the project config
-            let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
+            const projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
             projectCollConfig.value = projectCollectionOverrides ? _.merge({}, rootCollConfig.value, projectCollectionOverrides) : rootCollConfig.value
             console.log('App.vue watch projectCollConfig.value, projectCollectionOverrides : ', projectCollConfig.value, projectCollectionOverrides)
             // Replaced by breadcrumb :
@@ -267,26 +265,6 @@ export default {
             if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value && collectionId.value !== projectCollId.value) {
               collectionOverrides = projectCollConfig.value
               collectionOverrides.collectionId = collectionId.value
-              /*collectionOverrides = {
-                "collectionId": collectionId.value,
-                "mediaTypeEndpoint": "tei",
-                "homePageSettings": {
-                  "appNavBar": {
-                    "collectionShortTitle": ""
-                  },
-                  "pageHeader": {
-                    "collectionAltTitle": "",
-                    "aboutButtonText": "about"
-
-                  },
-                  "descriptionSection": {
-                    "collectionDescription": ""
-                  },
-                  "listSection": {
-                    "logo": ""
-                  }
-                }
-              }*/
             }
             collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
             console.log('App.vue watch final collConfig.value : ', collConfig.value)
@@ -309,7 +287,7 @@ export default {
       router.currentRoute, async (newRoute, oldRoute) => {
         if (watcherState.value === false) {
           watcherRoute.value = true
-          //collConfig.value = {}
+          // collConfig.value = {}
           console.log('App.vue watch change in route : ', oldRoute, newRoute)
           await getDtsRootResponse()
           await getCurrentCollection
@@ -368,7 +346,7 @@ export default {
               rootShortTitle.value = rootCollConfig.value ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : appConfig.value.genericConf.homePageSettings.appNavBar.collectionShortTitle
 
               // Set the project config
-              let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
+              const projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
               projectCollConfig.value = projectCollectionOverrides ? _.merge({}, rootCollConfig.value, projectCollectionOverrides) : rootCollConfig.value
               console.log('App.vue watch projectCollConfig.value, projectCollectionOverrides : ', projectCollConfig.value, projectCollectionOverrides)
               // Replaced by breadcrumb :
@@ -379,26 +357,6 @@ export default {
               if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value && collectionId.value !== projectCollId.value) {
                 collectionOverrides = projectCollConfig.value
                 collectionOverrides.collectionId = collectionId.value
-                /*collectionOverrides = {
-                  "collectionId": collectionId.value,
-                  "mediaTypeEndpoint": "tei",
-                  "homePageSettings": {
-                    "appNavBar": {
-                      "collectionShortTitle": ""
-                    },
-                    "pageHeader": {
-                      "collectionAltTitle": "",
-                      "aboutButtonText": "about"
-
-                    },
-                    "descriptionSection": {
-                      "collectionDescription": ""
-                    },
-                    "listSection": {
-                      "logo": ""
-                    }
-                  }
-                }*/
               }
               collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
               console.log('App.vue watch final collConfig.value : ', collConfig.value)
@@ -453,7 +411,7 @@ export default {
             rootShortTitle.value = rootCollConfig.value ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : appConfig.value.genericConf.homePageSettings.appNavBar.collectionShortTitle
 
             // Set the project config
-            let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
+            const projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
             projectCollConfig.value = projectCollectionOverrides ? _.merge({}, rootCollConfig.value, projectCollectionOverrides) : rootCollConfig.value
             console.log('App.vue watch projectCollConfig.value, projectCollectionOverrides : ', projectCollConfig.value, projectCollectionOverrides)
             // Replaced by breadcrumb :
@@ -464,26 +422,6 @@ export default {
             if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value && collectionId.value !== projectCollId.value) {
               collectionOverrides = projectCollConfig.value
               collectionOverrides.collectionId = collectionId.value
-              /*collectionOverrides = {
-                "collectionId": collectionId.value,
-                "mediaTypeEndpoint": "tei",
-                "homePageSettings": {
-                  "appNavBar": {
-                    "collectionShortTitle": ""
-                  },
-                  "pageHeader": {
-                    "collectionAltTitle": "",
-                    "aboutButtonText": "about"
-
-                  },
-                  "descriptionSection": {
-                    "collectionDescription": ""
-                  },
-                  "listSection": {
-                    "logo": ""
-                  }
-                }
-              }*/
             }
             collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
             console.log('App.vue watch final collConfig.value : ', collConfig.value)
