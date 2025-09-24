@@ -82,7 +82,8 @@ export default {
     let currentTab = shallowRef('')
     const getTabs = async () => {
       // const tabs = []
-      for (let i = 0; i < aboutSettings.value.length; i += 1) {
+      // loop through the non null (filter(x => x)) configuration tabs settings
+      for (let i = 0; i < aboutSettings.value.filter(x => x).length; i += 1) {
         console.log('AboutPage setup comp : ', aboutSettings.value[i], '\n comp.tabName : ', aboutSettings.value[i].tabName, '\n comp.compName : ', aboutSettings.value[i].compName)
         let component
         console.log('AboutPage collConfig.value.collectionId', collConfig.value.collectionId)
