@@ -324,7 +324,7 @@
                 </tr>
                 <tr class="row" v-else-if="value">
                   <td><span class="title"><b>{{ key }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
+                  <td><span class="title" style="text-transform: uppercase; font-size: 12px" v-html="value"></span></td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
                   <td></td>
                 </tr>
               </template>
@@ -776,6 +776,9 @@ aside.menu > .columns > .column:nth-child(3) {
   text-indent: 0;
   margin-bottom: 0;
   color: #4a4a4a;
+  & :deep i {
+    font-style: italic !important;
+  }
 }
 td > span.title > b {
   white-space: nowrap;

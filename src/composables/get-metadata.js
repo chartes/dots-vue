@@ -237,6 +237,10 @@ export default async function fetchMetadata (source, resourceId, documentType, r
           }
         }
       }
+      // citation statement
+      if (extensions['dct:bibliographicCitation']) {
+        metadata['dct:bibliographicCitation'] = extensions['dct:bibliographicCitation']
+      }
     }
   }
   await getMetadata()
