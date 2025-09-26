@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="Object.keys(collConfig).length > 0"
+    v-if="Object.keys(collConfig).length > 0 && collConfigReady"
     class="layout-grid-container"
   >
     <app-navbar
@@ -18,7 +18,6 @@
     />
       <suspense>
         <router-view
-          v-if="collConfigReady"
           class="layout-main"
           :is-doc-projectId-included="isDocProjectIdInc"
           :dts-root-collection-identifier="dtsRootCollectionId"
@@ -28,7 +27,7 @@
           :collection-config="collConfig"
           :collection-identifier="collectionId"
           :current-collection="currCollection"
-          :key="currCollection+route.name"
+          :key="currCollection"
         />
       </suspense>
     <back-to-top-button class="back-to-top-button"/>
@@ -44,7 +43,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { ref, shallowRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import router from '@/router'
@@ -95,6 +94,8 @@ export default {
     const appCssConfig = ref({})
     const whichTheme = ref(`${import.meta.env.VITE_APP_THEME}`.length === 0 ? 'red' : `${import.meta.env.VITE_APP_THEME}`)
     const theme = ref('')
+    const customCss = shallowRef({})
+    const cssPath = ref('')
 
     const dtsRootCollectionId = ref('')
     const rootCollectionIdentifier = ref('')
@@ -231,6 +232,46 @@ export default {
       console.log('App.vue getCurrentCollection projectCollId.value : ', projectCollId.value)
       await getBreadcrumb(collectionId.value)
     }
+
+    const getCustomCss = async () => {
+      if (collConfig.value.collectionCustomCss) {
+        const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: false })
+        console.log('App.vue getCustomCss appCssConfs', appCssConfs)
+        console.log('App.vue getCustomCss collConfig.value.collectionCustomCss', collConfig.value.collectionCustomCss)
+        console.log('App.vue getCustomCss get in if')
+        cssPath.value = `confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`
+        console.log('App.vue getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
+
+        if (collConfig.value.collectionCustomCss && appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`]) {
+          console.log('App.vue getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`])
+          customCss.value = await import(`confs/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css?raw`)
+          const style = document.createElement('style')
+          style.textContent = customCss.value.default
+          style.id = 'customCss'
+          // check if existing custom.css
+          const styleTags = [...document.querySelectorAll('style')]
+          if (styleTags.some((tag) => tag.id === 'customCss')) {
+            console.log('App.vue a customCss tag exist ', styleTags.filter((tag) => tag.id === 'customCss'))
+            document.getElementById('customCss').textContent = style.textContent
+            console.log('App.vue a customCss tag exist updated ', styleTags.filter((tag) => tag.id === 'customCss'))
+          } else document.head.append(style)
+        }
+      } else removeCustomCss()
+    }
+    const removeCustomCss = () => {
+      console.log('App.vue removeCustomCss store.state.collectionId', store.state.collectionId)
+      const styleTags = [...document.querySelectorAll('style')]
+      console.log('App.vue removeCustomCss styleTags ', styleTags)
+      styleTags.forEach((tag) => {
+        // console.log('App.vue watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
+        if (tag.id === 'customCss') {
+          console.log('App.vue removeCustomCss tag.textContent ', tag.textContent)
+          console.log('App.vue removeCustomCss tag.id ', tag.id)
+          tag.remove()
+        }
+      })
+    }
+
     watch(
       () => store.state.collectionId, async function () {
         collConfigReady.value = false
@@ -271,6 +312,13 @@ export default {
             }
             collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
             console.log('App.vue watch final collConfig.value : ', collConfig.value)
+            if (collConfig.value.collectionCustomCss) {
+              console.log('App.vue watch collConfig.value.collectionCustomCss IF: ', collConfig.value.collectionCustomCss)
+              await getCustomCss()
+            } else if (customCss.value) {
+              console.log('App.vue watch collConfig.value.collectionCustomCss ELSE: ', customCss.value)
+              removeCustomCss()
+            }
             // updating html document title for collections (when on document, managed in DocumentPage)
             if (!route.params.id) {
               if (store.state.collectionId) {
@@ -291,6 +339,8 @@ export default {
       router.currentRoute, async (newRoute, oldRoute) => {
         if ((newRoute && oldRoute) && (newRoute.name === oldRoute.name) && newRoute.name === 'About') {
           console.log('App.vue watch change in route : navigating within the existing About page')
+        } else if ((newRoute && oldRoute) && (newRoute.name === oldRoute.name) && (newRoute.params.collId === oldRoute.params.collId) && (newRoute.refId === oldRoute.refId)) {
+          console.log('App.vue watch change in route : navigating within an existing refId page')
         } else {
           collConfigReady.value = false
           if (watcherState.value === false) {
@@ -298,7 +348,6 @@ export default {
             // collConfig.value = {}
             console.log('App.vue watch change in route : ', oldRoute, newRoute)
             await getDtsRootResponse()
-            await getCurrentCollection
             console.log('App.vue watch getDtsRootResponse : ', dtsRootCollectionId.value)
             if (isDocProjectIdInc) {
               console.log('App.vue watch store.state.collectionId / newRoute.params.collId: ', store.state.collectionId, newRoute.params.collId)
@@ -369,6 +418,13 @@ export default {
                 }
                 collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
                 console.log('App.vue watch final collConfig.value : ', collConfig.value)
+                if (collConfig.value.collectionCustomCss) {
+                  console.log('App.vue watch collConfig.value.collectionCustomCss IF: ', collConfig.value.collectionCustomCss)
+                  await getCustomCss()
+                } else if (customCss.value) {
+                  console.log('App.vue watch collConfig.value.collectionCustomCss ELSE: ', customCss.value)
+                  removeCustomCss()
+                }
                 // updating html document title for collections (when on document, managed in DocumentPage)
                 if (!newRoute.params.id) {
                   if (store.state.collectionId && newRoute.params.collId) {
@@ -434,6 +490,13 @@ export default {
               }
               collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
               console.log('App.vue watch final collConfig.value : ', collConfig.value)
+              if (collConfig.value.collectionCustomCss) {
+                console.log('App.vue watch collConfig.value.collectionCustomCss IF: ', collConfig.value.collectionCustomCss)
+                await getCustomCss()
+              } else if (customCss.value) {
+                console.log('App.vue watch collConfig.value.collectionCustomCss ELSE: ', customCss.value)
+                removeCustomCss()
+              }
               // updating html document title for collections (when on document, managed in DocumentPage)
               if (!newRoute.params.id) {
                 if (store.state.collectionId && newRoute.params.collId) {
@@ -475,7 +538,10 @@ export default {
       getCurrentCollection,
       getBreadcrumb,
       breadCrumb,
-      mergeSettings
+      mergeSettings,
+      cssPath,
+      getCustomCss,
+      removeCustomCss
     }
   }
 }

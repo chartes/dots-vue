@@ -211,7 +211,6 @@
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :project-identifier="docProjectId"
             :iiif-manifest="manifest"
-            :collection-css="customCss.default"
             :id="resourceId"
             :level="currentLevel"
             :editorialLevelIndicator="currentLevelIndicator"
@@ -228,7 +227,6 @@
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :project-identifier="docProjectId"
             :iiif-manifest="manifest"
-            :collection-css="customCss.default"
             :id="resourceId + '&ref=' + refId"
             :level="currentLevel"
             :editorialLevelIndicator="currentLevelIndicator"
@@ -267,7 +265,7 @@ import {
   reactive,
   provide,
   ref,
-  inject, shallowRef
+  inject
 } from 'vue'
 
 import { useRoute } from 'vue-router'
@@ -443,9 +441,6 @@ export default {
     const selectedCollectionId = ref('')
     const selectedCollection = reactive({})
     const isModalOpened = ref(false)
-
-    let customCss = shallowRef({})
-    const cssPath = ref('')
 
     const miradorInstance = useMirador(miradorContainer, manifest)
     // provide an uninitialized instance of Mirador
@@ -1160,47 +1155,6 @@ export default {
           manifestIsAvailable.value = false
         })
     }
-    const getCustomCss = async () => {
-
-      if (collConfig.value.collectionCustomCss) {
-        // const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: true })
-        const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: false })
-        console.log('Document page getCustomCss appCssConfs', appCssConfs)
-        console.log('Document page getCustomCss collConfig.value.collectionCustomCss', collConfig.value.collectionCustomCss)
-        console.log('Document page getCustomCss get in if')
-        /* const match = appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`]
-        console.log('Document page getCustomCss match path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
-        console.log('Document page getCustomCss match', match) */
-        cssPath.value = `confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`
-        console.log('Document page getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
-
-        /* customCss.value = await import(`confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css?raw`) */
-
-        if (collConfig.value.collectionCustomCss && appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`]) {
-          console.log('Document page getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`])
-          customCss.value = await import(`confs/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css?raw`)
-          const style = document.createElement('style')
-          style.textContent = customCss.value.default
-          style.id = 'customCss'
-          document.head.append(style)
-          console.log('Document page customCss.value / cssComp : ', customCss.value)
-        }
-      }
-    }
-
-    const removeCustomCss = () => {
-      console.log('Document page watch store.state.collectionId', store.state.collectionId)
-      const styleTags = [...document.querySelectorAll('style')]
-      console.log('Document page watch store.state.collectionId getCustomCss styleTags ', styleTags)
-      styleTags.forEach((tag) => {
-        //console.log('Document page watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
-        if (tag.id === 'customCss') {
-          console.log('Document page watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
-          console.log('Document page watch store.state.collectionId getCustomCss tag.id ', tag.id)
-          tag.remove()
-        }
-      })
-    }
 
     watch(
       () => metadata.iiifManifestUrl,
@@ -1220,11 +1174,6 @@ export default {
       TOC_DEPTH.value = newProps.collectionConfig.tableOfContentsSettings.tableOfContentDepth
       editorialLevel.value = newProps.collectionConfig.tableOfContentsSettings.editByLevel
       console.log('Document page watch newProps.collectionConfig / collConfig.value : ', collConfig.value)
-      if (collConfig.value.collectionCustomCss) {
-        await getCustomCss()
-      } else {
-        removeCustomCss()
-      }
     }, { deep: true, immediate: true })
 
     watch(
@@ -1242,6 +1191,11 @@ export default {
           await getMetadata()
           getNewRefId()
           isLoading.value = true
+          if (newRoute.hash && newRoute.hash.length > 0) {
+            hash.value = newRoute.hash
+            console.log('Document page watch scrollTo hash : ', hash.value)
+            scrollTo()
+          }
         } else if (newRoute && oldRoute && newRoute.params.id === oldRoute.params.id) {
           console.log('Document page watch route change but resource DID NOT change ', oldRoute, newRoute)
           // await getCurrentItem("watch getCurrentItem : route : ", newRoute)
@@ -1251,7 +1205,6 @@ export default {
             hash.value = newRoute.hash && newRoute.hash.length > 0 ? newRoute.hash.replace('#', '') : false
             isLoading.value = true
             if (newRoute.hash && newRoute.hash.length > 0) {
-              await getAncestors()
               console.log('watch scrollTo hash : ', hash.value)
               scrollTo()
             }
@@ -1314,26 +1267,6 @@ export default {
         console.log('CollectionModal watch state isModalOpen.value : ')
       }, { immediate: true }
     )
-    /*watch(
-      () => store.state.collectionId, async function () {
-        console.log('Document page watch store.state.collectionId', store.state.collectionId)
-        const styleTags = [...document.querySelectorAll('style')]
-        console.log('Document page watch store.state.collectionId getCustomCss styleTags ', styleTags)
-        styleTags.forEach((tag) => {
-          console.log('Document page watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
-          if (tag.id === 'customCss') {
-            console.log('Document page watch store.state.collectionId getCustomCss tag.id ', tag.id)
-            tag.remove()
-          }
-        })
-      }, { immediate: true }
-    )*/
-    /*watch(
-      () => store.state.collectionId, function () {
-        console.log('Document page watch store.state.collectionId', store.state.collectionId)
-        removeCustomCss()
-      }, { immediate: true }
-    )*/
 
     function scrollTo () {
       // If the selected item is an anchor, capture and scroll to that anchor
@@ -1341,7 +1274,7 @@ export default {
       if (hash.value.length > 0) {
         // bump the hash to ensure change detection
         const bumpPath = `${import.meta.env.VITE_APP_APP_ROOT_URL}`.length <= 1 ? `${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}` : `${import.meta.env.VITE_APP_APP_ROOT_URL}${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}`
-        history.replaceState(null, '', bumpPath)
+        history.replaceState(history.state, '', bumpPath)
 
         // target element and scroll
         const el = document.getElementById(hash.value)
@@ -1425,11 +1358,7 @@ export default {
       selectedCollectionId,
       selectedCollection,
       currentItem,
-      setText,
-      getCustomCss,
-      removeCustomCss,
-      customCss,
-      cssPath
+      setText
     }
   }
 }

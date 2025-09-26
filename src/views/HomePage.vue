@@ -236,7 +236,6 @@ import { computed, defineAsyncComponent, inject, reactive, ref, shallowRef, watc
 
 import { getMetadataFromApi } from '@/api/document.js'
 import CollectionTOC from '@/components/CollectionTOC.vue'
-import store from '@/store'
 
 export default {
   name: 'HomePage',
@@ -292,9 +291,6 @@ export default {
     const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
     const collectionId = ref(props.collectionIdentifier)
     console.log('HomePage setup collectionId', collectionId.value)
-
-    let customCss = shallowRef({})
-    const cssPath = ref('')
 
     const componentTOC = ref([])
     const currCollection = ref(props.currentCollection)
@@ -359,47 +355,6 @@ export default {
     const homeCssClass = computed(() => {
       return state.isTreeOpened ? 'is-tree-opened' : ''
     })
-
-    const getCustomCss = async () => {
-      removeCustomCss()
-      if (collConfig.value.collectionCustomCss) {
-        // const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: true })
-        const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: false })
-        console.log('HomePage getCustomCss appCssConfs', appCssConfs)
-        console.log('HomePage getCustomCss collConfig.value.collectionCustomCss', collConfig.value.collectionCustomCss)
-        console.log('HomePage getCustomCss get in if')
-        /* const match = appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`]
-        console.log('HomePage getCustomCss match path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
-        console.log('HomePage getCustomCss match', match) */
-        cssPath.value = `confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`
-        console.log('HomePage getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
-
-        /* customCss.value = await import(`confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css?raw`) */
-
-        if (collConfig.value.collectionCustomCss && appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`]) {
-          console.log('HomePage getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`])
-          customCss.value = await import(`confs/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css?raw`)
-          const style = document.createElement('style')
-          style.textContent = customCss.value.default
-          style.id = 'customCss'
-          document.head.append(style)
-          console.log('HomePage getCustomCss customCss.value : ', customCss.value)
-        }
-      }
-    }
-    const removeCustomCss = () => {
-      console.log('HomePage removeCustomCss store.state.collectionId', store.state.collectionId)
-      const styleTags = [...document.querySelectorAll('style')]
-      console.log('HomePage removeCustomCss styleTags ', styleTags)
-      styleTags.forEach((tag) => {
-        // console.log('HomePage watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
-        if (tag.id === 'customCss') {
-          console.log('HomePage removeCustomCss tag.textContent ', tag.textContent)
-          console.log('HomePage removeCustomCss tag.id ', tag.id)
-          tag.remove()
-        }
-      })
-    }
 
     const ImgUrl = (source) => {
       // TODO: provide a logo object with url AND legend ?
@@ -519,27 +474,11 @@ export default {
       } else {
         customDescription.value = {}
       }
-      console.log('HomePage watch collConfig.value.collectionCustomCss : ', collConfig.value, collConfig.value.collectionCustomCss)
-      if (collConfig.value.collectionCustomCss) {
-        console.log('HomePage watch collConfig.value.collectionCustomCss IF: ', collConfig.value.collectionCustomCss)
-        await getCustomCss()
-      } else if (customCss.value) {
-        console.log('HomePage watch collConfig.value.collectionCustomCss ELSE: ', customCss.value)
-        removeCustomCss()
-      }
     }, { deep: true, immediate: true })
 
     watch(currentPage, () => {
       paginated()
     })
-    watch(
-      () => store.state.collectionId, function () {
-        console.log('HomePage watch store.state.collectionId', store.state.collectionId)
-        if (store.state.collectionId && store.state.collectionId !== collectionId.value && customCss.value) {
-          removeCustomCss()
-        }
-      }, { immediate: true }
-    )
 
     return {
       appConfig,
@@ -568,11 +507,7 @@ export default {
       currentPageData,
       customCollectionDescription,
       getCustomHomeDescription,
-      customDescription,
-      getCustomCss,
-      removeCustomCss,
-      customCss,
-      cssPath
+      customDescription
     }
   }
 }
