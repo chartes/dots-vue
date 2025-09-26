@@ -295,15 +295,15 @@ export default {
       console.log('Document.vue scrollTo on resolve router : ', router)
       if (hash.length > 0) {
         // bump the hash to ensure change detection
-        //const bumpPath = `${import.meta.env.VITE_APP_APP_ROOT_URL}`.length <= 1 ? `${router.currentRoute.value.fullPath.split('#')[0]}#${hash}` : `${import.meta.env.VITE_APP_APP_ROOT_URL}${router.currentRoute.value.fullPath.split('#')[0]}#${hash}`
-        //history.replaceState(null, '', bumpPath)
+        // const bumpPath = `${import.meta.env.VITE_APP_APP_ROOT_URL}`.length <= 1 ? `${router.currentRoute.value.fullPath.split('#')[0]}#${hash}` : `${import.meta.env.VITE_APP_APP_ROOT_URL}${router.currentRoute.value.fullPath.split('#')[0]}#${hash}`
+        // history.replaceState(null, '', bumpPath)
 
         // target element and scroll
         const el = document.getElementById(hash)
         if (el) {
           const yOffset = -70
           const y = el.getBoundingClientRect().top + window.scrollY + yOffset
-          console.log('DocumentPage.vue scrollTo y : ', y)
+          console.log('Document.vue scrollTo y : ', y)
           window.scrollTo({ top: y, behavior: 'smooth' })
           // el.scrollIntoView({ behavior: 'smooth' })
         }
