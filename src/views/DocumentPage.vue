@@ -54,8 +54,8 @@
         href=""
         @click="toggleTOCMenu"
         class="toc-menu-toggle"
-        :class="TOCMenuBtnCssClass"
-        ><!-- :class="currentLevelIndicator !== 'toEdit' ? 'hideAsideToc' : TOCMenuBtnCssClass" -->Sommaire</a
+        :class="leftTOCDisplayIndicator ? TOCMenuBtnCssClass : 'hideLeftToc'"
+        ><!-- :class="currentLevelIndicator !== 'toEdit' ? 'hideLeftToc' : TOCMenuBtnCssClass" -->Sommaire</a
       >
       <ul class="is-flex">
         <li>
@@ -347,6 +347,7 @@ export default {
   },
   async setup (props) {
     const topTOCDisplayIndicator = ref(false)
+    const leftTOCDisplayIndicator = ref(false)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
@@ -501,6 +502,7 @@ export default {
 
         console.log('Objectassign collConfig.value : ', collConfig.value)
         topTOCDisplayIndicator.value = collConfig.value.tableOfContentsSettings.displayTopToc !== false
+        leftTOCDisplayIndicator.value = collConfig.value.tableOfContentsSettings.displayLeftToc !== false
 
         currentLevelIndicator.value = currentItem.value.editorialLevelIndicator
         refId.value = Object.keys(route.query).length > 0 && Object.keys(route.query).includes('refId')
@@ -1374,6 +1376,7 @@ export default {
 
     return {
       topTOCDisplayIndicator,
+      leftTOCDisplayIndicator,
       tocCssClass: layout.tocCssClass,
       toggleTOCContent: layout.toggleTOCContent,
       tocMenuCssClass: layout.tocMenuCssClass,
@@ -1990,9 +1993,9 @@ div.remove-bottom-padding #article {
   overflow-x: hidden;
   white-space: pre;
 }
-/* .hideAsideToc {
+.hideLeftToc {
   visibility: hidden;
-} */
+}
 
 
 @media screen and (max-width: 1150px) {
