@@ -42,7 +42,8 @@
       ],
       "countByCiteType": [
       ],
-      "displayTopToc": false
+      "displayTopToc": false,
+      "displayLeftToc": false
     },
     "aboutPageSettings": [
       { "tabName": "tabName1", "compName": "about1" },
