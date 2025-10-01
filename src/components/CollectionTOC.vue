@@ -367,6 +367,7 @@ export default {
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const appConfig = ref(props.applicationConfig)
     const collConfig = ref(props.collectionConfig)
+    const sourceConfig = ref({})
     const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
 
     /* if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
@@ -403,20 +404,17 @@ export default {
         }
       })
     }
+    sourceConfig.value = appConfig.value.collectionsConf.filter(coll => coll.collectionId === props.currentCollection.identifier)[0]
 
     const componentTOC = ref([])
-    if (collConfig.value.homePageSettings && collConfig.value.homePageSettings.listSection && collConfig.value.homePageSettings.listSection.displaySort && collConfig.value.homePageSettings.listSection.displaySort.length > 0) {
+    if (sourceConfig.value && sourceConfig.value.homePageSettings && sourceConfig.value.homePageSettings.listSection && sourceConfig.value.homePageSettings.listSection.displaySort && sourceConfig.value.homePageSettings.listSection.displaySort.length > 0) {
       // console.log('CollectionTOC setup displaySort', collConfig.value.homePageSettings.listSection.displaySort)
-      componentTOC.value = customSort(props.toc, collConfig.value.homePageSettings.listSection.displaySort)
+      componentTOC.value = customSort(props.toc, sourceConfig.value.homePageSettings.listSection.displaySort)
     } else {
       componentTOC.value = props.toc
       componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
     }
     console.log('componentTOC.value props.toc : ', componentTOC.value)
-
-    /* expandedById.value = componentTOC.value.filter(item => item.expanded === true).map(col => [col.identifier, true])
-    console.log("componentTOC.value expandedById.value : ", expandedById.value) */
-    expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: false })))
 
     const toggleExpanded = async (collId) => {
       console.log('CollectionTOC toggleExpanded componentTOC collId: ', componentTOC.value, collId)
@@ -429,7 +427,6 @@ export default {
         console.log('response after identifier', response)
         componentTOC.value.filter(item => item.identifier === collId)[0].member = response.member
         componentTOC.value.filter(item => item.identifier === collId)[0].children = response.member
-        componentTOC.value.sort((a, b) => a.title > b.title ? 1 : -1)
         console.log('CollectionTOC componentTOC', componentTOC.value)
       }
       console.log('CollectionTOC expandedById.value', expandedById.value)
@@ -438,6 +435,19 @@ export default {
       console.log('CollectionTOC after selectedParent.value : ', collId)
       expandedById.value[collId] = !expandedById.value[collId]
       console.log('CollectionTOC after expandedById[collectionId] : ', collId, expandedById.value)
+    }
+
+    /* expandedById.value = componentTOC.value.filter(item => item.expanded === true).map(col => [col.identifier, true])
+    console.log("componentTOC.value expandedById.value : ", expandedById.value) */
+    if (collConfig.value.homePageSettings.listSection.openState) {
+      if (componentTOC.value.filter(item => item.citeType === 'Collection').length > 0) {
+        for (const comp of componentTOC.value.filter(item => item.citeType === 'Collection')) {
+          await toggleExpanded(comp.identifier)
+        }
+      }
+      expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: true })))
+    } else {
+      expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: false })))
     }
     const setStateCollection = (collId) => {
       store.commit('setCollectionId', collId)
@@ -449,11 +459,11 @@ export default {
       if (sourceConfig && sourceConfig.homePageSettings && Object.keys(sourceConfig.homePageSettings).includes('listSection')
           && sourceConfig.homePageSettings.listSection && Object.keys(sourceConfig.homePageSettings.listSection).includes('logo')
           && sourceConfig.homePageSettings.listSection.logo.length) {
-        console.log('HomePage ImgUrl found : ', sourceConfig.homePageSettings.listSection.logo)
+        // console.log('HomePage ImgUrl found : ', sourceConfig.homePageSettings.listSection.logo)
         const images = import.meta.glob('confs/*/assets/images/*.*', { eager: true })
-        console.log('HomePage ImgUrl images: ', images)
+        // console.log('HomePage ImgUrl images: ', images)
         const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.listSection.logo}`]
-        console.log('HomePage ImgUrl match: ', match)
+        // console.log('HomePage ImgUrl match: ', match)
         if (sourceConfig.homePageSettings.listSection.logo.includes('https')) {
           return sourceConfig.homePageSettings.listSection.logo
         } else {
@@ -464,12 +474,14 @@ export default {
       }
     }
 
-    watch(props, async (newProps) => {
+    const stopHandle = watch(props, newProps => {
       isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
       componentTOC.value = []
-      if (collConfig.value.homePageSettings && collConfig.value.homePageSettings.listSection && collConfig.value.homePageSettings.listSection.displaySort && collConfig.value.homePageSettings.listSection.displaySort.length > 0) {
-        // console.log('CollectionTOC watch displaySort', collConfig.value.homePageSettings.listSection.displaySort)
-        componentTOC.value = customSort(newProps.toc, collConfig.value.homePageSettings.listSection.displaySort)
+      appConfig.value = newProps.applicationConfig
+      collConfig.value = newProps.collectionConfig
+      sourceConfig.value = appConfig.value.collectionsConf.filter(coll => coll.collectionId === newProps.currentCollection.identifier)[0]
+      if (sourceConfig.value && sourceConfig.value.homePageSettings && sourceConfig.value.homePageSettings.listSection && sourceConfig.value.homePageSettings.listSection.displaySort && sourceConfig.value.homePageSettings.listSection.displaySort.length > 0) {
+        componentTOC.value = customSort(newProps.toc, sourceConfig.value.homePageSettings.listSection.displaySort)
       } else {
         componentTOC.value = newProps.toc
         componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
@@ -477,11 +489,10 @@ export default {
       displayOpt.value = newProps.displayOption
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
-      appConfig.value = newProps.applicationConfig
-      collConfig.value = newProps.collectionConfig
       browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
     }, { deep: true, immediate: true }
     )
+    stopHandle()
 
     return {
       route,
@@ -491,6 +502,7 @@ export default {
       rootCollectionId,
       appConfig,
       collConfig,
+      sourceConfig,
       customSort,
       browseBttnTxt,
       toggleExpanded,
