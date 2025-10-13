@@ -118,6 +118,7 @@
           :collection-config="collConfig"
           :toc="currentPageData"
           :margin="0"
+          :key="currentPageData"
         />
       </div>
 
