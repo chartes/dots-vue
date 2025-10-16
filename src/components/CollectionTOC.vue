@@ -404,7 +404,7 @@ export default {
         }
       })
     }
-    sourceConfig.value = appConfig.value.collectionsConf.filter(coll => coll.collectionId === props.currentCollection.identifier)[0]
+    sourceConfig.value = collConfig.value
 
     const componentTOC = ref([])
     if (sourceConfig.value && sourceConfig.value.homePageSettings && sourceConfig.value.homePageSettings.listSection && sourceConfig.value.homePageSettings.listSection.displaySort && sourceConfig.value.homePageSettings.listSection.displaySort.length > 0) {
@@ -455,19 +455,19 @@ export default {
 
     const ImgUrl = (source) => {
       // TODO: provide a logo object with url AND legend ?
-      const sourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
-      if (sourceConfig && sourceConfig.homePageSettings && Object.keys(sourceConfig.homePageSettings).includes('listSection')
-          && sourceConfig.homePageSettings.listSection && Object.keys(sourceConfig.homePageSettings.listSection).includes('logo')
-          && sourceConfig.homePageSettings.listSection.logo.length) {
-        // console.log('HomePage ImgUrl found : ', sourceConfig.homePageSettings.listSection.logo)
+      const imgSourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
+      if (imgSourceConfig && imgSourceConfig.homePageSettings && Object.keys(imgSourceConfig.homePageSettings).includes('listSection')
+          && imgSourceConfig.homePageSettings.listSection && Object.keys(imgSourceConfig.homePageSettings.listSection).includes('logo')
+          && imgSourceConfig.homePageSettings.listSection.logo.length) {
+        // console.log('HomePage ImgUrl found : ', imgSourceConfig.homePageSettings.listSection.logo)
         const images = import.meta.glob('confs/*/assets/images/*.*', { eager: true })
         // console.log('HomePage ImgUrl images: ', images)
-        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.listSection.logo}`]
+        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${imgSourceConfig.collectionId}/assets/images/${imgSourceConfig.homePageSettings.listSection.logo}`]
         // console.log('HomePage ImgUrl match: ', match)
-        if (sourceConfig.homePageSettings.listSection.logo.includes('https')) {
-          return sourceConfig.homePageSettings.listSection.logo
+        if (imgSourceConfig.homePageSettings.listSection.logo.includes('https')) {
+          return imgSourceConfig.homePageSettings.listSection.logo
         } else {
-          return match.default // new URL(`/src/assets/images/${sourceConfig.homePageSettings.logo}`, import.meta.url).href
+          return match.default // new URL(`/src/assets/images/${imgSourceConfig.homePageSettings.logo}`, import.meta.url).href
         }
       } else {
         return false
@@ -477,9 +477,8 @@ export default {
     const stopHandle = watch(props, newProps => {
       isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
       componentTOC.value = []
-      appConfig.value = newProps.applicationConfig
       collConfig.value = newProps.collectionConfig
-      sourceConfig.value = appConfig.value.collectionsConf.filter(coll => coll.collectionId === newProps.currentCollection.identifier)[0]
+      sourceConfig.value = collConfig.value
       if (sourceConfig.value && sourceConfig.value.homePageSettings && sourceConfig.value.homePageSettings.listSection && sourceConfig.value.homePageSettings.listSection.displaySort && sourceConfig.value.homePageSettings.listSection.displaySort.length > 0) {
         componentTOC.value = customSort(newProps.toc, sourceConfig.value.homePageSettings.listSection.displaySort)
       } else {
