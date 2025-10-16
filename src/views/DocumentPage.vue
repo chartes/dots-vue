@@ -157,7 +157,7 @@
           <ul class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center crumbs">
             <li
               v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')" :key="index"
-              :class="refId ? ancestor.identifier === refId ? 'is-current' : '' : ancestor.identifier === resourceId ? 'is-current' : ''"
+              :class="refId ? ancestor.identifier === refId ? 'is-current' : '' : ancestor.identifier === resourceId ? 'hide-resource' : ''"
             >
                 <router-link
                   :to="ancestor.router"
@@ -1810,6 +1810,10 @@ div.remove-bottom-padding #article {
   margin-bottom: 0;
   margin-left: 20px;
   margin-right: 20px;
+
+  &.hide-resource {
+    display: none;
+  }
 
   &.is-current {
     display: flex;
