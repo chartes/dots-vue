@@ -54,8 +54,8 @@
         href=""
         @click="toggleTOCMenu"
         class="toc-menu-toggle"
-        :class="TOCMenuBtnCssClass"
-        ><!-- :class="currentLevelIndicator !== 'toEdit' ? 'hideAsideToc' : TOCMenuBtnCssClass" -->Sommaire</a
+        :class="leftTOCDisplayIndicator ? TOCMenuBtnCssClass : 'hideLeftToc'"
+        ><!-- :class="currentLevelIndicator !== 'toEdit' ? 'hideLeftToc' : TOCMenuBtnCssClass" -->Sommaire</a
       >
       <ul class="is-flex">
         <li>
@@ -156,8 +156,8 @@
         <div class="ariane">
           <ul class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center crumbs">
             <li
-              v-for="(ancestor, index) in arianeDocument" :key="index"
-              :class="refId ? ancestor.identifier === refId ? 'is-current' : '' : ancestor.identifier === resourceId ? 'is-current' : ''"
+              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')" :key="index"
+              :class="refId ? ancestor.identifier === refId ? 'is-current' : '' : ancestor.identifier === resourceId ? 'hide-resource' : ''"
             >
                 <router-link
                   :to="ancestor.router"
@@ -173,18 +173,15 @@
         <to-previous-button
           class="to-previous-button-page-top"
           :class="!refId || firstRef ? 'disabled' : ''"
-          :refid="refId"
           :previousrefid="previousRefId"
           :previousreftitle="previousRefTitle"
-          @click="getNewRefId"
-          :key="resourceId + refId"
         />
         <to-next-button
           class="to-next-button-page-top"
           :class="!refId || lastRef ? 'disabled' : ''"
           :nextrefid="nextRefId"
           :nextreftitle="nextRefTitle"
-        /><!--@click="getNewRefId" :key="resourceId + refId" :refid="refId"-->
+        />
       </div>
 
     </div>
@@ -214,7 +211,6 @@
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :project-identifier="docProjectId"
             :iiif-manifest="manifest"
-            :collection-css="customCss.default"
             :id="resourceId"
             :level="currentLevel"
             :editorialLevelIndicator="currentLevelIndicator"
@@ -231,7 +227,6 @@
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :project-identifier="docProjectId"
             :iiif-manifest="manifest"
-            :collection-css="customCss.default"
             :id="resourceId + '&ref=' + refId"
             :level="currentLevel"
             :editorialLevelIndicator="currentLevelIndicator"
@@ -270,7 +265,7 @@ import {
   reactive,
   provide,
   ref,
-  inject, nextTick, shallowRef, onBeforeUnmount
+  inject
 } from 'vue'
 
 import { useRoute } from 'vue-router'
@@ -278,39 +273,6 @@ import router from '@/router/index.js'
 import fetchMetadata from '@/composables/get-metadata.js'
 import store from '@/store'
 
-/* const sources = [
-  { name: 'databnf', ext: 'data.bnf.fr', type: 'author_link' },
-  { name: 'dbpedia', ext: 'dbpedia.org', type: 'author_link' },
-  { name: 'idref', ext: 'idref.fr', type: 'author_link' },
-  { name: 'cataloguebnf', ext: 'catalogue.bnf.fr', type: 'author_link' },
-  { name: 'wikidata', ext: 'wikidata', type: 'author_link' },
-  { name: 'wikipedia', ext: 'wikipedia', type: 'author_link' },
-  { name: 'thenca', ext: 'thenca', type: 'document_link' },
-  { name: 'hal', ext: 'hal', type: 'document_link' },
-  { name: 'benc', ext: 'koha', type: 'document_link' },
-  { name: 'sudoc', ext: 'sudoc.fr', type: 'document_link' },
-  { name: 'biblissima', ext: 'biblissima.fr', type: 'document_link' },
-  { name: 'creativecommons', ext: 'creativecommons.org', type: 'document_link' },
-  { name: 'enc', ext: 'manifest', type: 'other_link' }
-] */
-
-/* function findSource (id) {
-  let i = 0
-  let source = null
-
-  do {
-    source = id.toLowerCase().includes(sources[i].ext) ? sources[i] : null
-    i++
-  } while (i < sources.length && source === null)
-
-  if (source) {
-    console.log('findSource source.name :', source.name)
-    console.log('findSource source :', source)
-    return { name: source.name, type: source.type }
-  }
-
-  return null
-} */
 function getSimpleObject (obj) {
   // console.log("getSimpleObject / obj", obj)
   let simpleObject = {}
@@ -383,6 +345,7 @@ export default {
   },
   async setup (props) {
     const topTOCDisplayIndicator = ref(false)
+    const leftTOCDisplayIndicator = ref(false)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
@@ -479,9 +442,6 @@ export default {
     const selectedCollection = reactive({})
     const isModalOpened = ref(false)
 
-    let customCss = shallowRef({})
-    const cssPath = ref('')
-
     const miradorInstance = useMirador(miradorContainer, manifest)
     // provide an uninitialized instance of Mirador
     provide('mirador', miradorInstance)
@@ -537,6 +497,7 @@ export default {
 
         console.log('Objectassign collConfig.value : ', collConfig.value)
         topTOCDisplayIndicator.value = collConfig.value.tableOfContentsSettings.displayTopToc !== false
+        leftTOCDisplayIndicator.value = collConfig.value.tableOfContentsSettings.displayLeftToc !== false
 
         currentLevelIndicator.value = currentItem.value.editorialLevelIndicator
         refId.value = Object.keys(route.query).length > 0 && Object.keys(route.query).includes('refId')
@@ -861,7 +822,7 @@ export default {
         processFlatTOC.filter(item => item.level === editorialLevel.value).forEach((node) => {
           node.editorialLevelIndicator = 'toEdit'
           if (node.level <= 0) {
-            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}/${node.identifier}`
+            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}/${node.identifier}`
             node.router = node.identifier
           } else {
             node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
@@ -905,7 +866,7 @@ export default {
       processFlatTOC.filter(item => !item.url).forEach(node => {
         node.editorialLevelIndicator = 'renderToc'
         if (node.level <= 0) {
-          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${node.identifier}`
+          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${node.identifier}`
           node.router = node.identifier
           node.router_params = node.identifier
           // console.log("addFlag on node.level <=0 :", node)
@@ -954,14 +915,17 @@ export default {
         currentLevelIndicator.value = flatTOC.value.find(i => i.identifier === refId.value).editorialLevelIndicator
         console.log('there is a refId , updated currentLevelIndicator.value', currentLevelIndicator.value)
 
-        console.log('search RefId item in TOC and return children : ', findById(topTOC.value, refId.value).children)
+        console.log('bottomTOC cas 2 search RefId item in TOC and return children : ', findById(topTOC.value, refId.value).children)
         // select flatTOC elements between the current matching refId and the last element belonging to the same parent
         const followingElementInTreeLimb = flatTOC.value.findIndex(i => i.identifier === refId.value) + 1
         const allFollowingElementsInTOC = flatTOC.value.slice(followingElementInTreeLimb, flatTOC.value.length)
-        const lastElementInTreeLimb = allFollowingElementsInTOC.findIndex(i => i.parent === flatTOC.value.find(i => i.identifier === refId.value).parent) + 1
+        const lastElementInTreeLimb = allFollowingElementsInTOC.findIndex(i => i.parent === flatTOC.value.find(i => i.identifier === refId.value).parent) === -1
+          ? flatTOC.value.length
+          : allFollowingElementsInTOC.findIndex(i => i.parent === flatTOC.value.find(i => i.identifier === refId.value).parent) + 1
         const currentMatchingElementIndex = flatTOC.value.findIndex(i => i.identifier === refId.value)
         // assign portion of topTOC to the bottomTOC and unlink the variables
         bottomTOC.value = JSON.parse(JSON.stringify(flatTOC.value.slice(followingElementInTreeLimb, lastElementInTreeLimb + currentMatchingElementIndex)))
+        console.log('bottomTOC cas 2 :', bottomTOC.value, topTOC.value)
       } else {
         console.log('there is NO refId , update currentLevelIndicator.value', currentLevelIndicator.value)
         currentLevelIndicator.value = flatTOC.value.find(i => i.identifier === resourceId.value).editorialLevelIndicator
@@ -979,7 +943,7 @@ export default {
 
     const getAncestors = async () => {
       console.log('getAncestors start')
-      const currentItemId = refId.value ? refId.value : resourceId.value
+      const currentItemId = hash.value ? hash.value : refId.value ? refId.value : resourceId.value
       console.log('ancestors currentItemId : ', flatTOC.value, hash.value, refId.value, resourceId.value, currentItemId)
 
       function findAncestors (item, directory) {
@@ -1175,7 +1139,7 @@ export default {
     }
 
     const setMirador = function () {
-      fetch(metadata.iiifManifestUrl, {
+      fetch(metadata.iiifManifestUrl.url, {
         method: 'GET'
       })
         .then((r) => {
@@ -1190,47 +1154,6 @@ export default {
           console.log('setMirador error : ', error)
           manifestIsAvailable.value = false
         })
-    }
-    const getCustomCss = async () => {
-
-      if (collConfig.value.collectionCustomCss) {
-        // const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: true })
-        const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: false })
-        console.log('Document page getCustomCss appCssConfs', appCssConfs)
-        console.log('Document page getCustomCss collConfig.value.collectionCustomCss', collConfig.value.collectionCustomCss)
-        console.log('Document page getCustomCss get in if')
-        /* const match = appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`]
-        console.log('Document page getCustomCss match path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
-        console.log('Document page getCustomCss match', match) */
-        cssPath.value = `confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`
-        console.log('Document page getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
-
-        /* customCss.value = await import(`confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css?raw`) */
-
-        if (collConfig.value.collectionCustomCss && appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`]) {
-          console.log('Document page getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`])
-          customCss.value = await import(`confs/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css?raw`)
-          const style = document.createElement('style')
-          style.textContent = customCss.value.default
-          style.id = 'customCss'
-          document.head.append(style)
-          console.log('Document page customCss.value / cssComp : ', customCss.value)
-        }
-      }
-    }
-
-    const removeCustomCss = () => {
-      console.log('Document page watch store.state.collectionId', store.state.collectionId)
-      const styleTags = [...document.querySelectorAll('style')]
-      console.log('Document page watch store.state.collectionId getCustomCss styleTags ', styleTags)
-      styleTags.forEach((tag) => {
-        //console.log('Document page watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
-        if (tag.id === 'customCss') {
-          console.log('Document page watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
-          console.log('Document page watch store.state.collectionId getCustomCss tag.id ', tag.id)
-          tag.remove()
-        }
-      })
     }
 
     watch(
@@ -1251,11 +1174,6 @@ export default {
       TOC_DEPTH.value = newProps.collectionConfig.tableOfContentsSettings.tableOfContentDepth
       editorialLevel.value = newProps.collectionConfig.tableOfContentsSettings.editByLevel
       console.log('Document page watch newProps.collectionConfig / collConfig.value : ', collConfig.value)
-      if (collConfig.value.collectionCustomCss) {
-        await getCustomCss()
-      } else {
-        removeCustomCss()
-      }
     }, { deep: true, immediate: true })
 
     watch(
@@ -1273,6 +1191,11 @@ export default {
           await getMetadata()
           getNewRefId()
           isLoading.value = true
+          if (newRoute.hash && newRoute.hash.length > 0) {
+            hash.value = newRoute.hash
+            console.log('Document page watch scrollTo hash : ', hash.value)
+            scrollTo()
+          }
         } else if (newRoute && oldRoute && newRoute.params.id === oldRoute.params.id) {
           console.log('Document page watch route change but resource DID NOT change ', oldRoute, newRoute)
           // await getCurrentItem("watch getCurrentItem : route : ", newRoute)
@@ -1344,35 +1267,26 @@ export default {
         console.log('CollectionModal watch state isModalOpen.value : ')
       }, { immediate: true }
     )
-    /*watch(
-      () => store.state.collectionId, async function () {
-        console.log('Document page watch store.state.collectionId', store.state.collectionId)
-        const styleTags = [...document.querySelectorAll('style')]
-        console.log('Document page watch store.state.collectionId getCustomCss styleTags ', styleTags)
-        styleTags.forEach((tag) => {
-          console.log('Document page watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
-          if (tag.id === 'customCss') {
-            console.log('Document page watch store.state.collectionId getCustomCss tag.id ', tag.id)
-            tag.remove()
-          }
-        })
-      }, { immediate: true }
-    )*/
-    /*watch(
-      () => store.state.collectionId, function () {
-        console.log('Document page watch store.state.collectionId', store.state.collectionId)
-        removeCustomCss()
-      }, { immediate: true }
-    )*/
 
     function scrollTo () {
-      nextTick(() => {
-        // If the selected item is an anchor, capture and scroll to that anchor
-        // console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
-        if (hash.value.length) {
-          location.hash = hash.value
+      // If the selected item is an anchor, capture and scroll to that anchor
+      console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
+      if (hash.value.length > 0) {
+        // bump the hash to ensure change detection
+        const bumpPath = `${import.meta.env.VITE_APP_APP_ROOT_URL}`.length <= 1 ? `${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}` : `${import.meta.env.VITE_APP_APP_ROOT_URL}${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}`
+        history.replaceState(history.state, '', bumpPath)
+
+        // target element and scroll
+        const el = document.getElementById(hash.value)
+        console.log('DocumentPage.vue scrollTo el : ', el)
+        if (el) {
+          const yOffset = -70
+          const y = el.getBoundingClientRect().top + window.scrollY + yOffset
+          console.log('DocumentPage.vue scrollTo y : ', y)
+          window.scrollTo({ top: y, behavior: 'smooth' })
+          // el.scrollIntoView({ behavior: 'smooth' })
         }
-      })
+      } else return
     }
     onMounted(() => {
       const appView = document.getElementById('app')
@@ -1380,17 +1294,6 @@ export default {
       window.addEventListener('scroll', updateMiradorTopPosition)
       layout.isTOCMenuOpened.value = false
     })
-    /* onBeforeUnmount(() => {
-      const styleTags = [...document.querySelectorAll('style')]
-      console.log('Document page getCustomCss styleTags ', styleTags)
-      styleTags.forEach((tag) => {
-        console.log('Document page getCustomCss tag.textContent ', tag.textContent)
-        if (tag.id === 'customCss') {
-          console.log('Document page getCustomCss tag.id ', tag.id)
-          tag.remove()
-        }
-      })
-    })*/
 
     onUnmounted(() => {
       const appView = document.getElementById('app')
@@ -1406,6 +1309,7 @@ export default {
 
     return {
       topTOCDisplayIndicator,
+      leftTOCDisplayIndicator,
       tocCssClass: layout.tocCssClass,
       toggleTOCContent: layout.toggleTOCContent,
       tocMenuCssClass: layout.tocMenuCssClass,
@@ -1454,11 +1358,7 @@ export default {
       selectedCollectionId,
       selectedCollection,
       currentItem,
-      setText,
-      getCustomCss,
-      removeCustomCss,
-      customCss,
-      cssPath
+      setText
     }
   }
 }
@@ -1580,9 +1480,9 @@ export default {
 .toggle-btn {
   position: absolute;
   right: 20px;
-  width: 27px;
+  width: 20px;
   height: 27px;
-  background: url(../assets/images/chevron_rouge.svg) center top -7px / cover no-repeat;
+  background: url(../assets/images/chevron_rouge.svg) center top -8px / cover no-repeat;
   border: none;
   text-decoration: none;
 }
@@ -1598,6 +1498,7 @@ export default {
   border-top: 1px dashed var(--text-color);
   border-bottom: #b8b8b8 1px solid;
   padding: 12px 0 9px;
+  overflow-x: hidden;
 }
 .controls a {
   display: inline;
@@ -1629,7 +1530,7 @@ export default {
   display: inline-block;
   width: 42px;
   height: 42px;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 .controls ul > li > a.access_link {
   vertical-align: center;
@@ -1693,7 +1594,14 @@ export default {
 }
 .toc-aside-is-opened .toc-area-aside {
   display: flex;
-  width: 220px;
+  width: 230px;
+  position: sticky;
+  top: 40px;
+  align-self: flex-start;
+  & > aside > nav {
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
 }
 .toc-aside-is-opened .document-views {
   flex: calc(100% - 220px);
@@ -1702,6 +1610,7 @@ export default {
   position: relative;
   min-height: 80vh;
   max-height: 100vh;
+  max-width: calc(100vw - 20px);
 }
 .text-mode .text-view,
 .images-mode .mirador-view {
@@ -1714,6 +1623,7 @@ export default {
   width: 500px;
   height: 700px;
   visibility: hidden;
+  max-width: calc(100vw - 20px);
 }
 .text-mode .mirador-view {
   flex: 100% 0 0;
@@ -1845,86 +1755,6 @@ div.remove-bottom-padding #article {
   color: inherit;
 }
 
-@media screen and (max-width: 1150px) {
-  .toc-area .toc-area-content nav > ol.tree {
-    columns: 2;
-  }
-  .controls > a.toc-menu-toggle {
-    margin-left: 20px;
-  }
-  .controls ul > li > a.access_link {
-    margin-right: 20px;
-  }
-}
-@media screen and (max-width: 800px) {
-  #article {
-    padding: 40px 4% 120px;
-  }
-  .toc-area .toc-area-content aside {
-    padding: 20px 20px !important;
-  }
-}
-@media screen and (max-width: 640px) {
-  .pb,
-  .controls > a.toc-menu-toggle,
-  .toc-area-aside {
-    display: none !important;
-  }
-  .toc-area .toc-area-content nav > ol.tree {
-    columns: 1;
-  }
-  .toggle-btn {
-    width: 20px;
-    right: 15px;
-  }
-  .controls {
-    flex-wrap: wrap;
-  }
-  .controls ul:first-of-type {
-    order: 3;
-    flex: 100% 0 0;
-    width: 100%;
-    justify-content: center;
-    padding: 20px 0 10px;
-  }
-  .controls ul:last-of-type {
-    flex: 100% 0 0;
-    justify-content: center;
-  }
-  .controls ul:last-of-type > li > a {
-    width: 30px;
-    height: 30px;
-  }
-  .controls > ul:first-of-type > li:nth-child(2) {
-    display: none;
-  }
-  #article section.div {
-    font-size: 14px;
-    line-height: 24px;
-  }
-  #article h1 {
-    font-size: 20px;
-    line-height: 25px;
-  }
-  #article section.div h2.head,
-  #article section.div h3.head {
-    font-size: 14px;
-    line-height: 24px;
-  }
-  #article section.div {
-    padding-top: 10px;
-  }
-  #article p.p {
-    text-align: left;
-  }
-
-  .text-and-images-mode .document-views {
-    display: block !important;
-  }
-  .text-and-images-mode .text-view,
-  .text-and-images-mode .mirador-view {
-  }
-}
 * [class*="mirador-window-top-bar"] {
   border-top: none !important;
 }
@@ -1980,6 +1810,10 @@ div.remove-bottom-padding #article {
   margin-bottom: 0;
   margin-left: 20px;
   margin-right: 20px;
+
+  &.hide-resource {
+    display: none;
+  }
 
   &.is-current {
     display: flex;
@@ -2037,6 +1871,10 @@ div.remove-bottom-padding #article {
   width: 100%;
   height: 100%;
 }
+.navigation-document-top a span {
+  line-height: 1.25;
+}
+
 .navigation-document-bottom {
   display: flex;
   flex-direction: row;
@@ -2088,7 +1926,121 @@ div.remove-bottom-padding #article {
   overflow-x: hidden;
   white-space: pre;
 }
-/* .hideAsideToc {
+.hideLeftToc {
   visibility: hidden;
-} */
+}
+
+
+@media screen and (max-width: 1150px) {
+  .toc-area .toc-area-content nav > ol.tree {
+    columns: 2;
+  }
+  .controls > a.toc-menu-toggle {
+    margin-left: 20px;
+  }
+  .controls ul > li > a.access_link {
+    margin-right: 20px;
+  }
+}
+@media screen and (max-width: 800px) {
+  #article {
+    padding: 40px 4% 120px;
+  }
+  .toc-area .toc-area-content aside {
+    padding: 20px 20px !important;
+  }
+
+  .l-n {
+    margin-left: -2.2rem;
+  }
+}
+@media screen and (max-width: 640px) {
+
+  #article {
+    padding: 40px 6% 120px;
+  }
+
+  .several-parent {
+    flex-direction: column;
+    align-items: center;
+  }
+  .document-views {
+    /* overflow-x: hidden; */
+    max-width: 100%;
+    position: relative;
+  }
+
+  .l-n {
+    margin-left: -1.5rem;
+  }
+
+  small {
+    font-size: 9px;
+  }
+
+  .pb,
+  .controls > a.toc-menu-toggle,
+  .toc-area-aside {
+    display: none !important;
+  }
+  .toc-area .toc-area-content nav > ol.tree {
+    columns: 1;
+  }
+  .toggle-btn {
+    width: 20px;
+    right: 15px;
+  }
+  .controls {
+    flex-wrap: wrap;
+  }
+  .controls ul:first-of-type {
+    order: 3;
+    flex: 100% 0 0;
+    width: 100%;
+    justify-content: center;
+    padding: 20px 0 10px;
+  }
+  .controls ul:last-of-type {
+    flex: 100% 0 0;
+    justify-content: center;
+  }
+  .controls ul:last-of-type > li > a {
+    width: 30px;
+    height: 30px;
+  }
+  .controls > ul:first-of-type > li:nth-child(2) {
+    display: none;
+  }
+  #article section.div {
+    font-size: 14px;
+    line-height: 24px;
+  }
+  #article h1 {
+    font-size: 20px;
+    line-height: 25px;
+  }
+  #article section.div h2.head,
+  #article section.div h3.head {
+    font-size: 14px;
+    line-height: 24px;
+  }
+  #article section.div {
+    padding-top: 10px;
+  }
+  #article p.p {
+    text-align: left;
+  }
+
+  .text-and-images-mode .document-views {
+    display: block !important;
+  }
+  .toc-area-header {
+    & > a:first-child {
+      margin-left: 0;
+      margin-right: 25px;
+    }
+  }
+
+}
+
 </style>

@@ -38,7 +38,7 @@
               <img
               class="biblissima-logo"
               alt="Logo de Biblissima+"
-              src="@/assets/images/Logo_biblissima_footer_white.png"
+              src="@/assets/images/logo_biblissima_footer_white.png"
             />
           </a>
         </div>
@@ -54,7 +54,7 @@
             <!--<img
               class="dots-logo"
               alt="Logo de DoTS"
-              src="@/assets/images/Logo_dots.png"
+              src="@/assets/images/logo_dots.png"
             />-->
           </a>
         </div>
@@ -155,6 +155,7 @@ export default {
   text-align: center;
   padding: 50px;
   transform: rotateZ(0);
+  margin-top: 20px !important;
 }
 .footer .title-container {
   display: flex;
@@ -171,6 +172,7 @@ export default {
     margin-top: 12px;
     margin-bottom: 12px;
     text-align: left;
+    font-family: "Barlow", sans-serif ;
     font-style: normal;
     font-size: 100%;
     color: white;
@@ -291,7 +293,7 @@ export default {
   display: inline-block;
   width: 70px;
   height: 70px;
-  background: url(../assets/images/Logo_dots.png) center / contain no-repeat;
+  background: url(../assets/images/logo_dots.png) center / contain no-repeat;
   &:hover {
     background: url(../assets/images/dots-logo-retro.drawio.svg) center / contain no-repeat;
   }
@@ -313,6 +315,18 @@ export default {
   }
   .dots-logo {
     height: 40px;
+  }
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .footer-links li:not(:last-child) {
+    padding-right: 0;
+    margin-right: 0;
+  }
+  .footer-links li:not(:last-child)::after {
+    display: none;
   }
 }
 </style>

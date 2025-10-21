@@ -158,15 +158,52 @@ export default {
       console.log('Document.vue finding pb facs with iiif', tmpDom.querySelectorAll('a.pb[href*="iiif"]'))
 
       if (mediaType.value === 'html' && manifest.value) {
-        tmpDom.querySelectorAll('a.pb[href*="iiif"]').forEach((a) => {
-          const container = document.createElement('div')
-          console.log('Document.vue html manifest : ', manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === a.href)[0].id)
-          const canvasId = manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === a.href)[0].id
-          const frameNum = manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === a.href)
-          container.innerHTML = `<page-break canvas-id="${canvasId}" canvas-num="${frameNum}" image="${a.href}"/>`
-          // Replace the link with a PageBreak component
-          a.parentNode.replaceChild(container.firstChild, a)
-        })
+        const allPageBeginning = Array.from(tmpDom.querySelectorAll('a.pb[href*="iiif"]'))
+        console.log('allPageBeginningHTML', allPageBeginning)
+        for (let i = 0; i < allPageBeginning.length; i++) {
+          const previous = allPageBeginning[i - 1]
+          const current = allPageBeginning[i]
+          console.log('allPageBeginningHTML previous current', previous, current, current.previousElementSibling ? current.previousElementSibling.tagName : 'no previousElementSibling')
+          // We only add one thumbnail (page-break component) for each line group (lg), and we select the first one. To achieve this:
+          // 1. check if there is a previous pb (if not, this is the first one) -> creating page-break component
+          // 2. check if there is a previous sibling (if not, this is the first pb of the current lb) -> creating page-break component
+          // 3. if there is a previous sibling, check that it is not a page-break (if not, this is the first pb of the current lb) -> creating page-break component
+          if (!previous || !current.previousElementSibling || (current.previousElementSibling && current.previousElementSibling.tagName !== 'PAGE-BREAK')) {
+            const container = document.createElement('div')
+            // console.log('Document.vue html manifest : ', manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === current.href)[0].id)
+            const canvasId = manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === current.href)[0].id
+            const frameNum = manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === current.href)
+            container.innerHTML = `<page-break canvas-id="${canvasId}" canvas-num="${frameNum}" image="${current.href}"/>`
+            // Replace the link with a PageBreak component
+            current.parentNode.replaceChild(container.firstChild, current)
+          } else if (current.previousElementSibling && current.previousElementSibling.tagName === 'PAGE-BREAK') {
+            // console.log('allPageBeginningHTML removing current ', current)
+            current.parentNode.removeChild(current)
+          }
+        }
+        const allFigures = Array.from(tmpDom.querySelectorAll('.lg figure'))
+        console.log('allFiguresHTML', allFigures)
+        for (let i = 0; i < allFigures.length; i++) {
+          const previous = allFigures[i - 1]
+          const current = allFigures[i]
+          console.log('allFiguresHTML previous current', previous, current, current.previousElementSibling ? current.previousElementSibling.tagName : 'no previousElementSibling')
+          // We only add one thumbnail (page-break component) for each line group (lg), and we select the first one. To achieve this:
+          // 1. check if there is a previous figure (if not, this is the first one) -> selecting the first img only and creating page-break component
+          // 2. check if there is a previous sibling (if not, this is the first figure of the current lb) -> selecting the first img only and creating page-break component
+          // 3. if there is a previous sibling, check that it is not a page-break (if not, this is the first figure of the current lb) -> selecting the first img only and creating page-break component
+          if (!previous || !current.previousElementSibling || (current.previousElementSibling && current.previousElementSibling.tagName !== 'PAGE-BREAK')) {
+            const container = document.createElement('div')
+            // console.log('allFiguresHTML current.querySelectorAll(\'a img[src*="iiif"]:first-of-type\')', current.querySelectorAll('a img')[0])
+            // console.log('Document.vue html manifest : ', manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === current.querySelectorAll('a img')[0].src)[0].id)
+            const canvasId = manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === current.querySelectorAll('a img')[0].src)[0].id
+            const frameNum = manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === current.querySelectorAll('a img')[0].src)
+            container.innerHTML = `<page-break canvas-id="${canvasId}" canvas-num="${frameNum}" image="${current.querySelectorAll('a img')[0].src}"/>`
+            // Replace the link with a PageBreak component
+            current.parentNode.replaceChild(container.firstChild, current)
+          } else if (current.previousElementSibling && current.previousElementSibling.tagName === 'PAGE-BREAK') {
+            current.parentNode.removeChild(current)
+          }
+        }
       }
 
       // Treat api tei as tei and transform it as xml:
@@ -190,24 +227,54 @@ export default {
         const lastPb = pbElements.length ? pbElements.slice(-1)[0].getAttribute('n') : null
         console.log('finding pbs tei with IIIF facs first and last pb', firstPb, lastPb)
 
-        pbElements.forEach((pb, index) => {
-          const facs = pb.getAttribute('facs')
-          console.log('Document.vue tei iiif test manifest.value / facs: ', manifest.value, facs)
-          const canvasId = manifest.value ? manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === facs)[0].id : ''
-          console.log('Document.vue tei iiif canvasId : ', canvasId)
-          const frameNum = manifest.value ? manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === facs) : 1
+        console.log('allPageBeginningTEI', pbElements)
+        for (let i = 0; i < pbElements.length; i++) {
+          const previous = pbElements[i - 1]
+          const current = pbElements[i]
+          // console.log('allPageBeginningTEI previous current', previous, current, current.previousElementSibling ? current.previousElementSibling + '\n' + current.previousElementSibling.tagName : 'no previousElementSibling')
+          // We only add one thumbnail (page-break component) for each line group (lg), and we select the first one. To achieve this:
+          // 1. check if there is a previous pb (if not, this is the first one) -> creating page-break component
+          // 2. check if there is a previous sibling (if not, this is the first pb of the current lb) -> creating page-break component
+          // 3. if there is a previous sibling, check that it is not a page-break (if not, this is the first pb of the current lb) -> creating page-break component
+          if (!previous || !current.previousElementSibling || (current.previousElementSibling && current.previousElementSibling.tagName !== 'page-break')) {
+            const container = xmlDoc.createElement('div')
+            const facs = current.getAttribute('facs')
+            // console.log('Document.vue allPageBeginningTEI tei iiif test manifest.value / facs: ', manifest.value, facs)
+            const canvasId = manifest.value ? manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === facs)[0].id : ''
+            // console.log('Document.vue allPageBeginningTEI tei iiif canvasId : ', canvasId)
+            const frameNum = manifest.value ? manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === facs) : 1
+            container.innerHTML = `<page-break canvas-id="${canvasId}" canvas-num="${frameNum}" image="${facs}"/>`
+            current.parentNode.replaceChild(container.firstChild, current)
+          } else if (current.previousElementSibling && current.previousElementSibling.tagName === 'page-break') {
+            // console.log('allPageBeginningTEI removing current ', current)
+            current.parentNode.removeChild(current)
+          }
+        }
 
-          // Create the <page-break> element in the XML document
-          /* const pageBreak = xmlDoc.createElement('page-break')
-          pageBreak.setAttribute('canvas-id', canvasId)
-          pageBreak.setAttribute('canvas-num', frameNum)
-          pageBreak.setAttribute('image', facs)
-          pb.parentNode.replaceChild(pageBreak, pb) */
-
-          const container = xmlDoc.createElement('div')
-          container.innerHTML = `<page-break canvas-id="${canvasId}" canvas-num="${frameNum}" image="${facs}"/>`
-          pb.parentNode.replaceChild(container.firstChild, pb)
-        })
+        const allFigures = Array.from(xmlDoc.querySelectorAll('lg figure'))
+        console.log('allFiguresTEI', allFigures)
+        for (let i = 0; i < allFigures.length; i++) {
+          const previous = allFigures[i - 1]
+          const current = allFigures[i]
+          console.log('allFiguresTEI previous current', previous, current, current.previousElementSibling ? current.previousElementSibling.tagName : 'no previousElementSibling')
+          // We only add one thumbnail (page-break component) for each line group (lg), and we select the first one. To achieve this:
+          // 1. check if there is a previous figure (if not, this is the first one) -> selecting the first graphic only and creating page-break component
+          // 2. check if there is a previous sibling (if not, this is the first figure of the current lb) -> selecting the first graphic only and creating page-break component
+          // 3. if there is a previous sibling, check that it is not a page-break (if not, this is the first figure of the current lb) -> selecting the first graphic only and creating page-break component
+          if (!previous || !current.previousElementSibling || (current.previousElementSibling && current.previousElementSibling.tagName !== 'page-break')) {
+            const container = xmlDoc.createElement('div')
+            // console.log('allFiguresTEI current.querySelectorAll(\'graphic\')[0].getAttribute(\'url\')', current.querySelectorAll('graphic')[0].getAttribute('url'))
+            // console.log('Document.vue html manifest : ', manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === current.querySelectorAll('graphic')[0].getAttribute('url')).id)
+            const canvasId = manifest.value ? manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === current.querySelectorAll('graphic')[0].getAttribute('url')).id : ''
+            const frameNum = manifest.value ? manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === current.querySelectorAll('graphic')[0].getAttribute('url')) : 1
+            container.innerHTML = `<page-break canvas-id="${canvasId}" canvas-num="${frameNum}" image="${current.querySelectorAll('graphic')[0].getAttribute('url')}"/>`
+            // Replace the link with a PageBreak component
+            current.parentNode.replaceChild(container.firstChild, current)
+          } else if (current.previousElementSibling && current.previousElementSibling.tagName === 'page-break') {
+            // console.log('allFiguresTEI removing current ', current)
+            current.parentNode.removeChild(current)
+          }
+        }
 
         const titleElements = Array.from(xmlDoc.getElementsByTagName('title'))
         titleElements.forEach((hd, index) => {
@@ -295,13 +362,17 @@ export default {
       console.log('Document.vue scrollTo on resolve router : ', router)
       if (hash.length > 0) {
         // bump the hash to ensure change detection
-        const bumpPath = `${import.meta.env.VITE_APP_APP_ROOT_URL}`.length <= 1 ? `${router.currentRoute.value.fullPath.split('#')[0]}#${hash}` : `${import.meta.env.VITE_APP_APP_ROOT_URL}${router.currentRoute.value.fullPath.split('#')[0]}#${hash}`
-        history.replaceState(null, '', bumpPath)
+        // const bumpPath = `${import.meta.env.VITE_APP_APP_ROOT_URL}`.length <= 1 ? `${router.currentRoute.value.fullPath.split('#')[0]}#${hash}` : `${import.meta.env.VITE_APP_APP_ROOT_URL}${router.currentRoute.value.fullPath.split('#')[0]}#${hash}`
+        // history.replaceState(null, '', bumpPath)
 
         // target element and scroll
         const el = document.getElementById(hash)
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth' })
+          const yOffset = -70
+          const y = el.getBoundingClientRect().top + window.scrollY + yOffset
+          console.log('Document.vue scrollTo y : ', y)
+          window.scrollTo({ top: y, behavior: 'smooth' })
+          // el.scrollIntoView({ behavior: 'smooth' })
         }
       } else return
     }

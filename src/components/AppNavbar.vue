@@ -138,10 +138,6 @@ export default {
 
   setup (props) {
     const store = useStore()
-    // State
-    const state = reactive({
-      isMenuOpened: false
-    })
     const route = useRoute()
     const isMenuOpened = ref(false)
     const rootURL = ref(import.meta.env.VITE_APP_APP_ROOT_URL.length > 0 ? `${import.meta.env.VITE_APP_APP_ROOT_URL.slice(1, import.meta.env.VITE_APP_APP_ROOT_URL.length)}` : '')
@@ -167,7 +163,7 @@ export default {
 
     // Computed property
     const menuCssClass = computed(() => {
-      return state.isMenuOpened ? 'is-opened' : ''
+      return isMenuOpened.value ? 'is-opened' : ''
     })
 
     // Methods
@@ -210,14 +206,14 @@ export default {
           console.log('AppNavbar ImgUrl rootCollImg : ', rootCollImg)
         }
         // Setting the default AppNavBar image (dots) if none is defined at root or collection level
-        const defaultSettings = import.meta.glob('@/assets/images/Logo_dots_circle.svg', { eager: true })
+        const defaultSettings = import.meta.glob('@/assets/images/logo_dots_circle.svg', { eager: true })
         console.log('AppNavbar ImgUrl defaultSettings: ', defaultSettings)
-        images['/src/assets/images/Logo_dots_circle.svg'] = defaultSettings['/src/assets/images/Logo_dots_circle.svg']
+        images['/src/assets/images/logo_dots_circle.svg'] = defaultSettings['/src/assets/images/logo_dots_circle.svg']
 
         // Match the collection AppNavBar image if any
         const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName}`]
         console.log('AppNavbar ImgUrl match: ', match)
-        const defaultImg = images['/src/assets/images/Logo_dots_circle.svg']
+        const defaultImg = images['/src/assets/images/logo_dots_circle.svg']
         // Use the collection AppNavBar image if any
         if (match) {
           if (sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName.includes('https')) {
@@ -283,14 +279,14 @@ export default {
           console.log('AppNavbar apiImgUrl rootCollImg : ', rootCollImg)
         }
         // Setting the default AppNavBar image (dots) if none is defined at root or collection level
-        const defaultSettings = import.meta.glob('@/assets/images/Logo_dots_circle.svg')
+        const defaultSettings = import.meta.glob('@/assets/images/logo_dots_circle.svg')
         console.log('AppNavbar apiImgUrl defaultSettings: ', defaultSettings)
-        images['/src/assets/images/Logo_dots_circle.svg'] = defaultSettings['/src/assets/images/Logo_dots_circle.svg']
+        images['/src/assets/images/logo_dots_circle.svg'] = defaultSettings['/src/assets/images/logo_dots_circle.svg']
 
         // Match the collection AppNavBar image if any
         const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`]
         console.log('AppNavbar apiImgUrl match: ', match)
-        const defaultImg = images['/src/assets/images/Logo_dots_circle.svg']
+        const defaultImg = images['/src/assets/images/logo_dots_circle.svg']
         // Use the collection AppNavBar image if any
         if (match) {
           if (sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName.includes('https')) {
@@ -409,6 +405,17 @@ a:hover {
 .level {
   margin-bottom: 0 !important;
 }
+nav  {
+  display: flex;
+  margin-top: 0;
+  z-index: 10; /* cf documentation menu */
+
+  position: fixed;
+  top:0;
+  width: 100vw;
+  padding-right: 20px;
+}
+
 nav span.level-item:not(:last-child)::after {
   content: '|';
   display: inline-block;
@@ -443,8 +450,6 @@ nav span.level-item:not(:last-child)::after {
 
 @media screen and (max-width: 800px) {
   .logo-header {
-    transform-origin: left center;
-    transform: scale(0.8);
     margin-right: 10px !important;
   }
   nav {
@@ -459,7 +464,13 @@ nav span.level-item:not(:last-child)::after {
     padding-right: 20px;
   }
   .logo-header {
-    margin-right: 20px;
+    min-width: 45px;
+    margin-left: 0;
+    margin-right: 10px;
+  }
+  .level-left {
+    display: flex;
+    width: calc(100% - 60px);
   }
   .level-left .level-item:not(:last-child),
   .level-right .level-item:not(:last-child) {
@@ -470,6 +481,13 @@ nav span.level-item:not(:last-child)::after {
   }
   .level-item:not(:last-child) {
     margin-bottom: 0;
+  }
+  .level-left .level-item {
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: calc(100% - 60px);
+    white-space: nowrap;
   }
   .level-right {
     margin-top: 0;
@@ -485,16 +503,14 @@ nav span.level-item:not(:last-child)::after {
     left:0;
     width: 100vw;
     height: 71px;
-    background-color: #B9192F;
   }
   nav {
-    background-color: rgba(185,25,47, 0.9);
     padding: 0;
   }
   .logo-header {
     position: absolute;
-    left:10px;
-    top:10px;
+    left: 6px;
+    top: 5px;
     transform: scale(1);
     z-index: 1;
   }
@@ -504,13 +520,55 @@ nav span.level-item:not(:last-child)::after {
     z-index: 1;
     top: 0;
     left: 0;
+    height: 70px;
+    overflow: hidden;
   }
   .level .level-item {
-    display: none !important;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+
+    & > a.level-item-external {
+      line-height: 1.2;
+      &:not(:first-child) {
+        display: none !important;
+      }
+      &:first-child {
+        top: 22px;
+        position: fixed;
+        left: 63px;
+      }
+      &::after {
+        display: none;
+      }
+    }
   }
-  .level.is-opened .level-item  {
-    display: flex !important;
+
+  .level.is-opened {
+    height: auto;
+    overflow: unset;
+
+    .level-item > a.level-item-external {
+      &:not(:first-child) {
+        display: block !important;
+      }
+    }
   }
+
+  .level-left {
+    width: 100%;
+  }
+
+  .level-left .level-item {
+    display: flex;
+    text-overflow: unset;
+    overflow: auto;
+    max-width: 100%;
+    white-space: normal;
+  }
+
   .mobile-button {
     display: flex;
     align-items: center;
@@ -529,15 +587,13 @@ nav span.level-item:not(:last-child)::after {
   }
   .level-item {
     padding: 5px 0;
-    font-size: 25px;
+    font-size: 18px;
     font-weight: 400;
     line-height: 52px;
   }
-  .level-left .level-item:first-of-type {
-    padding-top: 10px;
-  }
   .level-right .level-item:last-of-type {
     padding-bottom: 10px;
+    padding-top: 10px;
   }
   nav span.level-item[data-v-1fd76d11]:not(:last-child)::after {
     display: none;

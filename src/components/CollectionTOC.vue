@@ -367,6 +367,7 @@ export default {
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const appConfig = ref(props.applicationConfig)
     const collConfig = ref(props.collectionConfig)
+    const sourceConfig = ref({})
     const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
 
     /* if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
@@ -403,20 +404,17 @@ export default {
         }
       })
     }
+    sourceConfig.value = collConfig.value
 
     const componentTOC = ref([])
-    if (collConfig.value.homePageSettings && collConfig.value.homePageSettings.listSection && collConfig.value.homePageSettings.listSection.displaySort && collConfig.value.homePageSettings.listSection.displaySort.length > 0) {
+    if (sourceConfig.value && sourceConfig.value.homePageSettings && sourceConfig.value.homePageSettings.listSection && sourceConfig.value.homePageSettings.listSection.displaySort && sourceConfig.value.homePageSettings.listSection.displaySort.length > 0) {
       // console.log('CollectionTOC setup displaySort', collConfig.value.homePageSettings.listSection.displaySort)
-      componentTOC.value = customSort(props.toc, collConfig.value.homePageSettings.listSection.displaySort)
+      componentTOC.value = customSort(props.toc, sourceConfig.value.homePageSettings.listSection.displaySort)
     } else {
       componentTOC.value = props.toc
       componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
     }
     console.log('componentTOC.value props.toc : ', componentTOC.value)
-
-    /* expandedById.value = componentTOC.value.filter(item => item.expanded === true).map(col => [col.identifier, true])
-    console.log("componentTOC.value expandedById.value : ", expandedById.value) */
-    expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: false })))
 
     const toggleExpanded = async (collId) => {
       console.log('CollectionTOC toggleExpanded componentTOC collId: ', componentTOC.value, collId)
@@ -429,7 +427,6 @@ export default {
         console.log('response after identifier', response)
         componentTOC.value.filter(item => item.identifier === collId)[0].member = response.member
         componentTOC.value.filter(item => item.identifier === collId)[0].children = response.member
-        componentTOC.value.sort((a, b) => a.title > b.title ? 1 : -1)
         console.log('CollectionTOC componentTOC', componentTOC.value)
       }
       console.log('CollectionTOC expandedById.value', expandedById.value)
@@ -439,37 +436,51 @@ export default {
       expandedById.value[collId] = !expandedById.value[collId]
       console.log('CollectionTOC after expandedById[collectionId] : ', collId, expandedById.value)
     }
+
+    /* expandedById.value = componentTOC.value.filter(item => item.expanded === true).map(col => [col.identifier, true])
+    console.log("componentTOC.value expandedById.value : ", expandedById.value) */
+    if (collConfig.value.homePageSettings.listSection.openState) {
+      if (componentTOC.value.filter(item => item.citeType === 'Collection').length > 0) {
+        for (const comp of componentTOC.value.filter(item => item.citeType === 'Collection')) {
+          await toggleExpanded(comp.identifier)
+        }
+      }
+      expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: true })))
+    } else {
+      expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: false })))
+    }
     const setStateCollection = (collId) => {
       store.commit('setCollectionId', collId)
     }
 
     const ImgUrl = (source) => {
       // TODO: provide a logo object with url AND legend ?
-      const sourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
-      if (sourceConfig && sourceConfig.homePageSettings && Object.keys(sourceConfig.homePageSettings).includes('listSection')
-          && sourceConfig.homePageSettings.listSection && Object.keys(sourceConfig.homePageSettings.listSection).includes('logo')
-          && sourceConfig.homePageSettings.listSection.logo.length) {
-        console.log('HomePage ImgUrl found : ', sourceConfig.homePageSettings.listSection.logo)
+      const imgSourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
+      if (imgSourceConfig && imgSourceConfig.homePageSettings && Object.keys(imgSourceConfig.homePageSettings).includes('listSection')
+          && imgSourceConfig.homePageSettings.listSection && Object.keys(imgSourceConfig.homePageSettings.listSection).includes('logo')
+          && imgSourceConfig.homePageSettings.listSection.logo.length) {
+        // console.log('HomePage ImgUrl found : ', imgSourceConfig.homePageSettings.listSection.logo)
         const images = import.meta.glob('confs/*/assets/images/*.*', { eager: true })
-        console.log('HomePage ImgUrl images: ', images)
-        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.listSection.logo}`]
-        console.log('HomePage ImgUrl match: ', match)
-        if (sourceConfig.homePageSettings.listSection.logo.includes('https')) {
-          return sourceConfig.homePageSettings.listSection.logo
+        // console.log('HomePage ImgUrl images: ', images)
+        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${imgSourceConfig.collectionId}/assets/images/${imgSourceConfig.homePageSettings.listSection.logo}`]
+        // console.log('HomePage ImgUrl match: ', match)
+        if (imgSourceConfig.homePageSettings.listSection.logo.includes('https')) {
+          return imgSourceConfig.homePageSettings.listSection.logo
         } else {
-          return match.default // new URL(`/src/assets/images/${sourceConfig.homePageSettings.logo}`, import.meta.url).href
+          return match.default // new URL(`/src/assets/images/${imgSourceConfig.homePageSettings.logo}`, import.meta.url).href
         }
       } else {
         return false
       }
     }
 
-    watch(props, async (newProps) => {
+    const stopHandle = watch(props, newProps => {
       isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
       componentTOC.value = []
-      if (collConfig.value.homePageSettings && collConfig.value.homePageSettings.listSection && collConfig.value.homePageSettings.listSection.displaySort && collConfig.value.homePageSettings.listSection.displaySort.length > 0) {
-        // console.log('CollectionTOC watch displaySort', collConfig.value.homePageSettings.listSection.displaySort)
-        componentTOC.value = customSort(newProps.toc, collConfig.value.homePageSettings.listSection.displaySort)
+      collConfig.value = newProps.collectionConfig
+      sourceConfig.value = collConfig.value
+      if (sourceConfig.value && sourceConfig.value.homePageSettings && sourceConfig.value.homePageSettings.listSection && sourceConfig.value.homePageSettings.listSection.displaySort && sourceConfig.value.homePageSettings.listSection.displaySort.length > 0) {
+        componentTOC.value = customSort(newProps.toc, sourceConfig.value.homePageSettings.listSection.displaySort)
       } else {
         componentTOC.value = newProps.toc
         componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
@@ -477,11 +488,10 @@ export default {
       displayOpt.value = newProps.displayOption
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
-      appConfig.value = newProps.applicationConfig
-      collConfig.value = newProps.collectionConfig
       browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
     }, { deep: true, immediate: true }
     )
+    stopHandle()
 
     return {
       route,
@@ -491,6 +501,7 @@ export default {
       rootCollectionId,
       appConfig,
       collConfig,
+      sourceConfig,
       customSort,
       browseBttnTxt,
       toggleExpanded,
@@ -518,6 +529,8 @@ export default {
     font-weight: 500;
     line-height: 22px;
     padding: 0;
+    margin-bottom: 4px;
+
     &::before {
       font-family: "Barlow Semi Condensed", sans-serif;
       margin-left: -8px;
@@ -640,7 +653,12 @@ button {
   width: 100%;
   /*border-top: 6px solid #e4e4e4;*/
   border-radius: 6px;
-  font-size: 14px;
+
+  font-family: "Barlow", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+
   padding-top: 10px;
   padding-left: 10px;
   padding-right: 10px;
@@ -648,11 +666,13 @@ button {
   text-transform: uppercase;
   & a {
     border: none;
-    color: #485fc7;
+    color: #333333; /* #485fc7; */
   }
   & > .card-header-first-line {
     display: flex;
     flex-direction: row;
+    gap: 20px;
+
     & > .collection-elec-id {
       margin: 10px;
       font-size: 20px;
@@ -662,7 +682,9 @@ button {
     & > .collection-metadata {
       width: 80%;
       & > .collection-metadata-title {
-        color: #485fc7;
+        font-weight: 500;
+        color: #000; /* #485fc7; */
+        margin-bottom: 10px;
       }
       & > .collection-metadata-author-date {
         color: #4a4a4a;
@@ -726,6 +748,15 @@ button {
   background-color: #e4e4e4;
   border: 1px solid #e4e4e4;
   border-radius: 0 0 6px 6px;
+}
+
+@media screen and (max-width: 800px) {
+  .wrapper, .modal-wrapper {
+    .tree li {
+      margin-left: 15px !important;
+      margin-bottom: 8px;
+    }
+  }
 }
 
 </style>

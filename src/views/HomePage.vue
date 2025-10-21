@@ -118,6 +118,7 @@
           :collection-config="collConfig"
           :toc="currentPageData"
           :margin="0"
+          :key="currentPageData"
         />
       </div>
 
@@ -236,7 +237,6 @@ import { computed, defineAsyncComponent, inject, reactive, ref, shallowRef, watc
 
 import { getMetadataFromApi } from '@/api/document.js'
 import CollectionTOC from '@/components/CollectionTOC.vue'
-import store from '@/store'
 
 export default {
   name: 'HomePage',
@@ -292,9 +292,6 @@ export default {
     const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
     const collectionId = ref(props.collectionIdentifier)
     console.log('HomePage setup collectionId', collectionId.value)
-
-    let customCss = shallowRef({})
-    const cssPath = ref('')
 
     const componentTOC = ref([])
     const currCollection = ref(props.currentCollection)
@@ -359,47 +356,6 @@ export default {
     const homeCssClass = computed(() => {
       return state.isTreeOpened ? 'is-tree-opened' : ''
     })
-
-    const getCustomCss = async () => {
-      removeCustomCss()
-      if (collConfig.value.collectionCustomCss) {
-        // const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: true })
-        const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: false })
-        console.log('HomePage getCustomCss appCssConfs', appCssConfs)
-        console.log('HomePage getCustomCss collConfig.value.collectionCustomCss', collConfig.value.collectionCustomCss)
-        console.log('HomePage getCustomCss get in if')
-        /* const match = appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`]
-        console.log('HomePage getCustomCss match path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
-        console.log('HomePage getCustomCss match', match) */
-        cssPath.value = `confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`
-        console.log('HomePage getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
-
-        /* customCss.value = await import(`confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css?raw`) */
-
-        if (collConfig.value.collectionCustomCss && appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`]) {
-          console.log('HomePage getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`])
-          customCss.value = await import(`confs/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css?raw`)
-          const style = document.createElement('style')
-          style.textContent = customCss.value.default
-          style.id = 'customCss'
-          document.head.append(style)
-          console.log('HomePage getCustomCss customCss.value : ', customCss.value)
-        }
-      }
-    }
-    const removeCustomCss = () => {
-      console.log('HomePage removeCustomCss store.state.collectionId', store.state.collectionId)
-      const styleTags = [...document.querySelectorAll('style')]
-      console.log('HomePage removeCustomCss styleTags ', styleTags)
-      styleTags.forEach((tag) => {
-        // console.log('HomePage watch store.state.collectionId getCustomCss tag.textContent ', tag.textContent)
-        if (tag.id === 'customCss') {
-          console.log('HomePage removeCustomCss tag.textContent ', tag.textContent)
-          console.log('HomePage removeCustomCss tag.id ', tag.id)
-          tag.remove()
-        }
-      })
-    }
 
     const ImgUrl = (source) => {
       // TODO: provide a logo object with url AND legend ?
@@ -511,32 +467,19 @@ export default {
       }
       console.log('HomePage watch collectionConfig collectionDescription : ', collConfig.value, collectionDescription.value)
       paginated()
+      if (newProps.collectionConfig.homePageSettings.listSection.openState && !state.isTreeOpened) {
+        await toggleExpanded(currCollection.value.identifier)
+      }
       if (customCollectionDescription.value) {
         customDescription.value = await getCustomHomeDescription()
       } else {
         customDescription.value = {}
-      }
-      console.log('HomePage watch collConfig.value.collectionCustomCss : ', collConfig.value, collConfig.value.collectionCustomCss)
-      if (collConfig.value.collectionCustomCss) {
-        console.log('HomePage watch collConfig.value.collectionCustomCss IF: ', collConfig.value.collectionCustomCss)
-        await getCustomCss()
-      } else if (customCss.value) {
-        console.log('HomePage watch collConfig.value.collectionCustomCss ELSE: ', customCss.value)
-        removeCustomCss()
       }
     }, { deep: true, immediate: true })
 
     watch(currentPage, () => {
       paginated()
     })
-    watch(
-      () => store.state.collectionId, function () {
-        console.log('HomePage watch store.state.collectionId', store.state.collectionId)
-        if (store.state.collectionId && store.state.collectionId !== collectionId.value && customCss.value) {
-          removeCustomCss()
-        }
-      }, { immediate: true }
-    )
 
     return {
       appConfig,
@@ -565,11 +508,7 @@ export default {
       currentPageData,
       customCollectionDescription,
       getCustomHomeDescription,
-      customDescription,
-      getCustomCss,
-      removeCustomCss,
-      customCss,
-      cssPath
+      customDescription
     }
   }
 }
@@ -592,6 +531,7 @@ a {
   font-family: "Barlow", sans-serif !important;
 }
 #article h1 {
+  margin: 1em 0 1em 0;
   padding-top: 20px;
   padding-bottom: 20px;
   font-size: 25px;
@@ -723,68 +663,6 @@ a {
   padding-top: 25px;
   padding-bottom: 25px;
 }
-.document-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-content: center;
-  width: 100%;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  &:hover {
-    /* border: 1px solid #b9192f; */
-    border: 1px solid var(--text-color);
-  }
-}
-.document-card .card-header .document-folder {
-  width: 100%;
-  /*border-top: 6px solid #e4e4e4;*/
-  border-radius: 6px;
-  font-size: 14px;
-  padding-top: 10px;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 10px;
-  text-transform: uppercase;
-  & > .card-header-first-line {
-    display: flex;
-    flex-direction: row;
-    & > .collection-elec-id {
-      margin: 10px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #b9192f;
-    }
-    & > .collection-metadata {
-      width: 80%;
-      & > .collection-description {
-        width: 100%;
-        text-align: justify;
-        text-transform: none;
-      }
-    }
-  }
-  & > .wrapper > .collection-toc-area {
-    margin-bottom: 0 !important;
-  }
-}
-.document-card .card-image {
-  margin: auto;
-  & > a {
-    align-content: center;
-    > img {
-      height: auto;
-      width: 75px;
-    }
-  }
-}
-.document-card .card-content {
-  color: #000;
-  padding: 1.5rem 0;
-  border-bottom: 7px solid #e8e7e0;
-}
 .pagination-controls {
   display: flex;
   align-items: center;
@@ -862,6 +740,7 @@ a {
   }
 }
 .pagination {
+  gap: 20px;
   width: 100%;
   margin: 0;
   padding-bottom: 5px;

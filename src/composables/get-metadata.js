@@ -15,8 +15,9 @@ const sources = [
   { name: 'sudoc', ext: 'sudoc.fr', type: 'document_link' },
   { name: 'biblissima', ext: 'biblissima.fr', type: 'document_link' },
   { name: 'creativecommons', ext: 'creativecommons.org', type: 'document_link' },
-  { name: 'enc', ext: 'manifest', type: 'other_link' },
-  { name: 'dots', ext: 'dots', type: 'other_link' }
+  { name: 'iiif', ext: 'manifest', type: 'other_link' },
+  { name: 'tei', ext: 'api/dts', type: 'other_link' },
+  { name: 'dots', ext: window.location.origin, type: 'other_link' }
 ]
 
 function findSource (id) {
@@ -99,7 +100,15 @@ export default async function fetchMetadata (source, resourceId, documentType, r
 
     metadata.type = listmetadata['@type'] ? listmetadata['@type'] : ''
 
-    metadata.citation = listmetadata['@id'] ? `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}` : null
+    if (listmetadata['@id']) {
+      const source = findSource(window.location.origin)
+      metadata.citation = { source, url: `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}` }
+      console.log('source found:', source, listmetadata['@id'])
+    } else {
+      metadata.citation = null
+    }
+
+    //metadata.citation = listmetadata['@id'] ? `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}` : null
 
     metadata.member = listmetadata.member ? listmetadata.member : []
 
@@ -144,15 +153,26 @@ export default async function fetchMetadata (source, resourceId, documentType, r
       // metadata.rights = extensions["dct:rights"] ? extensions["dct:rights"] : null
       // 9-12metadata.title = extensions[htmlnamespace + ":h1"] ? extensions[htmlnamespace + ":h1"] : null
     }
+    if (extensions && extensions['dots:iiifManifestId']) {
+      const source = findSource(extensions['dots:iiifManifestId'])
+      metadata.iiifManifestUrl = { source, url: extensions['dots:iiifManifestId'] }
+      console.log('source found:', source, extensions['dots:iiifManifestId'])
+    } else if (extensions && extensions['dct:source'] && extensions['dct:source'][0]['@id']) {
+      const source = findSource(extensions['dct:source'][0]['@id'])
+      metadata.iiifManifestUrl = { source, url: extensions['dct:source'][0]['@id'] }
+      console.log('source found:', source, extensions['dct:source'][0]['@id'])
+    } else {
+      metadata.iiifManifestUrl = null
+    }
 
-    try {
+    /*try {
       metadata.iiifManifestUrl = extensions['dots:iiifManifestId'] ? extensions['dots:iiifManifestId'] : extensions['dct:source'][0]['@id']
       // layout.imageIsAvailable.value = true
     } catch {
       metadata.iiifManifestUrl = null
       // TODO: resolve why layout undefined and uncomment
       // layout.imageIsAvailable.value = false
-    }
+    }*/
 
     console.log('metadata.iiifManifestUrl:', metadata.iiifManifestUrl)
     console.log('metadata:', metadata)
@@ -217,6 +237,10 @@ export default async function fetchMetadata (source, resourceId, documentType, r
           }
         }
       }
+      // citation statement
+      if (extensions['dct:bibliographicCitation']) {
+        metadata['dct:bibliographicCitation'] = extensions['dct:bibliographicCitation']
+      } else metadata['dct:bibliographicCitation'] = ''
     }
   }
   await getMetadata()

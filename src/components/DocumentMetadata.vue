@@ -114,42 +114,42 @@
                     <div v-if="metadata.wikipedia" class="column is-one-quarter">
                       <figure class="image is-48x48">
                         <a target="_blank" v-bind:href="metadata.wikipedia">
-                          <img src="@/assets/images/Logo_wikipedia.png" />
+                          <img src="@/assets/images/logo_wikipedia.png" />
                         </a>
                       </figure>
                     </div>
                     <div v-if="metadata.catalogue_bnf" class="column is-one-quarter">
                       <figure class="image is-48x48 level-left">
                         <a target="_blank" v-bind:href="metadata['catalogue_bnf']">
-                          <img src="@/assets/images/Logo_bnf.png" />
+                          <img src="@/assets/images/logo_bnf.png" />
                         </a>
                       </figure>
                     </div>
                     <div v-if="metadata.data_bnf" class="column is-one-quarter">
                       <figure class="image is-48x48 level-left">
                         <a target="_blank" v-bind:href="metadata.data_bnf">
-                          <img src="@/assets/images/Logo_databnf.png" />
+                          <img src="@/assets/images/logo_databnf.png" />
                         </a>
                       </figure>
                     </div>
                     <div v-if="metadata.idref" class="column is-one-quarter">
                       <figure class="image is-48x48 level-left">
                         <a target="_blank" v-bind:href="metadata.idref">
-                          <img src="@/assets/images/Logo_idref.png" />
+                          <img src="@/assets/images/logo_idref.png" />
                         </a>
                       </figure>
                     </div>
                     <div v-if="metadata.dbpedia" class="column is-one-quarter">
                       <figure class="image is-48x48 level-left">
                         <a target="_blank" v-bind:href="metadata.dbpedia">
-                          <img src="@/assets/images/Logo_dbpedia.png" />
+                          <img src="@/assets/images/logo_dbpedia.png" />
                         </a>
                       </figure>
                     </div>
                     <div v-if="metadata.wikidata" class="column is-one-quarter">
                       <figure class="image is-48x48 level-left">
                         <a target="_blank" v-bind:href="metadata.wikidata">
-                          <img src="@/assets/images/Logo_wikidata.png" />
+                          <img src="@/assets/images/logo_wikidata.png" />
                         </a>
                       </figure>
                     </div>
@@ -161,28 +161,28 @@
                     <div v-if="metadata.thenca" class="column is-one-quarter">
                       <figure class="image is-48x48 level-left">
                         <a target="_blank" v-bind:href="metadata.thenca">
-                          <img src="@/assets/images/Logo_thenca.png" />
+                          <img src="@/assets/images/logo_thenca.png" />
                         </a>
                       </figure>
                     </div>
                     <div v-if="metadata.sudoc" class="column is-one-quarter">
                       <figure class="image is-48x48 level-left">
                         <a target="_blank" v-bind:href="metadata.sudoc">
-                          <img src="@/assets/images/Logo_sudoc.png" />
+                          <img src="@/assets/images/logo_sudoc.png" />
                         </a>
                       </figure>
                     </div>
                     <div v-if="metadata.benc" class="column is-one-quarter">
                       <figure class="image is-48x48 level-left">
                         <a target="_blank" v-bind:href="metadata.benc">
-                          <img src="@/assets/images/Logo_benc.png" />
+                          <img src="@/assets/images/logo_benc.png" />
                         </a>
                       </figure>
                     </div>
                     <div v-if="metadata.hal" class="column is-one-quarter">
                       <figure class="image is-48x48 level-left">
                         <a target="_blank" v-bind:href="metadata.hal">
-                          <img src="@/assets/images/Logo_hal.png" />
+                          <img src="@/assets/images/logo_hal.png" />
                         </a>
                       </figure>
                     </div>
@@ -324,7 +324,7 @@
                 </tr>
                 <tr class="row" v-else-if="value">
                   <td><span class="title"><b>{{ key }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
+                  <td><span class="title" style="text-transform: uppercase; font-size: 12px" v-html="value"></span></td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
                   <td></td>
                 </tr>
               </template>
@@ -515,15 +515,15 @@ export default {
     }
     const ImgUrl = (source) => {
       console.log('ImgUrl / source', source)
-      const imgUrls = import.meta.glob('../assets/images/Logo_*.svg', {
+      const imgUrls = import.meta.glob('../assets/images/logo_*.svg', {
         import: 'default',
         eager: true
       })
-      if (imgUrls[`../assets/images/Logo_${source}.svg`]) {
+      if (imgUrls[`../assets/images/logo_${source}.svg`]) {
         console.log('ImgUrl / found an svg for : ', source)
-        return imgUrls[`../assets/images/Logo_${source}.svg`]
+        return imgUrls[`../assets/images/logo_${source}.svg`]
       } else {
-        return new URL(`/src/assets/images/Logo_${source}.png`, import.meta.url).href
+        return new URL(`/src/assets/images/logo_${source}.png`, import.meta.url).href
       }
     }
 
@@ -722,9 +722,9 @@ export default {
 .toggle-btn {
   position: absolute;
   right: 20px;
-  width: 27px;
+  width: 20px;
   height: 27px;
-  background: url(../assets/images/chevron_rouge.svg) center top -4px / cover no-repeat;
+  background: url(../assets/images/chevron_rouge.svg) center top -8px / cover no-repeat;
   border: none;
   text-decoration: none;
 }
@@ -776,6 +776,9 @@ aside.menu > .columns > .column:nth-child(3) {
   text-indent: 0;
   margin-bottom: 0;
   color: #4a4a4a;
+  & :deep i {
+    font-style: italic !important;
+  }
 }
 td > span.title > b {
   white-space: nowrap;
@@ -829,8 +832,38 @@ figure {
 }
 @media screen and (max-width: 640px) {
   .toggle-btn {
-    width: 20px;
+    position: absolute;
+    bottom: 10px;
     right: 15px;
+    width: 20px;
+  }
+  .document-metadata-header > .resource {
+    padding-bottom: 40px;
+  }
+  .document-metadata-header span.metadata-header-label.resource {
+    position: absolute;
+    left: 20px;
+    bottom: 15px;
+    margin-right: 0;
+  }
+  .document-metadata-header {
+    position: relative;
+    & > div.resource {
+      justify-content: space-between;
+    }
+    &::after {
+      content: "";
+      display: block;
+      width: 100%;
+      position: absolute;
+      bottom:45px;
+      left: 0;
+      border-top: 1px solid #CECECE;
+    }
+  }
+  .document-metadata-header span.metadata-header-author {
+    color: #929292;
+    text-align: right;
   }
 }
 table {

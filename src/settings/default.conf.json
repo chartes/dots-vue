@@ -4,7 +4,7 @@
     "homePageSettings": {
       "appNavBar": {
         "appNavBarLogo": {
-        "imgName": "Logo_dots_circle.svg",
+        "imgName": "logo_dots_circle.svg",
         "href": "/"
         },
         "collectionShortTitle": "",
@@ -25,7 +25,8 @@
         "displayMode": "",
         "cardCollectionPerPage": 3,
         "logo": "",
-        "browseButtonText": "Browse the collection"
+        "browseButtonText": "Browse the collection",
+        "openState": false
       }
     },
     "footerSettings": {
@@ -41,7 +42,8 @@
       ],
       "countByCiteType": [
       ],
-      "displayTopToc": false
+      "displayTopToc": false,
+      "displayLeftToc": false
     },
     "aboutPageSettings": [
       { "tabName": "tabName1", "compName": "about1" },
