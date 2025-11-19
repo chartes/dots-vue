@@ -206,11 +206,10 @@ export default {
       mergeSettings()
       let metadataResponse = {}
       if (rootCollectionIdentifier.value === dtsRootCollectionId.value && rootCollectionIdentifier.value === collectionId.value) {
-        metadataResponse = await fetchMetadata('app.vue', '', 'Collection', route)
+        metadataResponse = await fetchMetadata('app.vue getCurrentCollection fetchMetadata (no id)', null, 'Collection', route)
       } else {
-        metadataResponse = await fetchMetadata('app.vue', collectionId.value, 'Collection', route)
+        metadataResponse = await fetchMetadata('app.vue getCurrentCollection fetchMetadata (with id)', collectionId.value, 'Collection', route)
       }
-      // const metadataResponse = await fetchMetadata('app.vue', collectionId.value, 'Collection', route)
       console.log('App.vue getCurrentCollection collectionId.value ', collectionId.value)
       console.log('App.vue getCurrentCollection metadataResponse', metadataResponse)
       console.log('App.vue getCurrentCollection excludeCollectionIds', collectionId.value, appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value))
@@ -226,11 +225,15 @@ export default {
       formatedResponse = { ...formatedResponse, member: formatedResponse.member?.map(m => { return getSimpleObject(m) }) }
       currCollection.value = formatedResponse
 
-      // Get and set the collection project
-      const projectId = await getProjectFromApi(collectionId.value)
-      projectCollId.value = projectId !== rootCollectionIdentifier.value ? projectId : ''
+      // Get and set the collection project (only if current collection is not top collection)
+      if (collectionId.value !== rootCollectionIdentifier.value) {
+        projectCollId.value = await getProjectFromApi(collectionId.value)
+        await getBreadcrumb(collectionId.value)
+      } else {
+        projectCollId.value = ''
+        breadCrumb.value = []
+      }
       console.log('App.vue getCurrentCollection projectCollId.value : ', projectCollId.value)
-      await getBreadcrumb(collectionId.value)
     }
 
     const getCustomCss = async () => {
@@ -353,14 +356,15 @@ export default {
           console.log('App.vue watch change in route : navigating within the existing About page')
         } else if ((newRoute && oldRoute) && (newRoute.name === oldRoute.name) && (newRoute.params.collId === oldRoute.params.collId) && (newRoute.refId === oldRoute.refId)) {
           console.log('App.vue watch change in route : navigating within an existing refId page')
-        } else {
+        } else if (newRoute && oldRoute) {
+          console.log('App.vue watch change in route / newRoute && oldRoute : ', oldRoute && newRoute)
           collConfigReady.value = false
           if (watcherState.value === false) {
             watcherRoute.value = true
             // collConfig.value = {}
-            console.log('App.vue watch change in route : ', oldRoute, newRoute)
-            await getDtsRootResponse()
-            console.log('App.vue watch getDtsRootResponse : ', dtsRootCollectionId.value)
+            console.log('App.vue watch change in route confirmed : ', oldRoute, newRoute)
+            await getDtsRootResponse('watch router.currentRoute')
+            console.log('App.vue watch getDtsRootResponse dtsRootCollectionId.value : ', dtsRootCollectionId.value)
             if (isDocProjectIdInc) {
               console.log('App.vue watch store.state.collectionId / newRoute.params.collId: ', store.state.collectionId, newRoute.params.collId)
               if ((newRoute && oldRoute) && (newRoute.name === oldRoute.name) && (newRoute.params.collId === oldRoute.params.collId) && (store.state.collectionId === collectionId.value)) {
@@ -389,7 +393,7 @@ export default {
                   store.commit('setCurrentItem', {})
                   collectionId.value = newRoute.params.collId
                   store.commit('setCollectionId', collectionId.value)
-                  console.log('App.vue watch newRoute.params.collId getProjectFromApi', await getProjectFromApi(collectionId.value))
+                  console.log('App.vue watch newRoute.params.collId getProjectFromApi', projectCollId.value)
                   console.log('App.vue watch collectionId.value as route.params.collId : ', collectionId.value)
                 } else {
                   store.commit('setCurrentItem', {})
