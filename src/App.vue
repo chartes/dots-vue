@@ -107,9 +107,6 @@ export default {
     const projectCollConfig = ref({})
     const collConfig = ref({})
     const rootShortTitle = ref('')
-    // Replaced by breadcrumb :
-    // const collShortTitle = ref('')
-    // const projectShortTitle = ref('')
     const breadCrumb = ref([])
     const isDocProjectIdInc = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0 ? true : `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID}`.toLowerCase() === 'true'
     console.log('App.vue setup route / route.params.collId / collectionId.value : ', route, route.params.collId ? route.params.collId : 'no param collId', collectionId.value)
@@ -154,18 +151,18 @@ export default {
       console.log('App.vue setup appConfig.value after update', appConfig.value)
     }
 
-    const getDtsRootResponse = async () => {
+    const getDtsRootResponse = async (source) => {
+      console.log('App.vue getDtsRootResponse source', source)
       const dtsRootResponse = await getMetadataFromApi()
       dtsRootCollectionId.value = dtsRootResponse['@id']
       console.log('App.vue get dtsRootCollectionId', dtsRootCollectionId.value)
     }
-    getDtsRootResponse()
 
     const getBreadcrumb = async (collId) => {
       let loopCollId = collId
       const initialBreadCrumb = {}
       initialBreadCrumb[collId] = currCollection.value.title
-      console.log('App.vue breadcrumb initial initialBreadCrumb loopCollId rootCollectionIdentifier.value', initialBreadCrumb, loopCollId, breadCrumb.value)
+      console.log('App.vue breadcrumb initial initialBreadCrumb loopCollId, rootCollectionIdentifier.value', initialBreadCrumb, loopCollId, rootCollectionIdentifier.value)
       breadCrumb.value = loopCollId !== rootCollectionIdentifier.value ? [initialBreadCrumb] : []
       console.log('App.vue breadcrumb initial', breadCrumb.value)
       let parentCollId = ''
@@ -218,10 +215,10 @@ export default {
         metadataResponse.member = metadataResponse.member.filter(m => !matchedCollectionConf.excludeCollectionIds.includes(m['@id']))
       }
       let formatedResponse = getSimpleObject(metadataResponse)
-      console.log('App.vue formatedResponse', formatedResponse)
+      console.log('App.vue formatedResponse 1', formatedResponse)
       formatedResponse.member.forEach(m => { m.identifier = m['@id'] })
       formatedResponse.member.forEach(m => { m.parent = collectionId.value })
-      console.log('App.vue formatedResponse', formatedResponse)
+      console.log('App.vue formatedResponse 2', formatedResponse)
       formatedResponse = { ...formatedResponse, member: formatedResponse.member?.map(m => { return getSimpleObject(m) }) }
       currCollection.value = formatedResponse
 
@@ -303,17 +300,15 @@ export default {
             // Set the project config
             let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
             if (!projectCollectionOverrides && collectionId.value !== rootCollectionIdentifier.value) {
-                  projectCollectionOverrides = rootCollConfig.value
-                  projectCollectionOverrides.collectionId = collectionId.value
-                  projectCollectionOverrides.homePageSettings.collectionShortTitle = ''
-                  projectCollectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
-                  projectCollectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
-                  console.log('App.vue watch collectionId.value / no projectCollectionOverrides found, creating one: ', collectionId.value, projectCollectionOverrides)
-                }
+              projectCollectionOverrides = rootCollConfig.value
+              projectCollectionOverrides.collectionId = collectionId.value
+              projectCollectionOverrides.homePageSettings.collectionShortTitle = ''
+              projectCollectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
+              projectCollectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
+              console.log('App.vue watch collectionId.value / no projectCollectionOverrides found, creating one: ', collectionId.value, projectCollectionOverrides)
+            }
             projectCollConfig.value = _.merge({}, rootCollConfig.value, projectCollectionOverrides)
             console.log('App.vue watch projectCollConfig.value, projectCollectionOverrides : ', projectCollConfig.value, projectCollectionOverrides)
-            // Replaced by breadcrumb :
-            // projectShortTitle.value = projectCollConfig.value ? projectCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : ''
 
             let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
             console.log('App.vue watch collectionId.value / collectionOverrides : ', collectionId.value, collectionOverrides)
@@ -403,7 +398,7 @@ export default {
                 }
                 console.log('App.vue watch collectionId.value : ', collectionId.value)
                 await getCurrentCollection(newRoute)
-                console.log('App.vue currCollection.value : ', currCollection.value)
+                console.log('App.vue watch currCollection.value : ', currCollection.value)
                 // Collection is loaded
                 console.log('App.vue watch appConfig.collectionsConf & type : ', appConfig.value.collectionsConf, Array.isArray(appConfig.value.collectionsConf), collectionId.value)
 
@@ -430,10 +425,7 @@ export default {
                   console.log('App.vue watch collectionId.value / no projectCollectionOverrides found, creating one: ', collectionId.value, projectCollectionOverrides)
                 }
                 projectCollConfig.value = _.merge({}, rootCollConfig.value, projectCollectionOverrides)
-
                 console.log('App.vue watch projectCollConfig.value, projectCollectionOverrides : ', projectCollConfig.value, projectCollectionOverrides)
-                // Replaced by breadcrumb :
-                // projectShortTitle.value = projectCollConfig.value ? projectCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : ''
 
                 let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
                 console.log('App.vue watch collectionId.value / collectionOverrides : ', collectionId.value, collectionOverrides)
@@ -507,17 +499,15 @@ export default {
               // Set the project config
               let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
               if (!projectCollectionOverrides && collectionId.value !== rootCollectionIdentifier.value) {
-                  projectCollectionOverrides = rootCollConfig.value
-                  projectCollectionOverrides.collectionId = collectionId.value
-                  projectCollectionOverrides.homePageSettings.collectionShortTitle = ''
-                  projectCollectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
-                  projectCollectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
-                  console.log('App.vue watch collectionId.value / no projectCollectionOverrides found, creating one: ', collectionId.value, projectCollectionOverrides)
-                }
+                projectCollectionOverrides = rootCollConfig.value
+                projectCollectionOverrides.collectionId = collectionId.value
+                projectCollectionOverrides.homePageSettings.collectionShortTitle = ''
+                projectCollectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
+                projectCollectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
+                console.log('App.vue watch collectionId.value / no projectCollectionOverrides found, creating one: ', collectionId.value, projectCollectionOverrides)
+              }
               projectCollConfig.value = _.merge({}, rootCollConfig.value, projectCollectionOverrides)
               console.log('App.vue watch projectCollConfig.value, projectCollectionOverrides : ', projectCollConfig.value, projectCollectionOverrides)
-              // Replaced by breadcrumb :
-              // projectShortTitle.value = projectCollConfig.value ? projectCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : ''
 
               let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
               console.log('App.vue watch collectionId.value / collectionOverrides : ', collectionId.value, collectionOverrides)
