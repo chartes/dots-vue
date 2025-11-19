@@ -417,17 +417,28 @@ export default {
     console.log('componentTOC.value props.toc : ', componentTOC.value)
 
     const toggleExpanded = async (collId) => {
-      console.log('CollectionTOC toggleExpanded componentTOC collId: ', componentTOC.value, collId)
-      if (!componentTOC.value.filter(item => item['@id'] === collId || item.identifier === collId)[0].children || componentTOC.value.filter(item => item['@id'] === collId || item.identifier === collId)[0].children.length === 0) {
-        const response = getSimpleObject(await getMetadataFromApi(collId))
-        console.log('response', response)
-        // eslint-disable-next-line no-return-assign
-        response.member.forEach(m => { m.identifier = m['@id'] })
-        response.member.forEach(m => { m.parent = collId })
-        console.log('response after identifier', response)
-        componentTOC.value.filter(item => item.identifier === collId)[0].member = response.member
-        componentTOC.value.filter(item => item.identifier === collId)[0].children = response.member
-        console.log('CollectionTOC componentTOC', componentTOC.value)
+      console.log('CollectionTOC toggleExpanded componentTOC collId source: ', componentTOC.value, collId)
+
+      const idx = componentTOC.value.findIndex(item => item['@id'] === collId || item.identifier === collId)
+      if (idx !== -1) {
+        const item = componentTOC.value[idx]
+
+        if (!item.children || item.children.length === 0) {
+          const response = getSimpleObject(await getMetadataFromApi(collId))
+          console.log('response', response)
+
+          response.member.forEach(m => { m.identifier = m['@id'] })
+          response.member.forEach(m => { m.parent = collId })
+          console.log('response after identifier', response)
+
+          // Reassigning to ensure Vue reactivity
+          componentTOC.value[idx] = {
+            ...item,
+            member: response.member,
+            children: response.member
+          }
+          console.log('CollectionTOC componentTOC', componentTOC.value)
+        }
       }
       console.log('CollectionTOC expandedById.value', expandedById.value)
 
