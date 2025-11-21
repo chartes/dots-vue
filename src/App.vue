@@ -197,19 +197,19 @@ export default {
       console.log('App.vue breadcrumb after update', breadCrumb.value)
     }
 
-    const getCurrentCollection = async (route) => {
-      console.log('App.vue getCurrentCollection origin route', origin, route)
+    const setCurrentCollectionContext = async (route) => {
+      console.log('App.vue setCurrentCollectionContext origin route', origin, route)
       console.log('this is where it fails')
       await mergeSettings()
       let metadataResponse = {}
       if (rootCollectionIdentifier.value === dtsRootCollectionId.value && rootCollectionIdentifier.value === collectionId.value) {
-        metadataResponse = await fetchMetadata('app.vue getCurrentCollection fetchMetadata (no id)', null, 'Collection', route)
+        metadataResponse = await fetchMetadata('app.vue setCurrentCollectionContext fetchMetadata (no id)', null, 'Collection', route)
       } else {
-        metadataResponse = await fetchMetadata('app.vue getCurrentCollection fetchMetadata (with id)', collectionId.value, 'Collection', route)
+        metadataResponse = await fetchMetadata('app.vue setCurrentCollectionContext fetchMetadata (with id)', collectionId.value, 'Collection', route)
       }
-      console.log('App.vue getCurrentCollection collectionId.value ', collectionId.value)
-      console.log('App.vue getCurrentCollection metadataResponse', metadataResponse)
-      console.log('App.vue getCurrentCollection excludeCollectionIds', collectionId.value, appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value))
+      console.log('App.vue setCurrentCollectionContext collectionId.value ', collectionId.value)
+      console.log('App.vue setCurrentCollectionContext metadataResponse', metadataResponse)
+      console.log('App.vue setCurrentCollectionContext excludeCollectionIds', collectionId.value, appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value))
       const matchedCollectionConf = appConfig.value.collectionsConf && appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value).length > 0 ? appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value) : {}
       if (matchedCollectionConf && matchedCollectionConf.excludeCollectionIds && matchedCollectionConf.excludeCollectionIds.length > 0) {
         metadataResponse.member = metadataResponse.member.filter(m => !matchedCollectionConf.excludeCollectionIds.includes(m['@id']))
@@ -230,7 +230,7 @@ export default {
         projectCollId.value = ''
         breadCrumb.value = []
       }
-      console.log('App.vue getCurrentCollection projectCollId.value : ', projectCollId.value)
+      console.log('App.vue setCurrentCollectionContext projectCollId.value : ', projectCollId.value)
     }
 
     const getCustomCss = async () => {
@@ -283,7 +283,7 @@ export default {
           collConfig.value = {}
           if (store.state.collectionId && store.state.collectionId !== collectionId.value) {
             collectionId.value = store.state.collectionId
-            await getCurrentCollection(route)
+            await setCurrentCollectionContext(route)
             // Collection is loaded
 
             // first, try to find if the root Collection has a configuration based on id
@@ -396,7 +396,7 @@ export default {
             collectionId.value = rootCollectionIdentifier.value
           }
           store.commit('setCollectionId', collectionId.value)
-          await getCurrentCollection(newRoute)
+          await setCurrentCollectionContext(newRoute)
           // Collection is loaded
 
           // first, try to find if the root Collection has a configuration based on id
@@ -459,7 +459,7 @@ export default {
             store.commit('setCurrentItem', {})
           }
           collectionId.value = rootCollectionIdentifier.value
-          await getCurrentCollection(newRoute)
+          await setCurrentCollectionContext(newRoute)
 
           // Collection is loaded
 
@@ -532,7 +532,7 @@ export default {
       rootCollConfig,
       projectCollConfig,
       collConfig,
-      getCurrentCollection,
+      setCurrentCollectionContext,
       getBreadcrumb,
       breadCrumb,
       mergeSettings,
