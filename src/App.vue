@@ -116,7 +116,7 @@ export default {
     // localStorage.setItem('theme', whichTheme.value)
     console.log('App.vue setup theme : ', whichTheme.value)
 
-    const mergeSettings = () => {
+    const mergeSettings = async () => {
       const appSettings = import.meta.glob('confs/*.conf.json', { eager: true })
       console.log('App.vue setup appSettings', appSettings)
       const appCssSettings = import.meta.glob('confs/*.conf.css', { eager: true })
@@ -128,9 +128,9 @@ export default {
       // Check if a default custom collection exists in Custom settings
       let defaultCustomSettings = {}
       if (`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}`.length > 0) {
-        defaultCustomSettings = import.meta.glob('confs/custom.conf.json', { eager: true })
+        defaultCustomSettings = Object.entries(import.meta.glob("confs/custom.conf.json", { eager: true})).map(([key, value]) => value)[0]
         console.log('App.vue setup defaultCustomSettings', defaultCustomSettings)
-        appSettings['./settings/default.conf.json'] = defaultCustomSettings ? _.merge({}, appSettings['./settings/default.conf.json'], defaultCustomSettings[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/custom.conf.json`]) : appSettings['./settings/default.conf.json']
+        appSettings['./settings/default.conf.json'] = defaultCustomSettings ? _.merge({}, appSettings['./settings/default.conf.json'], defaultCustomSettings) : appSettings['./settings/default.conf.json']
         console.log('App.vue setup appSettings[\'./settings/default.conf.json\'] updated with custom default', appSettings['./settings/default.conf.json'])
       }
       const defaultMatch = appSettings['./settings/default.conf.json'].default
@@ -200,7 +200,7 @@ export default {
     const getCurrentCollection = async (route) => {
       console.log('App.vue getCurrentCollection origin route', origin, route)
       console.log('this is where it fails')
-      mergeSettings()
+      await mergeSettings()
       let metadataResponse = {}
       if (rootCollectionIdentifier.value === dtsRootCollectionId.value && rootCollectionIdentifier.value === collectionId.value) {
         metadataResponse = await fetchMetadata('app.vue getCurrentCollection fetchMetadata (no id)', null, 'Collection', route)
