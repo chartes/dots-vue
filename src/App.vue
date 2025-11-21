@@ -278,58 +278,57 @@ export default {
       () => store.state.collectionId, async function () {
         console.log("WATCH", "watcher collectionId")
         collConfigReady.value = false
-        if (watcherRoute.value === false && dtsRootCollectionId.value && rootCollectionIdentifier.value) {
+        if (dtsRootCollectionId.value && rootCollectionIdentifier.value) {
           watcherState.value = true
           collConfig.value = {}
-          if (store.state.collectionId && store.state.collectionId !== collectionId.value) {
-            collectionId.value = store.state.collectionId
-            await setCurrentCollectionContext(route)
-            // Collection is loaded
+          collectionId.value = store.state.collectionId
+          await setCurrentCollectionContext(route)
+          // Collection is loaded
 
-            // first, try to find if the root Collection has a configuration based on id
-            let rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value)
-            // second, try to find if a rootCollection (without id) has been defined
-            if (!rootCollectionOverrides) {
-              rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === 'rootCollection')
-            }
-            // const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
-            rootCollConfig.value = rootCollectionOverrides ? _.merge({}, appConfig.value.genericConf, rootCollectionOverrides) : appConfig.value.genericConf
-            rootShortTitle.value = rootCollConfig.value ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : appConfig.value.genericConf.homePageSettings.appNavBar.collectionShortTitle
+          // first, try to find if the root Collection has a configuration based on id
+          let rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value)
+          // second, try to find if a rootCollection (without id) has been defined
+          if (!rootCollectionOverrides) {
+            rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === 'rootCollection')
+          }
+          // const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
+          rootCollConfig.value = rootCollectionOverrides ? _.merge({}, appConfig.value.genericConf, rootCollectionOverrides) : appConfig.value.genericConf
+          rootShortTitle.value = rootCollConfig.value ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : appConfig.value.genericConf.homePageSettings.appNavBar.collectionShortTitle
 
-            // Set the project config
-            let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
-            if (!projectCollectionOverrides && collectionId.value !== rootCollectionIdentifier.value) {
-              projectCollectionOverrides = rootCollConfig.value
-              projectCollectionOverrides.collectionId = collectionId.value
-              projectCollectionOverrides.homePageSettings.collectionShortTitle = ''
-              projectCollectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
-              projectCollectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
-            }
-            projectCollConfig.value = _.merge({}, rootCollConfig.value, projectCollectionOverrides)
+          // Set the project config
+          let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
+          if (!projectCollectionOverrides && collectionId.value !== rootCollectionIdentifier.value) {
+            projectCollectionOverrides = rootCollConfig.value
+            projectCollectionOverrides.collectionId = collectionId.value
+            projectCollectionOverrides.homePageSettings.collectionShortTitle = ''
+            projectCollectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
+            projectCollectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
+          }
+          projectCollConfig.value = _.merge({}, rootCollConfig.value, projectCollectionOverrides)
 
-            let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
-            if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value && collectionId.value !== projectCollId.value) {
-              collectionOverrides = projectCollConfig.value
-              collectionOverrides.collectionId = collectionId.value
-              collectionOverrides.homePageSettings.collectionShortTitle = ''
-              collectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
-              collectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
-            }
-            collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
-            if (collConfig.value.collectionCustomCss) {
-              await getCustomCss()
-            } else if (customCss.value) {
-              removeCustomCss()
-            }
-            // updating html document title for collections (when on document, managed in DocumentPage)
-            if (!route.params.id) {
-              if (store.state.collectionId) {
-                document.title = appConfig.value && appConfig.value.collectionsConf && appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId) ? appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId).homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title
-              } else {
-                document.title = rootCollConfig.value && rootCollConfig.value.homePageSettings ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : document.title
-              }
+          let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
+          if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value && collectionId.value !== projectCollId.value) {
+            collectionOverrides = projectCollConfig.value
+            collectionOverrides.collectionId = collectionId.value
+            collectionOverrides.homePageSettings.collectionShortTitle = ''
+            collectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
+            collectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
+          }
+          collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
+          if (collConfig.value.collectionCustomCss) {
+            await getCustomCss()
+          } else if (customCss.value) {
+            removeCustomCss()
+          }
+          // updating html document title for collections (when on document, managed in DocumentPage)
+          if (!route.params.id) {
+            if (store.state.collectionId) {
+              document.title = appConfig.value && appConfig.value.collectionsConf && appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId) ? appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId).homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title
+            } else {
+              document.title = rootCollConfig.value && rootCollConfig.value.homePageSettings ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : document.title
             }
           }
+
           watcherState.value = false
           collConfigReady.value = true
         }
@@ -404,50 +403,6 @@ export default {
           await setCurrentCollectionContext(newRoute)
           // Collection is loaded
 
-          // first, try to find if the root Collection has a configuration based on id
-          let rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value)
-          // second, try to find if a rootCollection (without id) has been defined
-          if (!rootCollectionOverrides) {
-            rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === 'rootCollection')
-          }
-          // const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
-          rootCollConfig.value = rootCollectionOverrides ? _.merge({}, appConfig.value.genericConf, rootCollectionOverrides) : appConfig.value.genericConf
-          rootShortTitle.value = rootCollConfig.value ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : appConfig.value.genericConf.homePageSettings.appNavBar.collectionShortTitle
-
-          // Set the project config
-          let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
-          if (!projectCollectionOverrides && collectionId.value !== rootCollectionIdentifier.value) {
-            projectCollectionOverrides = rootCollConfig.value
-            projectCollectionOverrides.collectionId = collectionId.value
-            projectCollectionOverrides.homePageSettings.collectionShortTitle = ''
-            projectCollectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
-            projectCollectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
-          }
-          projectCollConfig.value = _.merge({}, rootCollConfig.value, projectCollectionOverrides)
-
-          let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
-          if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value && collectionId.value !== projectCollId.value) {
-            collectionOverrides = projectCollConfig.value
-            collectionOverrides.collectionId = collectionId.value
-            collectionOverrides.homePageSettings.collectionShortTitle = ''
-            collectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
-            collectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
-          }
-          collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
-          if (collConfig.value.collectionCustomCss) {
-            await getCustomCss()
-          } else if (customCss.value) {
-            removeCustomCss()
-          }
-          // updating html document title for collections (when on document, managed in DocumentPage)
-          if (!newRoute.params.id) {
-            if (store.state.collectionId && newRoute.params.collId) {
-              document.title = appConfig.value && appConfig.value.collectionsConf && appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId) ? appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId).homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title
-            } else {
-              document.title = rootCollConfig.value && rootCollConfig.value.homePageSettings ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : document.title
-            }
-          }
-          collConfigReady.value = true
         } else {
           // Set the app rootCollection
           if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
@@ -465,52 +420,7 @@ export default {
           }
           collectionId.value = rootCollectionIdentifier.value
           await setCurrentCollectionContext(newRoute)
-
           // Collection is loaded
-
-          // first, try to find if the root Collection has a configuration based on id
-          let rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value)
-          // second, try to find if a rootCollection (without id) has been defined
-          if (!rootCollectionOverrides) {
-            rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === 'rootCollection')
-          }
-          // const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
-          rootCollConfig.value = rootCollectionOverrides ? _.merge({}, appConfig.value.genericConf, rootCollectionOverrides) : appConfig.value.genericConf
-          rootShortTitle.value = rootCollConfig.value ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : appConfig.value.genericConf.homePageSettings.appNavBar.collectionShortTitle
-
-          // Set the project config
-          let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
-          if (!projectCollectionOverrides && collectionId.value !== rootCollectionIdentifier.value) {
-            projectCollectionOverrides = rootCollConfig.value
-            projectCollectionOverrides.collectionId = collectionId.value
-            projectCollectionOverrides.homePageSettings.collectionShortTitle = ''
-            projectCollectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
-            projectCollectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
-          }
-          projectCollConfig.value = _.merge({}, rootCollConfig.value, projectCollectionOverrides)
-
-          let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
-          if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value && collectionId.value !== projectCollId.value) {
-            collectionOverrides = projectCollConfig.value
-            collectionOverrides.collectionId = collectionId.value
-            collectionOverrides.homePageSettings.collectionShortTitle = ''
-            collectionOverrides.homePageSettings.pageHeader.collectionAltTitle = ''
-            collectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
-          }
-          collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
-          if (collConfig.value.collectionCustomCss) {
-            await getCustomCss()
-          } else if (customCss.value) {
-            removeCustomCss()
-          }
-          // updating html document title for collections (when on document, managed in DocumentPage)
-          if (!newRoute.params.id) {
-            if (store.state.collectionId && newRoute.params.collId) {
-              document.title = appConfig.value && appConfig.value.collectionsConf && appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId) ? appConfig.value.collectionsConf.find(coll => coll.collectionId === store.state.collectionId).homePageSettings.appNavBar.collectionShortTitle : currCollection.value.title
-            } else {
-              document.title = rootCollConfig.value && rootCollConfig.value.homePageSettings ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : document.title
-            }
-          }
         }
 
           watcherRoute.value = false
