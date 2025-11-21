@@ -343,13 +343,12 @@ export default {
           return
         }
 
-        // do nothing when clicking on a about button on the about page?
-        // XXX: useless?
+        // Acces about page without rerender collection
         if (newRoute?.name === oldRoute?.name && newRoute?.name === "About") {
           return
         }
 
-        // do nothing if old routes and new routes are the same
+        // Same collection
         if (newRoute?.name === oldRoute?.name && newRoute?.params?.collId === oldRoute?.params?.collId && newRoute?.refId === oldRoute?.refId) {
           return
         }
@@ -376,6 +375,7 @@ export default {
             return
           }
 
+          // store root collection identifier (from serveur or VITE_APP config)
           if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
             rootCollectionIdentifier.value = dtsRootCollectionId.value
           } else {
