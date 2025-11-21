@@ -117,38 +117,42 @@ export default {
     console.log('App.vue setup theme : ', whichTheme.value)
 
     const mergeSettings = async () => {
-      const appSettings = import.meta.glob('confs/*.conf.json', { eager: true })
+      // convert configuration pathes to collection names (e.g. '${VITE_APP_CUSTOM_SETTINGS_PATH}/theater.conf.json' -> theater
+      const appSettings = Object.fromEntries(Object.entries(import.meta.glob('confs/*.conf.json', { eager: true })).map(([key, value])=> {
+        const newKey = key.split("/").at(-1).replace(".conf.json", "")
+        return [newKey, value]
+      }));
+
       console.log('App.vue setup appSettings', appSettings)
       const appCssSettings = import.meta.glob('confs/*.conf.css', { eager: true })
       console.log('App.vue setup appCssSettings', appCssSettings)
 
       const defaultSettings = await import('./settings/default.conf.json')
-      appSettings['./settings/default.conf.json'] = defaultSettings
+      appSettings.default = defaultSettings
 
       // Check if a default custom collection exists in Custom settings
       let defaultCustomSettings = {}
       if (`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}`.length > 0) {
         defaultCustomSettings = Object.entries(import.meta.glob("confs/custom.conf.json", { eager: true})).map(([key, value]) => value)[0]
         console.log('App.vue setup defaultCustomSettings', defaultCustomSettings)
-        appSettings['./settings/default.conf.json'] = defaultCustomSettings ? _.merge({}, appSettings['./settings/default.conf.json'], defaultCustomSettings) : appSettings['./settings/default.conf.json']
-        console.log('App.vue setup appSettings[\'./settings/default.conf.json\'] updated with custom default', appSettings['./settings/default.conf.json'])
+        appSettings.default = defaultCustomSettings ? _.merge({}, appSettings.default, defaultCustomSettings) : appSettings.default
+        console.log('App.vue setup appSettings.default updated with custom default', appSettings.default)
       }
-      const defaultMatch = appSettings['./settings/default.conf.json'].default
+      const defaultMatch = appSettings.default.default
       defaultMatch.collectionId = rootCollectionIdentifier.value
       Object.assign(appConfig.value, defaultMatch)
       console.log('App.vue setup defaultMatch', defaultMatch)
       console.log('App.vue setup appConfig.value', appConfig.value)
-      // delete appSettings['./settings/default.conf.json']
-      console.log('App.vue setup appSettings after update', appSettings)
+      console.log('App.vue setup appSettings after update 1', appSettings)
       appConfig.value.collectionsConf = []
-      appConfig.value.collectionsConf.push(appSettings['./settings/default.conf.json'].default.genericConf)
-      delete appSettings['./settings/default.conf.json']
-      console.log('App.vue setup appSettings after update', appSettings)
+      appConfig.value.collectionsConf.push(appSettings.default.default.genericConf)
+      delete appSettings.default
+      console.log('App.vue setup appSettings after update 2', appSettings)
       for (let i = 0; i < Object.keys(appSettings).length; i += 1) {
         console.log('App.vue setup appSettings collection iteration', appSettings[Object.keys(appSettings)[i]])
         appConfig.value.collectionsConf.push(appSettings[Object.keys(appSettings)[i]])
       }
-      console.log('App.vue setup appConfig.value after update', appConfig.value)
+      console.log('App.vue setup appConfig.value after update 3', appConfig.value)
     }
 
     const getDtsRootResponse = async (source) => {
