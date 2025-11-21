@@ -122,8 +122,8 @@ export default {
       const appCssSettings = import.meta.glob('confs/*.conf.css', { eager: true })
       console.log('App.vue setup appCssSettings', appCssSettings)
 
-      const defaultSettings = import.meta.glob('./settings/default.conf.json', { eager: true })
-      appSettings['./settings/default.conf.json'] = defaultSettings['./settings/default.conf.json']
+      const defaultSettings = await import('./settings/default.conf.json')
+      appSettings['./settings/default.conf.json'] = defaultSettings
 
       // Check if a default custom collection exists in Custom settings
       let defaultCustomSettings = {}
