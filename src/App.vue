@@ -95,7 +95,6 @@ export default {
     const whichTheme = ref(`${import.meta.env.VITE_APP_THEME}`.length === 0 ? 'red' : `${import.meta.env.VITE_APP_THEME}`)
     const theme = ref('')
     const customCss = shallowRef({})
-    const cssPath = ref('')
 
     const dtsRootCollectionId = ref('')
     const rootCollectionIdentifier = ref('')
@@ -122,10 +121,7 @@ export default {
         const newKey = key.split("/").at(-1).replace(".conf.json", "")
         return [newKey, value]
       }));
-
       console.log('App.vue setup appSettings', appSettings)
-      const appCssSettings = import.meta.glob('confs/*.conf.css', { eager: true })
-      console.log('App.vue setup appCssSettings', appCssSettings)
 
       const defaultSettings = await import('./settings/default.conf.json')
       appSettings.default = defaultSettings
@@ -239,15 +235,17 @@ export default {
 
     const getCustomCss = async () => {
       if (collConfig.value.collectionCustomCss) {
-        const appCssConfs = import.meta.glob('confs/**/*.customCss.css', { eager: false })
-        console.log('App.vue getCustomCss appCssConfs', appCssConfs)
+        const appCssConfs = Object.fromEntries(Object.entries(import.meta.glob('confs/**/*.customCss.css', { eager: false })).map(([key, value]) => {
+          const newKey = key.split("/").at(-1).replace(".customCss.css", "")
+          return [newKey, value]
+        }))
+        console.log('App.vue getCustomCss appCssConfs ', appCssConfs)
         console.log('App.vue getCustomCss collConfig.value.collectionCustomCss', collConfig.value.collectionCustomCss)
         console.log('App.vue getCustomCss get in if')
-        cssPath.value = `confs/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`
         console.log('App.vue getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
 
-        if (collConfig.value.collectionCustomCss && appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`]) {
-          console.log('App.vue getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`])
+        if (collConfig.value.collectionCustomCss && appCssConfs[collConfig.value.collectionId]) {
+          console.log('App.vue getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[collConfig.value.collectionId])
           customCss.value = await import(`confs/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css?raw`)
           const style = document.createElement('style')
           style.textContent = customCss.value.default
@@ -574,7 +572,6 @@ export default {
       getBreadcrumb,
       breadCrumb,
       mergeSettings,
-      cssPath,
       getCustomCss,
       removeCustomCss
     }
