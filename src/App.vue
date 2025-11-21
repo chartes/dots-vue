@@ -385,7 +385,12 @@ export default {
           if (newRoute.params.id) {
 
             const parentResponse = await getParentFromApi(newRoute.params.id)
-            const currentCollection = parentResponse.member.length > 0 ? store.state.collectionId ? parentResponse.member.map(m => m['@id']).includes(store.state.collectionId) ? store.state.collectionId : parentResponse.member[0]['@id'] : parentResponse.member[0]['@id'] : undefined
+            const currentCollection = parentResponse?.member.find((member) => {
+              if (member["@id"] === store.state.collectionId) {
+                return member
+              }
+            })?.["@id"] || parentResponse.member[0]['@id']
+
             collectionId.value = currentCollection
             store.commit('setResourceId', newRoute.params.id)
           } else if (newRoute.params.collId) {
