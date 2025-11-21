@@ -388,16 +388,14 @@ export default {
             const currentCollection = parentResponse.member.length > 0 ? store.state.collectionId ? parentResponse.member.map(m => m['@id']).includes(store.state.collectionId) ? store.state.collectionId : parentResponse.member[0]['@id'] : parentResponse.member[0]['@id'] : undefined
             collectionId.value = currentCollection
             store.commit('setResourceId', newRoute.params.id)
-            store.commit('setCollectionId', collectionId.value)
           } else if (newRoute.params.collId) {
             store.commit('setCurrentItem', {})
             collectionId.value = newRoute.params.collId
-            store.commit('setCollectionId', collectionId.value)
           } else {
             store.commit('setCurrentItem', {})
             collectionId.value = rootCollectionIdentifier.value
-            store.commit('setCollectionId', collectionId.value)
           }
+          store.commit('setCollectionId', collectionId.value)
           await getCurrentCollection(newRoute)
           // Collection is loaded
 
