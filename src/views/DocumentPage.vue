@@ -928,7 +928,7 @@ export default {
 
     const setBreadcrumbs = async () => {
 
-      const ancestors = await getAncestors(currentItem.value)
+      const ancestors = await getAncestors(currentItem.value, collConfig.value.excludeCollectionIds || [])
 
       console.log('setBreadcrumbs start')
       const currentItemId = hash.value ? hash.value : refId.value ? refId.value : resourceId.value
