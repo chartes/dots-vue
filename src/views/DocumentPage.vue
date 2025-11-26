@@ -273,7 +273,7 @@ import router from '@/router/index.js'
 import fetchMetadata from '@/composables/get-metadata.js'
 import store from '@/store'
 
-function getSimpleObject (obj) {
+export function getSimpleObject (obj) {
   // console.log("getSimpleObject / obj", obj)
   let simpleObject = {}
   simpleObject = {
@@ -288,7 +288,7 @@ function getSimpleObject (obj) {
     children: obj.children,
     member: obj.member,
     parent: obj.parent,
-    dublincore: { ...obj.dublincore, title: Array.isArray(obj.dublincore.title) ? obj.dublincore.title[0] : obj.dublincore.title },
+    dublincore: { ...obj?.dublincore, title: Array.isArray(obj?.dublincore?.title) ? obj?.dublincore?.title?.[0] : obj?.dublincore?.title },
     extensions: obj.extensions
   }
   // console.log("getSimpleObject / simpleObject", simpleObject)
