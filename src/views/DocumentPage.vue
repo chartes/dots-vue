@@ -465,33 +465,23 @@ export default {
         const parentResponse = await getParentFromApi(response['@id'])
         // console.log("parentResponse", parentResponse["member"][0])
 
-        if (response['@type'] === 'Resource') {
-          documentType.value = 'Resource'
-          currentItem.value = getSimpleObject(response)
-          currentItem.value.parent = parentResponse.member.length > 1 ? parentResponse.member.map(p => p['@id']) : parentResponse.member[0]['@id']
-          currentItem.value.level = 0
+        documentType.value = 'Resource'
+        currentItem.value = getSimpleObject(response)
+        currentItem.value.parent = parentResponse.member.length > 1 ? parentResponse.member.map(p => p['@id']) : parentResponse.member[0]['@id']
+        currentItem.value.level = 0
 
-          // Fetch editorial level document parts if any (based on citeType)
-          let editorialTypes = []
-          if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByCiteType.length > 0) {
-            editorialTypes = collConfig.value[0].tableOfContentsSettings.editByCiteType
-          }
-          currentItem.value.editorialLevelIndicator = editorialTypes.includes(currentItem.value.citeType) ? 'toEdit' : 'renderToc'
-          store.commit('setCurrentItem', currentItem.value)
-          document.title = currentItem.value.title
-          console.log('init type : ', documentType.value)
-          console.log('set currentItem.value : ', currentItem.value)
-          isModalOpened.value = false
-        } else {
-          documentType.value = 'Collection'
-
-          currentItem.value = getSimpleObject(response)
-          currentItem.value.parent = parentResponse.member ? parentResponse.member[0]['@id'] : null
-          currentItem.value.level = -1
-          currentItem.value.editorialLevelIndicator = 'renderToc'
-          console.log('init type : ', documentType.value)
-          isModalOpened.value = true
+        // Fetch editorial level document parts if any (based on citeType)
+        let editorialTypes = []
+        if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByCiteType.length > 0) {
+          editorialTypes = collConfig.value[0].tableOfContentsSettings.editByCiteType
         }
+        currentItem.value.editorialLevelIndicator = editorialTypes.includes(currentItem.value.citeType) ? 'toEdit' : 'renderToc'
+        store.commit('setCurrentItem', currentItem.value)
+        document.title = currentItem.value.title
+        console.log('init type : ', documentType.value)
+        console.log('set currentItem.value : ', currentItem.value)
+        isModalOpened.value = false
+
         docProjectId.value = isDocProjectIdInc.value ? route.params.collId + '/' : ''
         console.log('docProjectId.value ', docProjectId.value)
 
@@ -522,13 +512,8 @@ export default {
       console.log('DocumentPage getTOC resourceId.value', resourceId.value)
       console.log('DocumentPage getTOC refId.value', refId.value)
 
-      const response = await getTOCFromApi(resourceId.value, documentType.value)
+      const response = await getTOCFromApi(resourceId.value, "Resource")
       console.log('DocumentPage getTOC initial TOC response', response)
-      if (response.member && documentType.value === 'Collection') {
-        response.member.forEach(m => { m.parent = response['@id'] })
-        response.member.forEach(m => { m.level = store.state.currentItem.level + 1 })
-        response.member.forEach(m => { m.identifier = m['@id'] })
-      }
       if (!response.member) {
         response.member = []
       }
