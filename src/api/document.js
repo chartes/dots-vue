@@ -192,7 +192,7 @@ async function getProjectFromApi (id, options = {}) {
 
 async function getAncestors (currentCollection) {
 
-  const ancestors = [getSimpleObject(currentCollection), ]
+  const ancestors = [[getSimpleObject(currentCollection),], ]
 
   let loop = true
   let cur = currentCollection
@@ -200,8 +200,8 @@ async function getAncestors (currentCollection) {
     let parent = await getParentFromApi(cur?.identifier)
     // stop when no parent or parent == VITE_APP_ROOT_DTS_COLLECTION_ID
     if (parent?.member &&  parent?.member?.[0]?.["@id"].toLowerCase() !== import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID.toLowerCase()) {
-      cur = parent?.member[0]
-      ancestors.push(getSimpleObject(cur))
+      cur = getSimpleObject(parent?.member[0])
+      ancestors.push(parent?.member.map((elem) => getSimpleObject(elem)))
     } else {
       loop = false
     }
