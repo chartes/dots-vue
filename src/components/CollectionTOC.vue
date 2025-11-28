@@ -471,9 +471,12 @@ export default {
           && imgSourceConfig.homePageSettings.listSection && Object.keys(imgSourceConfig.homePageSettings.listSection).includes('logo')
           && imgSourceConfig.homePageSettings.listSection.logo.length) {
         // console.log('HomePage ImgUrl found : ', imgSourceConfig.homePageSettings.listSection.logo)
-        const images = import.meta.glob('confs/*/assets/images/*.*', { eager: true })
-        // console.log('HomePage ImgUrl images: ', images)
-        const match = images[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${imgSourceConfig.collectionId}/assets/images/${imgSourceConfig.homePageSettings.listSection.logo}`]
+        const images = Object.fromEntries(Object.entries(import.meta.glob('confs/*/assets/images/*.*', { eager: true })).map(([key, value]) => {
+          const newKey = key.split("/").slice(-4).join("/")
+          return [newKey, value]
+        }))
+        console.log('HomePage ImgUrl images: ', images)
+        const match = images[`${imgSourceConfig.collectionId}/assets/images/${imgSourceConfig.homePageSettings.listSection.logo}`]
         // console.log('HomePage ImgUrl match: ', match)
         if (imgSourceConfig.homePageSettings.listSection.logo.includes('https')) {
           return imgSourceConfig.homePageSettings.listSection.logo

@@ -88,10 +88,13 @@ export default {
         let component
         console.log('AboutPage collConfig.value.collectionId', collConfig.value.collectionId)
         console.log('AboutPage collConfig.value.aboutPageSettings', collConfig.value.aboutPageSettings)
-        const comps = import.meta.glob('confs/**/*.vue')
+        const comps = Object.fromEntries(Object.entries(import.meta.glob('confs/*/*.vue')).map(([key, value])=> {
+          const newKey = key.split("/").slice(-2).join("/")
+          return [newKey, value]
+        }))
         console.log('comps test : ', comps)
-        const match = comps[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/${aboutSettings.value[i].compName}.vue`]
-        const matchRootCollection = comps[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/${aboutSettings.value[i].compName}.vue`]
+        const match = comps[`${collConfig.value.collectionId}/${aboutSettings.value[i].compName}.vue`]
+        const matchRootCollection = comps[`${rootCollectionId.value}/${aboutSettings.value[i].compName}.vue`]
         // matching About pages for exact collection if defined
         console.log('match test : ', match)
         if (match) {
