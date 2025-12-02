@@ -116,11 +116,12 @@ export default {
     console.log('App.vue setup theme : ', whichTheme.value)
 
     const mergeSettings = async () => {
-      // convert configuration pathes to collection names (e.g. '${VITE_APP_CUSTOM_SETTINGS_PATH}/theater.conf.json' -> theater
-      const appSettings = Object.fromEntries(Object.entries(import.meta.glob('confs/*.conf.json', { eager: true })).map(([key, value])=> {
-        const newKey = key.split("/").at(-1).replace(".conf.json", "")
-        return [newKey, value]
-      }));
+
+      if (Object.keys(appConfig.value).length > 0) {
+        return
+      }
+
+      const appSettings = import.meta.glob('confs/*.conf.json', { eager: true })
       console.log('App.vue setup appSettings', appSettings)
 
       const defaultSettings = await import('./settings/default.conf.json')
