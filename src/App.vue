@@ -342,11 +342,6 @@ export default {
           return
         }
 
-        // Acces about page without rerender collection
-        if (newRoute?.name === oldRoute?.name && newRoute?.name === "About") {
-          return
-        }
-
         // Same collection
         if (newRoute?.name === oldRoute?.name && newRoute?.params?.collId === oldRoute?.params?.collId && newRoute?.refId === oldRoute?.refId) {
           return
