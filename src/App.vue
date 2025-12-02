@@ -208,7 +208,7 @@ export default {
 
     const getCustomCss = async () => {
       if (collConfig.value.collectionCustomCss) {
-        const appCssConfs = Object.fromEntries(Object.entries(import.meta.glob('confs/**/*.customCss.css', { eager: false })).map(([key, value]) => {
+        const appCssConfs = Object.fromEntries(Object.entries(import.meta.glob('confs/**/*.customCss.css', { eager: false, query: "?raw" })).map(([key, value]) => {
           const newKey = key.split("/").at(-1).replace(".customCss.css", "")
           return [newKey, value]
         }))
@@ -219,9 +219,9 @@ export default {
 
         if (collConfig.value.collectionCustomCss && appCssConfs[collConfig.value.collectionCustomCss]) {
           console.log('App.vue getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[collConfig.value.collectionId])
-          customCss.value = await import(`confs/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css?raw`)
+          customCss.value = (await appCssConfs[collConfig.value.collectionCustomCss]()).default
           const style = document.createElement('style')
-          style.textContent = customCss.value.default
+          style.textContent = customCss.value
           style.id = 'customCss'
           // check if existing custom.css
           const styleTags = [...document.querySelectorAll('style')]
