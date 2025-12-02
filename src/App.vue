@@ -395,7 +395,6 @@ export default {
             collectionId.value = rootCollectionIdentifier.value
           }
           store.commit('setCollectionId', collectionId.value)
-          await setCurrentCollectionContext(newRoute)
           // Collection is loaded
 
         } else {
@@ -414,6 +413,8 @@ export default {
             store.commit('setCurrentItem', {})
           }
           collectionId.value = rootCollectionIdentifier.value
+          // TODO: check if this line is necessary
+          // store.commit('setCollectionId', collectionId.value)
           await setCurrentCollectionContext(newRoute)
           // Collection is loaded
         }
