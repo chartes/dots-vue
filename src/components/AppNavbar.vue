@@ -12,8 +12,8 @@
         >
           <img
             class="logo-header"
-            v-if="ImgUrl(collectionId)"
-            :src="ImgUrl(collectionId)"
+            v-if="imgUrl"
+            :src="imgUrl"
           />
         </a>
         <router-link
@@ -24,8 +24,8 @@
         >
           <img
             class="logo-header"
-            v-if="ImgUrl(collectionId)"
-            :src="ImgUrl(collectionId)"
+            v-if="imgUrl"
+            :src="imgUrl"
           />
         </router-link>
         <span class="level-item">
@@ -63,13 +63,13 @@
        <div class="level-right">
        <div class="level-item menu">
          <a
-          v-if="apiImgUrl(collectionId)"
+          v-if="apiImgUrl"
           target="_blank"
           :href="apiImgHref"
          >
           <img
             class="logo-api"
-            :src="apiImgUrl(collectionId)"
+            :src="apiImgUrl"
             alt="Logo API"
           />
          </a>
@@ -150,7 +150,9 @@ export default {
     const projectCollConfig = ref(props.projectCollectionConfig)
     const collConfig = ref(props.collectionConfig)
     const imgHref = ref('')
+    const imgUrl = ref(undefined)
     const apiImgHref = ref('')
+    const apiImgUrl = ref(undefined)
     const rootShortTitle = ref(props.rootCollectionConfig.homePageSettings.appNavBar.collectionShortTitle)
     console.log('AppNavbar setup props.collectionConfig', props.collectionConfig)
     // const collShortTitle = ref(props.collectionConfig.homePageSettings.appNavBar.collectionShortTitle)
@@ -181,7 +183,7 @@ export default {
       console.log('AppNavBar click below ProjectId open collection modal ', collId)
     }
 
-    const ImgUrl = (source) => {
+    const setImgUrl = (source) => {
       // TODO: provide a logo object with url AND legend ?
 
       const sourceConfig = collConfig.value
@@ -219,43 +221,42 @@ export default {
         if (match) {
           if (sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName.includes('https')) {
             imgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarLogo.href
-            return sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName
+            imgUrl.value = sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName
           } else {
             imgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarLogo.href
             console.log('AppNavbar ImgUrl imgHref.value : ', imgHref.value)
             console.log('AppNavbar ImgUrl match : ', match)
-            return match.default
+            imgUrl.value = match.default
           }
         // Otherwise use the root collection AppNavBar image if any
         } else if (rootCollImg) {
           if (rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.imgName.includes('https')) {
             imgHref.value = rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.href
-            return rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.imgName
+            imgUrl.value = rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.imgName
           } else {
             imgHref.value = rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.href
             console.log('AppNavbar ImgUrl appNavBarLogo.imgName : ', `${rootCollConfig.value.homePageSettings.appNavBar.appNavBarLogo.imgName}`)
             console.log('AppNavbar ImgUrl imgHref.value : ', imgHref.value)
             console.log('AppNavbar ImgUrl rootCollImg : ', rootCollImg)
-            return rootCollImg.default
+            imgUrl.value = rootCollImg.default
           }
         // Otherwise use the default (dots) AppNavBar image
         } else {
           if (sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName.includes('https')) {
             imgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarLogo.href
-            return sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName
+            imgUrl.value = sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName
           } else {
             imgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarLogo.href
             console.log('AppNavbar ImgUrl default appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName}`)
             console.log('AppNavbar ImgUrl default imgHref.value : ', imgHref.value)
             console.log('AppNavbar ImgUrl default defaultLogo : ', defaultLogo)
-            return defaultLogo
+            imgUrl.value = defaultLogo
           }
         }
-      } else {
-        return false
       }
     }
-    const apiImgUrl = (source) => {
+
+    const setApiImgUrl = (source) => {
       // TODO: provide a logo object with url AND legend ?
       const sourceConfig = collConfig.value
       if (sourceConfig && sourceConfig.homePageSettings && Object.keys(sourceConfig.homePageSettings).includes('appNavBar')
@@ -292,40 +293,38 @@ export default {
         if (match) {
           if (sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName.includes('https')) {
             apiImgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
-            return sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName
+            apiImgUrl.value = sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName
           } else {
             apiImgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
             console.log('AppNavbar apiImgUrl apiImgHref.value : ', apiImgHref.value)
             console.log('AppNavbar apiImgUrl match 2: ', match)
-            return match.default
+            apiImgUrl.value = match.default
           }
         // Otherwise use the root collection AppNavBar image if any
         } else if (rootCollImg) {
           if (rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.imgName.includes('https')) {
             apiImgHref.value = rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.href
-            return rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.imgName
+            apiImgUrl.value = rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.imgName
           } else {
             apiImgHref.value = rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.href
             console.log('AppNavbar apiImgUrl appNavBarLogo.imgName : ', `${rootCollConfig.value.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`)
             console.log('AppNavbar apiImgUrl apiImgHref.value : ', apiImgHref.value)
             console.log('AppNavbar apiImgUrl rootCollImg : ', rootCollImg)
-            return rootCollImg.default
+            apiImgUrl.value = rootCollImg.default
           }
         // Otherwise use the default (dots) AppNavBar image
         } else {
           if (sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName.includes('https')) {
             apiImgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
-            return sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName
+            apiImgUrl.value = sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName
           } else {
             apiImgHref.value = sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.href
             console.log('AppNavbar apiImgUrl default appNavBarLogo.imgName : ', `${sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName}`)
             console.log('AppNavbar apiImgUrl default apiImgHref.value : ', apiImgHref.value)
             console.log('AppNavbar apiImgUrl default defaultLogo : ', defaultLogo)
-            return defaultLogo
+            apiImgUrl.value = defaultLogo
           }
         }
-      } else {
-        return false
       }
     }
 
@@ -337,6 +336,14 @@ export default {
     onBeforeUnmount(() => {
       document.body.removeEventListener('click', closeMenu)
     })
+
+    watch(collectionId, (newCollectionId) => {
+      if (newCollectionId) {
+          setImgUrl(newCollectionId)
+          setApiImgUrl(newCollectionId)
+      }
+    }, { immediate: true })
+
     watch(props, (newProps) => {
       console.log('AppNavbar watch props : ', newProps)
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
@@ -370,7 +377,9 @@ export default {
       openCollectionModal,
       burgerChanged,
       closeMenu,
-      ImgUrl,
+      imgUrl,
+      setImgUrl,
+      setApiImgUrl,
       imgHref,
       apiImgUrl,
       apiImgHref
