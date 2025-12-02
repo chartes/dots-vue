@@ -143,7 +143,7 @@
               <a
                 v-else
                 href="#"
-                v-on:click.prevent="toggleCollection(ancestor.router)"
+                v-on:click.prevent="toggleCollection(ancestor.identifier)"
               >
                 {{ ancestor.title }}
               </a>
@@ -255,7 +255,7 @@ import CollectionModal from '@/components/CollectionModal.vue'
 
 import { useStore } from 'vuex'
 import useMirador from '@/composables/use-mirador'
-import { getMetadataFromApi, getParentFromApi, getTOCFromApi } from '@/api/document'
+import { getMetadataFromApi, getParentFromApi, getTOCFromApi, getAncestors } from '@/api/document'
 
 import {
   computed,
@@ -273,7 +273,7 @@ import router from '@/router/index.js'
 import fetchMetadata from '@/composables/get-metadata.js'
 import store from '@/store'
 
-function getSimpleObject (obj) {
+export function getSimpleObject (obj) {
   // console.log("getSimpleObject / obj", obj)
   let simpleObject = {}
   simpleObject = {
@@ -288,7 +288,7 @@ function getSimpleObject (obj) {
     children: obj.children,
     member: obj.member,
     parent: obj.parent,
-    dublincore: { ...obj.dublincore, title: Array.isArray(obj.dublincore.title) ? obj.dublincore.title[0] : obj.dublincore.title },
+    dublincore: { ...obj?.dublincore, title: Array.isArray(obj?.dublincore?.title) ? obj?.dublincore?.title?.[0] : obj?.dublincore?.title },
     extensions: obj.extensions
   }
   // console.log("getSimpleObject / simpleObject", simpleObject)
@@ -465,33 +465,23 @@ export default {
         const parentResponse = await getParentFromApi(response['@id'])
         // console.log("parentResponse", parentResponse["member"][0])
 
-        if (response['@type'] === 'Resource') {
-          documentType.value = 'Resource'
-          currentItem.value = getSimpleObject(response)
-          currentItem.value.parent = parentResponse.member.length > 1 ? parentResponse.member.map(p => p['@id']) : parentResponse.member[0]['@id']
-          currentItem.value.level = 0
+        documentType.value = 'Resource'
+        currentItem.value = getSimpleObject(response)
+        currentItem.value.parent = parentResponse.member.length > 1 ? parentResponse.member.map(p => p['@id']) : parentResponse.member[0]['@id']
+        currentItem.value.level = 0
 
-          // Fetch editorial level document parts if any (based on citeType)
-          let editorialTypes = []
-          if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByCiteType.length > 0) {
-            editorialTypes = collConfig.value[0].tableOfContentsSettings.editByCiteType
-          }
-          currentItem.value.editorialLevelIndicator = editorialTypes.includes(currentItem.value.citeType) ? 'toEdit' : 'renderToc'
-          store.commit('setCurrentItem', currentItem.value)
-          document.title = currentItem.value.title
-          console.log('init type : ', documentType.value)
-          console.log('set currentItem.value : ', currentItem.value)
-          isModalOpened.value = false
-        } else {
-          documentType.value = 'Collection'
-
-          currentItem.value = getSimpleObject(response)
-          currentItem.value.parent = parentResponse.member ? parentResponse.member[0]['@id'] : null
-          currentItem.value.level = -1
-          currentItem.value.editorialLevelIndicator = 'renderToc'
-          console.log('init type : ', documentType.value)
-          isModalOpened.value = true
+        // Fetch editorial level document parts if any (based on citeType)
+        let editorialTypes = []
+        if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByCiteType.length > 0) {
+          editorialTypes = collConfig.value[0].tableOfContentsSettings.editByCiteType
         }
+        currentItem.value.editorialLevelIndicator = editorialTypes.includes(currentItem.value.citeType) ? 'toEdit' : 'renderToc'
+        store.commit('setCurrentItem', currentItem.value)
+        document.title = currentItem.value.title
+        console.log('init type : ', documentType.value)
+        console.log('set currentItem.value : ', currentItem.value)
+        isModalOpened.value = false
+
         docProjectId.value = isDocProjectIdInc.value ? route.params.collId + '/' : ''
         console.log('docProjectId.value ', docProjectId.value)
 
@@ -522,13 +512,8 @@ export default {
       console.log('DocumentPage getTOC resourceId.value', resourceId.value)
       console.log('DocumentPage getTOC refId.value', refId.value)
 
-      const response = await getTOCFromApi(resourceId.value, documentType.value)
+      const response = await getTOCFromApi(resourceId.value, "Resource")
       console.log('DocumentPage getTOC initial TOC response', response)
-      if (response.member && documentType.value === 'Collection') {
-        response.member.forEach(m => { m.parent = response['@id'] })
-        response.member.forEach(m => { m.level = store.state.currentItem.level + 1 })
-        response.member.forEach(m => { m.identifier = m['@id'] })
-      }
       if (!response.member) {
         response.member = []
       }
@@ -934,15 +919,18 @@ export default {
         bottomTOC.value = JSON.parse(JSON.stringify(topTOC.value.filter(i => i.level > 0)))
         console.log('bottomTOC cas 3 :', bottomTOC.value, topTOC.value)
       }
-      await getAncestors()
+      await setBreadcrumbs()
       console.log('getTOC result topTOC : ', topTOC.value)
       console.log('getTOC result bottomTOC : ', bottomTOC.value)
       store.commit('setTOC', flatTOC.value)
       isLoading.value = true
     }
 
-    const getAncestors = async () => {
-      console.log('getAncestors start')
+    const setBreadcrumbs = async () => {
+
+      const ancestors = await getAncestors(currentItem.value, collConfig.value.excludeCollectionIds || [])
+
+      console.log('setBreadcrumbs start')
       const currentItemId = hash.value ? hash.value : refId.value ? refId.value : resourceId.value
       console.log('ancestors currentItemId : ', flatTOC.value, hash.value, refId.value, resourceId.value, currentItemId)
 
@@ -983,41 +971,9 @@ export default {
       }
 
       // Build the collections breadcrumb
-      arianeCollection.value = flatTOC.value
-      // Filter the TOC down to the item we care about based on currentItemId
-        .filter(item => item.identifier === currentItemId)
-      // Map each item to an array of its ancestors
-        .map(item => findAncestors(item, flatTOC.value))
-      // Flatten the array of arrays into an array of items
-        .flat()
-      // De-duplicate the result
-        .reduce((output, item) => {
-          return !output.includes(item)
-            ? [...output, item]
-            : output
-        }, [])
-      // From these ancestors, we only need Collection items
-        .filter(item => item.citeType === 'Collection')
-      // Sorting by increasing level
-        .sort((a, b) => a.level - b.level)
-
-      console.log('getAncestor arianeCollection.value', arianeCollection.value)
-
-      // Group the ancestors (type collection) by level (when there are several parent collections at any level)
-      const arianeColGroupedByLevel = new Map()
-
-      for (let i = 0; i < arianeCollection.value.length; i += 1) {
-        console.log('arianeCollection test order increasing', arianeCollection.value[i])
-        const level = arianeCollection.value[i].level
-        console.log('arianeCollection arianeColGroupedByLevel i / item / level : ', i, arianeCollection.value[i], level)
-        console.log('arianeCollection arianeColGroupedByLevel / i ', i, arianeColGroupedByLevel)
-        if (!arianeColGroupedByLevel.has(level)) {
-          arianeColGroupedByLevel.set(level, [arianeCollection.value[i]])
-        } else {
-          arianeColGroupedByLevel.get(level).push(arianeCollection.value[i])
-        }
-      }
-      arianeCollection.value = Array.from(arianeColGroupedByLevel.values())
+      arianeCollection.value = ancestors.reverse().map((elem) => {
+        return elem.filter((e) => e.citeType === "Collection")
+      }).filter((e) => e.length > 0)
 
       // Build the breadcrumb within the resource
       arianeDocument.value = flatTOC.value
@@ -1217,7 +1173,7 @@ export default {
             currentLevel.value = refId.value
               ? flatTOC.value.find(i => i.identifier === refId.value).level
               : flatTOC.value.find(i => i.identifier === resourceId.value).level
-            await getAncestors()
+            await setBreadcrumbs()
             currentLevelIndicator.value = refId.value
               ? flatTOC.value.find(i => i.identifier === refId.value).editorialLevelIndicator
               : flatTOC.value.find(i => i.identifier === resourceId.value).editorialLevelIndicator

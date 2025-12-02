@@ -1,3 +1,5 @@
+import { getSimpleObject } from "@/views/DocumentPage"
+
 const _baseApiURL = `${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`
 
 // --- Cache for getMetadataFromApi ---
@@ -188,11 +190,32 @@ async function getProjectFromApi (id, options = {}) {
   return loopId
 }
 
+async function getAncestors (currentCollection, excludedCollections = []) {
+
+  const ancestors = [[getSimpleObject(currentCollection),], ]
+
+  let loop = true
+  let cur = currentCollection
+  while (loop) {
+    let parent = await getParentFromApi(cur?.identifier)
+    // stop when no parent or parent == VITE_APP_ROOT_DTS_COLLECTION_ID
+    if (parent?.member &&  parent?.member?.[0]?.["@id"].toLowerCase() !== import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID.toLowerCase()) {
+      cur = getSimpleObject(parent?.member[0])
+      ancestors.push(parent?.member.map((elem) => getSimpleObject(elem)).filter((elem) => !excludedCollections.includes(elem.identifier)))
+    } else {
+      loop = false
+    }
+  }
+
+  return ancestors
+}
+
 export {
   getCoverDataFromApi,
   getDocumentFromApi,
   getMetadataFromApi,
   getTOCFromApi,
   getParentFromApi,
-  getProjectFromApi
+  getProjectFromApi,
+  getAncestors,
 }

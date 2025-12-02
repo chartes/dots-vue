@@ -53,7 +53,7 @@ import AppNavbar from '@/components/AppNavbar'
 import AppFooter from '@/components/AppFooter.vue'
 import BackToTopButton from '@/components/BackToTopButton.vue'
 import fetchMetadata from '@/composables/get-metadata'
-import { getMetadataFromApi, getParentFromApi, getProjectFromApi } from '@/api/document'
+import { getMetadataFromApi, getParentFromApi, getProjectFromApi, getAncestors } from '@/api/document'
 
 function getSimpleObject (obj) {
   // console.log("getSimpleObject / obj", obj)
@@ -160,42 +160,14 @@ export default {
     }
 
     const getBreadcrumb = async (collId) => {
-      let loopCollId = collId
-      const initialBreadCrumb = {}
-      initialBreadCrumb[collId] = currCollection.value.title
-      console.log('App.vue breadcrumb initial initialBreadCrumb loopCollId, rootCollectionIdentifier.value', initialBreadCrumb, loopCollId, rootCollectionIdentifier.value)
-      breadCrumb.value = loopCollId !== rootCollectionIdentifier.value ? [initialBreadCrumb] : []
-      console.log('App.vue breadcrumb initial', breadCrumb.value)
-      let parentCollId = ''
-      while (loopCollId && loopCollId !== projectCollId.value && loopCollId !== rootCollectionIdentifier.value) {
-        console.log('App.vue breadcrumb loopCollId', loopCollId)
-        const parentsResponse = await getParentFromApi(loopCollId)
-        const parentCollIds = parentsResponse.member ? parentsResponse.member.map(p => ({ [p['@id']]: p.title })) : []
-        console.log('App.vue breadcrumb parentsResponse.member', parentsResponse.member ? parentsResponse.member + '/n' + parentsResponse.member.map(p => ({ [p['@id']]: p.title })) : 'no parent')
-        console.log('App.vue breadcrumb parentCollIds', parentCollIds)
-        if (Array.isArray(parentCollIds) && parentCollIds.length > 1) {
-          parentCollId = store.state.collectionId && Object.keys(parentCollIds).includes(store.state.collectionId) && store.state.collectionId !== loopCollId ? store.state.collectionId : parentCollIds[0]
-          console.log('App.vue breadcrumb parentCollId cas 1', parentCollId)
-        } else {
-          parentCollId = parentCollIds.map(p => Object.keys(p)[0])[0]
-          console.log('App.vue breadcrumb parentCollId cas 2', parentCollId)
-        }
-        if (parentCollId && parentCollId !== rootCollectionIdentifier.value && !breadCrumb.value.map(m => Object.keys(m)[0]).includes(parentCollId)) {
-          const parentBreadcrumb = {}
-          parentBreadcrumb[parentCollId] = parentsResponse.member.find(p => p['@id'] === parentCollId).title
-          breadCrumb.value.push(parentBreadcrumb)
-        }
-        loopCollId = parentCollId
-      }
-      console.log('App.vue breadcrumb ', breadCrumb.value)
-      for (const id of breadCrumb.value.map(p => Object.keys(p)[0])) {
-        const loopCollSettings = appConfig.value.collectionsConf.find(coll => coll.collectionId === id)
-        console.log('App.vue shortTitlesBreadcrumb id ', id, appConfig.value.collectionsConf.find(coll => coll.collectionId === id))
-        if ((((loopCollSettings || {}).homePageSettings || {}).appNavBar || {}).collectionShortTitle) {
-          breadCrumb.value.find(p => Object.keys(p)[0] === id)[id] = loopCollSettings.homePageSettings.appNavBar.collectionShortTitle
-        }
-      }
-      console.log('App.vue breadcrumb after update', breadCrumb.value)
+      const ancestors = await getAncestors(currCollection.value)
+      breadCrumb.value = ancestors.map((collections) => {
+        const collection = collections[0]
+        const collConfig = appConfig.value.collectionsConf.find((config) => {return config.collectionId === collection.identifier})
+        const label = collConfig?.homePageSettings?.appNavBar?.collectionShortTitle || collection.identifier
+        return {[collection.identifier]: label}
+      })
+
     }
 
     const setCurrentCollectionContext = async (route) => {
