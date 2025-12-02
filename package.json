@@ -10,7 +10,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
   },
   "dependencies": {
-    "bulma": "^0.9.4",
+    "bulma": "^1.0.4",
     "md5": "^2.3.0",
     "mirador": "^3.4.3",
     "rdflib": "^2.3.0",
@@ -27,9 +27,9 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "5.2.4",
     "lodash": "4.17.21",
-    "@vue/eslint-config-standard": "^8.0.1",
-    "eslint": "^8.57.1",
-    "eslint-plugin-vue": "^9.33.0",
+    "@vue/eslint-config-standard": "^9.0.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-vue": "^10.6.2",
     "vite": "5.4.21"
   },
   "browserslist": [
