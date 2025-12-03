@@ -116,7 +116,6 @@ export default {
     console.log('App.vue setup theme : ', whichTheme.value)
 
     const mergeSettings = async () => {
-
       if (Object.keys(appConfig.value).length > 0) {
         return
       }
@@ -130,7 +129,7 @@ export default {
       // Check if a default custom collection exists in Custom settings
       let defaultCustomSettings = {}
       if (`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}`.length > 0) {
-        defaultCustomSettings = Object.entries(import.meta.glob("confs/custom.conf.json", { eager: true})).map(([key, value]) => value)[0]
+        defaultCustomSettings = Object.entries(import.meta.glob('confs/custom.conf.json', { eager: true })).map(([key, value]) => value)[0]
         console.log('App.vue setup defaultCustomSettings', defaultCustomSettings)
         appSettings.default = defaultCustomSettings ? _.merge({}, appSettings.default, defaultCustomSettings) : appSettings.default
         console.log('App.vue setup appSettings.default updated with custom default', appSettings.default)
@@ -163,11 +162,10 @@ export default {
       const ancestors = await getAncestors(currCollection.value)
       breadCrumb.value = ancestors.map((collections) => {
         const collection = collections[0]
-        const collConfig = appConfig.value.collectionsConf.find((config) => {return config.collectionId === collection.identifier})
+        const collConfig = appConfig.value.collectionsConf.find((config) => { return config.collectionId === collection.identifier })
         const label = collConfig?.homePageSettings?.appNavBar?.collectionShortTitle || collection.identifier
-        return {[collection.identifier]: label}
+        return { [collection.identifier]: label }
       })
-
     }
 
     const setCurrentCollectionContext = async (route) => {
@@ -208,8 +206,8 @@ export default {
 
     const getCustomCss = async () => {
       if (collConfig.value.collectionCustomCss) {
-        const appCssConfs = Object.fromEntries(Object.entries(import.meta.glob('confs/**/*.customCss.css', { eager: false, query: "?raw" })).map(([key, value]) => {
-          const newKey = key.split("/").at(-1).replace(".customCss.css", "")
+        const appCssConfs = Object.fromEntries(Object.entries(import.meta.glob('confs/**/*.customCss.css', { eager: false, query: '?raw' })).map(([key, value]) => {
+          const newKey = key.split('/').at(-1).replace('.customCss.css', '')
           return [newKey, value]
         }))
         console.log('App.vue getCustomCss appCssConfs ', appCssConfs)
@@ -249,7 +247,7 @@ export default {
 
     watch(
       () => store.state.collectionId, async function () {
-        console.log("WATCH", "watcher collectionId")
+        console.log('App.vue watch STATE store.state.collectionId : ', store.state.collectionId)
         collConfigReady.value = false
         if (dtsRootCollectionId.value && rootCollectionIdentifier.value) {
           watcherState.value = true
@@ -309,7 +307,7 @@ export default {
     )
     watch(
       router.currentRoute, async (newRoute, oldRoute) => {
-
+        console.log('App.vue watch ROUTER oldRoute/newRoute : ', oldRoute, newRoute)
         // Do nothing if newRoute and oldRoute are not defined
         if (!(newRoute && oldRoute)) {
           return
@@ -335,7 +333,6 @@ export default {
 
         // true/false, depends on VITE_APP_XXX variables
         if (isDocProjectIdInc) {
-
           // Do nothing if routes are the same, collId are the same, and collId is stored. Mark collConfigReady as ready (true)
           if ((newRoute.name === oldRoute.name) && (newRoute.params.collId === oldRoute.params.collId) && (store.state.collectionId === collectionId.value)) {
             collConfigReady.value = true
@@ -353,10 +350,10 @@ export default {
 
             const parentResponse = await getParentFromApi(newRoute.params.id)
             const currentCollection = parentResponse?.member.find((member) => {
-              if (member["@id"] === store.state.collectionId) {
+              if (member['@id'] === store.state.collectionId) {
                 return member
               }
-            })?.["@id"] || parentResponse.member[0]['@id']
+            })?.['@id'] || parentResponse.member[0]['@id']
 
             collectionId.value = currentCollection
             store.commit('setResourceId', newRoute.params.id)
@@ -373,7 +370,7 @@ export default {
         } else {
           // Set the app rootCollection
           if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
-            // If there no are no user defined app rootCollection, the rootCollection of the app is the DTS root collection
+            // If there is no user-defined app rootCollection, the rootCollection of the app is the DTS root collection
             rootCollectionIdentifier.value = dtsRootCollectionId.value
           } else {
             // Otherwise use the user defined app rootCollection
@@ -392,8 +389,8 @@ export default {
           // Collection is loaded
         }
 
-          watcherRoute.value = false
-          collConfigReady.value = true
+        watcherRoute.value = false
+        collConfigReady.value = true
       }, { deep: true, immediate: true }
     )
 
