@@ -347,7 +347,6 @@ export default {
           }
           // Set the current collection
           if (newRoute.params.id) {
-
             const parentResponse = await getParentFromApi(newRoute.params.id)
             const currentCollection = parentResponse?.member.find((member) => {
               if (member['@id'] === store.state.collectionId) {
@@ -550,8 +549,8 @@ p.header-baseline span {
 
 /* responsive layout */
 .app-width-margin {
-  margin: 0 auto !important;
-  max-width: 1100px !important;
+  margin: 0 auto;
+  max-width: 1100px;
 }
 .app-width-padding {
   margin: 0;
