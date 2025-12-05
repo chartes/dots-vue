@@ -191,6 +191,8 @@ article.about {
     margin: 20px 10px auto auto;
     height: 100%;
     width: 20%;
+    z-index: 10;
+    background-color: white;
     & > div > aside > p.menu-label {
       padding-top: 5px;
       padding-bottom: 5px;
@@ -199,6 +201,7 @@ article.about {
       font-size: 16px;
       text-transform: uppercase;
       text-align: right;
+      text-indent: 0;
       &:hover {
         background-color: rgba(185, 25, 47, 15%);
       }
@@ -293,11 +296,18 @@ article.about {
     align-items: center;
     width: 100%;
     & .tab-menu {
-      margin: 10px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      margin-left: 10px;
+      margin-right: 10px;
       height: 100%;
       width: 100%;
+      padding-top: 10px;
+      padding-bottom: 10px;
       padding-left: 2.5%;
       padding-right: 2.5%;
+      background-color: white;
+      z-index: 10;
       & > div > aside {
         display: flex;
         flex-direction: row;
