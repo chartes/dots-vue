@@ -31,9 +31,6 @@
     }
 }
 .about-content {
-    & > h1 {
-        color: var(--text-color)
-    }
     & a {
         scroll-margin-top: 70px;
     }

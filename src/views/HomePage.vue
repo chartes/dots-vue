@@ -541,8 +541,6 @@ a {
   font-weight: 500;
   line-height: 33px;
   text-transform: none;
-  /* color: #971716; */
-  color: var(--text-color);
 }
 .home-mask > .wrapper > .collection-toc-area {
   width: 100%;

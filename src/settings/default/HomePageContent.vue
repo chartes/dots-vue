@@ -60,6 +60,7 @@ export default {
 .about h1 {
   padding-top: 20px;
   padding-bottom: 20px;
+  font-family: "Barlow", sans-serif;
   text-align: left;
   font-size: 25px;
   font-weight: 500;
@@ -70,10 +71,10 @@ export default {
 .about h2 {
   padding-top: 20px;
   padding-bottom: 20px;
+  font-family: "Barlow", sans-serif;
   text-align: left;
-  font-size: 20px;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 33px;
   text-transform: none;
 }
 .about p {

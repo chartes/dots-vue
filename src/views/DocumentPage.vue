@@ -1633,7 +1633,7 @@ div.remove-bottom-padding #article {
   line-height: 33px;
   text-transform: none;
   /* color: #971716; */
-  color: var(--text-color);
+  /*color: var(--text-color);*/
 }
 
 #article .titlepage {

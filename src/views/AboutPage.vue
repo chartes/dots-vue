@@ -254,21 +254,21 @@ article.about {
 }
 .about .about-content h1,
 .about .content h1 {
-  margin: 30px 0 !important;
-  font-family: "Noto Serif", serif !important;
-  font-weight: 400;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  font-family: "Barlow", sans-serif;
+  font-weight: 500;
   font-style: normal;
-  font-size: 30px;
-  line-height: 42px;
+  font-size: 25px;
+  line-height: 33px;
 }
 .about .about-content h2,
 .about .content h2 {
-  margin: 70px 0 30px !important;
+  padding-top: 20px;
+  padding-bottom: 20px;
   font-family: "Barlow", sans-serif;
-  font-weight: 400;
-  font-size: 28px;
-  line-height: 34px;
-  color: #B9192F;
+  font-weight: 500;
+  line-height: 33px;
 }
 .about .about-content a,
 .about .content a {
