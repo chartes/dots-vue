@@ -1,473 +1,304 @@
 <template>
   <div class="document-metadata" :class="metaDataCssClass">
-    <!--<a href="#" v-on:click="toggleNew">
-        <span class="metadata-header-author">Switch</span>
-    </a>-->
-    <div v-if="!isNew">
-      <div class="document-metadata-header">
-        <a href="#" v-on:click="toggleContent">
-          <span
-            class="metadata-header-author"
-          >
-            {{ metadata.author }}
-          </span>
-          <span
-            class="metadata-header-title"
-          >
-            {{ metadata.title }}
-          </span>
-        </a>
-        <a href="#" class="toggle-btn" v-on:click="toggleContent"></a>
-      </div>
-      <aside class="menu">
-        <Suspense v-if="!isNew">
-          <div class="columns is-multiline">
-            <div class="column is-2">
-              <div v-if="authorThumbnailUrl">
-                <figure class="image" style="max-width: 100%">
-                  <img :src="authorThumbnailUrl" />
-                </figure>
-              </div>
-              <div v-else class="author-default-thumbnail" />
-            </div>
-            <div class="column is-7 thesis-infos is-flex is-flex-direction-column">
-              <section v-if="metadata.coverage">
-                <h2 class="title">Position</h2>
-                <ul>
-                  <li v-if="metadata.coverage" class="block">
-                    <span>Période du sujet</span> : {{ metadata.coverage }}
-                  </li>
-                </ul>
-              </section>
-              <section>
-                <h2 class="title">Citer</h2>
-                <ul>
-                  <li class="block">
-                    <span style="font-variant: all-small-caps">{{ metadata.author }}</span
-                    >, « <span v-html="metadata.title"></span> », in
-                    <span style="font-style: italic"
-                      >Positions des thèses soutenues par les élèves de la promotion de
-                      {{ metadata.date }} pour obtenir le diplôme d'archiviste
-                      paléographe</span
-                    >, École nationale des chartes, Paris, {{ metadata.date
-                    }}<span v-if="metadata.page">, p. {{ metadata.page }}</span
-                    >.
-                  </li>
+    <div
+      v-if="!isPopUp"
+       class="document-metadata-header"
+    >
+      <div class="resource" v-on:click="toggleContent">
 
-                  <li>
-                    <span>
-                      Licence : <a target="_blank" v-bind:href="metadata.rights">{{ metadata.rights }}</a>
-                    </span>
-                  </li>
-                </ul>
-              </section>
-              <section>
-                <h2 class="title">Direct metadatas</h2>
-                <!--<span> {{ metadata }}</span>-->
-                <ul v-for="(val, name, index) in metadata" :key="index">
-                  <li v-if="typeof(val) === 'string'" class="block">
-                    <span style="font-variant: all-small-caps">{{ name }} : {{ val }}</span>
-                  </li>
-                </ul>
-                <section>
-                  <h2 class="title"> Extensions - LIAGE</h2>
-                  <ul v-for="(value, name, index) in metadata.extensions" :key="index">
-                    <li v-if="Array.isArray(value) && value.length > 1">
-                      <span
-                        class="test"
-                        v-for="(v, occ) in value"
-                        style="font-variant: all-small-caps"
-                        :key="occ"
-                      >
-                        {{ name }} : {{ typeof(v) === 'object' ? Object.values(v)[0] : v }}
-                      </span>
-                    </li>
-                  </ul>
-                </section>
-                <section>
-                  <h2 class="title"> Extensions - HORS LIAGE</h2>
-                  <ul v-for="(value, name, index) in metadata.extensions" :key="index">
-                    <li v-if="typeof(value) === 'string' || Array.isArray(value) && value.length === 1">
-                      <span style="font-variant: all-small-caps">{{ name }} : {{ value }}</span>
-                    </li>
-                  </ul>
-                </section>
-                <section>
-                  <h2 class="title">Dublincore</h2>
-                  <ul v-for="(value, name, index) in metadata.dublincore" :key="index">
-                    <li v-if="Array.isArray(value) && value.length > 1" class="block">
-                      <span v-for="(v, occ) in value" style="font-variant: all-small-caps" :key="occ">{{ v }}</span>
-                    </li>
-                    <li v-else class="block">
-                      <span style="font-variant: all-small-caps">{{ value }}</span>
-                    </li>
-                  </ul>
-                </section>
-              </section>
-            </div>
-            <div class="column thesis-links">
-              <h2 class="title">Liens externes</h2>
-              <div class="is-flex is-flex-direction-column">
-                <div>
-                  <p class="title">Auteur</p>
-                  <div class="columns is-multiline is-mobile block">
-                    <div v-if="metadata.wikipedia" class="column is-one-quarter">
-                      <figure class="image is-48x48">
-                        <a target="_blank" v-bind:href="metadata.wikipedia">
-                          <img src="@/assets/images/logo_wikipedia.png" />
-                        </a>
-                      </figure>
-                    </div>
-                    <div v-if="metadata.catalogue_bnf" class="column is-one-quarter">
-                      <figure class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="metadata['catalogue_bnf']">
-                          <img src="@/assets/images/logo_bnf.png" />
-                        </a>
-                      </figure>
-                    </div>
-                    <div v-if="metadata.data_bnf" class="column is-one-quarter">
-                      <figure class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="metadata.data_bnf">
-                          <img src="@/assets/images/logo_databnf.png" />
-                        </a>
-                      </figure>
-                    </div>
-                    <div v-if="metadata.idref" class="column is-one-quarter">
-                      <figure class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="metadata.idref">
-                          <img src="@/assets/images/logo_idref.png" />
-                        </a>
-                      </figure>
-                    </div>
-                    <div v-if="metadata.dbpedia" class="column is-one-quarter">
-                      <figure class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="metadata.dbpedia">
-                          <img src="@/assets/images/logo_dbpedia.png" />
-                        </a>
-                      </figure>
-                    </div>
-                    <div v-if="metadata.wikidata" class="column is-one-quarter">
-                      <figure class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="metadata.wikidata">
-                          <img src="@/assets/images/logo_wikidata.png" />
-                        </a>
-                      </figure>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <p class="title">Oeuvres liées</p>
-                  <div class="columns is-multiline is-mobile block">
-                    <div v-if="metadata.thenca" class="column is-one-quarter">
-                      <figure class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="metadata.thenca">
-                          <img src="@/assets/images/logo_thenca.png" />
-                        </a>
-                      </figure>
-                    </div>
-                    <div v-if="metadata.sudoc" class="column is-one-quarter">
-                      <figure class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="metadata.sudoc">
-                          <img src="@/assets/images/logo_sudoc.png" />
-                        </a>
-                      </figure>
-                    </div>
-                    <div v-if="metadata.benc" class="column is-one-quarter">
-                      <figure class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="metadata.benc">
-                          <img src="@/assets/images/logo_benc.png" />
-                        </a>
-                      </figure>
-                    </div>
-                    <div v-if="metadata.hal" class="column is-one-quarter">
-                      <figure class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="metadata.hal">
-                          <img src="@/assets/images/logo_hal.png" />
-                        </a>
-                      </figure>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Suspense>
-      </aside>
-      <!--  <theseAnnee v-if="state['date']" :id="state['date']" :textid="id" /> -->
-    </div>
-    <div v-else>
-      <div
-        v-if="!isPopUp"
-         class="document-metadata-header"
-      >
-        <div class="resource" v-on:click="toggleContent">
-
-          <span class="metadata-header-title resource">{{ metadata.title }}</span>
-          <template v-if="Array.isArray(metadata.author) && metadata.author.length > 0">
-            <span
-              v-for="(aut, index) in metadata.author"
-              v-bind:key="index"
-              class="metadata-header-author resource"
-            >
-              {{ aut }}
-            </span>
-          </template>
+        <span class="metadata-header-title resource">{{ metadata.title }}</span>
+        <template v-if="Array.isArray(metadata.author) && metadata.author.length > 0">
           <span
-            v-else-if="metadata.author"
+            v-for="(aut, index) in metadata.author"
+            v-bind:key="index"
             class="metadata-header-author resource"
           >
-            {{ metadata.author }}
+            {{ aut }}
           </span>
-          <span class="metadata-header-label resource">
-            Métadonnées
-          </span>
-        </div>
-        <a href="#" class="toggle-btn" v-on:click="toggleContent"></a>
+        </template>
+        <span
+          v-else-if="metadata.author"
+          class="metadata-header-author resource"
+        >
+          {{ metadata.author }}
+        </span>
+        <span class="metadata-header-label resource">
+          Métadonnées
+        </span>
       </div>
-      <div
-        v-else
-         class="document-metadata-header"
-      >
-        <div class="collection" v-on:click="toggleContent">
-          <span class="metadata-header-label collection">
-            Métadonnées
-          </span>
-          <span class="metadata-header-title collection">{{ metadata.title }}</span>
-          <span
-            v-if="metadata.author"
-            class="metadata-header-author collection"
-          >
-            {{ metadata.author }}
-          </span>
-        </div>
-        <a href="#" class="toggle-btn" v-on:click="toggleContent"></a>
+      <a href="#" class="toggle-btn" v-on:click="toggleContent"></a>
+    </div>
+    <div
+      v-else
+       class="document-metadata-header"
+    >
+      <div class="collection" v-on:click="toggleContent">
+        <span class="metadata-header-label collection">
+          Métadonnées
+        </span>
+        <span class="metadata-header-title collection">{{ metadata.title }}</span>
+        <span
+          v-if="metadata.author"
+          class="metadata-header-author collection"
+        >
+          {{ metadata.author }}
+        </span>
       </div>
-      <aside class="menu">
-        <Suspense>
-          <div class="is-flex is-justify-content-center">
-          <table class="table is-fullwidth"><!-- style="background-color: #e4e4e4;" -->
-            <tbody>
-              <!--<tr class="row">
-                <td><span class="title" style="font-variant: all-small-caps"><b>Identifiant</b></span></td>
+      <a href="#" class="toggle-btn" v-on:click="toggleContent"></a>
+    </div>
+    <aside class="menu">
+      <Suspense>
+        <div class="is-flex is-justify-content-center">
+        <table class="table is-fullwidth"><!-- style="background-color: #e4e4e4;" -->
+          <tbody>
+            <!--<tr class="row">
+              <td><span class="title" style="font-variant: all-small-caps"><b>Identifiant</b></span></td>
+              <td>
+                <span class="title" style="text-transform: uppercase; font-size: 12px">
+                  <a target="_blank" :href="metadata.id">{{ metadata.id }}</a>
+              </span>
+              </td>
+              <td></td>
+            </tr>
+            <tr class="row">
+              <td><span class="title" style="font-variant: all-small-caps"><b>Titre</b></span></td>
+              <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ metadata.title }}</span></td>
+              <td></td>
+            </tr>-->
+            <template v-for="(value, name, index) in metadata.dublincore" :key="index">
+              <tr v-if="Array.isArray(value) && value.length > 1" v-for="(v, i) in value" :key="i" class="row is-align-items-center">
+                <td v-if="v === value[0]" :rowspan="value.length"><span class="title"><b>dc:{{ name }}</b></span></td>
+                <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ v }}</span></td>
                 <td>
-                  <span class="title" style="text-transform: uppercase; font-size: 12px">
-                    <a target="_blank" :href="metadata.id">{{ metadata.id }}</a>
-                </span>
-                </td>
-                <td></td>
-              </tr>
-              <tr class="row">
-                <td><span class="title" style="font-variant: all-small-caps"><b>Titre</b></span></td>
-                <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ metadata.title }}</span></td>
-                <td></td>
-              </tr>-->
-              <template v-for="(value, name, index) in metadata.dublincore" :key="index">
-                <tr v-if="Array.isArray(value) && value.length > 1" v-for="(v, i) in value" :key="i" class="row is-align-items-center">
-                  <td v-if="v === value[0]" :rowspan="value.length"><span class="title"><b>dc:{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ v }}</span></td>
-                  <td>
-                    <figure v-if="getValue(v).includes('http')" class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="getValue(v)">
-                          <img :src="ImgUrl(name)"/>
-                        </a>
-                      </figure>
-                  </td>
-                </tr>
-                <tr class="row" v-else>
-                  <td><span class="title"><b>dc:{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td>
-                  <td></td>
-                </tr>
-              </template>
-              <template v-for="(value, name, index) in metadata.extensions" :key="index">
-                <tr v-if="Array.isArray(value) && value.length > 1" v-for="(v, i) in value" :key="i" class="row is-align-items-center">
-                  <td v-if="v === value[0]" :rowspan="value.length"><span class="title"><b>{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ v }}</span></td>
-                  <td>
-                    <figure v-if="getValue(v).includes('http')" class="image is-48x48 level-left">
+                  <figure v-if="getValue(v).includes('http')" class="image is-48x48 level-left">
                       <a target="_blank" v-bind:href="getValue(v)">
                         <img :src="ImgUrl(name)"/>
                       </a>
                     </figure>
-                  </td>
-                </tr>
-                <tr class="row" v-else>
-                  <td><span class="title"><b>{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td>
-                  <td></td>
-                </tr>
-              </template>
-              <template v-for="(value, key, index) in metadata" :key="index">
-                <tr v-if="Array.isArray(value) && value.length >= 1" v-for="(v, i) in value" :key="i" class="row is-align-items-center">
-                  <td v-if="v === value[0]" :rowspan="value.length"><span class="title is-align-items-center"><b>{{ key }}</b></span></td>
-                  <td v-if="v.url"><span class="title" style="text-transform: uppercase; font-size: 12px">{{ v.url }}</span></td><!-- {{ Array.isArray(v) ? v[0] : typeof(v) === 'object' ? Object.values(v)[0] : v }} -->
-                  <td v-else><span class="title" style="text-transform: uppercase; font-size: 12px">{{ v }}</span></td><!-- {{ Array.isArray(v) ? v[0] : typeof(v) === 'object' ? Object.values(v)[0] : v }} -->
-                  <td v-if="v.url">
-                    <figure class="image is-24x24 level-left">
-                      <a target="_blank" v-bind:href="v.url">
-                        <img :src="ImgUrl(v.source.name)"/>
-                      </a>
-                    </figure>
-                  </td>
-                  <td v-else></td>
-                </tr>
-                <tr class="row" v-else-if="value && typeof(value) === 'object'">
-                  <td><span class="title"><b>{{ key }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value.url }}</span></td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
-                  <td>
-                    <figure v-if="value.url && value.url.includes('http')" class="image is-24x24 level-left">
+                </td>
+              </tr>
+              <tr class="row" v-else>
+                <td><span class="title"><b>dc:{{ name }}</b></span></td>
+                <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td>
+                <td></td>
+              </tr>
+            </template>
+            <template v-for="(value, name, index) in metadata.extensions" :key="index">
+              <tr v-if="Array.isArray(value) && value.length > 1" v-for="(v, i) in value" :key="i" class="row is-align-items-center">
+                <td v-if="v === value[0]" :rowspan="value.length"><span class="title"><b>{{ name }}</b></span></td>
+                <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ v }}</span></td>
+                <td>
+                  <figure v-if="getValue(v).includes('http')" class="image is-48x48 level-left">
+                    <a target="_blank" v-bind:href="getValue(v)">
+                      <img :src="ImgUrl(name)"/>
+                    </a>
+                  </figure>
+                </td>
+              </tr>
+              <tr class="row" v-else>
+                <td><span class="title"><b>{{ name }}</b></span></td>
+                <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td>
+                <td></td>
+              </tr>
+            </template>
+            <template v-for="(value, key, index) in metadata" :key="index">
+              <tr v-if="Array.isArray(value) && value.length >= 1" v-for="(v, i) in value" :key="i" class="row is-align-items-center">
+                <td v-if="v === value[0]" :rowspan="value.length"><span class="title is-align-items-center"><b>{{ key }}</b></span></td>
+                <td v-if="v.url">
+                  <span class="title">
+                     <a v-if="v.url.includes('localhost')" v-bind:href="v.url">
+                       {{ v.url }}
+                     </a>
+                    <a v-else target="_blank" v-bind:href="v.url">
+                      {{ v.url }}
+                    </a>
+                  </span>
+                </td><!-- {{ Array.isArray(v) ? v[0] : typeof(v) === 'object' ? Object.values(v)[0] : v }} -->
+                <td v-else>
+                  <span class="title" style="text-transform: uppercase; font-size: 12px">
+                    {{ v }}
+                  </span>
+                </td><!-- {{ Array.isArray(v) ? v[0] : typeof(v) === 'object' ? Object.values(v)[0] : v }} -->
+                <td v-if="v.url">
+                  <figure class="image is-24x24 level-left">
+                    <a target="_blank" v-bind:href="v.url">
+                      <img :src="ImgUrl(v.source.name)"/>
+                    </a>
+                  </figure>
+                </td>
+                <td v-else></td>
+              </tr>
+              <tr class="row" v-else-if="value && typeof(value) === 'object'">
+                <td><span class="title"><b>{{ key }}</b></span></td>
+                <td><span class="title">
+                  <a target="_blank" v-bind:href="value.url">
+                    {{ value.url }}
+                  </a>
+                </span>
+                </td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
+                <td>
+                  <figure v-if="value.url && value.url.includes('http')" class="image is-24x24 level-left">
+                    <a target="_blank" v-bind:href="value.url">
+                      <img class="meta_logos" :src="ImgUrl(value.source.name)"/>
+                    </a>
+                  </figure>
+                </td>
+              </tr>
+              <tr class="row" v-else-if="value">
+                <td><span class="title"><b>{{ key }}</b></span></td>
+                <td v-if="value.toString().includes('http')">
+                  <span class="title">
+                    <a target="_blank" v-bind:href="value">
+                      {{ value }}
+                    </a>
+                  </span>
+                </td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
+                <td v-else>
+                  <span class="title" style="text-transform: uppercase; font-size: 12px">
+                    {{ value }}
+                  </span>
+                </td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
+                <td></td>
+              </tr>
+            </template>
+            <!--<template v-for="(value, index) in metadata['dct:isVersionOf']" :key="index">
+              <tr class="row">
+                <td><span class="title" style="font-variant: all-small-caps"><b>dct:isVersionOf</b></span></td>
+                <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value.url }}</span></td>
+                <td>
+                  <figure class="image is-48x48 level-left">
                       <a target="_blank" v-bind:href="value.url">
-                        <img class="meta_logos" :src="ImgUrl(value.source.name)"/>
+                        <img :src="ImgUrl(value.source)"/>
                       </a>
                     </figure>
-                  </td>
-                </tr>
-                <tr class="row" v-else-if="value">
-                  <td><span class="title"><b>{{ key }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px" v-html="value"></span></td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
-                  <td></td>
-                </tr>
-              </template>
-              <!--<template v-for="(value, index) in metadata['dct:isVersionOf']" :key="index">
-                <tr class="row">
-                  <td><span class="title" style="font-variant: all-small-caps"><b>dct:isVersionOf</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value.url }}</span></td>
-                  <td>
-                    <figure class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="value.url">
-                          <img :src="ImgUrl(value.source)"/>
-                        </a>
-                      </figure>
-                  </td>
-                </tr>
-              </template>
-              <template v-for="(value, name, index) in metadata.dublincore" :key="index">
-                <tr v-if="Array.isArray(value) && value.length > 1" v-for="v in value" :key="index" class="row">
-                  <td v-if="v === value[0]" :rowspan="value.length"><span class="title" style="font-variant: all-small-caps"><b>dc:{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ v }}</span></td>
-                  <td>
-                    <figure v-if="getValue(v).includes('http')" class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="getValue(v)">
-                          <img :src="ImgUrl(name)"/>
-                        </a>
-                      </figure>
-                  </td>
-                </tr>
-                <tr class="row" v-else>
-                  <td><span class="title" style="font-variant: all-small-caps"><b>dc:{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td>
-                  <td></td>
-                </tr>
-              </template>
-              <template v-for="(value, name, index) in metadata.extensions" :key="index">
-                <tr v-if="Array.isArray(value) && value.length > 1" v-for="v in value" :key="index" class="row">
-                  <td v-if="v === value[0]" :rowspan="value.length"><span class="title" style="font-variant: all-small-caps"><b>{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px" v-html="getValue(v)"/></td>
-                  <td>
-                    <figure v-if="getValue(v).includes('http')" class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="getValue(v)">
-                          <img :src="ImgUrl(name)"/>
-                        </a>
-                      </figure>
-                  </td>
-                </tr>
-                <tr class="row" v-else>
-                  <td><span class="title" style="font-variant: all-small-caps"><b>{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td>
-                  <td></td>
-                </tr>
-              </template>-->
-            </tbody>
-          </table>
+                </td>
+              </tr>
+            </template>
+            <template v-for="(value, name, index) in metadata.dublincore" :key="index">
+              <tr v-if="Array.isArray(value) && value.length > 1" v-for="v in value" :key="index" class="row">
+                <td v-if="v === value[0]" :rowspan="value.length"><span class="title" style="font-variant: all-small-caps"><b>dc:{{ name }}</b></span></td>
+                <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ v }}</span></td>
+                <td>
+                  <figure v-if="getValue(v).includes('http')" class="image is-48x48 level-left">
+                      <a target="_blank" v-bind:href="getValue(v)">
+                        <img :src="ImgUrl(name)"/>
+                      </a>
+                    </figure>
+                </td>
+              </tr>
+              <tr class="row" v-else>
+                <td><span class="title" style="font-variant: all-small-caps"><b>dc:{{ name }}</b></span></td>
+                <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td>
+                <td></td>
+              </tr>
+            </template>
+            <template v-for="(value, name, index) in metadata.extensions" :key="index">
+              <tr v-if="Array.isArray(value) && value.length > 1" v-for="v in value" :key="index" class="row">
+                <td v-if="v === value[0]" :rowspan="value.length"><span class="title" style="font-variant: all-small-caps"><b>{{ name }}</b></span></td>
+                <td><span class="title" style="text-transform: uppercase; font-size: 12px" v-html="getValue(v)"/></td>
+                <td>
+                  <figure v-if="getValue(v).includes('http')" class="image is-48x48 level-left">
+                      <a target="_blank" v-bind:href="getValue(v)">
+                        <img :src="ImgUrl(name)"/>
+                      </a>
+                    </figure>
+                </td>
+              </tr>
+              <tr class="row" v-else>
+                <td><span class="title" style="font-variant: all-small-caps"><b>{{ name }}</b></span></td>
+                <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td>
+                <td></td>
+              </tr>
+            </template>-->
+          </tbody>
+        </table>
+          </div>
+        <!--<div class="columns is-multiline">
+          <div class="column is-2">
+            <div v-if="authorThumbnailUrl">
+              <figure class="image" style="max-width: 100%">
+                <img :src="authorThumbnailUrl" />
+              </figure>
             </div>
-          <!--<div class="columns is-multiline">
-            <div class="column is-2">
-              <div v-if="authorThumbnailUrl">
-                <figure class="image" style="max-width: 100%">
-                  <img :src="authorThumbnailUrl" />
-                </figure>
-              </div>
-              <div v-else class="author-default-thumbnail" />
-            </div>
-            <div class="column is-7 thesis-infos is-flex is-flex-direction-column">
-              <section v-if="metadata.coverage">
-                <h2 class="title">Position</h2>
-                <ul>
-                  <li v-if="metadata.coverage" class="block">
-                    <span>Période du sujet</span> : {{ metadata.coverage }}
-                  </li>
-                </ul>
-              </section>
-              <section>
-                <h2 class="title">Citer</h2>
-                <ul>
-                  <li class="block">
-                    <span style="font-variant: all-small-caps">{{ metadata.author }}</span
-                    >, « <span v-html="metadata.title"></span> », in
-                    <span style="font-style: italic"
-                      >Positions des thèses soutenues par les élèves de la promotion de
-                      {{ metadata.date }} pour obtenir le diplôme d'archiviste
-                      paléographe</span
-                    >, École nationale des chartes, Paris, {{ metadata.date
-                    }}<span v-if="metadata.page">, p. {{ metadata.page }}</span
-                    >.
-                  </li>
+            <div v-else class="author-default-thumbnail" />
+          </div>
+          <div class="column is-7 thesis-infos is-flex is-flex-direction-column">
+            <section v-if="metadata.coverage">
+              <h2 class="title">Position</h2>
+              <ul>
+                <li v-if="metadata.coverage" class="block">
+                  <span>Période du sujet</span> : {{ metadata.coverage }}
+                </li>
+              </ul>
+            </section>
+            <section>
+              <h2 class="title">Citer</h2>
+              <ul>
+                <li class="block">
+                  <span style="font-variant: all-small-caps">{{ metadata.author }}</span
+                  >, « <span v-html="metadata.title"></span> », in
+                  <span style="font-style: italic"
+                    >Positions des thèses soutenues par les élèves de la promotion de
+                    {{ metadata.date }} pour obtenir le diplôme d'archiviste
+                    paléographe</span
+                  >, École nationale des chartes, Paris, {{ metadata.date
+                  }}<span v-if="metadata.page">, p. {{ metadata.page }}</span
+                  >.
+                </li>
 
-                  <li>
-                    <span>
-                      Licence : <a target="_blank" v-bind:href="metadata.rights">{{ metadata.rights }}</a>
+                <li>
+                  <span>
+                    Licence : <a target="_blank" v-bind:href="metadata.rights">{{ metadata.rights }}</a>
+                  </span>
+                </li>
+              </ul>
+            </section>
+            <section>
+              <h2 class="title">Direct metadatas</h2>
+              <ul v-for="(val, name, index) in metadata" :key="index">
+                <li v-if="typeof(val) === 'string'" class="block">
+                  <span style="font-variant: all-small-caps">{{ name }} : {{ val }}</span>
+                </li>
+              </ul>
+              <section>
+                <h2 class="title"> Extensions - LIAGE</h2>
+                <ul v-for="(value, name, index) in metadata.extensions" :key="index">
+                  <li v-if="Array.isArray(value) && value.length > 1">
+                    <span
+                      class="test"
+                      v-for="(v, occ) in value"
+                      style="font-variant: all-small-caps"
+                      :key="occ"
+                    >
+                      {{ name }} : {{ typeof(v) === 'object' ? Object.values(v)[0] : v }}
                     </span>
                   </li>
                 </ul>
               </section>
               <section>
-                <h2 class="title">Direct metadatas</h2>
-                <ul v-for="(val, name, index) in metadata" :key="index">
-                  <li v-if="typeof(val) === 'string'" class="block">
-                    <span style="font-variant: all-small-caps">{{ name }} : {{ val }}</span>
+                <h2 class="title"> Extensions - HORS LIAGE</h2>
+                <ul v-for="(value, name, index) in metadata.extensions" :key="index">
+                  <li v-if="typeof(value) === 'string' || Array.isArray(value) && value.length === 1">
+                    <span style="font-variant: all-small-caps">{{ name }} : {{ value }}</span>
                   </li>
                 </ul>
-                <section>
-                  <h2 class="title"> Extensions - LIAGE</h2>
-                  <ul v-for="(value, name, index) in metadata.extensions" :key="index">
-                    <li v-if="Array.isArray(value) && value.length > 1">
-                      <span
-                        class="test"
-                        v-for="(v, occ) in value"
-                        style="font-variant: all-small-caps"
-                        :key="occ"
-                      >
-                        {{ name }} : {{ typeof(v) === 'object' ? Object.values(v)[0] : v }}
-                      </span>
-                    </li>
-                  </ul>
-                </section>
-                <section>
-                  <h2 class="title"> Extensions - HORS LIAGE</h2>
-                  <ul v-for="(value, name, index) in metadata.extensions" :key="index">
-                    <li v-if="typeof(value) === 'string' || Array.isArray(value) && value.length === 1">
-                      <span style="font-variant: all-small-caps">{{ name }} : {{ value }}</span>
-                    </li>
-                  </ul>
-                </section>
-                <section>
-                  <h2 class="title">Dublincore</h2>
-                  <ul v-for="(value, name, index) in metadata.dublincore" :key="index">
-                    <li v-if="Array.isArray(value) && value.length > 1" class="block">
-                      <span v-for="(v, occ) in value" style="font-variant: all-small-caps" :key="occ">{{ v }}</span>
-                    </li>
-                    <li v-else class="block">
-                      <span style="font-variant: all-small-caps">{{ value }}</span>
-                    </li>
-                  </ul>
-                </section>
               </section>
-            </div>
-          </div>-->
-        </Suspense>
-      </aside>
-
-    </div>
+              <section>
+                <h2 class="title">Dublincore</h2>
+                <ul v-for="(value, name, index) in metadata.dublincore" :key="index">
+                  <li v-if="Array.isArray(value) && value.length > 1" class="block">
+                    <span v-for="(v, occ) in value" style="font-variant: all-small-caps" :key="occ">{{ v }}</span>
+                  </li>
+                  <li v-else class="block">
+                    <span style="font-variant: all-small-caps">{{ value }}</span>
+                  </li>
+                </ul>
+              </section>
+            </section>
+          </div>
+        </div>-->
+      </Suspense>
+    </aside>
   </div>
 </template>
 
@@ -771,6 +602,12 @@ aside.menu > .columns > .column:nth-child(3) {
   font-size: 15px;
   font-weight: 500;
   font-style: normal;
+  & > a {
+    font-family: "Barlow", sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    color: #4a4a4a;
+  }
 }
 .title {
   text-indent: 0;
