@@ -316,6 +316,10 @@ function getSimpleObject (obj) {
   // console.log("getSimpleObject / simpleObject", simpleObject)
   return simpleObject
 }
+const collator = new Intl.Collator('fr', {
+  numeric: true,
+  sensitivity: 'base'
+})
 
 export default {
   name: 'CollectionTOC',
@@ -370,15 +374,6 @@ export default {
     const sourceConfig = ref({})
     const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
 
-    /* if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
-      const rootResponse = await getMetadataFromApi()
-      rootCollectionId.value = rootResponse['@id']
-      console.log('App.vue get rootCollectionId', rootCollectionId.value)
-    } else {
-      rootCollectionId.value = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
-      console.log('App.vue set rootCollectionId as .env', rootCollectionId.value)
-    } */
-
     const expandedById = ref({})
 
     const selectedParent = ref(props.currentCollection ? props.currentCollection.identifier : '')
@@ -399,20 +394,22 @@ export default {
           return -1
         } else if (bInB) {
           return 1
-        } else {
-          return a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1 // alphabetical sort
         }
+
+        // TRI PAR DÉFAUT : naturel + français + sans diacritiques
+        return collator.compare(a.title, b.title)
       })
     }
     sourceConfig.value = collConfig.value
 
     const componentTOC = ref([])
-    if (sourceConfig.value && sourceConfig.value.homePageSettings && sourceConfig.value.homePageSettings.listSection && sourceConfig.value.homePageSettings.listSection.displaySort && sourceConfig.value.homePageSettings.listSection.displaySort.length > 0) {
+    if (sourceConfig.value?.homePageSettings?.listSection?.displaySort?.length > 0) {
       // console.log('CollectionTOC setup displaySort', collConfig.value.homePageSettings.listSection.displaySort)
       componentTOC.value = customSort(props.toc, sourceConfig.value.homePageSettings.listSection.displaySort)
     } else {
       componentTOC.value = props.toc
-      componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
+      // componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
+      componentTOC.value.sort((a, b) => collator.compare(a.title, b.title))
     }
     console.log('componentTOC.value props.toc : ', componentTOC.value)
 
@@ -467,12 +464,10 @@ export default {
     const ImgUrl = (source) => {
       // TODO: provide a logo object with url AND legend ?
       const imgSourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
-      if (imgSourceConfig && imgSourceConfig.homePageSettings && Object.keys(imgSourceConfig.homePageSettings).includes('listSection')
-          && imgSourceConfig.homePageSettings.listSection && Object.keys(imgSourceConfig.homePageSettings.listSection).includes('logo')
-          && imgSourceConfig.homePageSettings.listSection.logo.length) {
+      if (imgSourceConfig?.homePageSettings?.listSection?.logo?.length > 0) {
         // console.log('HomePage ImgUrl found : ', imgSourceConfig.homePageSettings.listSection.logo)
         const images = Object.fromEntries(Object.entries(import.meta.glob('confs/*/assets/images/*.*', { eager: true })).map(([key, value]) => {
-          const newKey = key.split("/").slice(-4).join("/")
+          const newKey = key.split('/').slice(-4).join('/')
           return [newKey, value]
         }))
         console.log('HomePage ImgUrl images: ', images)
@@ -493,11 +488,12 @@ export default {
       componentTOC.value = []
       collConfig.value = newProps.collectionConfig
       sourceConfig.value = collConfig.value
-      if (sourceConfig.value && sourceConfig.value.homePageSettings && sourceConfig.value.homePageSettings.listSection && sourceConfig.value.homePageSettings.listSection.displaySort && sourceConfig.value.homePageSettings.listSection.displaySort.length > 0) {
+      if (sourceConfig.value?.homePageSettings?.listSection?.displaySort?.length > 0) {
         componentTOC.value = customSort(newProps.toc, sourceConfig.value.homePageSettings.listSection.displaySort)
       } else {
         componentTOC.value = newProps.toc
-        componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
+        // componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
+        componentTOC.value.sort((a, b) => collator.compare(a.title, b.title))
       }
       displayOpt.value = newProps.displayOption
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
@@ -580,7 +576,6 @@ export default {
   }
 }
 
-
 button {
   width:30px;
   height: 30px;
@@ -589,7 +584,6 @@ button {
 
   background: url(@/assets/images/chevron_red_rounded.svg) center / 20px auto no-repeat;
   &.expanded {
-    background: url(@/assets/images/chevron_red_rounded.svg) center / 20x auto no-repeat;
     transform: rotate(90deg);
   }
 }
@@ -738,8 +732,6 @@ button {
   padding: 1.5rem 0;
   border-bottom: 7px solid #e8e7e0;
 }
-
-
 
 .collection-toc-area-header > a {
   text-transform: uppercase;
