@@ -360,12 +360,10 @@ export default {
     const ImgUrl = (source) => {
       // TODO: provide a logo object with url AND legend ?
       const sourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
-      if (sourceConfig && sourceConfig.homePageSettings && Object.keys(sourceConfig.homePageSettings).includes('listSection')
-          && sourceConfig.homePageSettings.listSection && Object.keys(sourceConfig.homePageSettings.listSection).includes('logo')
-          && sourceConfig.homePageSettings.listSection.logo.length) {
+      if (sourceConfig?.homePageSettings?.listSection?.logo?.length > 0) {
         console.log('HomePage ImgUrl found : ', sourceConfig.homePageSettings.listSection.logo)
         const images = Object.fromEntries(Object.entries(import.meta.glob('confs/*/assets/images/*.*', { eager: true })).map(([key, value]) => {
-          const newKey = key.split("/").slice(-4).join("/")
+          const newKey = key.split('/').slice(-4).join('/')
           return [newKey, value]
         }))
         console.log('HomePage ImgUrl images: ', images)
@@ -462,7 +460,7 @@ export default {
       aboutBttnTxt.value = newProps.collectionConfig.homePageSettings.pageHeader.aboutButtonText
       collectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.collectionDescription
       customCollectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription
-      if (collConfig.value.homePageSettings && collConfig.value.homePageSettings.listSection && collConfig.value.homePageSettings.listSection.displaySort && collConfig.value.homePageSettings.listSection.displaySort.length > 0) {
+      if (collConfig.value.homePageSettings?.listSection?.displaySort?.length > 0) {
         // console.log('HomePage watch displaySort', collConfig.value.homePageSettings.listSection.displaySort)
         componentTOC.value = customSort([...currCollection.value.member], collConfig.value.homePageSettings.listSection.displaySort)
       } else {

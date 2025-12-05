@@ -88,8 +88,8 @@ export default {
         let component
         console.log('AboutPage collConfig.value.collectionId', collConfig.value.collectionId)
         console.log('AboutPage collConfig.value.aboutPageSettings', collConfig.value.aboutPageSettings)
-        const comps = Object.fromEntries(Object.entries(import.meta.glob('confs/*/*.vue')).map(([key, value])=> {
-          const newKey = key.split("/").slice(-2).join("/")
+        const comps = Object.fromEntries(Object.entries(import.meta.glob('confs/*/*.vue')).map(([key, value]) => {
+          const newKey = key.split('/').slice(-2).join('/')
           return [newKey, value]
         }))
         console.log('comps test : ', comps)
