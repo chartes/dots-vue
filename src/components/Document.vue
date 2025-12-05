@@ -371,10 +371,13 @@ export default {
           const yOffset = -70
           const y = el.getBoundingClientRect().top + window.scrollY + yOffset
           console.log('Document.vue scrollTo y : ', y)
-          window.scrollTo({ top: y, behavior: 'smooth' })
-          // el.scrollIntoView({ behavior: 'smooth' })
+          window.scrollTo({ top: y, behavior: 'instant' })
         }
-      } else return
+      } else {
+        // Scroll to top if no anchor
+        console.log('Document.vue no anchor scrollTo Page TOP')
+        window.scrollTo({ top: 0, behavior: 'instant' })
+      }
     }
     watch(props, (newProps) => {
       docProjectId.value = newProps.projectIdentifier

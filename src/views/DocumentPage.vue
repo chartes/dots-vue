@@ -512,7 +512,7 @@ export default {
       console.log('DocumentPage getTOC resourceId.value', resourceId.value)
       console.log('DocumentPage getTOC refId.value', refId.value)
 
-      const response = await getTOCFromApi(resourceId.value, "Resource")
+      const response = await getTOCFromApi(resourceId.value, 'Resource')
       console.log('DocumentPage getTOC initial TOC response', response)
       if (!response.member) {
         response.member = []
@@ -927,7 +927,6 @@ export default {
     }
 
     const setBreadcrumbs = async () => {
-
       const ancestors = await getAncestors(currentItem.value, collConfig.value.excludeCollectionIds || [])
 
       console.log('setBreadcrumbs start')
@@ -972,7 +971,7 @@ export default {
 
       // Build the collections breadcrumb
       arianeCollection.value = ancestors.reverse().map((elem) => {
-        return elem.filter((e) => e.citeType === "Collection")
+        return elem.filter((e) => e.citeType === 'Collection')
       }).filter((e) => e.length > 0)
 
       // Build the breadcrumb within the resource
@@ -1129,44 +1128,49 @@ export default {
       collConfig.value = newProps.collectionConfig
       TOC_DEPTH.value = newProps.collectionConfig.tableOfContentsSettings.tableOfContentDepth
       editorialLevel.value = newProps.collectionConfig.tableOfContentsSettings.editByLevel
-      console.log('Document page watch newProps.collectionConfig / collConfig.value : ', collConfig.value)
+      console.log('DocumentPage watch newProps.collectionConfig / collConfig.value : ', collConfig.value)
     }, { deep: true, immediate: true })
 
     watch(
       router.currentRoute, async (newRoute, oldRoute) => {
         isLoading.value = false
-        console.log('Document page watch route.params : ', route.params)
-        console.log('Document page watch route.query : ', route.query)
-        console.log('Document page watch route.hash : ', route.hash)
-        console.log('Document page watch router oldRoute, newRoute : ', oldRoute, newRoute)
+        console.log('DocumentPage watch route.params : ', route.params)
+        console.log('DocumentPage watch route.query : ', route.query)
+        console.log('DocumentPage watch route.hash : ', route.hash)
+        console.log('DocumentPage watch router oldRoute, newRoute : ', oldRoute, newRoute)
 
         if (newRoute && oldRoute && newRoute.params.id !== oldRoute.params.id) {
           await getCurrentItem('watch getCurrentItem : route : ', newRoute)
-          console.log('Document page watch route change, resource DID change :', refId.value)
+          console.log('DocumentPage watch route change, resource DID change :', refId.value)
           await getTOC('watch query')
           await getMetadata()
           getNewRefId()
           isLoading.value = true
           if (newRoute.hash && newRoute.hash.length > 0) {
             hash.value = newRoute.hash
-            console.log('Document page watch scrollTo hash : ', hash.value)
+            console.log('DocumentPage watch scrollTo hash : ', hash.value)
             scrollTo()
           }
         } else if (newRoute && oldRoute && newRoute.params.id === oldRoute.params.id) {
-          console.log('Document page watch route change but resource DID NOT change ', oldRoute, newRoute)
+          console.log('DocumentPage watch route change but resource DID NOT change ', oldRoute, newRoute)
           // await getCurrentItem("watch getCurrentItem : route : ", newRoute)
           // await getTOC("watch query")
           if (newRoute.query.refId === oldRoute.query.refId) {
-            console.log('Document page watch route change but resource/refId DID NOT change ', oldRoute, newRoute)
+            console.log('DocumentPage watch route change but resource/refId DID NOT change ', oldRoute, newRoute)
             hash.value = newRoute.hash && newRoute.hash.length > 0 ? newRoute.hash.replace('#', '') : false
-            isLoading.value = true
+
             if (newRoute.hash && newRoute.hash.length > 0) {
-              console.log('watch scrollTo hash : ', hash.value)
+              console.log('DocumentPage watch scrollTo hash : ', hash.value)
               scrollTo()
+            } else {
+              // Scroll to top if no anchor
+              console.log('DocumentPage watch no anchor scrollTo Page TOP')
+              window.scrollTo({ top: 0, behavior: 'instant' })
             }
+            isLoading.value = true
           } else {
             hash.value = newRoute.hash && newRoute.hash.length > 0 ? newRoute.hash.replace('#', '') : false
-            console.log('Document page watch route change refId changed oldRoute, newRoute, hash.value ', oldRoute, newRoute, hash.value)
+            console.log('DocumentPage watch route change refId changed oldRoute, newRoute, hash.value ', oldRoute, newRoute, hash.value)
             refId.value = newRoute.query.refId
             // await getCurrentItem('watch getCurrentItem : route : ', newRoute)
             // await getTOC("watch query")
@@ -1205,13 +1209,13 @@ export default {
           }
         } else if (typeof oldRoute === 'undefined') {
           await getCurrentItem('watch getCurrentItem : route : ', route)
-          console.log('Document page watch NO newRoute : oldRoute, newRoute = route ', oldRoute, route)
+          console.log('DocumentPage watch NO newRoute : oldRoute, newRoute = route ', oldRoute, route)
           await getTOC('watch query')
           await getMetadata()
           getNewRefId()
           isLoading.value = true
         } else {
-          console.log('Document page watch TEST : oldRoute, newRoute ', oldRoute, newRoute)
+          console.log('DocumentPage watch TEST : oldRoute, newRoute ', oldRoute, newRoute)
         }
       }, { deep: true, immediate: true }
     )
@@ -1242,7 +1246,10 @@ export default {
           window.scrollTo({ top: y, behavior: 'smooth' })
           // el.scrollIntoView({ behavior: 'smooth' })
         }
-      } else return
+      } else {
+        // Scroll to top if no anchor
+        window.scrollTo({ top: 0, behavior: 'instant' })
+      }
     }
     onMounted(() => {
       const appView = document.getElementById('app')
@@ -1885,7 +1892,6 @@ div.remove-bottom-padding #article {
 .hideLeftToc {
   visibility: hidden;
 }
-
 
 @media screen and (max-width: 1150px) {
   .toc-area .toc-area-content nav > ol.tree {
