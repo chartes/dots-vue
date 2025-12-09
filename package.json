@@ -7,7 +7,8 @@
     "build:staging": "vite build --mode=staging",
     "build:prod": "vite build --mode=production",
     "preview": "vite preview",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
+    "lint": "eslint --ext .js,.vue --fix-dry-run src",
+    "lint:fix": "eslint --ext .js,.vue --fix src"
   },
   "dependencies": {
     "bulma": "^1.0.4",
