@@ -166,60 +166,9 @@ a {
   line-height: 25px;
   text-transform: none;
 }
-.toc-area {
-  width: 100%;
-  font-family: "Barlow", sans-serif !important;
-  margin-bottom: 30px !important;
-}
-.toc-area-header {
-  display: flex;
-  width: 100%;
-  padding: 20px;
-  background-color: #f1f1f1;
-  border-radius: 6px;
-  position: relative;
-}
-.toc-area-header > a {
-  text-transform: uppercase;
-  font-family: "Barlow Semi Condensed", sans-serif;
-  font-weight: 500;
-  color: #4a4a4a !important;
-  text-decoration: none;
-  border: none;
-  &:first-child {
-    text-transform: none;
-    margin-left: auto;
-    margin-right: 47px;
-  }
-}
-.is-tree-opened .menu {
-  display: flex;
-  flex-direction: column;
-  padding: 0px 20px 0px;
-  /* border-top: solid 2px #fcfcfc; */
-  background-color: #e4e4e4;
-  border-radius: 0 0 6px 6px;
-}
-
-/* toggle */
-.toggle-btn {
-  position: absolute;
-  right: 20px;
-  width: 27px;
-  height: 27px;
-  background: url(../assets/images/chevron_rouge.svg) center top -7px / cover no-repeat;
-  border: none;
-  text-decoration: none;
-}
-.is-tree-opened .toggle-btn {
-  background: url(../assets/images/croix.svg) center / cover no-repeat;
-}
 #article {
   margin-bottom: 30px !important;
   padding: 10px 0 10px !important;
-}
-.wrapper {
-  width: 100%;
 }
 .tile.is-child {
   display: flex;
@@ -233,20 +182,5 @@ a {
   justify-content: center;
   margin-top: 30px;
   margin-bottom: 30px;
-}
-.project-tile {
-  display: flex;
-  width: fit-content;
-  margin-bottom: 30px;
-  padding: 6px 10px;
-  border: #b9192f 1px solid;
-  border-radius: 6px;
-  & > a {
-    font-family: "Barlow Semi Condensed", sans-serif;
-    font-weight: 500;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: #b9192f;
-  }
 }
 </style>
