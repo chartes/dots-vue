@@ -1,13 +1,21 @@
 <template>
-  <div v-if="isModalOpened" class="modal-mask" :class="modalCssClass">
+  <div
+    v-if="isModalOpened"
+    class="modal-mask"
+    :class="modalCssClass"
+  >
     <div class="modal-wrapper">
-      <div class="modal-container" ref="target">
+      <div class="modal-container">
         <div class="modal-header">
           <span class="modal-header-section">Collection :</span>
           <span class="modal-header-title">
             {{ currentCollection.title }}
           </span>
-          <a href="#" class="close-btn" v-on:click="toggleContent"></a>
+          <a
+            href="#"
+            class="close-btn"
+            @click="toggleContent"
+          />
         </div>
         <div>
           <document-metadata
@@ -20,10 +28,15 @@
           <div class="modal-body-header">
             <span class="modal-body-header-section">Sommaire </span>
             <span class="modal-body-header-title">{{ browseBttnTxt }} {{ currentCollection.title }}</span>
-            <a href="#" class="toggle-btn" v-on:click.prevent="toggleExpanded(collectionId)"></a>
+            <a
+              href="#"
+              class="toggle-btn"
+              @click.prevent="toggleExpanded(collectionId)"
+            />
           </div>
         </div>
-        <div v-if="currentCollection.member.length > 0"
+        <div
+          v-if="currentCollection.member.length > 0"
           class="menu"
           :class="expandedById[collectionId] ? 'expanded': ''"
         >
@@ -109,7 +122,7 @@ export default {
     console.log('CollectionModal props.currentItem : ', props.currentItem)
 
     /* collectionTOC.value.filter(item => item.identifier === collectionId.value)[0].member = collectionTOC.value.filter(item => item.identifier === collectionId.value)[0].member.forEach((m) => m.parent = currentCollection.value.identifier)
-    console.log("CollectionModal append parent to collectionTOC : ", collectionTOC.value) */
+    console.log('CollectionModal append parent to collectionTOC : ', collectionTOC.value) */
 
     const appendMissingChildren = async () => {
       if (collectionTOC.value.filter(item => item.identifier === collectionId.value)[0].children.length !== collectionTOC.value.filter(item => item.identifier === collectionId.value)[0].totalChildren) {
@@ -153,7 +166,6 @@ export default {
     appendMissingChildren()
 
     console.log('CollectionModal collectionTOC / collectionId : ', Object.fromEntries(collectionTOC.value.filter(item => item.identifier === collectionId.value).map(col => [col.identifier, false])), collectionTOC.value, collectionId, currentCollection)
-    const target = ref(null)
 
     const expandedById = ref(false)
 
@@ -242,7 +254,6 @@ export default {
       browseBttnTxt,
       appendMissingChildren,
       toggleContent,
-      target,
       collectionId,
       currentCollection,
       collectionTOC,
@@ -327,7 +338,7 @@ export default {
   .is-tree-opened .menu {
     display: flex;
     flex-direction: column;
-    padding: 0px 20px 0px;
+    padding: 0 20px 0;
     border-top: solid 2px #fcfcfc;
     background-color: #e4e4e4;
     border-radius: 0 0 6px 6px;

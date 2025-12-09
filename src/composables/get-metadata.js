@@ -69,7 +69,7 @@ export default async function fetchMetadata (source, resourceId, documentType, r
     console.log('fetchMetadata resourceId : ', resourceId)
     console.log('fetchMetadata see TOC from store.state : ', store.state.TOC)
     console.log('fetchMetadata see TOC from store.state filtered : ', store.state.TOC.filter(item => item.identifier === resourceId))
-    // console.log("fetchMetadata see TOC from store.state filtered parents: ", store.state.TOC.filter(item => item.identifier === resourceId)[0].parent)
+    // console.log('fetchMetadata see TOC from store.state filtered parents: ', store.state.TOC.filter(item => item.identifier === resourceId)[0].parent)
     const startTimefetchMetadataFromDots = new Date()
     let listmetadata = {}
     if (documentType === 'Resource') {

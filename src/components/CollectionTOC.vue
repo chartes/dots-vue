@@ -3,7 +3,8 @@
     v-if="(currentCollection.identifier === rootCollectionId && displayOpt !== 'list' && currentCollection.member.every(item => item.citeType === 'Collection')) || (displayOpt === 'card' && currentCollection.member.every(item => item.citeType === 'Collection'))"
   >
     <div
-      v-for="(item, index) in componentTOC" :key="index"
+      v-for="(item, index) in componentTOC"
+      :key="index"
       class="document-card"
     >
       <template v-if="item['@type'] === 'Collection' || item.citeType === 'Collection'">
@@ -24,8 +25,7 @@
                   <span>
                     {{ item.author }} {{ item.dublincore.creator }}
                   </span>
-                  <span
-                  >
+                  <span>
                     {{ item.dublincore.date }}
                   </span><!-- v-if="c.date" -->
                 </div>
@@ -66,8 +66,7 @@
                   <span>
                     {{ item.author }} {{ item.dublincore.creator }}
                   </span>
-                  <span
-                  >
+                  <span>
                     {{ item.dublincore.date }}
                   </span><!-- v-if="c.date" -->
                 </div>
@@ -116,24 +115,22 @@
                 :class="expandedById[item.identifier] ? 'expanded': ''"
               />
             </div>
-            <div v-if="expandedById[item.identifier] && item.totalChildren > 0 && item.children?.length > 0
-                || item.expanded === true && item.totalChildren > 0 && item.children?.length > 0"
+            <div
+              v-if="(expandedById[item.identifier] || item.expanded)
+                && item.totalChildren > 0
+                && item.children?.length > 0"
+              class="menu app-width-margin expanded"
             >
-              <div v-if="expandedById[item.identifier] && item.totalChildren > 0 && item.children?.length > 0
-                || item.expanded === true && item.totalChildren > 0 && item.children?.length > 0"
-                class="menu app-width-margin expanded"
-              >
-                <CollectionTOC
-                  :is-doc-projectId-included="isDocProjectIdInc"
-                  :current-collection="item"
-                  :dts-root-collection-identifier="dtsRootCollectionId"
-                  :root-collection-identifier="rootCollectionId"
-                  :application-config="appConfig"
-                  :collection-config="collConfig"
-                  :margin="$props.margin"
-                  :toc="item.children"
-                />
-              </div>
+              <CollectionTOC
+                :is-doc-projectId-included="isDocProjectIdInc"
+                :current-collection="item"
+                :dts-root-collection-identifier="dtsRootCollectionId"
+                :root-collection-identifier="rootCollectionId"
+                :application-config="appConfig"
+                :collection-config="collConfig"
+                :margin="$props.margin"
+                :toc="item.children"
+              />
             </div>
           </div>
         </div>
@@ -160,8 +157,7 @@
                   <span>
                     {{ item.author }} {{ item.dublincore.creator }}
                   </span>
-                  <span
-                  >
+                  <span>
                     {{ item.dublincore.date }}
                   </span><!-- v-if="c.date" -->
                 </div>
@@ -182,7 +178,10 @@
     v-else
     class="tree"
   >
-    <template v-for="(item, index) in componentTOC" :key="index">
+    <template
+      v-for="(item, index) in componentTOC"
+      :key="index"
+    >
       <li
         :style="`margin-left: ${ $props.margin }px;`"
         :class="item.totalChildren > 0 ? 'more' : ''"
@@ -271,9 +270,11 @@
             {{ item.title }}
           </router-link>
         </div>
-        <div v-if="expandedById[item.identifier] && item.totalChildren > 0 && item.children?.length > 0
-                  || item.expanded === true && item.totalChildren > 0 && item.children?.length > 0"
-        class="is-tree-opened menu app-width-margin expanded"
+        <div
+          v-if="(expandedById[item.identifier] || item.expanded)
+            && item.totalChildren > 0
+            && item.children?.length > 0"
+          class="is-tree-opened menu app-width-margin expanded"
         >
           <CollectionTOC
             :is-doc-projectId-included="isDocProjectIdInc"
@@ -396,7 +397,7 @@ export default {
           return 1
         }
 
-        // TRI PAR DÉFAUT : naturel + français + sans diacritiques
+        // DEFAULT SORTING: natural + French + without diacritics
         return collator.compare(a.title, b.title)
       })
     }
@@ -563,7 +564,7 @@ export default {
     }
 
     &.more {
-      padding-left: 0px !important;
+      padding-left: 0 !important;
 
       &.li.container > a, span {
         margin-top: 4px;
@@ -749,7 +750,7 @@ button {
 .expanded.menu {
   display: flex;
   flex-direction: column;
-  padding: 0px 20px 0px;
+  padding: 0 20px 0;
   /* border-top: solid 2px #fcfcfc; */
   background-color: #e4e4e4;
   border: 1px solid #e4e4e4;

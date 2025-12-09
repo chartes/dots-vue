@@ -1,4 +1,4 @@
-import { getSimpleObject } from "@/views/DocumentPage"
+import { getSimpleObject } from '@/views/DocumentPage'
 
 const _baseApiURL = `${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`
 
@@ -14,9 +14,9 @@ const parentsPromiseCache = new Map()
 // -------------------------------------------------------------------------
 
 async function getCoverDataFromApi (id, options = {}) {
-  const response_coverData = await fetch(`${_baseApiURL}/cover?id=${id}`, { mode: 'cors', ...options })
-  const coverData = await response_coverData.text()
-  console.log('document.js getCoverDataFromApi response_coverData ', response_coverData)
+  const responseCoverData = await fetch(`${_baseApiURL}/cover?id=${id}`, { mode: 'cors', ...options })
+  const coverData = await responseCoverData.text()
+  console.log('document.js getCoverDataFromApi responseCoverData ', responseCoverData)
   return coverData
 }
 
@@ -199,7 +199,7 @@ async function getAncestors (currentCollection, excludedCollections = []) {
   while (loop) {
     let parent = await getParentFromApi(cur?.identifier)
     // stop when no parent or parent == VITE_APP_ROOT_DTS_COLLECTION_ID
-    if (parent?.member &&  parent?.member?.[0]?.["@id"].toLowerCase() !== import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID.toLowerCase()) {
+    if (parent?.member &&  parent?.member?.[0]?.['@id'].toLowerCase() !== import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID.toLowerCase()) {
       cur = getSimpleObject(parent?.member[0])
       ancestors.push(parent?.member.map((elem) => getSimpleObject(elem)).filter((elem) => !excludedCollections.includes(elem.identifier)))
     } else {

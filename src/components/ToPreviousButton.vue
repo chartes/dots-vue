@@ -5,7 +5,7 @@
     :class="cssClass"
     @click="goToPreviousFragment($event, previousrefid, previousreftitle)"
   >
-    <span class="b_previous"/>
+    <span class="b_previous" />
     <span>{{ previousRefTitle }}</span>
   </a>
 </template>

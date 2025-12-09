@@ -2,9 +2,15 @@
   <aside class="media pb-component">
     <article class="pb">
       <div class="pb-label">
-        <a :href="imageInfo"></a>
+        <a :href="imageInfo" />
       </div>
-      <div><img class="pb-thumnbail" @click.prevent="goToCanvas()" :src="thumbnail" /></div>
+      <div>
+        <img
+          class="pb-thumbnail"
+          :src="thumbnail"
+          @click.prevent="goToCanvas()"
+        />
+      </div>
     </article>
   </aside>
 </template>
@@ -66,7 +72,7 @@ export default {
 .pb-component:hover {
   cursor: pointer;
 }
-.pb-thumnbail {
+.pb-thumbnail {
   max-width: 60px;
 }
 .pb-label {

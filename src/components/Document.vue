@@ -1,8 +1,11 @@
 <template>
   <div class="wrapper">
-    <div class="row" :class="currentLevelIndicator === 'renderToc' ? 'remove-bottom-padding' : ''">
+    <div
+      class="row"
+      :class="currentLevelIndicator === 'renderToc' ? 'remove-bottom-padding' : ''"
+    >
       <Suspense @resolve="scrollTo()">
-        <component :is="customDocument"/>
+        <component :is="customDocument" />
       </Suspense>
     </div>
     <!-- Display a TOC of the current item children in 2 scenarios : -->
@@ -13,12 +16,12 @@
       class="row bottom-toc"
     >
       <TOC
-       :is-doc-projectId-included="isDocProjectIdInc"
-       :margin="0"
-       :toc="asideTOC"
-       :maxcitedepth="maxcitedepth"
-       :refid="parentId.includes('&ref=') ? parentId.split('&ref=')[1] : parentId"
-       :key="parentId"
+        :is-doc-projectId-included="isDocProjectIdInc"
+        :margin="0"
+        :toc="asideTOC"
+        :maxcitedepth="maxcitedepth"
+        :refid="parentId.includes('&ref=') ? parentId.split('&ref=')[1] : parentId"
+        :key="parentId"
       />
     </div>
     <div
@@ -27,12 +30,12 @@
       class="row bottom-toc"
     >
       <TOC
-       :is-doc-projectId-included="isDocProjectIdInc"
-       :margin="0"
-       :toc="asideTOC"
-       :maxcitedepth="maxcitedepth"
-       :refid="parentId.includes('&ref=') ? parentId.split('&ref=')[1] : parentId"
-       :key="parentId"
+        :is-doc-projectId-included="isDocProjectIdInc"
+        :margin="0"
+        :toc="asideTOC"
+        :maxcitedepth="maxcitedepth"
+        :refid="parentId.includes('&ref=') ? parentId.split('&ref=')[1] : parentId"
+        :key="parentId"
       />
     </div>
     <!-- Or the specific case of Collections when editorial level & current level are 0 -->
@@ -94,7 +97,7 @@ export default {
     const editorialLevel = ref(props.editoriallevel)
     console.log('Document.vue const editorialLevel', editorialLevel)
 
-    // Content fetched here will depend whether the selected item is a resource or a collection
+    // Content fetched here will vary whether the selected item is a resource or a collection
     const documentType = ref(props.documenttype)
     console.log('Document.vue const documenttype', documentType)
 
@@ -429,4 +432,4 @@ header {
 <style>
   @import '@/assets/css/tei.css';
 </style>
-<style src="@/assets/css/postprod.css"/>
+<style src="@/assets/css/postprod.css" />

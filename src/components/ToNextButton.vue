@@ -6,7 +6,7 @@
     @click="goToNextFragment($event, nextrefid, nextreftitle)"
   >
     <span>{{ nextRefTitle }}</span>
-    <span class="b_next"/>
+    <span class="b_next" />
   </a>
 </template>
 

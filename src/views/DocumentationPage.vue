@@ -1,10 +1,12 @@
 <template>
-  <article class="about">
+  <article class="documentation">
     <div class="tiles">
       <div class="tile page-header app-width-padding">
         <div class="tile is-child">
           <div class="is-flex is-flex-direction-row title-tile">
-            <p class="title">Cartulaires d'Île-de-France</p>
+            <p class="title">
+              Cartulaires d'Île-de-France
+            </p>
             <!--<p class="header-baseline">
               <span>Position</span> : à l’origine, les positions prises et à défendre par
               l’élève, face au jury. Depuis, un résumé de la thèse soutenue.
@@ -106,11 +108,13 @@
   </article>
 </template>
 
+<script setup lang="ts">
+</script>
 <style>
-article.about {
+article.documentation {
   margin-top: 0;
 }
-.about .content {
+.documentation .content {
   font-family: "Libre Baskerville", serif !important;
   font-size: 16px;
   text-align: left;
@@ -120,31 +124,31 @@ article.about {
   text-indent: 0;
   padding: 0 8% 100px;
 }
-.about .content p,
-.about .content ul {
+.documentation .content p,
+.documentation .content ul {
   font-family: "Barlow", sans-serif;
   font-size: 20px;
   font-weight: 400;
   line-height: 32px;
   color: #5F5F5F;
 }
-.about .content p {
+.documentation .content p {
   text-align: left;
   text-indent: 0;
 }
-.about .content ul {
+.documentation .content ul {
   padding-bottom: 10px;
   margin-left: 0;
   list-style-position: inside;
 }
-.about .content ul > li {
+.documentation .content ul > li {
   margin-bottom: 0;
 }
-.about .content h1,
-.about .content h2 {
+.documentation .content h1,
+.documentation .content h2 {
   padding-top: 0;
 }
-.about .content h1 {
+.documentation .content h1 {
   margin: 30px 0 !important;
   font-family: "Noto Serif", serif;
   font-weight: 400;
@@ -152,7 +156,7 @@ article.about {
   font-size: 30px;
   line-height: 42px;
 }
-.about .content h2 {
+.documentation .content h2 {
   margin: 70px 0 30px !important;
   font-family: "Barlow", sans-serif;
   font-weight: 400;
@@ -162,34 +166,32 @@ article.about {
 }
 
 @media screen and (max-width: 800px) {
-  .about .content {
+  .documentation .content {
     padding: 0 20px 50px;
   }
-  .about .content p,
-  .about .content ul {
+  .documentation .content p,
+  .documentation .content ul {
     font-size: 16px;
     line-height: 24px;
   }
-  .about .content p {
+  .documentation .content p {
     margin: 0 0 !important;
   }
-  .about .content ul {
+  .documentation .content ul {
     list-style-position: inside;
     margin: 20px 0 !important;
   }
-  .about .content h1 {
+  .documentation .content h1 {
     width: 80%;
     margin: 35px 0 !important;
     font-size: 30px;
     line-height: 36px;
   }
-  .about .content h1,
-  .about .content h2 {
+  .documentation .content h1,
+  .documentation .content h2 {
     text-align: left;
     width: 80%;
   }
 }
 
 </style>
-<script setup lang="ts">
-</script>

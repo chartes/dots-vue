@@ -16,21 +16,21 @@
       :collection-identifier="collectionId"
       :key="currCollection"
     />
-      <suspense>
-        <router-view
-          class="layout-main"
-          :is-doc-projectId-included="isDocProjectIdInc"
-          :dts-root-collection-identifier="dtsRootCollectionId"
-          :root-collection-identifier="rootCollectionIdentifier"
-          :application-config="appConfig"
-          :root-collection-config="rootCollConfig"
-          :collection-config="collConfig"
-          :collection-identifier="collectionId"
-          :current-collection="currCollection"
-          :key="currCollection"
-        />
-      </suspense>
-    <back-to-top-button class="back-to-top-button"/>
+    <suspense>
+      <router-view
+        class="layout-main"
+        :is-doc-projectId-included="isDocProjectIdInc"
+        :dts-root-collection-identifier="dtsRootCollectionId"
+        :root-collection-identifier="rootCollectionIdentifier"
+        :application-config="appConfig"
+        :root-collection-config="rootCollConfig"
+        :collection-config="collConfig"
+        :collection-identifier="collectionId"
+        :current-collection="currCollection"
+        :key="currCollection"
+      />
+    </suspense>
+    <back-to-top-button class="back-to-top-button" />
     <app-footer
       class="layout-footer"
       :root-collection-identifier="rootCollectionIdentifier"

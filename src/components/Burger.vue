@@ -1,11 +1,11 @@
 <template>
   <a
-          role="button"
-          class="navbar-burger"
-          :class="menuCsscClass"
-          aria-label="menu"
-          aria-expanded="false"
-          @click="toggleBurger"
+    role="button"
+    class="navbar-burger"
+    :class="menuCssClass"
+    aria-label="menu"
+    aria-expanded="false"
+    @click="toggleBurger"
   >
     <span aria-hidden="true"></span>
     <span aria-hidden="true"></span>
@@ -38,7 +38,7 @@ export default {
       context.emit('change', { isOpened: isMenuOpened.value })
     }
 
-    const menuCsscClass = computed(() => {
+    const menuCssClass = computed(() => {
       return isMenuOpened.value ? 'is-active' : ''
     })
 
@@ -48,7 +48,7 @@ export default {
 
     return {
       toggleBurger,
-      menuCsscClass,
+      menuCssClass,
       isMenuOpened
     }
   }

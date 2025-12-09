@@ -1,19 +1,21 @@
 <template>
-  <div class="is-flex is-flex-direction-column" :class="viewModeCssClass">
+  <div
+    class="is-flex is-flex-direction-column"
+    :class="viewModeCssClass"
+  >
     <CollectionModal
-      class="modal-area"
       v-if="isLoading && isModalOpened"
-      :isOpen="isModalOpened ? isModalOpened : false"
-      :is-doc-projectId-included="isDocProjectIdInc"
+      class="modal-area"
+      :is-open="isModalOpened ? isModalOpened : false"
+      :is-doc-project-id-included="isDocProjectIdInc"
       :dts-root-collection-identifier="dtsRootCollectionId"
       :root-collection-identifier="rootCollectionId"
-      :collectionIdentifier="selectedCollectionId"
+      :collection-identifier="selectedCollectionId"
       :collection-config="collConfig"
-      :currentItem="selectedCollection"
+      :current-item="selectedCollection"
       :toc="flatTOC"
       @change="closeModal"
-    >
-    </CollectionModal>
+    />
     <div>
       <document-metadata
         :ispopup="false"
@@ -27,22 +29,31 @@
       :class="tocCssClass"
     >
       <div class="toc-area-header">
-        <a href="#" v-on:click="toggleTOCContent">Sommaire</a>
-        <a href="#" class="toggle-btn" v-on:click="toggleTOCContent"></a>
+        <a
+          href="#"
+          @click="toggleTOCContent"
+        >
+          Sommaire
+        </a>
+        <a
+          href="#"
+          class="toggle-btn"
+          @click="toggleTOCContent"
+        />
       </div>
       <div class="toc-area-content toc-content">
         <aside id="aside">
           <nav>
             <nav>
               <TOC
-               v-if="flatTOC.length > 0"
-               :is-doc-projectId-included="isDocProjectIdInc"
-               :margin="0"
-               :toc="flatTOC.filter(n => n.level > 0)"
-               :maxcitedepth="TOC_DEPTH"
-               @update-ref-id="getNewRefId"
-               :refid="refId"
-               :key="arianeDocument"
+                v-if="flatTOC.length > 0"
+                :key="arianeDocument"
+                :is-doc-project-id-included="isDocProjectIdInc"
+                :margin="0"
+                :toc="flatTOC.filter(n => n.level > 0)"
+                :maxcitedepth="TOC_DEPTH"
+                :refid="refId"
+                @update-ref-id="getNewRefId"
               />
             </nav>
           </nav>
@@ -52,11 +63,13 @@
     <nav class="controls is-flex app-width-margin">
       <a
         href=""
-        @click="toggleTOCMenu"
         class="toc-menu-toggle"
         :class="leftTOCDisplayIndicator ? TOCMenuBtnCssClass : 'hideLeftToc'"
-        ><!-- :class="currentLevelIndicator !== 'toEdit' ? 'hideLeftToc' : TOCMenuBtnCssClass" -->Sommaire</a
+        @click="toggleTOCMenu"
       >
+        <!-- :class="currentLevelIndicator !== 'toEdit' ? 'hideLeftToc' : TOCMenuBtnCssClass" -->
+        Sommaire
+      </a>
       <ul class="is-flex">
         <li>
           <a
@@ -64,7 +77,7 @@
             class="text-btn"
             aria-label="texte seul"
             @click.prevent="changeViewMode('text-mode')"
-          ></a>
+          />
         </li>
         <li>
           <a
@@ -72,7 +85,7 @@
             class="text-images-btn"
             aria-label="texte et images"
             @click.prevent="changeViewMode('text-and-images-mode')"
-          ></a>
+          />
         </li>
         <li>
           <a
@@ -80,7 +93,7 @@
             class="images-btn"
             aria-label="images seules"
             @click.prevent="changeViewMode('images-mode')"
-          ></a>
+          />
         </li>
       </ul>
       <ul class="is-flex">
@@ -88,7 +101,7 @@
           <a
             v-if="metadata.downloadPDF"
             target="_blank"
-            v-bind:href="metadata.downloadPDF"
+            :href="metadata.downloadPDF"
             class="pdf-btn"
             aria-label="Télécharger le PDF"
           />
@@ -97,14 +110,14 @@
           <a
             v-if="refId && refId.length > 0"
             target="_blank"
-            v-bind:href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}&ref=${refId}`"
+            :href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}&ref=${refId}`"
             class="xml-btn"
             aria-label="Télécharger le XML"
           />
           <a
             v-else
             target="_blank"
-            v-bind:href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}`"
+            :href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}`"
             class="xml-btn"
             aria-label="Télécharger le XML"
           />
@@ -113,9 +126,10 @@
           <a
             v-if="metadata.thenca"
             target="_blank"
-            v-bind:href="metadata.thenca"
+            :href="metadata.thenca"
             class="access_link"
-          >Accès à la thèse
+          >
+            Accès à la thèse
           </a>
         </li>
       </ul>
@@ -124,26 +138,30 @@
       <div class="ariane-collection">
         <ul class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center crumbs">
           <li
-            v-for="(item, index) in arianeCollection.value" :key="index"
+            v-for="(item, index) in arianeCollection.value"
+            :key="index"
             :class="item.length > 1 ? 'several-parent' : refId ? item[0].identifier === refId ? 'is-current' : '' : item[0].identifier === resourceId ? 'is-current' : ''"
           >
-            <template v-for="(ancestor, index) in item.sort((a,b)=>store.state.collectionId.indexOf(b.identifier)-store.state.collectionId.indexOf(a.identifier))" v-bind:key="index">
+            <template
+              v-for="(ancestor, idx) in item.sort((a,b) => $store.state.collectionId.indexOf(b.identifier) - $store.state.collectionId.indexOf(a.identifier))"
+              :key="idx"
+            >
               <router-link
                 v-if="isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
                 :to="{ name: 'Home', params: {collId: ancestor.identifier} }"
-                >
+              >
                 {{ ancestor.title }}
               </router-link>
               <router-link
                 v-else-if="!isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
                 :to="{ name: 'Home' }"
-                >
+              >
                 {{ ancestor.title }}
               </router-link>
               <a
                 v-else
                 href="#"
-                v-on:click.prevent="toggleCollection(ancestor.identifier)"
+                @click.prevent="toggleCollection(ancestor.identifier)"
               >
                 {{ ancestor.title }}
               </a>
@@ -156,15 +174,22 @@
         <div class="ariane">
           <ul class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center crumbs">
             <li
-              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')" :key="index"
+              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')"
+              :key="index"
               :class="refId ? ancestor.identifier === refId ? 'is-current' : '' : ancestor.identifier === resourceId ? 'hide-resource' : ''"
             >
-                <router-link
-                  :to="ancestor.router"
-                  >
-                    <span class="left" v-html="setText(ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).left"></span>
-                    <span class="right" v-html="setText( ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).right"></span>
-                </router-link>
+              <router-link
+                :to="ancestor.router"
+              >
+                <span
+                  class="left"
+                  v-html="setText(ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).left"
+                />
+                <span
+                  class="right"
+                  v-html="setText( ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).right"
+                />
+              </router-link>
             </li>
           </ul>
         </div>
@@ -183,62 +208,84 @@
           :nextreftitle="nextRefTitle"
         />
       </div>
-
     </div>
-    <div class="document-area is-flex app-width-margin" :class="tocMenuCssClass">
-      <div class="toc-area-aside toc-content"><!-- id="toc-area-aside" -->
+    <div
+      class="document-area is-flex app-width-margin"
+      :class="tocMenuCssClass"
+    >
+      <div class="toc-area-aside toc-content">
+        <!-- id="toc-area-aside" -->
         <aside id="aside">
           <nav>
             <nav>
               <span v-if="arianeDocument.length && arianeDocument[0].descendant">{{ arianeDocument[0].descendant }}{{ countEditorialTypes.length > 0 ? ' item de type ' + countEditorialTypes[0] : '' }}</span>
               <TOC
-               :is-doc-projectId-included="isDocProjectIdInc"
-               :margin="0"
-               :toc="flatTOC.filter(n => n.level > 0)"
-               :maxcitedepth="TOC_DEPTH"
-               @update-ref-id="getNewRefId"
-               :refid="refId"
-               :key="arianeDocument"
+                :key="arianeDocument"
+                :is-doc-project-id-included="isDocProjectIdInc"
+                :margin="0"
+                :toc="flatTOC.filter(n => n.level > 0)"
+                :maxcitedepth="TOC_DEPTH"
+                :refid="refId"
+                @update-ref-id="getNewRefId"
               />
             </nav>
           </nav>
         </aside>
       </div>
-      <div class="document-views is-flex" v-if="isLoading">
-        <div v-if="!refId || refId && refId.length === 0" class="text-view" id="text-view">
+      <div
+        v-if="isLoading"
+        class="document-views is-flex"
+      >
+        <div
+          v-if="!refId || refId && refId.length === 0"
+          id="text-view"
+          class="text-view"
+        >
           <document-source
-            :is-doc-projectId-included="isDocProjectIdInc"
-            :media-type-endpoint="collConfig.mediaTypeEndpoint"
-            :project-identifier="docProjectId"
-            :iiif-manifest="manifest"
             :id="resourceId"
-            :level="currentLevel"
-            :editorialLevelIndicator="currentLevelIndicator"
-            :editoriallevel="editorialLevel"
-            :documenttype="documentType"
-            :bottomtoc="bottomTOC"
-            :maxcitedepth="TOC_DEPTH"
             :key="resourceId + currentLevelIndicator + manifest"
-          />
-        </div>
-        <div v-else class="text-view" id="text-view">
-          <document-source
-            :is-doc-projectId-included="isDocProjectIdInc"
+            :is-doc-project-id-included="isDocProjectIdInc"
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :project-identifier="docProjectId"
             :iiif-manifest="manifest"
-            :id="resourceId + '&ref=' + refId"
             :level="currentLevel"
-            :editorialLevelIndicator="currentLevelIndicator"
+            :editorial-level-indicator="currentLevelIndicator"
             :editoriallevel="editorialLevel"
             :documenttype="documentType"
             :bottomtoc="bottomTOC"
             :maxcitedepth="TOC_DEPTH"
-            :key="refId + editorialLevel + manifest"
           />
         </div>
-        <div v-if="isLoading" class="mirador-view" id="mirador-view" :style="miradorViewCssStyle">
-          <div id="vue-mirador-container" ref="miradorContainer"/>
+        <div
+          v-else
+          id="text-view"
+          class="text-view"
+        >
+          <document-source
+            :id="resourceId + '&ref=' + refId"
+            :key="refId + editorialLevel + manifest"
+            :is-doc-project-id-included="isDocProjectIdInc"
+            :media-type-endpoint="collConfig.mediaTypeEndpoint"
+            :project-identifier="docProjectId"
+            :iiif-manifest="manifest"
+            :level="currentLevel"
+            :editorial-level-indicator="currentLevelIndicator"
+            :editoriallevel="editorialLevel"
+            :documenttype="documentType"
+            :bottomtoc="bottomTOC"
+            :maxcitedepth="TOC_DEPTH"
+          />
+        </div>
+        <div
+          v-if="isLoading"
+          id="mirador-view"
+          class="mirador-view"
+          :style="miradorViewCssStyle"
+        >
+          <div
+            id="vue-mirador-container"
+            ref="miradorContainer"
+          />
         </div>
       </div>
     </div>
@@ -312,11 +359,6 @@ function findById (array, id) {
 
 export default {
   name: 'DocumentPage',
-  computed: {
-    store () {
-      return store
-    }
-  },
   components: {
     DocumentMetadata,
     DocumentSource,
@@ -868,7 +910,7 @@ export default {
 
       if (editorialTypesIsValid.value) {
         topTOC.value = processFlatTOC
-        // console.log("flatTOC.value updated after editorialType : ", flatTOC.value)
+        // console.log('flatTOC.value updated after editorialType : ', flatTOC.value)
         console.log('processFlatTOC updated after editorialType : ', processFlatTOC)
         console.log('topTOC.value based on editorialType : ', topTOC.value)
       }
@@ -1633,7 +1675,7 @@ div.remove-bottom-padding #article {
   line-height: 33px;
   text-transform: none;
   /* color: #971716; */
-  /*color: var(--text-color);*/
+  color: var(--text-color);
 }
 
 #article .titlepage {
@@ -1691,7 +1733,7 @@ div.remove-bottom-padding #article {
   color: var(--text-color);
   border-bottom: none;
   padding: 1em 0 0 0;
-  margin: 35px 0 43px 0px;
+  margin: 35px 0 43px 0;
   text-align: center;
   font-variant: small-caps;
 }
@@ -1699,7 +1741,7 @@ div.remove-bottom-padding #article {
 #article section.div h3.head {
   color: #222222;
   margin: 35px 0 28px 0;
-  border-bottom: 0px dotted;
+  border-bottom: 0 dotted;
   text-align: center;
   padding: 1em 0 0 1ex;
   font-weight: bold;

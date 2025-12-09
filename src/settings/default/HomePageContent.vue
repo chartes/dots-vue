@@ -20,7 +20,6 @@
       </p>
     </div>
   </article>
-
 </template>
 <script>
 import { ref, watch } from 'vue'

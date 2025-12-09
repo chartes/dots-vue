@@ -7,7 +7,8 @@
             {{ footTitle ? footTitle : currCollection.title }}
           </span>
           <span
-            v-for="(subtitle, index) in footSubtitles" :key="index"
+            v-for="(subtitle, index) in footSubtitles"
+            :key="index"
             class="subtitle"
           >
             {{ subtitle }}
@@ -22,20 +23,20 @@
       <div class="column logos">
         <div class="logo-institutions">
           <a
-              target="_blank"
-              href="https://www.chartes.psl.eu/"
-            >
-              <img
+            target="_blank"
+            href="https://www.chartes.psl.eu/"
+          >
+            <img
               class="enc-logo"
               alt="Logo de l'École nationale des chartes"
               src="@/assets/images/footer_enc_logo.png"
             />
           </a>
           <a
-              target="_blank"
-              href="https://projet.biblissima.fr/fr"
-            >
-              <img
+            target="_blank"
+            href="https://projet.biblissima.fr/fr"
+          >
+            <img
               class="biblissima-logo"
               alt="Logo de Biblissima+"
               src="@/assets/images/logo_biblissima_footer_white.png"
@@ -47,10 +48,10 @@
             Powered by
           </span>
           <a
-              class="dots-logo"
-              target="_blank"
-              href="https://chartes.github.io/dots_documentation/"
-            >
+            class="dots-logo"
+            target="_blank"
+            href="https://chartes.github.io/dots_documentation/"
+          >
             <!--<img
               class="dots-logo"
               alt="Logo de DoTS"
@@ -63,7 +64,10 @@
     <div class="row links">
       <ul class="footer-links">
         <li>
-          <a target="_blank" href="https://www.chartes.psl.eu/contact">
+          <a
+            target="_blank"
+            href="https://www.chartes.psl.eu/contact"
+          >
             Contact
           </a>
         </li>
@@ -76,7 +80,10 @@
           </router-link>
         </li>
         <li>
-          <a target="_blank" href="https://www.huma-num.fr/">
+          <a
+            target="_blank"
+            href="https://www.huma-num.fr/"
+          >
             Huma-Num
           </a>
         </li>

@@ -1,6 +1,9 @@
 <template>
   <ul class="tree">
-    <template v-for="(item, index) in componentTOC" :key="index">
+    <template
+      v-for="(item, index) in componentTOC"
+      :key="index"
+    >
       <li
         v-if="item.show"
         :style="`margin-left: ${ (item.level -1) * 15 }px;`"
@@ -18,9 +21,9 @@
             :title="item.url"
             :data-href="item.url"
             :class="route.hash === item.hash ? 'is-current' : !route.hash && item.identifier === currentRefId ? 'is-current' : ''"
-            v-on:click.prevent="goTo(item)"
+            @click.prevent="goTo(item)"
           >
-            {{ item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : item.citeType : item.citeType }} {{ item.descendant > 0 ? `(${item.descendant})` : ''}}
+            {{ item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : item.citeType : item.citeType }} {{ item.descendant > 0 ? `(${item.descendant})` : '' }}
 
           </a><!-- : 'pas de titre' : `Fragment n° ${index + 1}` :title="item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : item.citeType : item.citeType"-->
         </div>
@@ -353,7 +356,7 @@ div.toc-area-content.toc-content {
     &.more {
       /*margin-left: 0px;*/
       display: block;
-      padding-left: 0px;
+      padding-left: 0;
       break-inside: avoid;
 
       & .li.container > a, span {
@@ -396,8 +399,8 @@ div.toc-area-aside.toc-content {
     }
 
     &.more {
-      /*margin-left: 0px;*/
-      padding-left: 0px;
+      /*margin-left: 0;*/
+      padding-left: 0;
       & .li.container > a, span {
       margin-top: 4px;
     }
@@ -431,8 +434,8 @@ div.bottom-toc {
     }
 
     &.more {
-      /*margin-left: 0px;*/
-      padding-left: 0px;
+      /*margin-left: 0;*/
+      padding-left: 0;
       & .li.container > a {
         margin-top: 4px;
       }

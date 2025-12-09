@@ -2,13 +2,15 @@
   <div
     v-if="(rootCollectionId === dtsRootCollectionId && collectionId === rootCollectionId && displayOpt !== 'list' && currentCollection.member.every(item => item.citeType === 'Collection')) || (displayOpt === 'card' && currentCollection.member.every(item => item.citeType === 'Collection'))"
     class="collection-list"
-  ><!-- && currCollection.member.every(m => m.citeType === 'Collection') -->
+  >
     <div class="tiles">
       <div class="tile page-header app-width-padding">
         <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center wrapper">
           <div class="tile is-child article app-width-margin">
             <div class="title-tile">
-              <p class="title">{{ collectionAltTitle ? collectionAltTitle : currCollection.title }}</p>
+              <p class="title">
+                {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
+              </p>
             </div>
             <div class="project-tile">
               <router-link
@@ -51,7 +53,7 @@
         class="article app-width-margin"
       >
         <h1>La collection</h1>
-          {{ currCollection.description }}
+        {{ currCollection.description }}
       </div>
       <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
       <div
@@ -68,44 +70,44 @@
       class="document-list app-width-margin"
     >
       <div class="is-flex">
-          <div
-            v-if="totalPages"
-            class="pagination has-text-centered is-flex is-flex-direction-row is-justify-content-center"
-          >
-            <div class="pagination-documents-count">
-              {{ componentTOC.length }} {{ componentTOC.length === 1 ? 'collection' : 'collections' }}
-            </div>
-            <div class="pagination-controls">
-              <a
-                :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
-                @click="currentPage <= 1 ? null : currentPage = 1"
-              />
-              <a
-                :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
-                @click="currentPage <= 1 ? null : --currentPage"
-              />
-              <input
-                v-model="currentPage"
-                name="page"
-                type="number"
-                min="1"
-                :max="totalPages"
-                placeholder="Page..."
-                class="current-page"
-                @change.prevent="currentPage = parseInt(p)"
-              >
-              <span class="label-sur-page">/</span>
-              <span class="total-pages">{{ totalPages }}</span>
-              <a
-                :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
-                @click="currentPage < totalPages ? ++currentPage : null"
-              />
-              <a
-                :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
-                @click="currentPage < totalPages ? currentPage = totalPages : null"
-              />
-            </div>
+        <div
+          v-if="totalPages"
+          class="pagination has-text-centered is-flex is-flex-direction-row is-justify-content-center"
+        >
+          <div class="pagination-documents-count">
+            {{ componentTOC.length }} {{ componentTOC.length === 1 ? 'collection' : 'collections' }}
           </div>
+          <div class="pagination-controls">
+            <a
+              :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
+              @click="currentPage <= 1 ? null : currentPage = 1"
+            />
+            <a
+              :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
+              @click="currentPage <= 1 ? null : --currentPage"
+            />
+            <input
+              v-model="currentPage"
+              name="page"
+              type="number"
+              min="1"
+              :max="totalPages"
+              placeholder="Page..."
+              class="current-page"
+              @change.prevent="currentPage = parseInt(p)"
+            >
+            <span class="label-sur-page">/</span>
+            <span class="total-pages">{{ totalPages }}</span>
+            <a
+              :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
+              @click="currentPage < totalPages ? ++currentPage : null"
+            />
+            <a
+              :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
+              @click="currentPage < totalPages ? currentPage = totalPages : null"
+            />
+          </div>
+        </div>
       </div>
       <div>
         <CollectionTOC
@@ -121,7 +123,6 @@
           :key="currentPageData"
         />
       </div>
-
     </div>
   </div>
   <div
@@ -134,7 +135,9 @@
         <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center wrapper">
           <div class="tile is-child app-width-margin">
             <div class="title-tile">
-              <p class="title">{{ collectionAltTitle ? collectionAltTitle : currCollection.title }}</p>
+              <p class="title">
+                {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
+              </p>
             </div>
             <div class="project-tile">
               <router-link
@@ -177,7 +180,7 @@
         class="article app-width-margin"
       >
         <h1>La collection</h1>
-          {{ currCollection.description }}
+        {{ currCollection.description }}
       </div>
       <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.descriptionSection.collectionDescription) -->
       <div
@@ -209,7 +212,8 @@
             :class="expandedById[collectionId] ? 'expanded': ''"
           />
         </div>
-        <div v-if="componentTOC.length > 0"
+        <div
+          v-if="componentTOC.length > 0"
           class="menu app-width-margin"
           :class="expandedById[collectionId] ? 'expanded': ''"
         >
@@ -575,7 +579,7 @@ a {
 .expanded.menu {
   display: flex;
   flex-direction: column;
-  padding: 0px 20px 0px;
+  padding: 0 20px 0;
   /* border-top: solid 2px #fcfcfc; */
   background-color: #e4e4e4;
   border-radius: 0 0 6px 6px;

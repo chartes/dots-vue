@@ -4,13 +4,18 @@
       <div class="tile page-header app-width-padding">
         <div class="tile is-child">
           <div class="is-flex is-flex-direction-row title-tile">
-            <p class="title">{{ collectionAltTitle ? collectionAltTitle : currCollection.title }} - Terms of service</p>
+            <p class="title">
+              {{ collectionAltTitle ? collectionAltTitle : currCollection.title }} - Terms of service
+            </p>
           </div>
         </div>
       </div>
     </div>
     <section class="main app-width-margin">
-      <div id="article" class="article">
+      <div
+        id="article"
+        class="article"
+      >
         <h1>Publisher</h1>
         <p>
           École nationale des chartes, Public establishment<br>
@@ -36,14 +41,29 @@
         </p>
         <hr>
         <h1>Personal data</h1>
-        <p>Refer to the page <a target="_blank" href="https://www.chartes.psl.eu/politique-de-confidentialite">« Politique de confidentialité »</a> of the École nationale des chartes - PSL.</p>
+        <p>
+          Refer to the page
+          <a
+            target="_blank"
+            href="https://www.chartes.psl.eu/politique-de-confidentialite"
+          >
+            « Politique de confidentialité »
+          </a> of the École nationale des chartes - PSL.
+        </p>
 
         <hr>
         <h1>Intellectual property</h1>
 
         <h2>Website development and content</h2>
-        <p>Unless otherwise stated, the structure, design and content of this website ({{ websiteURL }}) and data available via its APIs
-           are shared under the Creative Commons license <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>.
+        <p>
+          Unless otherwise stated, the structure, design and content of this website ({{ websiteURL }}) and data available via its APIs
+          are shared under the Creative Commons license
+          <a
+            target="_blank"
+            href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+          >
+            CC BY-NC-SA 4.0
+          </a>.
         </p>
 
         <h2>Image rights</h2>
@@ -70,23 +90,24 @@
         -->
         <hr>
         <h1>Liability clause</h1>
-        <p>The information on the site is provided as a public service.<br>
+        <p>
+          The information on the site is provided as a public service.<br>
           The publisher uses all reasonable efforts to ensure the information available on the website ({{ websiteURL }})
-           is as available, accurate, and up to date as possible, and reserves the right to amend and correct its content
+          is as available, accurate, and up to date as possible, and reserves the right to amend and correct its content
           at any time without prior notice.<br>
           However, the publisher cannot guarantee the availability, accuracy or completeness of the information presented.
           Use of the information available or provided on this website is the sole responsibility of the user.<br>
           Websites or third-party information referenced on the site have been selected and provided to users only for convenience and information purposes.
           The publisher will not be held liable for any damage of any kind resulting from the interpretation or use of information available on the site or on third-party sites.
         </p>
-        <p>This notice is subject to be modified and updated at any time without prior notice.<br>
+        <p>
+          This notice is subject to be modified and updated at any time without prior notice.<br>
           <br>
           This page was last updated on {{ lastModified }}.
         </p>
-       </div>
+      </div>
     </section>
   </div>
-
 </template>
 <script>
 import { ref, watch } from 'vue'

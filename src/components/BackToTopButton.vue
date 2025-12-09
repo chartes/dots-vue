@@ -1,5 +1,9 @@
 <template>
-  <a href="#" @click="backToTop" :class="cssClass"></a>
+  <a
+    href="#"
+    :class="cssClass"
+    @click="backToTop"
+  />
 </template>
 
 <script>

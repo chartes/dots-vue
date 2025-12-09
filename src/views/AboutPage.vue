@@ -11,18 +11,21 @@
         </div>
       </div>
     </div>
-    <div class="about-page app-width-padding"><!--:class="isMenuOpened ?'opened' : ''"-->
+    <div class="about-page app-width-padding">
+      <!--:class="isMenuOpened ?'opened' : ''"-->
       <div class="tab-menu">
         <div
           type="is-toggle"
-        ><!-- @click="scrollToTop" -->
+        >
+          <!-- @click="scrollToTop" -->
           <aside class="menu">
             <p
-              class="menu-label"
-              :class="currentTab === tab[1] ? 'is-active' : ''"
               v-for="(tab, index) in tabs"
               :key="index"
-              @click="currentTab = tab[1]" v-text="tab[0]"
+              class="menu-label"
+              :class="currentTab === tab[1] ? 'is-active' : ''"
+              @click="currentTab = tab[1]"
+              v-text="tab[0]"
             />
           </aside>
         </div>
@@ -30,11 +33,10 @@
       <div class="content-menu">
         <keep-alive>
           <component
-            class="content"
             :is="currentTab"
+            class="content"
             :application-base-url="appBaseUrl"
-          >
-          </component>
+          />
         </keep-alive>
       </div>
     </div>
@@ -42,7 +44,6 @@
 </template>
 <script>
 import { shallowRef, defineAsyncComponent, ref, watch } from 'vue'
-// import myComponents from '@/views/about/index'
 
 export default {
   name: 'AboutPage',
@@ -165,9 +166,13 @@ export default {
 }
 
 </script>
-<style>
+<style scoped>
 article.about {
   margin-top: 0;
+}
+#article h1,
+#article {
+  font-family: "Barlow", sans-serif !important;
 }
 .tile.is-child {
   display: flex;
@@ -257,13 +262,14 @@ article.about {
 }
 .about .about-content h1,
 .about .content h1 {
+  margin: 1em 0 1em 0;
   padding-top: 20px;
   padding-bottom: 20px;
   font-family: "Barlow", sans-serif;
-  font-weight: 500;
-  font-style: normal;
   font-size: 25px;
+  font-weight: 500;
   line-height: 33px;
+  text-transform: none;
 }
 .about .about-content h2,
 .about .content h2 {

@@ -11,8 +11,8 @@
           target="_blank"
         >
           <img
-            class="logo-header"
             v-if="imgUrl"
+            class="logo-header"
             :src="imgUrl"
           />
         </a>
@@ -23,31 +23,36 @@
           :to="{ name: 'Home' }"
         >
           <img
-            class="logo-header"
             v-if="imgUrl"
+            class="logo-header"
             :src="imgUrl"
-          />
+          >
         </router-link>
         <span class="level-item">
           <router-link
             active-class="active"
             class="level-item-external"
             :to="{ name: 'Home' }"
-            >{{ rootShortTitle ? rootShortTitle : rootCollectionId }}
+          >{{ rootShortTitle ? rootShortTitle : rootCollectionId }}
           </router-link>
-          <template v-for="(item, index) in breadCrumb.slice().reverse()" v-bind:key="index">
+          <template
+            v-for="(item, index) in breadCrumb.slice().reverse()"
+            :key="index"
+          >
             <router-link
               v-if="index === 0"
               class="level-item-external"
               active-class="active"
               :to="{ name: 'Home', params: {collId: Object.keys(item)[0]} }"
-              >{{ Object.values(item)[0] }}
+            >
+              {{ Object.values(item)[0] }}
             </router-link>
             <a
               v-else
               class="level-item-external"
               @click.prevent="openCollectionModal(Object.keys(item)[0])"
-              >{{ Object.values(item)[0] }}
+            >
+              {{ Object.values(item)[0] }}
             </a>
           </template>
           <!-- replaced by the above breadcrum to have sub-collections
@@ -60,36 +65,39 @@
           </router-link> -->
         </span>
       </div>
-       <div class="level-right">
-       <div class="level-item menu">
-         <a
-          v-if="apiImgUrl"
-          target="_blank"
-          :href="apiImgHref"
-         >
-          <img
-            class="logo-api"
-            :src="apiImgUrl"
-            alt="Logo API"
-          />
-         </a>
-         <a
-           v-else
-           target="_blank"
-           href="https://chartes.github.io/dots_documentation/api/"
-         >
-           API <b>{ }</b>
-         </a>
+      <div class="level-right">
+        <div class="level-item menu">
+          <a
+            v-if="apiImgUrl"
+            target="_blank"
+            :href="apiImgHref"
+          >
+            <img
+              class="logo-api"
+              :src="apiImgUrl"
+              alt="Logo API"
+            />
+          </a>
+          <a
+            v-else
+            target="_blank"
+            href="https://chartes.github.io/dots_documentation/api/"
+          >
+            API <b>{ }</b>
+          </a>
         </div>
       </div>
     </nav>
     <div class="mobile-button">
-      <Burger-button @change="burgerChanged" :opened="isMenuOpened" />
+      <Burger-button
+        :opened="isMenuOpened"
+        @change="burgerChanged"
+      />
     </div>
   </section>
 </template>
 <script>
-import { ref, computed, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import BurgerButton from './Burger.vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
@@ -183,7 +191,7 @@ export default {
       console.log('AppNavBar click below ProjectId open collection modal ', collId)
     }
 
-    const setImgUrl = (source) => {
+    const setImgUrl = () => {
       // TODO: provide a logo object with url AND legend ?
 
       const sourceConfig = collConfig.value
@@ -194,7 +202,7 @@ export default {
         console.log('AppNavbar ImgUrl found : ', sourceConfig.homePageSettings.appNavBar.appNavBarLogo.imgName)
         // Get all images from the settings repo
         const images = Object.fromEntries(Object.entries(import.meta.glob('confs/*/assets/images/*.*', { eager: true })).map(([key, value]) => {
-          const newKey = key.split("/").slice(-4).join("/")
+          const newKey = key.split('/').slice(-4).join('/')
           return [newKey, value]
         }))
         console.log('AppNavbar ImgUrl images: ', images)
@@ -256,7 +264,7 @@ export default {
       }
     }
 
-    const setApiImgUrl = (source) => {
+    const setApiImgUrl = () => {
       // TODO: provide a logo object with url AND legend ?
       const sourceConfig = collConfig.value
       if (sourceConfig && sourceConfig.homePageSettings && Object.keys(sourceConfig.homePageSettings).includes('appNavBar')
@@ -266,7 +274,7 @@ export default {
         console.log('AppNavbar apiImgUrl found : ', sourceConfig.homePageSettings.appNavBar.appNavBarApiLogo.imgName)
         // Get all images from the settings repo
         const images = Object.fromEntries(Object.entries(import.meta.glob('confs/*/assets/images/*.*', { eager: true })).map(([key, value]) => {
-          const newKey = key.split("/").slice(-4).join("/")
+          const newKey = key.split('/').slice(-4).join('/')
           return [newKey, value]
         }))
         console.log('AppNavbar apiImgUrl images: ', images)
