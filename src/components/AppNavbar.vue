@@ -35,7 +35,7 @@
             :to="{ name: 'Home' }"
             >{{ rootShortTitle ? rootShortTitle : rootCollectionId }}
           </router-link>
-          <template v-for="(item, index) in breadCrumb.slice().reverse()">
+          <template v-for="(item, index) in breadCrumb.slice().reverse()" v-bind:key="index">
             <router-link
               v-if="index === 0"
               class="level-item-external"
