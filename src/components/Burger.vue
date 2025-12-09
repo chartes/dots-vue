@@ -17,7 +17,7 @@
 import { computed, ref, watch } from 'vue'
 
 export default {
-  name: 'Burger',
+  name: 'BurgerButton',
   props: {
     opened: {
       required: false,

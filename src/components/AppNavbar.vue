@@ -84,20 +84,20 @@
       </div>
     </nav>
     <div class="mobile-button">
-      <Burger @change="burgerChanged" :opened="isMenuOpened" />
+      <Burger-button @change="burgerChanged" :opened="isMenuOpened" />
     </div>
   </section>
 </template>
 <script>
 import { ref, computed, onMounted, onBeforeUnmount, reactive, watch } from 'vue'
-import Burger from './Burger.vue'
+import BurgerButton from './Burger.vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import defaultLogo from '@/assets/images/logo_dots_circle.svg'
 
 export default {
   name: 'AppNavbar',
-  components: { Burger },
+  components: { BurgerButton },
   props: {
     isDocProjectIdIncluded: {
       type: Boolean,
