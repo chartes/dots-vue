@@ -206,7 +206,7 @@
       </div>
       <div class="document-views is-flex" v-if="isLoading">
         <div v-if="!refId || refId && refId.length === 0" class="text-view" id="text-view">
-          <document
+          <document-source
             :is-doc-projectId-included="isDocProjectIdInc"
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :project-identifier="docProjectId"
@@ -222,7 +222,7 @@
           />
         </div>
         <div v-else class="text-view" id="text-view">
-          <document
+          <document-source
             :is-doc-projectId-included="isDocProjectIdInc"
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :project-identifier="docProjectId"
@@ -246,7 +246,7 @@
 </template>
 
 <script>
-import Document from '@/components/Document.vue'
+import DocumentSource from '@/components/Document.vue'
 import TOC from '@/components/TOC.vue'
 import ToPreviousButton from '@/components/ToPreviousButton.vue'
 import ToNextButton from '@/components/ToNextButton.vue'
@@ -319,7 +319,7 @@ export default {
   },
   components: {
     DocumentMetadata,
-    Document,
+    DocumentSource,
     TOC,
     ToPreviousButton,
     ToNextButton,

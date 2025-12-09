@@ -62,7 +62,7 @@ import TOC from '@/components/TOC.vue'
 import router from '@/router'
 
 export default {
-  name: 'Document',
+  name: 'DocumentSource',
   components: {
     TOC
   },
