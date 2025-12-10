@@ -3,8 +3,9 @@ export function getSimpleObject (obj) {
   const simpleObject = {
     identifier: obj.identifier ? obj.identifier : obj['@id'],
     citeType: obj['@type'] ? obj['@type'] : obj.citeType,
-    expanded: obj?.expanded,
+    description: obj?.description,
     title: obj?.title,
+    expanded: obj?.expanded,
     level: obj?.level,
     editorialLevelIndicator: obj?.editorialLevelIndicator,
     totalChildren: obj?.totalChildren,
