@@ -10,7 +10,7 @@ export function getSimpleObject (obj) {
     totalChildren: obj?.totalChildren,
     totalDescendants: obj?.totalDescendants,
     children: obj?.children,
-    member: obj?.member,
+    member: obj?.member?.map((m) => getSimpleObject(m)),
     parent: obj?.parent,
     dublincore: { ...obj?.dublincore, title: Array.isArray(obj?.dublincore?.title) ? obj?.dublincore?.title?.[0] : obj?.dublincore?.title },
     extensions: obj?.extensions,

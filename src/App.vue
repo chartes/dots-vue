@@ -166,11 +166,10 @@ export default {
       if (matchedCollectionConf && matchedCollectionConf.excludeCollectionIds && matchedCollectionConf.excludeCollectionIds.length > 0) {
         metadataResponse.member = metadataResponse.member.filter(m => !matchedCollectionConf.excludeCollectionIds.includes(m['@id']))
       }
-      let formatedResponse = getSimpleObject(metadataResponse)
+      const formatedResponse = getSimpleObject(metadataResponse)
       console.log('App.vue formatedResponse 1', formatedResponse)
       formatedResponse.member.forEach(m => { m.parent = collectionId.value })
       console.log('App.vue formatedResponse 2', formatedResponse)
-      formatedResponse = { ...formatedResponse, member: formatedResponse.member?.map(m => { return getSimpleObject(m) }) }
       currCollection.value = formatedResponse
 
       // Get and set the collection project (only if current collection is not top collection)

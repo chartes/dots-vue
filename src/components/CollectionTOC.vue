@@ -408,7 +408,6 @@ export default {
           const response = getSimpleObject(await getMetadataFromApi(collId))
           console.log('response', response)
 
-          response.member.forEach(m => { m.identifier = m['@id'] })
           response.member.forEach(m => { m.parent = collId })
           console.log('response after identifier', response)
 
