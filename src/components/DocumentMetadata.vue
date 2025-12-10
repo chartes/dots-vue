@@ -260,6 +260,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import md5 from 'md5'
 import * as $rdf from 'rdflib'
 // import node from "rdflib/src/node.js";
+import { removeKeys } from '@/composables/utils'
 
 export default {
   name: 'DocumentMetadata',
@@ -399,17 +400,6 @@ export default {
       () => props.metadataprop,
       () => {
         console.log('metadataprop watch current, new : ', metadata.value, props.metadataprop)
-
-        const removeKeys = (obj, keys) => obj !== Object(obj)
-          ? obj
-          : Array.isArray(obj)
-            ? obj.map((item) => removeKeys(item, keys))
-            : Object.keys(obj)
-              .filter((k) => !keys.includes(k))
-              .reduce(
-                (acc, x) => Object.assign(acc, { [x]: removeKeys(obj[x], keys) }),
-                {}
-              )
 
         const removedKeys = ['children', 'member', 'editorialLevelIndicator', 'renderToc', 'level', 'expanded', 'router', 'router_params', 'dublincore', 'extensions']/* gerer les 'url' à supp pour les collections seulement */
 

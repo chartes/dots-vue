@@ -18,3 +18,15 @@ export function getSimpleObject (obj) {
   }
   return simpleObject
 }
+
+// https://gist.github.com/aurbano/383e691368780e7f5c98?permalink_comment_id=3560352#gistcomment-3560352
+export const removeKeys = (obj, keys) => obj !== Object(obj)
+      ? obj
+      : Array.isArray(obj)
+      ? obj.map((item) => removeKeys(item, keys))
+      : Object.keys(obj)
+          .filter((k) => !keys.includes(k))
+          .reduce(
+            (acc, x) => Object.assign(acc, { [x]: removeKeys(obj[x], keys) }),
+            {}
+          )
