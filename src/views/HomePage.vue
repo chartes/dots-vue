@@ -400,13 +400,17 @@ export default {
       let component
       console.log('HomePage getCustomHomeDescription collConfig.value.collectionId', collConfig.value.collectionId)
       console.log('HomePage getCustomHomeDescription collConfig.value.aboutPageSettings', collConfig.value.homePageSettings)
-      const comps = import.meta.glob('confs/**/*.vue')
+      const comps = Object.fromEntries(Object.entries(import.meta.glob('confs/**/*.vue')).map(([key, value]) => {
+        // remove first / if exists
+        const newKey = key.replace(import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH, "").replace(/^\//, "")
+        return [newKey, value]
+      }))
 
       const defaultSettings = import.meta.glob('../settings/default/HomePageContent.vue', { eager: true })
       comps['../settings/default/HomePageContent.vue'] = defaultSettings['../settings/default/HomePageContent.vue']
 
-      const match = comps[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`]
-      const matchRootCollection = comps[`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`]
+      const match = comps[`${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`]
+      const matchRootCollection = comps[`${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`]
       console.log('match 1 : ', match)
       console.log('matchRootCollection : ', matchRootCollection)
       const defaultCollection = comps['../settings/default/HomePageContent.vue']
