@@ -54,26 +54,7 @@ import AppFooter from '@/components/AppFooter.vue'
 import BackToTopButton from '@/components/BackToTopButton.vue'
 import fetchMetadata from '@/composables/get-metadata'
 import { getMetadataFromApi, getParentFromApi, getProjectFromApi, getAncestors } from '@/api/document'
-
-function getSimpleObject (obj) {
-  // console.log("getSimpleObject / obj", obj)
-  let simpleObject = {}
-  simpleObject = {
-    identifier: obj.identifier ? obj.identifier : obj['@id'],
-    citeType: obj['@type'] ? obj['@type'] : obj.citeType,
-    title: obj.title,
-    description: obj.description,
-    level: obj.level,
-    editorialLevelIndicator: obj.editorialLevelIndicator,
-    totalChildren: obj.totalChildren,
-    member: !obj.member ? obj.children : obj.member,
-    parent: obj.parent,
-    dublincore: obj.dublincore,
-    extensions: obj.extensions
-  }
-  // console.log('getSimpleObject / simpleObject', simpleObject)
-  return simpleObject
-}
+import { getSimpleObject } from '@/composables/utils.js'
 
 export default {
   name: 'App',
@@ -187,7 +168,6 @@ export default {
       }
       let formatedResponse = getSimpleObject(metadataResponse)
       console.log('App.vue formatedResponse 1', formatedResponse)
-      formatedResponse.member.forEach(m => { m.identifier = m['@id'] })
       formatedResponse.member.forEach(m => { m.parent = collectionId.value })
       console.log('App.vue formatedResponse 2', formatedResponse)
       formatedResponse = { ...formatedResponse, member: formatedResponse.member?.map(m => { return getSimpleObject(m) }) }
