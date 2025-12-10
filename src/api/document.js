@@ -1,4 +1,4 @@
-import { getSimpleObject } from '@/views/DocumentPage'
+import { getSimpleObject } from '@/composables/utils.js'
 
 const _baseApiURL = `${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`
 

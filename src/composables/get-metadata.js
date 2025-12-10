@@ -79,8 +79,8 @@ export default async function fetchMetadata (source, resourceId, documentType, r
     }
     const endTimefetchMetadataFromDots = new Date()
     console.log('fetchMetadata metadata get time from DOTS : ', endTimefetchMetadataFromDots - startTimefetchMetadataFromDots)
-    const htmlnamespace = Object.keys(listmetadata['@context']).find((k) =>
-      listmetadata['@context'][k].includes('html')
+    const htmlnamespace = Object.keys(listmetadata.context).find((k) =>
+      listmetadata.context[k].includes('html')
     )
     console.log('listmetadata htmlnamespace :', htmlnamespace)
     console.log('listmetadata listmetadata :', listmetadata)

@@ -319,28 +319,8 @@ import { useRoute } from 'vue-router'
 import router from '@/router/index.js'
 import fetchMetadata from '@/composables/get-metadata.js'
 import store from '@/store'
+import { getSimpleObject } from '@/composables/utils.js'
 
-export function getSimpleObject (obj) {
-  // console.log("getSimpleObject / obj", obj)
-  let simpleObject = {}
-  simpleObject = {
-    identifier: obj.identifier ? obj.identifier : obj['@id'],
-    citeType: obj['@type'] ? obj['@type'] : obj.citeType,
-    expanded: obj.expanded,
-    title: Array.isArray(obj.title) ? obj.title[0] : obj.title,
-    level: obj.level,
-    editorialLevelIndicator: obj.editorialLevelIndicator,
-    totalChildren: obj.totalChildren,
-    totalDescendants: obj.totalDescendants,
-    children: obj.children,
-    member: obj.member,
-    parent: obj.parent,
-    dublincore: { ...obj?.dublincore, title: Array.isArray(obj?.dublincore?.title) ? obj?.dublincore?.title?.[0] : obj?.dublincore?.title },
-    extensions: obj.extensions
-  }
-  // console.log("getSimpleObject / simpleObject", simpleObject)
-  return simpleObject
-}
 function findById (array, id) {
   for (const item of array) {
     if (item.identifier === id) return item
