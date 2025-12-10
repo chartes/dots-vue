@@ -298,25 +298,8 @@ import { useRoute } from 'vue-router'
 import { getMetadataFromApi } from '@/api/document.js'
 import store from '@/store'
 
-function getSimpleObject (obj) {
-  // console.log("getSimpleObject / obj", obj)
-  let simpleObject = {}
-  simpleObject = {
-    identifier: obj.identifier ? obj.identifier : obj['@id'],
-    citeType: obj['@type'] ? obj['@type'] : obj.citeType,
-    expanded: obj.expanded,
-    title: obj.title,
-    level: obj.level,
-    editorialLevelIndicator: obj.editorialLevelIndicator,
-    totalChildren: obj.totalChildren,
-    member: !obj.member ? obj.children : obj.member,
-    parent: obj.parent,
-    dublincore: obj.dublincore,
-    extensions: obj.extensions
-  }
-  // console.log("getSimpleObject / simpleObject", simpleObject)
-  return simpleObject
-}
+import { getSimpleObject } from '@/composables/utils'
+
 const collator = new Intl.Collator('fr', {
   numeric: true,
   sensitivity: 'base'
