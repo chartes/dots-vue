@@ -197,16 +197,17 @@ export default {
         if (collConfig.value.collectionCustomCss && appCssConfs[collConfig.value.collectionCustomCss]) {
           console.log('App.vue getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[collConfig.value.collectionId])
           customCss.value = (await appCssConfs[collConfig.value.collectionCustomCss]()).default
-          const style = document.createElement('style')
-          style.textContent = customCss.value
-          style.id = 'customCss'
-          // check if existing custom.css
-          const styleTags = [...document.querySelectorAll('style')]
-          if (styleTags.some((tag) => tag.id === 'customCss')) {
-            console.log('App.vue a customCss tag exist ', styleTags.filter((tag) => tag.id === 'customCss'))
-            document.getElementById('customCss').textContent = style.textContent
-            console.log('App.vue a customCss tag exist updated ', styleTags.filter((tag) => tag.id === 'customCss'))
-          } else document.head.append(style)
+
+          // check if a customCss style tag exists, if not create it
+          let el = document.getElementById('customCss')
+          if (!el) {
+            el = document.createElement('style')
+            el.id = 'customCss'
+          }
+          // Update the CSS content of the customCss style tag
+          el.textContent = customCss.value
+          // IMPORTANT : appendChild will move the customCss style tag to the end of <head> so it takes precedence
+          document.head.appendChild(el)
         }
       } else removeCustomCss()
     }
