@@ -52,7 +52,7 @@
         id="home-article"
         class="article app-width-margin"
       >
-        <h1>La collection 55</h1>
+        <h1>La collection</h1>
         {{ currCollection.description }}
       </div>
       <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
@@ -61,7 +61,7 @@
         id="home-article"
         class="article app-width-margin"
       >
-        <h1>La collection 64</h1>
+        <h1>La collection</h1>
         {{ collectionDescription }}
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
@@ -179,7 +179,7 @@
         id="home-article"
         class="article app-width-margin"
       >
-        <h1>La collection 182</h1>
+        <h1>La collection</h1>
         {{ currCollection.description }}
       </div>
       <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.descriptionSection.collectionDescription) -->
@@ -188,7 +188,7 @@
         id="home-article"
         class="article app-width-margin"
       >
-        <h1>La collection 191</h1>
+        <h1>La collection</h1>
         {{ collectionDescription }}
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
