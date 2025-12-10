@@ -41,7 +41,7 @@ function findSource (id) {
 export default async function fetchMetadata (source, resourceId, documentType, route) {
   const startTimefetchMetadata = new Date()
   const initial_metadata = {
-    id: null,
+    identifier: null,
     title: null,
     description: null,
     author: null,
@@ -91,19 +91,15 @@ export default async function fetchMetadata (source, resourceId, documentType, r
     console.log('---------')
     console.log('dublincore:', dublincore)
 
-    // if (documentType.value === "Resource") {
-    metadata.identifier = listmetadata['@id'] ? listmetadata['@id'] : null
+    metadata.type = listmetadata.citeType
+    metadata.identifier = listmetadata.identifier
+    metadata.title = listmetadata.title
+    metadata.description = listmetadata.description
 
-    metadata.title = listmetadata.title ? listmetadata.title : ''
-
-    metadata.description = listmetadata.description ? listmetadata.description : ''
-
-    metadata.type = listmetadata['@type'] ? listmetadata['@type'] : ''
-
-    if (listmetadata['@id']) {
+    if (listmetadata.identifier) {
       const source = findSource(window.location.origin)
       metadata.citation = { source, url: `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}` }
-      console.log('source found:', source, listmetadata['@id'])
+      console.log('source found:', source, listmetadata.identifier)
     } else {
       metadata.citation = null
     }
@@ -191,12 +187,12 @@ export default async function fetchMetadata (source, resourceId, documentType, r
       // benc & sudoc & thenca
       if (extensions['dct:isVersionOf']) {
         metadata['dct:isVersionOf'] = []
-        for (const member of extensions['dct:isVersionOf']) {
-          if (member['@id']) {
-            const source = findSource(member['@id'])
+        for (const item of extensions['dct:isVersionOf']) {
+          if (item['@id']) {
+            const source = findSource(item['@id'])
             if (source) {
-              metadata['dct:isVersionOf'].push({ source, url: member['@id'] })
-              console.log('source found:', source, member['@id'])
+              metadata['dct:isVersionOf'].push({ source, url: item['@id'] })
+              console.log('source found:', source, item['@id'])
             }
           }
         }

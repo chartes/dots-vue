@@ -405,7 +405,7 @@ export default {
         const item = componentTOC.value[idx]
 
         if (!item.children || item.children.length === 0) {
-          const response = getSimpleObject(await getMetadataFromApi(collId))
+          const response = await getMetadataFromApi(collId)
           console.log('response', response)
 
           response.member.forEach(m => { m.parent = collId })

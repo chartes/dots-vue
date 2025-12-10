@@ -50,26 +50,29 @@ async function getMetadataFromApi (id, options = {}) {
   const fetchPromise = fetch(fetchUrl, { mode: 'cors', ...options })
     .then(res => res.json())
     .then(metadata => {
-      // Get the id from the DTS response
-      const realId = metadata?.['@id']
+      // simplify object
+      const simpleMetadata = getSimpleObject(metadata)
 
-      console.log('getMetadataFromApi: API returned @id =', realId)
+      // Get the id from the DTS response
+      const realId = simpleMetadata?.identifier
+
+      console.log('getMetadataFromApi: API returned identifier =', realId)
 
       // Cache metadata under the requested key (id or ROOT_KEY)
-      metadataCache.set(key, metadata)
+      metadataCache.set(key, simpleMetadata)
       metadataPromiseCache.delete(key)
 
       // Cache duplication for root collection (can be referred to with or without its id) :
       // for the root collection (fetched on collection DTS root without id), when we get the response, also cache it under its id (realId)
       // checking also that realId exists (erroneous API response)
       if (!id && realId) {
-        metadataCache.set(realId, metadata)
+        metadataCache.set(realId, simpleMetadata)
         console.log(
           'getMetadataFromApi: root call, duplicating cache under real ID:',
           realId
         )
       }
-      return metadata
+      return simpleMetadata
     })
     .catch(error => {
       metadataPromiseCache.delete(key)

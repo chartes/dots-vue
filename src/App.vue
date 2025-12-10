@@ -135,7 +135,7 @@ export default {
     const setDtsRootResponse = async (source) => {
       console.log('App.vue setDtsRootResponse source', source)
       const dtsRootResponse = await getMetadataFromApi()
-      dtsRootCollectionId.value = dtsRootResponse['@id']
+      dtsRootCollectionId.value = dtsRootResponse.identifier
       console.log('App.vue get dtsRootCollectionId', dtsRootCollectionId.value)
     }
 
@@ -164,13 +164,13 @@ export default {
       console.log('App.vue setCurrentCollectionContext excludeCollectionIds', collectionId.value, appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value))
       const matchedCollectionConf = appConfig.value.collectionsConf && appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value).length > 0 ? appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value) : {}
       if (matchedCollectionConf && matchedCollectionConf.excludeCollectionIds && matchedCollectionConf.excludeCollectionIds.length > 0) {
-        metadataResponse.member = metadataResponse.member.filter(m => !matchedCollectionConf.excludeCollectionIds.includes(m['@id']))
+        metadataResponse.member = metadataResponse.member.filter(m => !matchedCollectionConf.excludeCollectionIds.includes(m.identifier))
       }
-      const formatedResponse = getSimpleObject(metadataResponse)
-      console.log('App.vue formatedResponse 1', formatedResponse)
-      formatedResponse.member.forEach(m => { m.parent = collectionId.value })
-      console.log('App.vue formatedResponse 2', formatedResponse)
-      currCollection.value = formatedResponse
+
+      console.log('App.vue metadataResponse 1', metadataResponse)
+      metadataResponse.member.forEach(m => { m.parent = collectionId.value })
+      console.log('App.vue metadataResponse 2', metadataResponse)
+      currCollection.value = metadataResponse
 
       // Get and set the collection project (only if current collection is not top collection)
       if (collectionId.value !== rootCollectionIdentifier.value) {

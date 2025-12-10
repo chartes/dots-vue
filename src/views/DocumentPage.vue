@@ -484,11 +484,11 @@ export default {
         store.commit('setResourceId', route.params.id)
 
         const response = await getMetadataFromApi(resourceId.value)
-        const parentResponse = await getParentFromApi(response['@id'])
+        const parentResponse = await getParentFromApi(response.identifier)
         // console.log("parentResponse", parentResponse["member"][0])
 
         documentType.value = 'Resource'
-        currentItem.value = getSimpleObject(response)
+        currentItem.value = response
         currentItem.value.parent = parentResponse.member.length > 1 ? parentResponse.member.map(p => p['@id']) : parentResponse.member[0]['@id']
         currentItem.value.level = 0
 
@@ -586,7 +586,7 @@ export default {
               console.log('appendParentInTOC / node.parent / p', node.parent, node.parent[i])
               const appendParentInTOC = await getMetadataFromApi(node.parent[i])
               console.log('appendParentInTOC', appendParentInTOC)
-              const parentResponse = await getParentFromApi(appendParentInTOC['@id'])
+              const parentResponse = await getParentFromApi(appendParentInTOC.identifier)
               // Compute parent level from current node
               parentResponse.level = node.level - 1
               // Append this level to the parent instance to be added in the TOC
@@ -656,7 +656,7 @@ export default {
             const appendParentInTOC = await getMetadataFromApi(node.parent)
             console.log('appendParentInTOC else', appendParentInTOC)
 
-            const parentResponse = await getParentFromApi(appendParentInTOC['@id'])
+            const parentResponse = await getParentFromApi(appendParentInTOC.identifier)
             // Compute parent level from current node
             parentResponse.level = node.level - 1
             // Append this level to the parent instance to be added in the TOC
