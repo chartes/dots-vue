@@ -1,6 +1,6 @@
 <template>
-  <article class="about">
-    <div class="about-content">
+  <article class="home">
+    <div class="home-content">
       <h1>A custom default title</h1>
       <h2>In the default custom component, you can use either: </h2>
       <p>
@@ -53,10 +53,10 @@ export default {
 }
 </script>
 <style scoped>
-.about {
+.home {
   font-family: "Barlow", sans-serif;
 }
-.about h1 {
+.home h1 {
   padding-top: 20px;
   padding-bottom: 20px;
   font-family: "Barlow", sans-serif;
@@ -67,7 +67,7 @@ export default {
   text-transform: none;
   color: var(--text-color);
 }
-.about h2 {
+.home h2 {
   padding-top: 20px;
   padding-bottom: 20px;
   font-family: "Barlow", sans-serif;
@@ -77,21 +77,21 @@ export default {
   line-height: 28px;
   text-transform: none;
 }
-.about p {
+.home p {
   text-align: left;
   text-indent: 0;
   word-break: break-word;
 }
-.about a {
+.home a {
   color: #B9192F;
   word-break: break-word;
   &:hover {
     text-decoration: underline !important;
   }
 }
-.about table,
-.about pre,
-.about blockquote {
+.home table,
+.home pre,
+.home blockquote {
   margin: 20px 0;
 }
 </style>

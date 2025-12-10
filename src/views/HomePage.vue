@@ -36,7 +36,7 @@
       <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
       <div
         v-if="customCollectionDescription"
-        id="article"
+        id="home-article"
         class="article app-width-margin"
       >
         <component
@@ -49,19 +49,19 @@
       <!-- no homePageSettings.descriptionSection.customCollectionDescription : use DTS API collection description if available -->
       <div
         v-else-if="currCollection.description"
-        id="article"
+        id="home-article"
         class="article app-width-margin"
       >
-        <h1>La collection</h1>
+        <h1>La collection 55</h1>
         {{ currCollection.description }}
       </div>
       <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
       <div
         v-else-if="collectionDescription"
-        id="article"
+        id="home-article"
         class="article app-width-margin"
       >
-        <h1>La collection</h1>
+        <h1>La collection 64</h1>
         {{ collectionDescription }}
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
@@ -163,7 +163,7 @@
       <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
       <div
         v-if="customCollectionDescription"
-        id="article"
+        id="home-article"
         class="article app-width-margin"
       >
         <component
@@ -176,19 +176,19 @@
       <!-- no homePageSettings.descriptionSection.customCollectionDescription : use DTS API collection description if available -->
       <div
         v-else-if="currCollection.description"
-        id="article"
+        id="home-article"
         class="article app-width-margin"
       >
-        <h1>La collection</h1>
+        <h1>La collection 182</h1>
         {{ currCollection.description }}
       </div>
       <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.descriptionSection.collectionDescription) -->
       <div
         v-else-if="collectionDescription"
-        id="article"
+        id="home-article"
         class="article app-width-margin"
       >
-        <h1>La collection</h1>
+        <h1>La collection 191</h1>
         {{ collectionDescription }}
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
@@ -527,19 +527,19 @@ export default {
 a {
   border-bottom: none;
 }
-#article {
+#home-article {
   padding: 40px 10% 120px;
   border-bottom: 1px dotted #ffffff;
   /* min-height: 100%; */
 }
-#article article {
+#home-article article {
   margin: 0;
 }
-#article h1,
-#article {
+#home-article h1,
+#home-article {
   font-family: "Barlow", sans-serif !important;
 }
-#article h1 {
+#home-article h1 {
   margin: 1em 0 1em 0;
   padding-top: 20px;
   padding-bottom: 20px;
@@ -547,6 +547,7 @@ a {
   font-weight: 500;
   line-height: 33px;
   text-transform: none;
+  color: var(--text-color)
 }
 .home-mask > .wrapper > .collection-toc-area {
   width: 100%;
@@ -603,7 +604,7 @@ a {
   }
 }
 
-#article {
+#home-article {
   margin-bottom: 30px !important;
   padding: 10px 0 10px !important;
 }

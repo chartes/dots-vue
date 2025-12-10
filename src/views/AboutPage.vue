@@ -166,7 +166,7 @@ export default {
 }
 
 </script>
-<style scoped>
+<style>
 article.about {
   margin-top: 0;
 }
@@ -273,11 +273,12 @@ article.about {
 }
 .about .about-content h2,
 .about .content h2 {
-  padding-top: 20px;
-  padding-bottom: 20px;
+  margin: 70px 0 30px;
   font-family: "Barlow", sans-serif;
-  font-weight: 500;
-  line-height: 33px;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 34px;
+  color: #b9192f;
 }
 .about .about-content a,
 .about .content a {
