@@ -1,4 +1,4 @@
-// simplify and sort Objet
+// simplify and sort Object
 export function getSimpleObject (obj) {
   const simpleObject = {
     identifier: obj.identifier ? obj.identifier : obj['@id'],
@@ -31,3 +31,63 @@ export const removeKeys = (obj, keys) => obj !== Object(obj)
             (acc, x) => Object.assign(acc, { [x]: removeKeys(obj[x], keys) }),
             {}
           )
+
+// Manage customCss
+export function createCustomCssManager(initialCss = '') {
+  // create / apply style
+  let el = document.getElementById('customCss');
+  if (!el) {
+    el = document.createElement('style');
+    el.id = 'customCss';
+    // Initial append
+    document.head.appendChild(el);
+  }
+  el.textContent = initialCss;
+
+  // Observer : if customCss style tag isn't the last child, replace (e.g. move) it
+  const observer = new MutationObserver(() => {
+    // if customCss style tag is already the last child, do nothing
+    if (document.head.lastElementChild !== el) {
+      document.head.appendChild(el);
+    }
+  });
+
+  observer.observe(document.head, { childList: true });
+
+  return {
+    update(css) {
+      el.textContent = css;
+      // if customCss style tag isn't the last child, replace (e.g. move) it
+      if (document.head.lastElementChild !== el) {
+        document.head.appendChild(el)
+      }
+    },
+    disconnect() {
+      observer.disconnect();
+    },
+    element: el
+  };
+}
+
+// Use customCss manager
+import { onMounted, onBeforeUnmount, watch } from 'vue';
+
+export function useCustomCss(customCssRef) {
+  let mgr;
+
+  onMounted(() => {
+    mgr = createCustomCssManager(customCssRef.value || '');
+  });
+
+  watch(customCssRef, (newVal) => {
+    if (mgr) mgr.update(newVal);
+  });
+
+  onBeforeUnmount(() => {
+    if (mgr) mgr.disconnect();
+  });
+
+  return {
+    getElement: () => mgr && mgr.element
+  };
+}

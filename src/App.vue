@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { ref, shallowRef, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import router from '@/router'
@@ -55,6 +55,7 @@ import BackToTopButton from '@/components/BackToTopButton.vue'
 import fetchMetadata from '@/composables/get-metadata'
 import { getMetadataFromApi, getParentFromApi, getProjectFromApi, getAncestors } from '@/api/document'
 import { getSimpleObject } from '@/composables/utils.js'
+import { useCustomCss } from '@/composables/utils.js'
 
 export default {
   name: 'App',
@@ -75,7 +76,7 @@ export default {
     const appCssConfig = ref({})
     const whichTheme = ref(`${import.meta.env.VITE_APP_THEME}`.length === 0 ? 'red' : `${import.meta.env.VITE_APP_THEME}`)
     const theme = ref('')
-    const customCss = shallowRef({})
+    const customCss = ref({})
 
     const dtsRootCollectionId = ref('')
     const rootCollectionIdentifier = ref('')
@@ -95,6 +96,8 @@ export default {
     document.documentElement.setAttribute('data-theme', whichTheme.value)
     // localStorage.setItem('theme', whichTheme.value)
     console.log('App.vue setup theme : ', whichTheme.value)
+
+    useCustomCss(customCss)
 
     const mergeSettings = async () => {
       if (Object.keys(appConfig.value).length > 0) {
@@ -220,6 +223,7 @@ export default {
         if (tag.id === 'customCss') {
           console.log('App.vue removeCustomCss tag.textContent ', tag.textContent)
           console.log('App.vue removeCustomCss tag.id ', tag.id)
+          customCss.value = undefined
           tag.remove()
         }
       })
