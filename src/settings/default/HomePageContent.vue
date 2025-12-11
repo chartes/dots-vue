@@ -68,6 +68,7 @@ export default {
   color: var(--text-color);
 }
 .home h2 {
+  margin: 0 !important;
   padding-top: 20px;
   padding-bottom: 20px;
   font-family: "Barlow", sans-serif;
@@ -76,6 +77,7 @@ export default {
   font-weight: 500;
   line-height: 28px;
   text-transform: none;
+  color: #4a4a4a !important;
 }
 .home p {
   text-align: left;
