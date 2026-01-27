@@ -39,7 +39,26 @@ export default function useLayout () {
   })
 
   const changeViewMode = function (v) {
-    viewMode.value = v
+    //viewMode.value = v
+    console.log('changeViewMode before : ', viewMode.value, v)
+    if (v === 'init') {
+      viewMode.value = 'text-mode'
+    } else if (viewMode.value === 'init' && v === 'text-mode') {
+      viewMode.value = 'text-mode'
+    } else if (viewMode.value === 'text-mode' && v === 'text-mode') {
+      viewMode.value = 'images-mode'
+    } else if (viewMode.value === 'text-mode' && v === 'images-mode') {
+      viewMode.value = 'text-and-images-mode'
+    } else if (viewMode.value === 'images-mode' && v === 'images-mode') {
+      viewMode.value = 'text-mode'
+    } else if (viewMode.value === 'images-mode' && v === 'text-mode') {
+      viewMode.value = 'text-and-images-mode'
+    } else if (viewMode.value === 'text-and-images-mode' && v === 'text-mode') {
+      viewMode.value = 'images-mode'
+    } else if (viewMode.value === 'text-and-images-mode' && v === 'images-mode') {
+      viewMode.value = 'text-mode'
+    }
+    console.log('changeViewMode after : ', viewMode.value)
   }
 
   const getViewMode = function () {

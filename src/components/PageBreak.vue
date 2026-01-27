@@ -33,13 +33,15 @@ export default {
         const currentCanvasId = Object.values(mirador.miradorStore.getState().windows)[0].canvasId
         console.log('currentCanvasId / props.canvasId', currentCanvasId, props.canvasId, currentCanvasId.substring(currentCanvasId.lastIndexOf('/f') + 1, currentCanvasId.length))
         if (currentCanvasId === props.canvasId && layout.getViewMode() !== 'text-mode') {
-          layout.changeViewMode('text-mode')
+          layout.changeViewMode('init')
           mirador.setCanvasId(props.canvasId.substring(0, props.canvasId.lastIndexOf('/f') + 1) + 'f1')
         } else {
           mirador.setCanvasId(props.canvasId)
           // if (layout.miradorVisible != true) {
           // layout.setMiradorVisible(true);
-          layout.changeViewMode('text-and-images-mode')
+          if (layout.getViewMode() === 'text-mode') {
+            layout.changeViewMode('images-mode')
+          }
           // }
         }
       }

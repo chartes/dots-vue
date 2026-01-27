@@ -4,7 +4,7 @@
     :class="viewModeCssClass"
   >
     <CollectionModal
-      v-if="isLoading && isModalOpened"
+      v-if="isLoading && isModalOpened && collConfig.option === 2"
       class="modal-area"
       :is-open="isModalOpened ? isModalOpened : false"
       :is-doc-project-id-included="isDocProjectIdInc"
@@ -16,15 +16,148 @@
       :toc="flatTOC"
       @change="closeModal"
     />
-    <div>
+    <div class="navigation-row-top app-width-margin">
+      <div class="ariane-collection-top">
+        <ul v-if="arianeCollection.length" class="breadcrumb-top">
+          <li class="first">
+            <router-link
+              v-if="isDocProjectIdIncluded"
+              :to="{ name: 'Home', params: {collId: arianeCollection[0][0].identifier} }"
+              class="fa fa-home"
+            >
+            </router-link>
+          </li>
+          <li
+            v-for="(item, index) in arianeCollection.slice(1)"
+            :key="index"
+            :class="index === activeBreadcrumb ? 'active' : ''"
+            @click.prevent="activeBreadcrumb === index ? activeBreadcrumb = null : activeBreadcrumb = index"
+          >
+            <template
+              v-for="(ancestor, idx) in item.sort((a,b) => $store.state.collectionId.indexOf(b.identifier) - $store.state.collectionId.indexOf(a.identifier))"
+              :key="idx"
+            >
+              <router-link
+                v-if="isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
+                :to="{ name: 'Home', params: {collId: ancestor.identifier} }"
+              >
+                {{ ancestor.title }}
+              </router-link>
+              <router-link
+                v-else-if="!isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
+                :to="{ name: 'Home' }"
+              >
+                {{ ancestor.title }}
+              </router-link>
+              <a
+                v-else
+                href="#"
+                @click.prevent="toggleCollection(ancestor.identifier)"
+              >
+                <i
+                  v-if="ancestor.citeType === 'Collection'"
+                  class="fa fa-archive"
+                />
+                <i
+                  v-else
+                  class="fa fa-file-text"
+                />
+                {{ ancestor.citeType === 'Resource' && ancestor?.dublincore?.creator ? ancestor.dublincore.creator + ', ' + ancestor.title : ancestor.title }}
+              </a>
+            </template>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div v-if="selectedCollectionId.length > 0">
       <document-metadata
         :ispopup="false"
-        :metadataprop="metadata"
+        :metadataprop="selectedCollection"
         class="metadata-area app-width-margin"
       />
+      <div
+        v-if="selectedCollection.citeType === 'Collection'"
+        class="toc-area app-width-margin"
+        :class="tocCssClass"
+      >
+        <div class="toc-area-header">
+          <a
+            href="#"
+            @click="toggleTOCContent"
+          >
+            Sommaire
+          </a>
+          <a
+            href="#"
+            class="toggle-btn"
+            @click="toggleTOCContent"
+          />
+        </div>
+        <div class="toc-area-content toc-content">
+          <aside id="aside">
+            <nav>
+              <nav>
+                <CollectionTOC
+                  :is-doc-projectId-included="isDocProjectIdInc"
+                  :dts-root-collection-identifier="dtsRootCollectionId"
+                  :root-collection-identifier="rootCollectionId"
+                  :collection-config="collConfig"
+                  :current-collection="selectedCollection"
+                  :margin="0"
+                  :toc="selectedCollection.children"
+                />
+              </nav>
+            </nav>
+          </aside>
+        </div>
+      </div>
+      <div
+        v-else="collConfig.option === 1 && topTOCDisplayIndicator"
+        class="toc-area app-width-margin"
+        :class="tocCssClass"
+      >
+        <div class="toc-area-header">
+          <a
+            href="#"
+            @click="toggleTOCContent"
+          >
+            Sommaire
+          </a>
+          <a
+            href="#"
+            class="toggle-btn"
+            @click="toggleTOCContent"
+          />
+        </div>
+        <div class="toc-area-content toc-content">
+          <aside id="aside">
+            <nav>
+              <nav>
+                <TOC
+                  v-if="flatTOC.length > 0"
+                  :key="arianeDocument"
+                  :is-doc-project-id-included="isDocProjectIdInc"
+                  :margin="0"
+                  :toc="flatTOC.filter(n => n.level > 0)"
+                  :maxcitedepth="TOC_DEPTH"
+                  :refid="refId"
+                  @update-ref-id="getNewRefId"
+                />
+              </nav>
+            </nav>
+          </aside>
+        </div>
+      </div>
     </div>
-    <div
-      v-if="topTOCDisplayIndicator"
+    <!--<div v-if="collConfig.option === 1">
+      <document-metadata
+        :ispopup="false"
+        :metadataprop="selectedCollection"
+        class="metadata-area app-width-margin"
+      />
+    </div>-->
+    <!--<div
+      v-if="collConfig.option === 1 && topTOCDisplayIndicator"
       class="toc-area app-width-margin"
       :class="tocCssClass"
     >
@@ -59,15 +192,15 @@
           </nav>
         </aside>
       </div>
-    </div>
-    <nav class="controls is-flex app-width-margin">
+    </div>-->
+    <!--<nav class="controls is-flex app-width-margin">
       <a
         href=""
         class="toc-menu-toggle"
         :class="leftTOCDisplayIndicator ? TOCMenuBtnCssClass : 'hideLeftToc'"
         @click="toggleTOCMenu"
       >
-        <!-- :class="currentLevelIndicator !== 'toEdit' ? 'hideLeftToc' : TOCMenuBtnCssClass" -->
+        [ :class="currentLevelIndicator !== 'toEdit' ? 'hideLeftToc' : TOCMenuBtnCssClass" ]
         Sommaire
       </a>
       <ul class="is-flex">
@@ -133,9 +266,9 @@
           </a>
         </li>
       </ul>
-    </nav>
+    </nav>-->
     <div class="navigation-row app-width-margin">
-      <div class="ariane-collection">
+      <!--<div class="ariane-collection">
         <ul class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center crumbs">
           <li
             v-for="(item, index) in arianeCollection.value"
@@ -168,33 +301,101 @@
             </template>
           </li>
         </ul>
-      </div>
+      </div>-->
 
       <div class="navigation-document">
         <div class="ariane">
-          <ul class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center crumbs">
+          <a
+            href=""
+            class="toc-menu-toggle"
+            :class="leftTOCDisplayIndicator ? TOCMenuBtnCssClass : 'hideLeftToc'"
+            @click="toggleTOCMenu"
+          ><i class="fa fa-list-ul" aria-hidden="true"></i>
+
+            <!-- :class="currentLevelIndicator !== 'toEdit' ? 'hideLeftToc' : TOCMenuBtnCssClass" -->
+          </a>
+          <ul class="is-flex is-flex-direction-row is-align-items-center crumbs">
+            <!--<li v-if="flatTOC.length > 0" class="first">
+              <router-link
+                v-if="isDocProjectIdIncluded"
+                :to="{ name: 'Document', params: {collId: collConfig.identifier, id: resourceId} }"
+              >
+                < !--<i class="fa fa-file-text"></i> -- >
+                {{ flatTOC.find(item => item.citeType === 'Resource').title }}
+
+              </router-link>
+            </li>-->
             <li
-              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')"
+              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash').slice(0,-1)"
               :key="index"
               :class="refId ? ancestor.identifier === refId ? 'is-current' : '' : ancestor.identifier === resourceId ? 'hide-resource' : ''"
             >
               <router-link
                 :to="ancestor.router"
               >
-                <span
+                {{
+                  ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre'
+                }}
+                <!--<span
                   class="left"
                   v-html="setText(ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).left"
                 />
                 <span
                   class="right"
                   v-html="setText( ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).right"
+                />-->
+              </router-link>
+            </li>
+            <li
+              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash').slice(-1)"
+              :key="index"
+              :class="refId ? ancestor.identifier === refId ? 'is-current' : '' : ''"
+            ><!-- : ancestor.identifier === resourceId ? 'hide-resource' : ''" -->
+
+              <router-link
+                :to="ancestor.router"
+              >
+                {{
+                  ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre'
+                }}
+                <!--<span
+                  class="left"
+                  v-html="setText(ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).left"
                 />
+                <span
+                  class="right"
+                  v-html="setText( ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).right"
+                />-->
               </router-link>
             </li>
           </ul>
+          <div class="navigation-document-top">
+            <router-link
+              class="to-previous-fragment"
+              :class="previousRefId === '' ? 'disabled' : ''"
+              :to="{ name: 'Document', params: {collId: collConfig.identifier, id: resourceId}, query: {refId: previousRefId} }"
+            />
+            <!--<to-previous-button
+              class="to-previous-button-page-top"
+              :class="!refId || firstRef ? 'disabled' : ''"
+              :previousrefid="previousRefId"
+              :previousreftitle="previousRefTitle"
+            />-->
+            <router-link
+              class="to-next-fragment"
+              :class="nextRefId === '' ? 'disabled' : ''"
+              :to="{ name: 'Document', params: {collId: collConfig.identifier, id: resourceId}, query: {refId: nextRefId} }"
+            />
+            <!--<to-next-button
+              class="to-next-button-page-top"
+              :class="!refId || lastRef ? 'disabled' : ''"
+              :nextrefid="nextRefId"
+              :nextreftitle="nextRefTitle"
+            />-->
+          </div>
         </div>
       </div>
-      <div class="navigation-document-top">
+      <!--<div class="navigation-document-top">
         <to-previous-button
           class="to-previous-button-page-top"
           :class="!refId || firstRef ? 'disabled' : ''"
@@ -207,8 +408,82 @@
           :nextrefid="nextRefId"
           :nextreftitle="nextRefTitle"
         />
-      </div>
+      </div>-->
     </div>
+    <nav class="controls is-flex app-width-margin">
+      <!--<a
+        href=""
+        class="toc-menu-toggle"
+        :class="leftTOCDisplayIndicator ? TOCMenuBtnCssClass : 'hideLeftToc'"
+        @click="toggleTOCMenu"
+      >
+        <! -- :class="currentLevelIndicator !== 'toEdit' ? 'hideLeftToc' : TOCMenuBtnCssClass" -- >
+        Sommaire
+      </a>-->
+      <ul class="is-flex">
+        <li>
+          <a
+            href=""
+            class="text-btn"
+            aria-label="texte seul"
+            @click.prevent="changeViewMode('text-mode')"
+          />
+        </li>
+        <!--<li>
+          <a
+            href=""
+            class="text-images-btn"
+            aria-label="texte et images"
+            @click.prevent="changeViewMode('text-and-images-mode')"
+          />
+        </li>-->
+        <li>
+          <a
+            href=""
+            class="images-btn"
+            aria-label="images seules"
+            @click.prevent="changeViewMode('images-mode')"
+          />
+        </li>
+      </ul>
+      <!--<ul class="is-flex">
+        <li>
+          <a
+            v-if="metadata.downloadPDF"
+            target="_blank"
+            :href="metadata.downloadPDF"
+            class="pdf-btn"
+            aria-label="Télécharger le PDF"
+          />
+        </li>
+        <li>
+          <a
+            v-if="refId && refId.length > 0"
+            target="_blank"
+            :href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}&ref=${refId}`"
+            class="xml-btn"
+            aria-label="Télécharger le XML"
+          />
+          <a
+            v-else
+            target="_blank"
+            :href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}`"
+            class="xml-btn"
+            aria-label="Télécharger le XML"
+          />
+        </li>
+        <li>
+          <a
+            v-if="metadata.thenca"
+            target="_blank"
+            :href="metadata.thenca"
+            class="access_link"
+          >
+            Accès à la thèse
+          </a>
+        </li>
+      </ul>-->
+    </nav>
     <div
       class="document-area is-flex app-width-margin"
       :class="tocMenuCssClass"
@@ -299,6 +574,7 @@ import ToPreviousButton from '@/components/ToPreviousButton.vue'
 import ToNextButton from '@/components/ToNextButton.vue'
 import DocumentMetadata from '@/components/DocumentMetadata.vue'
 import CollectionModal from '@/components/CollectionModal.vue'
+import _ from 'lodash'
 
 import { useStore } from 'vuex'
 import useMirador from '@/composables/use-mirador'
@@ -312,7 +588,8 @@ import {
   reactive,
   provide,
   ref,
-  inject
+  inject,
+  nextTick,
 } from 'vue'
 
 import { useRoute } from 'vue-router'
@@ -320,6 +597,7 @@ import router from '@/router/index.js'
 import fetchMetadata from '@/composables/get-metadata.js'
 import store from '@/store'
 import { getSimpleObject } from '@/composables/utils.js'
+import CollectionTOC from "@/components/CollectionTOC.vue";
 
 function findById (array, id) {
   for (const item of array) {
@@ -340,6 +618,7 @@ function findById (array, id) {
 export default {
   name: 'DocumentPage',
   components: {
+    CollectionTOC,
     DocumentMetadata,
     DocumentSource,
     TOC,
@@ -360,6 +639,10 @@ export default {
       type: String,
       required: true
     },
+    applicationConfig: {
+      type: Object,
+      required: false
+    },
     collectionConfig: {
       type: Object,
       required: true
@@ -378,6 +661,7 @@ export default {
     const manifestIsAvailable = ref(false)
     const manifest = ref(null)
     const miradorContainer = ref(null)
+    const activeBreadcrumb = ref(null)
 
     // Mirador view sticky behavior
     const miradorViewBoundingTop = ref(0)
@@ -428,7 +712,7 @@ export default {
       author_links: [],
       other_links: [], */
 
-    const metadata = reactive(initial_metadata)
+    const metadata = ref(initial_metadata)
     const route = useRoute()
     const store = useStore()
 
@@ -451,7 +735,7 @@ export default {
     const topTOC = ref([])
     const bottomTOC = ref([])
 
-    const arianeCollection = reactive([])
+    const arianeCollection = ref([])
     const arianeDocument = ref([])
     const previousRefId = ref('')
     const previousRefTitle = ref('')
@@ -461,7 +745,7 @@ export default {
     const lastRef = ref(false)
 
     const selectedCollectionId = ref('')
-    const selectedCollection = reactive({})
+    const selectedCollection = ref({})
     const isModalOpened = ref(false)
 
     const miradorInstance = useMirador(miradorContainer, manifest)
@@ -525,7 +809,7 @@ export default {
     const getMetadata = async () => {
       const metadataResponse = await fetchMetadata('DocumentPage', resourceId.value, 'Resource', route)
       console.log('DocumentPage getMetadata metadataResponse', metadataResponse)
-      Object.assign(metadata, metadataResponse)
+      Object.assign(metadata.value, metadataResponse)
     }
 
     // Setting up the Tables Of Content Top and Left
@@ -1012,7 +1296,7 @@ export default {
 
       // Build the collections breadcrumb
       arianeCollection.value = ancestors.reverse().map((elem) => {
-        return elem.filter((e) => e.citeType === 'Collection')
+        return elem.filter((e) => e.citeType === 'Collection' || e.citeType === 'Resource')
       }).filter((e) => e.length > 0)
 
       // Build the breadcrumb within the resource
@@ -1064,26 +1348,41 @@ export default {
         }
       })
       store.commit('setArianeDocument', arianeDocument.value.map(item => item.identifier))
+      getNewRefId
     }
     const closeModal = () => {
       isModalOpened.value = false
       selectedCollectionId.value = ''
-      Object.assign(selectedCollection, {})
+      Object.assign(selectedCollection.value, {})
       store.commit('setCollectionModalId', false)
-      console.log(' Collection modal was closed : ', selectedCollectionId.value, selectedCollection)
+      console.log(' Collection modal was closed : ', selectedCollectionId.value, selectedCollection.value)
     }
 
-    const toggleCollection = (collectionId) => {
-      console.log('toggleCollection collectionId : ', collectionId)
+    const toggleCollection = (breadcrumbItem) => {
+      console.log('toggleCollection breadcrumbItem : ', breadcrumbItem)
       isModalOpened.value = true
-      selectedCollectionId.value = collectionId
-      Object.assign(selectedCollection, flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0])
+      if (selectedCollectionId.value === breadcrumbItem) {
+        selectedCollectionId.value = ''
+        Object.assign(selectedCollection.value, {})
+      } else {
+        selectedCollectionId.value = breadcrumbItem
+        if (flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0].citeType === 'Collection') {
+          //Object.assign(selectedCollection.value, flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0])
+          selectedCollection.value = flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0]
+        } else {
+          //Object.assign(selectedCollection.value, _.merge(metadata.value, flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0]))
+          selectedCollection.value = _.merge(metadata.value, flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0])
+        }
+      }
+
+
       console.log('toggleCollection selectedCollectionId / selectedCollection : ', selectedCollectionId.value, flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0])
     }
     const getNewRefId = function () {
       console.log('getNewRefId check if refId / refId.value', refId, refId.value)
       firstRef.value = false
       lastRef.value = false
+      layout.changeViewMode('init')
       if (refId.value) {
         firstRef.value = false
         lastRef.value = false
@@ -1126,6 +1425,11 @@ export default {
             : refIdTOC[currentItemIndex + 1].citeType + ' ' + refIdTOC[currentItemIndex + 1].identifier
           // console.log('function getNewRefId nextRefId.value : ', nextRefId.value)
         }
+      } else if ( flatTOC.value.filter(item => { return ((item.editorialLevelIndicator === 'renderToc' && item.level >= 0) || item.editorialLevelIndicator === 'toEdit')}).length > 1 ) {
+        previousRefId.value = ''
+        previousRefTitle.value = ''
+        nextRefId.value = flatTOC.value.filter(item => { return ((item.editorialLevelIndicator === 'renderToc' && item.level >= 0) || item.editorialLevelIndicator === 'toEdit')})[1].identifier
+        nextRefTitle.value = flatTOC.value.filter(item => { return ((item.editorialLevelIndicator === 'renderToc' && item.level >= 0) || item.editorialLevelIndicator === 'toEdit')})[1].title
       } else {
         previousRefId.value = ''
         previousRefTitle.value = ''
@@ -1135,7 +1439,7 @@ export default {
     }
 
     const setMirador = function () {
-      fetch(metadata.iiifManifestUrl.url, {
+      fetch(metadata.value.iiifManifestUrl.url, {
         method: 'GET'
       })
         .then((r) => {
@@ -1153,10 +1457,10 @@ export default {
     }
 
     watch(
-      () => metadata.iiifManifestUrl,
+      () => metadata.value.iiifManifestUrl,
       () => {
-        if (metadata.iiifManifestUrl) {
-          console.log('metadata.iiifManifestUrl is now available !!! : ', metadata.iiifManifestUrl, manifestIsAvailable.value)
+        if (metadata.value.iiifManifestUrl) {
+          console.log('metadata.iiifManifestUrl is now available !!! : ', metadata.value.iiifManifestUrl, manifestIsAvailable.value)
           layout.imageIsAvailable.value = true
           setMirador()
         } else {
@@ -1297,11 +1601,12 @@ export default {
       appView.addEventListener('scroll', updateMiradorTopPosition)
       window.addEventListener('scroll', updateMiradorTopPosition)
       layout.isTOCMenuOpened.value = false
+      layout.changeViewMode('init')
     })
 
     onUnmounted(() => {
       const appView = document.getElementById('app')
-      layout.changeViewMode('text-mode')
+      layout.changeViewMode('init')
       console.log('layout on leave', layout, layout.isTOCMenuOpened.value)
       if (layout.isTOCMenuOpened.value === true) {
         console.log('closing TOC on leave')
@@ -1323,6 +1628,7 @@ export default {
       viewModeCssClass: layout.viewModeCssClass,
       miradorViewCssStyle,
       miradorContainer,
+      activeBreadcrumb,
       metadata,
       manifestIsAvailable,
       manifest,
@@ -1495,14 +1801,28 @@ export default {
 }
 
 .controls {
-  justify-content: space-between;
-  align-items: center;
+  justify-content: right;
+  justify-items: right;
+  align-items: flex-end;
+  align-content: center;
+  /*align-items: center;*/
   width: 100%;
-  /* border-top: #b9192f 1px dashed; */
-  border-top: 1px dashed var(--text-color);
+  margin-left: auto;
+  /* border-top: #b9192f 1px dashed;
   border-bottom: #b8b8b8 1px solid;
   padding: 12px 0 9px;
-  overflow-x: hidden;
+  overflow-x: hidden;*/
+  & > ul {
+    margin-left: 0px;
+    & > li > a.text-btn, a.text-images-btn, a.images-btn {
+      margin-right: 5px;
+      margin-left: 0;
+    }
+    & > li > a.xml-btn {
+      margin-right: 0;
+      margin-left: 0;
+    }
+  }
 }
 .controls a {
   display: inline;
@@ -1544,8 +1864,8 @@ export default {
 .controls a.text-btn {
   background: url(../assets/images/b_text_off.svg) center / cover no-repeat;
 }
-.text-mode .controls a.text-btn {
-  background-image: url(../assets/images/b_text_on.svg);
+.text-and-images-mode .controls a.text-btn, .text-mode .controls a.text-btn {
+  background-image: url(../assets/images/b_text_on_mika.svg);
 }
 .controls a.text-images-btn {
   width: 80px;
@@ -1558,8 +1878,8 @@ export default {
 .controls a.images-btn {
   background: url(../assets/images/b_image_off.svg) center / cover no-repeat;
 }
-.images-mode .controls a.images-btn {
-  background-image: url(../assets/images/b_image_on.svg);
+.text-and-images-mode .controls a.images-btn, .images-mode .controls a.images-btn {
+  background-image: url(../assets/images/b_image_on_mika.svg);
 }
 .text-mode-only .controls a.text-btn {
   pointer-events: none;
@@ -1596,12 +1916,23 @@ export default {
 .toc-area-aside {
   display: none;
 }
+.toc-aside-is-opened #aside {
+  width: 300px;
+  float: none;
+  position: unset;
+  overflow: auto;
+  top: 180px;
+  bottom: 0px;
+  margin: 0;
+  /*padding: 70px 0 3em 1rem;*/
+  padding: 0;
+}
 .toc-aside-is-opened .toc-area-aside {
   display: flex;
   width: 230px;
-  position: sticky;
+  /*position: sticky;
   top: 40px;
-  align-self: flex-start;
+  align-self: flex-start;*/
   & > aside > nav {
     height: calc(100vh - 120px);
     overflow-y: auto;
@@ -1780,10 +2111,11 @@ div.remove-bottom-padding #article {
 }
 .ariane {
   display: flex;
-  flex-direction: column;
+  /*flex-direction: column;*/
   justify-content: center;
   align-items: center;
-  width: 80% !important;
+  /* width: 80% !important; */
+  width: 100% !important;
   max-width: 1100px !important;
 
   font-family: "Barlow", sans-serif !important;
@@ -1791,7 +2123,7 @@ div.remove-bottom-padding #article {
 
   & > ul {
     display: flex;
-    justify-content: center;
+    justify-content: left;
     align-items: center;
 
     & > li:first-child {
@@ -1799,9 +2131,23 @@ div.remove-bottom-padding #article {
       font-weight: bold;
     }
   }
+  > a.toc-menu-toggle {
+    width: 40px;
+    height: 40px;
+    margin-right: 20px;
+    text-align: center;
+    align-content: center;
+    color: #aeaeae;
+    border: #aeaeae 1px solid;
+    border-radius: 4px;
+    &.is-opened {
+      color: var(--text-color);
+      border: var(--text-color) 1px solid;
+    }
+  }
 }
 .crumbs {
-  width: 100%;
+  width: 80%;
 }
 .crumbs li + li:before {
   width: 100% !important;
@@ -1809,11 +2155,34 @@ div.remove-bottom-padding #article {
 }
 
 .crumbs li {
-  width: 100% !important;
+  /*width: 100% !important;*/
+  display: flex;
+  justify-content: center;
   margin-top: 0;
   margin-bottom: 0;
-  margin-left: 20px;
-  margin-right: 20px;
+  /*margin-left: 20px;*/
+  margin-right: 0px;
+  padding-right: 20px;
+
+  &:last-child:after {
+    display: none;
+  }
+
+  &:not(:last-child):after {
+    content: ' > ';
+    display: inline-block;
+    color: var(--text-color);
+    padding-left: .75rem;
+  }
+  &:not(:last-child) {
+    & a {
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+  }
 
   &.hide-resource {
     display: none;
@@ -1823,11 +2192,14 @@ div.remove-bottom-padding #article {
     display: flex;
     justify-content: center;
     align-items: center;
+    /*margin-top: 20px;*/
     & a {
-      display: flex;
-      justify-content: center;
+      /*display: flex;
+      justify-content: center;*/
       width: 100%;
-      color: #336;
+      /*color: #336;*/
+      color: var(--text-color);
+      font-weight: bold;
       border: none;
       &:hover {
         color: #B9192F;
@@ -1836,12 +2208,17 @@ div.remove-bottom-padding #article {
   }
   &:not(.is-current) {
     & a {
-      display: flex;
-      justify-content: center;
+      /*display: flex;
+      justify-content: center;*/
       width: 100% !important;
 
       color: #4a4a4a;
       border: none;
+
+      &:before {
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+      }
 
       &:hover {
         color: #B9192F !important;
@@ -1853,6 +2230,10 @@ div.remove-bottom-padding #article {
 .navigation-row {
   display: flex;
   flex-direction: column;
+  position: sticky;
+  top: 0px; /* hauteur de la navbar + collection navigation */
+  z-index: 10;
+  background: #fff;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -1862,17 +2243,19 @@ div.remove-bottom-padding #article {
 .navigation-document {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
   width: 100%;
-  margin-bottom: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #5f004d !important;
 }
 .navigation-document-top {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+  justify-content: right;
+  /*align-items: center;*/
+  width: 20%;
   height: 100%;
 }
 .navigation-document-top a span {
@@ -2044,6 +2427,209 @@ div.remove-bottom-padding #article {
     }
   }
 
+}
+
+.ariane-collection-top {
+  justify-content: left;
+}
+
+.navigation-row-top {
+  width: 100% !important;
+  /*position: sticky;
+  top: 70px; / * hauteur de la navbar * /
+  z-index: 10;
+  background: #fff;*/
+  /*margin-top: 20px;*/
+}
+ul.breadcrumb-top {
+  display: flex;
+  max-width: 100%;
+	margin-top: 10px;
+  margin-bottom: 20px;
+	padding: 0px;
+	font-size: 0px;
+	line-height: 0px;
+	/*@include inline;*/
+	height: 40px;
+
+	& > li {
+    display: flex;
+    justify-content: left;
+		position: relative;
+		margin: 0px 0px;
+		padding: 0px;
+		list-style: none;
+		list-style-image: none;
+		/*@include inline;*/
+		border-left: 1px solid #ccc;
+		/* transition: 0.3s ease; */
+
+		&:hover {
+      flex-shrink: 0 !important;
+      width: auto !important;
+			&:before {
+				border-left: 10px solid var(--text-color);
+			}
+			a {
+				color: #000;
+				background: var(--text-color);
+			}
+		}
+
+		&:before {
+			content:"";
+			position: absolute;
+			right: -9px;
+			top: -1px;
+			z-index: 9;
+			border-left: 10px solid #fff;
+			border-top: 22px solid transparent;
+			border-bottom: 22px solid transparent;
+			/*transition: 0.3s ease;*/
+		}
+
+		&:not(:last-child):after {
+			content:"";
+			position: absolute;
+			right: -10px;
+			top: -1px;
+			z-index: 8;
+			border-left: 10px solid #ccc;
+			border-top: 22px solid transparent;
+			border-bottom: 22px solid transparent;
+		}
+
+
+		&.active {
+      flex-shrink: 0 !important;
+      width: fit-content !important;
+			a {
+        font-weight: bold;
+				color: #000;
+			}
+		}
+
+		&.first {
+      width: auto;
+      flex-shrink: 0; /* home fixe */
+			border-left: none;
+
+			a {
+				padding-left: 20px;
+				border-radius: 5px 0px 0px 5px;
+			}
+		}
+    &.last {
+			&:before {
+				display: none;
+			}
+			&:after {
+				display: none;
+			}
+			a {
+				padding-right: 20px;
+				border-radius: 0px 40px 40px 0px;
+			}
+		}
+    &:not(:first-child):not(:last-child) {
+      flex-shrink: 1; /* ces li peuvent shrink */
+      max-width: fit-content;
+      min-width: 100px;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      > a {
+        font-size: 12px;
+        line-height: 40px;
+        & > i {
+          font-family: "Font Awesome 5 Free" !important;
+          font-size: 14px;
+          /*width: 25px;
+          height: 25px;*/
+        }
+      }
+    }
+
+		&:last-child {
+      flex-shrink: 1;
+      width: fit-content !important;
+      white-space: nowrap !important;
+			overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      border: 1px solid #ddd !important;
+      &:before {
+        z-index: -1 !important;
+      }
+      border-radius: 0 20px 20px 0 !important;
+      a {
+        min-width: 0;
+        border: 1px #ddd !important;
+        border-radius: 0 20px 20px 0 !important;
+      }
+		}
+
+		a {
+			display: inline-block;
+			font-size: 12px;
+			line-height: 40px;
+			padding: 0px 15px 0px 25px;
+			text-decoration: none;
+			background: #fff;
+			border: 1px solid #ddd;
+			white-space: nowrap !important;
+			overflow: hidden !important;
+      text-overflow: ellipsis !important;
+			/*transition: 0.3s ease;*/
+		}
+	}
+  &:has(
+    > li:not(:last-child):hover,
+    > li:not(:last-child).active
+  ) > li:last-child {
+    flex-shrink: 1 !important;
+    /*flex-grow: 1 !important;*/
+    width: auto !important;
+    min-width: 0;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+ul.breadcrumb-top li a i {
+  font-size: 14px;
+  line-height: 1;
+}
+.to-next-fragment {
+  display: flex;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-bottom: none !important;
+  background: url(../assets/images/page_suivant_mika.svg) center / cover no-repeat;
+  &.disabled {
+    pointer-events: none;
+    background: url(../assets/images/page_suivant.svg) center / cover no-repeat;
+    transform: none;
+  }
+  margin-left: 5px;
+  margin-right: 0px;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+.to-previous-fragment {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  border-bottom: none !important;
+  background: url(../assets/images/page_avant_mika.svg) center / cover no-repeat;
+  &.disabled {
+    pointer-events: none;
+    background: url(../assets/images/page_avant.svg) center / cover no-repeat;
+    transform: none;
+  }
+  margin-left: 0;
+  margin-right: 5px;
+  margin-bottom: 0;
+  margin-top: 0;
 }
 
 </style>

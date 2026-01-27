@@ -5,7 +5,7 @@
       :class="menuCssClass"
     >
       <div class="level-left">
-        <a
+        <!--<a
           v-if="imgHref !== '/'"
           :href="imgHref"
           target="_blank"
@@ -15,26 +15,31 @@
             class="logo-header"
             :src="imgUrl"
           />
-        </a>
+        </a>-->
         <router-link
-          v-else
           class="logo-header"
           active-class="active"
           :to="{ name: 'Home' }"
         >
+
+          <!--<i class="fa fa-pie-chart" aria-hidden="true">
+
+          </i>-->Elec
+
+          <!-- v-else class="logo-header"
           <img
             v-if="imgUrl"
             class="logo-header"
             :src="imgUrl"
-          >
+          >-->
         </router-link>
         <span class="level-item">
-          <router-link
+          <!--<router-link
             active-class="active"
             class="level-item-external"
             :to="{ name: 'Home' }"
           >{{ rootShortTitle ? rootShortTitle : rootCollectionId }}
-          </router-link>
+          </router-link>-->
           <template
             v-for="(item, index) in breadCrumb.slice().reverse()"
             :key="index"
@@ -47,13 +52,13 @@
             >
               {{ Object.values(item)[0] }}
             </router-link>
-            <a
+            <!--<a
               v-else
               class="level-item-external"
               @click.prevent="openCollectionModal(Object.keys(item)[0])"
             >
               {{ Object.values(item)[0] }}
-            </a>
+            </a>-->
           </template>
           <!-- replaced by the above breadcrum to have sub-collections
           <router-link
@@ -406,6 +411,7 @@ nav {
   background-color: var(--fill-color);
   padding-top: 10px;
   padding-bottom: 10px;
+  z-index: 10;
 }
 a {
   color: inherit;
@@ -428,8 +434,8 @@ nav  {
   margin-top: 0;
   z-index: 10; /* cf documentation menu */
 
-  position: fixed;
-  top:0;
+  /*position: fixed;
+  top:0;*/
   width: 100vw;
   padding-right: 20px;
 }
@@ -441,10 +447,18 @@ nav span.level-item:not(:last-child)::after {
   padding-left: .75rem;
 }
 .logo-header {
-  display: inline-block;
-  width: 45px;
-  height: 50px;
-  margin:0 40px 0 2px;
+  font-family: "Barlow", sans-serif;
+  align-content: center;
+  display: flex;
+  flex-direction: row;
+  /*display: inline-block;*/
+  width: 30px;
+  height: 30px;
+  margin: 10px 40px 0 -20px;
+  & > img {
+    height: 20px;
+    width: 20px;
+  }
 }
 .logo-api {
   display: inline-block;
@@ -454,6 +468,9 @@ nav span.level-item:not(:last-child)::after {
 }
 .level-left {
   display: flex;
+  font-family: "Libre Baskerville";
+  font-weight: bold;
+  font-size: 20px;
   & > span > a {
     text-transform: capitalize;
     &.level-item-external:not(:last-child)::after {
