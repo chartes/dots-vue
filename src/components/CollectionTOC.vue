@@ -293,7 +293,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { getMetadataFromApi } from '@/api/document.js'
 import store from '@/store'
@@ -347,7 +347,7 @@ export default {
       type: Number
     }
   },
-  async setup (props) {
+  setup (props) {
     const route = useRoute()
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const displayOpt = ref(props.displayOption)
@@ -406,10 +406,10 @@ export default {
 
         if (!item.children || item.children.length === 0) {
           const response = await getMetadataFromApi(collId)
-          console.log('response', response)
+          console.log('CollectionTOC response', response)
 
           response.member.forEach(m => { m.parent = collId })
-          console.log('response after identifier', response)
+          console.log('CollectionTOC response after identifier', response)
 
           // Reassigning to ensure Vue reactivity
           componentTOC.value[idx] = {
@@ -430,16 +430,49 @@ export default {
 
     /* expandedById.value = componentTOC.value.filter(item => item.expanded === true).map(col => [col.identifier, true])
     console.log("componentTOC.value expandedById.value : ", expandedById.value) */
-    if (collConfig.value.homePageSettings.listSection.openState) {
+    /*if (collConfig.value.homePageSettings.listSection.openState) {
       if (componentTOC.value.filter(item => item.citeType === 'Collection').length > 0) {
         for (const comp of componentTOC.value.filter(item => item.citeType === 'Collection')) {
-          await toggleExpanded(comp.identifier)
+          console.log('CollectionTOC loop comp.identifier ', comp.identifier, appConfig.value.collectionsConf.find(item => item.collectionId === comp.parent) || appConfig.value.collectionsConf.find(item => item.collectionId === comp.identifier))
+          const existingParentCollConfiguration = appConfig.value.collectionsConf.find(item => item.collectionId === comp.parent) || appConfig.value.collectionsConf.find(item => item.collectionId === comp.identifier)
+          if (existingParentCollConfiguration?.homePageSettings?.listSection?.openState) {
+            await toggleExpanded(comp.identifier)
+            expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: true })))
+          }
+          //expandedById.value = Object.assign({}, { comp.identifier: 'true'},  ...expandedById.value)
         }
       }
-      expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: true })))
+      //expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: true })))
     } else {
       expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: false })))
+      for (const comp of componentTOC.value.filter(item => item.citeType === 'Collection')) {
+          console.log('CollectionTOC loop comp.identifier ', comp.identifier, appConfig.value.collectionsConf.find(item => item.collectionId === comp.parent) || appConfig.value.collectionsConf.find(item => item.collectionId === comp.identifier))
+          const existingCollConfiguration = appConfig.value.collectionsConf.find(item => item.collectionId === comp.identifier)
+          if (existingCollConfiguration?.homePageSettings?.listSection?.openState) {
+            console.log ('CollectionTOC XXX')
+            await toggleExpanded(comp.identifier)
+            //expandedById.value[comp.identifier] = !expandedById.value[comp.identifier]
+          }
+          //expandedById.value = Object.assign({}, { comp.identifier: 'true'},  ...expandedById.value)
+        }
+    }*/
+    const openInitialCollections = async () => {
+      const collections = componentTOC.value.filter(
+        item => item.citeType === 'Collection'
+      )
+
+      for (const comp of collections) {
+        const conf = appConfig.value.collectionsConf.find(c => c.collectionId === comp.identifier)
+
+        if (conf?.homePageSettings?.listSection?.openState) {
+          await toggleExpanded(comp.identifier)
+
+          // wait next render
+          await nextTick()
+        }
+      }
     }
+
     const setStateCollection = (collId) => {
       store.commit('setCollectionId', collId)
     }
@@ -466,7 +499,8 @@ export default {
       }
     }
 
-    const stopHandle = watch(props, newProps => {
+    //const stopHandle =
+    watch(props, async newProps => {
       isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
       componentTOC.value = []
       collConfig.value = newProps.collectionConfig
@@ -478,13 +512,19 @@ export default {
         // componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
         componentTOC.value.sort((a, b) => collator.compare(a.title, b.title))
       }
+      await openInitialCollections()
       displayOpt.value = newProps.displayOption
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
       browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
     }, { deep: true, immediate: true }
     )
-    stopHandle()
+    //stopHandle()
+
+    /*onMounted(async () => {
+      await nextTick()
+      await openInitialCollections()
+    })*/
 
     return {
       route,
@@ -502,7 +542,8 @@ export default {
       expandedById,
       selectedParent,
       componentTOC,
-      setStateCollection
+      setStateCollection,
+      openInitialCollections
     }
   }
 }
