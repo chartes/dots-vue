@@ -815,24 +815,33 @@ export default {
       if (editorialTypesIsValid.value) {
         processFlatTOC.filter(item => editorialTypes.includes(item.citeType)).forEach((node) => {
           node.editorialLevelIndicator = 'toEdit'
-          if (node.level <= 0) {
-            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}/${node.identifier}`
+          if (node.level < 0) {
+            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}/${node.identifier}`
             node.router = node.identifier
+            console.log('addFlag on node.level editorialTypes.includes(item.citeType) : < 0', node)
+          } else if (node.level === 0) {
+            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}`
+            node.router = node.identifier
+            console.log('addFlag on node.level editorialTypes.includes(item.citeType) : = 0', node)
           } else {
-            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
+            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
             node.router = `${route.params.id}?refId=${node.identifier}`
             node.router_params = route.params.id
             node.router_refid = node.identifier
+            console.log('addFlag on node.level editorialTypes.includes(item.citeType) : > 0 ', node)
           }
         })
       } else {
         processFlatTOC.filter(item => item.level === editorialLevel.value).forEach((node) => {
           node.editorialLevelIndicator = 'toEdit'
-          if (node.level <= 0) {
+          if (node.level < 0) {
             node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}/${node.identifier}`
             node.router = node.identifier
+          } else if (node.level === 0) {
+            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}`
+            node.router = node.identifier
           } else {
-            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
+            node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
             node.router = `${route.params.id}?refId=${node.identifier}`
             node.router_params = route.params.id
             node.router_refid = node.identifier
@@ -844,7 +853,7 @@ export default {
         node.editorialLevelIndicator = 'hash'
         node.ancestor_editorialLevel = ancestor
         if (node.ancestor_editorialLevel !== route.params.id) {
-          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.ancestor_editorialLevel}#${node.identifier}`
+          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.ancestor_editorialLevel}#${node.identifier}`
           node.router = `${route.params.id}?refId=${node.ancestor_editorialLevel}#${node.identifier}`
           node.hash = `#${node.identifier}`
           node.router_params = route.params.id
@@ -869,22 +878,32 @@ export default {
       processFlatTOC.filter(item => toEditIds.includes(item.parent)).forEach(node => {
         flagDescendants(node, node.parent)
       })
-      console.log('processFlatTOCRest', processFlatTOC.filter(item => !item.url))
-      processFlatTOC.filter(item => !item.url).forEach(node => {
+      processFlatTOC.filter(item => !item?.url).forEach(node => {
         node.editorialLevelIndicator = 'renderToc'
-        if (node.level <= 0) {
-          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${node.identifier}`
+        if (node.level < 0) {
+          const routePathTest = `/${node.identifier.toLowerCase()}/`
+          if (isDocProjectIdInc.value && !route.path.toLowerCase().includes(routePathTest)) {
+           node.url = 'Subcollection URL is undefined ( VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID is true )'
+          } else {
+           node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${node.identifier}`
+          }
           node.router = node.identifier
           node.router_params = node.identifier
-          // console.log("addFlag on node.level <=0 :", node)
+          console.log('addFlag on node.level <0 : ', node)
+        } else if (node.level === 0) {
+          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}`
+          node.router = node.identifier
+          node.router_params = node.identifier
+          console.log('addFlag on node.level === 0 : ', node)
         } else {
-          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
+          node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
           node.router = `${route.params.id}?refId=${node.identifier}`
           node.router_params = route.params.id
           node.router_refid = node.identifier
           if (node.identifier === 'a1') {
-            console.log('node.url ', node.url, '\n', window.location.origin, '\n', import.meta.env.VITE_APP_APP_ROOT_URL, '\n', route.path)
+            console.log('addFlag on node.level > 0 node.url ', node.url, '\n', window.location.origin, '\n', import.meta.env.VITE_APP_APP_ROOT_URL, '\n', route.path)
           }
+          console.log('addFlag on node.level > 0 : ', node)
         }
       })
 
