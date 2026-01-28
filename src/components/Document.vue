@@ -381,7 +381,132 @@ export default {
         console.log('Document.vue no anchor scrollTo Page TOP')
         window.scrollTo({ top: 0, behavior: 'instant' })
       }
+      initAsideNotes()
+      updateSideNotes()
     }
+
+    let asideNotesParent = null
+    let docRoot = null
+    let docContentElement = null
+
+    const initAsideNotes = () => {
+      docRoot = document.documentElement
+      docContentElement =
+        document.getElementById('article')
+
+      const main = document.getElementById('article')
+      if (!main) return
+
+      asideNotesParent = main.querySelector('.aside-noteref-parent')
+
+      if (!asideNotesParent) {
+        asideNotesParent = document.createElement('aside')
+        asideNotesParent.classList.add('aside-noteref-parent')
+        main.prepend(asideNotesParent)
+      }
+
+      asideNotesParent.addEventListener('click', e => {
+        if (e.target.classList.contains('see-all-link')) {
+          e.preventDefault()
+          e.target.closest('.aside-noteref')?.classList.toggle('clamped')
+        }
+      })
+    }
+
+
+    const updateSideNotes = () => {
+      if (!docRoot || !docContentElement || !asideNotesParent) return
+
+      // reset
+      asideNotesParent.querySelectorAll('.aside-noteref').forEach(e => e.remove())
+
+      let noteParentHeight = Math.max(
+        100,
+        asideNotesParent.getBoundingClientRect().height
+      )
+
+      const windowHeight = window.outerHeight
+      const documentInViewTop = docRoot.scrollTop
+      const documentInViewBottom =
+        documentInViewTop + windowHeight - noteParentHeight
+
+      const documentContentTop = docContentElement.offsetTop
+      const notesInView = []
+      let minTop = 0
+
+      document.querySelectorAll('.noteref').forEach(noteRef => {
+        const noteTop = noteRef.offsetTop
+
+        if (noteTop > documentInViewTop && noteTop < documentInViewBottom) {
+          const noteId = noteRef.getAttribute('href')?.substring(1)
+          const noteElement = document.querySelector(`.note[id="${noteId}"]`)
+          if (!noteElement) return
+
+          notesInView.push({
+            noteId,
+            noteElement,
+            top: noteTop + documentContentTop
+          })
+        }
+      })
+
+      notesInView.forEach(note => {
+        const asideTop = Math.max(note.top, minTop)
+
+        const aside = document.createElement('div')
+        aside.classList.add('aside-noteref')
+        aside.style.top = asideTop + 'px'
+
+        const wrapper = document.createElement('div')
+        wrapper.classList.add('aside-noteref-wrapper')
+        aside.append(wrapper)
+
+        const content = document.createElement('div')
+        content.classList.add('aside-noteref-content')
+        content.innerHTML = note.noteElement.innerHTML
+        wrapper.append(content)
+
+        const noteback = content.querySelector('.noteback')
+        if (noteback) {
+          noteback.classList.remove('noteback')
+          noteback.classList.add('notebottom')
+          noteback.setAttribute(
+            'href',
+            '#' + note.noteId.split('_').join('')
+          )
+        }
+
+        asideNotesParent.append(aside)
+
+        if (aside.offsetHeight > 95) {
+          aside.classList.add('clamped')
+
+          const seeAll = document.createElement('a')
+          seeAll.classList.add('see-all-link', 'fas', 'fa-angle-right-icon')
+          seeAll.href = '#'
+          seeAll.addEventListener('click', e => {
+            e.preventDefault()
+            aside.classList.toggle('clamped')
+          })
+
+          wrapper.append(seeAll)
+        }
+
+        minTop = asideTop + aside.offsetHeight + 10
+      })
+    }
+
+    window.addEventListener('scroll', updateSideNotes)
+    window.addEventListener('resize', updateSideNotes)
+
+    document.querySelector('.footnotes')?.addEventListener('click', e => {
+      if (e.target.classList.contains('noteback')) {
+        updateSideNotes()
+      }
+    })
+
+
+
     watch(props, (newProps) => {
       docProjectId.value = newProps.projectIdentifier
       manifest.value = newProps.iiifManifest
