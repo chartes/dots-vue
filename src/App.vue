@@ -640,123 +640,124 @@ p.header-baseline span {
 /* Notes */
 
 a.noteref {
-    scroll-margin-top: 100px;
+  scroll-margin-top: 100px;
 }
 
 a.noteref sup {
-    position: static;
-    transform: translateY(-3px);
-    display: inline-block;
-    height: auto;
-    padding: 2px 4px 1px;
-    background: #CCF;
+  position: static;
+  transform: translateY(-3px);
+  display: inline-block;
+  height: auto;
+  padding: 2px 4px 1px;
+  background: #CCF;
 
-    font-weight: bold;
-    font-size: 0.8em;
-    color: black;
-    line-height: 1;
-    text-indent: 0;
-    text-align: center;
+  font-weight: bold;
+  font-size: 0.8em;
+  color: black;
+  line-height: 1;
+  text-indent: 0;
+  text-align: center;
 }
 
 .aside-noteref-parent {
-    position: fixed;
-    left: calc((100vw - 1100px) / 2);
-    right: calc((100vw - 1100px) / 2);
-    bottom: 0;
-    z-index: 8;
+  position: fixed;
+  left: calc((100vw - 1100px) / 2);
+  right: calc((100vw - 1100px) / 2);
+  bottom: 0;
+  z-index: 8;
 
-    max-width: 1100px;
-    padding-bottom: 10px;
-    /*padding-right: 20px;*/
-    background-color: rgba(255, 255, 255, 0.95);
-    border-top: #CCCCCC 1px solid;
+  max-width: 1100px;
+  padding-bottom: 10px;
+  /*padding-right: 20px;*/
+  background-color: rgba(255, 255, 255, 0.95);
+  border-top: #CCCCCC 1px solid;
 
-    max-height: 30vh;
-    overflow-y: auto;
+  max-height: 30vh;
+  overflow-y: auto;
 
-    font-size: inherit;
-    line-height: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 .aside-noteref-parent:empty {
-    border: none;
+  border: none;
+  padding-bottom: 0;
 }
 
 .aside-noteref {
-    /*position: relative;*/
-    display: block;
-    width: 100%;
-    padding: 20px 50px 0;
-    margin-bottom: 20px;
+  /*position: relative;*/
+  display: block;
+  width: 100%;
+  padding: 20px 50px 0;
+  margin-bottom: 20px;
 }
 
 .aside-noteref:not(:first-child) {
-    border-top: #CCCCCC 1px solid;
+  border-top: #CCCCCC 1px solid;
 }
 
 .aside-noteref-wrapper {
-    position: relative;
-    min-width: 100%;
+  position: relative;
+  min-width: 100%;
 }
 
 .aside-noteref-content p,
 .footnotes p {
-    text-indent: 0;
+  text-indent: 0;
 }
 
 .aside-noteref:first-child {
-    box-shadow: 0px -4px 4px 0px rgba(0,0,0,0.10);
+  box-shadow: 0px -4px 4px 0px rgba(0,0,0,0.10);
 }
 
 .aside-noteref .aside-noteref-content {
-    font-size: 0.92em;
+  font-size: 0.92em;
 }
 
 .aside-noteref.clamped .aside-noteref-content {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* number of lines to show */
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* number of lines to show */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .aside-noteref-content p {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .aside-noteref-content a.notebottom,
 .aside-noteref-content > a:first-child {
-    display: inline-block;
-    margin-right: 5px;
-    height: auto;
-    padding: 2px 4px 1px;
-    background: #CCF;
+  display: inline-block;
+  margin-right: 5px;
+  height: auto;
+  padding: 2px 4px 1px;
+  background: #CCF;
 
-    font-weight: bold;
-    font-size: 0.8em;
+  font-weight: bold;
+  font-size: 0.8em;
 
-    float: left;
+  float: left;
 }
 
 .aside-noteref-content a.notebottom:hover,
 .aside-noteref-content > a:first-child:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .aside-noteref a.see-all-link {
-    position: absolute;
-    top: 50%;
-    right: -50px;
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    transform-origin: 50% 50%;
-    transform: rotate(-90deg) translateY(-50%);
+  position: absolute;
+  top: 50%;
+  right: -50px;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  transform-origin: 50% 50%;
+  transform: rotate(-90deg) translateY(-50%);
 }
 
 .aside-noteref.clamped a.see-all-link {
-    right: -15px;
-    transform: rotate(90deg) translateY(-50%);
+  right: -15px;
+  transform: rotate(90deg) translateY(-50%);
 }
 </style>
