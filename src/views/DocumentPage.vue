@@ -415,6 +415,17 @@
             />
           </a>
         </li>
+        <li>
+          <a
+            href=""
+            class="notes-btn"
+            :class="isNotesOpened ? 'is-opened' : ''"
+            aria-label="notes de bas de page"
+            @click.prevent="toggleNotes"
+          >
+            <i class="fa-regular fa-comment-dots"></i>
+          </a>
+        </li>
       </ul>
       <!--<ul class="is-flex">
         <li>
@@ -485,6 +496,7 @@
           v-if="!refId || refId && refId.length === 0"
           id="text-view"
           class="text-view"
+          :class="isNotesOpened ? 'notes-opened' : ''"
         >
           <document-source
             :id="resourceId"
@@ -505,6 +517,7 @@
           v-else
           id="text-view"
           class="text-view"
+          :class="isNotesOpened ? 'notes-opened' : ''"
         >
           <document-source
             :id="resourceId + '&ref=' + refId"
@@ -724,6 +737,8 @@ export default {
     const selectedCollectionId = ref('')
     const selectedCollection = ref({})
     const isModalOpened = ref(false)
+
+    const isNotesOpened = ref(false)
 
     const miradorInstance = useMirador(miradorContainer, manifest)
     // provide an uninitialized instance of Mirador
@@ -1432,6 +1447,9 @@ export default {
           manifestIsAvailable.value = false
         })
     }
+    const toggleNotes = () => {
+      isNotesOpened.value = !isNotesOpened.value
+    }
 
     watch(
       () => metadata.value.iiifManifestUrl,
@@ -1641,6 +1659,8 @@ export default {
       scrollTo,
       isModalOpened,
       closeModal,
+      isNotesOpened,
+      toggleNotes,
       toggleCollection,
       selectedCollectionId,
       selectedCollection,
@@ -1792,7 +1812,7 @@ export default {
   overflow-x: hidden;*/
   & > ul {
     margin-left: 0px;
-    & > li > a.text-btn, a.text-images-btn, a.images-btn {
+    & > li > a.text-btn, a.text-images-btn, a.images-btn, a.notes-btn {
       margin-right: 0;
       margin-left: 10px;
     }
@@ -1856,6 +1876,23 @@ export default {
 .controls a.images-btn {
   /*background: url(../assets/images/b_image_off.svg) center / cover no-repeat;*/
 }
+.controls a.notes-btn {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  color: #C3C3C3;
+  font-size: 20px;
+  border: 1px solid;
+  border-color: #C3C3C3;
+  border-radius: 4px;
+  &.is-opened {
+    border-color: var(--text-color);
+    color: var(--text-color);
+  }
+}
+
 .text-and-images-mode .controls a.images-btn, .images-mode .controls a.images-btn {
   /*background-image: url(../assets/images/b_image_on_mika.svg);*/
 }

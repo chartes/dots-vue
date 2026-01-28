@@ -659,7 +659,12 @@ a.noteref sup {
   text-align: center;
 }
 
+.notes-opened .aside-noteref-parent{
+  visibility: visible;
+}
+
 .aside-noteref-parent {
+  visibility: hidden;
   position: fixed;
   left: calc((100vw - 1100px) / 2);
   right: calc((100vw - 1100px) / 2);
