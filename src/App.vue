@@ -30,7 +30,19 @@
         :key="currCollection"
       />
     </suspense>
-    <back-to-top-button class="back-to-top-button" />
+    <!--<back-to-top-button class="back-to-top-button" />-->
+    <div class="scroll-top-wrapper app-width-margin">
+      <div
+        v-show="scrollTopIsVisible"
+        class="scroll-top"
+        :class="scrollTopIsVisible ? 'is-available' : ''"
+        @click.prevent="scrollToTop"
+      >
+        <a>
+          <DirectionArrows size="40" radius="4" direction="up"/>
+        </a>
+      </div>
+    </div>
     <app-footer
       class="layout-footer"
       :root-collection-identifier="rootCollectionIdentifier"
@@ -43,7 +55,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import router from '@/router'
@@ -51,7 +63,7 @@ import _ from 'lodash'
 
 import AppNavbar from '@/components/AppNavbar'
 import AppFooter from '@/components/AppFooter.vue'
-import BackToTopButton from '@/components/BackToTopButton.vue'
+import DirectionArrows from '@/assets/images/DirectionArrows.vue'
 import fetchMetadata from '@/composables/get-metadata'
 import { getMetadataFromApi, getParentFromApi, getProjectFromApi, getAncestors } from '@/api/document'
 import { getSimpleObject } from '@/composables/utils.js'
@@ -60,7 +72,7 @@ import { useCustomCss } from '@/composables/utils.js'
 export default {
   name: 'App',
   components: {
-    BackToTopButton,
+    DirectionArrows,
     AppNavbar,
     AppFooter
   },
@@ -77,6 +89,17 @@ export default {
     const whichTheme = ref(`${import.meta.env.VITE_APP_THEME}`.length === 0 ? 'red' : `${import.meta.env.VITE_APP_THEME}`)
     const theme = ref('')
     const customCss = ref({})
+    const scrollTopIsVisible = ref(false)
+    const onScroll = () => {
+      scrollTopIsVisible.value = window.scrollY > 100
+    }
+
+    const scrollToTop = () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+    }
 
     const dtsRootCollectionId = ref('')
     const rootCollectionIdentifier = ref('')
@@ -376,6 +399,13 @@ export default {
         collConfigReady.value = true
       }, { deep: true, immediate: true }
     )
+    onMounted(() => {
+      window.addEventListener('scroll', onScroll)
+    })
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('scroll', onScroll)
+    })
 
     return {
       whichTheme,
@@ -401,7 +431,9 @@ export default {
       breadCrumb,
       mergeSettings,
       getCustomCss,
-      removeCustomCss
+      removeCustomCss,
+      scrollTopIsVisible,
+      scrollToTop
     }
   }
 }
@@ -487,6 +519,36 @@ p.header-baseline {
 p.header-baseline span {
   font-weight: 700;
   font-style: normal;
+}
+.scroll-top-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  width: 100%
+}
+
+.scroll-top {
+  position: fixed;
+  /*top: 0;*/
+  bottom: 120px;
+  /*right: 0;*/
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  z-index: 9;
+}
+
+.scroll-top a {
+    position: absolute;
+    right: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: all ease-out 0.25s;
+}
+
+.scroll-top.is-available a {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 @media screen and (max-width: 1150px) {
