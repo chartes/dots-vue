@@ -3,8 +3,8 @@
     class="is-flex is-flex-direction-column"
     :class="viewModeCssClass"
   >
-    <CollectionModal
-      v-if="isLoading && isModalOpened && collConfig.option === 2"
+    <!--<CollectionModal
+      v-if="isLoading && isModalOpened"
       class="modal-area"
       :is-open="isModalOpened ? isModalOpened : false"
       :is-doc-project-id-included="isDocProjectIdInc"
@@ -15,7 +15,7 @@
       :current-item="selectedCollection"
       :toc="flatTOC"
       @change="closeModal"
-    />
+    />-->
     <div class="navigation-row-top app-width-margin">
       <div class="ariane-collection-top">
         <ul v-if="arianeCollection.length" class="breadcrumb-top">
@@ -112,11 +112,11 @@
         </div>
       </div>
       <div
-        v-else="collConfig.option === 1 && topTOCDisplayIndicator"
+        v-else
         class="toc-area app-width-margin"
         :class="tocCssClass"
       >
-        <div class="toc-area-header">
+        <div v-if="topTOCDisplayIndicator" class="toc-area-header">
           <a
             href="#"
             @click="toggleTOCContent"
@@ -149,50 +149,6 @@
         </div>
       </div>
     </div>
-    <!--<div v-if="collConfig.option === 1">
-      <document-metadata
-        :ispopup="false"
-        :metadataprop="selectedCollection"
-        class="metadata-area app-width-margin"
-      />
-    </div>-->
-    <!--<div
-      v-if="collConfig.option === 1 && topTOCDisplayIndicator"
-      class="toc-area app-width-margin"
-      :class="tocCssClass"
-    >
-      <div class="toc-area-header">
-        <a
-          href="#"
-          @click="toggleTOCContent"
-        >
-          Sommaire
-        </a>
-        <a
-          href="#"
-          class="toggle-btn"
-          @click="toggleTOCContent"
-        />
-      </div>
-      <div class="toc-area-content toc-content">
-        <aside id="aside">
-          <nav>
-            <nav>
-              <TOC
-                v-if="flatTOC.length > 0"
-                :key="arianeDocument"
-                :is-doc-project-id-included="isDocProjectIdInc"
-                :margin="0"
-                :toc="flatTOC.filter(n => n.level > 0)"
-                :maxcitedepth="TOC_DEPTH"
-                :refid="refId"
-                @update-ref-id="getNewRefId"
-              />
-            </nav>
-          </nav>
-        </aside>
-      </div>
-    </div>-->
     <!--<nav class="controls is-flex app-width-margin">
       <a
         href=""
