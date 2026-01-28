@@ -500,14 +500,16 @@ export default {
         updateSideNotes()
       }
     })
-    document.addEventListener('click', e => {
-      if (e.target.classList.contains('see-all-link')) {
-        e.preventDefault()
-        const asideNoteref = e.target.closest('.aside-noteref')
-        if (asideNoteref) {
-          asideNoteref.classList.toggle('clamped')
-        }
-      }
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.see-all-link').forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault()
+          const asideNoteref = e.target.closest('.aside-noteref')
+          if (asideNoteref) {
+            asideNoteref.classList.toggle('clamped')
+          }
+        })
+      })
     })
 
 
