@@ -482,12 +482,8 @@ export default {
           aside.classList.add('clamped')
 
           const seeAll = document.createElement('a')
-          seeAll.classList.add('see-all-link', 'fas', 'fa-angle-right-icon')
+          seeAll.classList.add('see-all-link', 'fa', 'fa-angle-right')
           seeAll.href = '#'
-          seeAll.addEventListener('click', e => {
-            e.preventDefault()
-            aside.classList.toggle('clamped')
-          })
 
           wrapper.append(seeAll)
         }
@@ -502,6 +498,15 @@ export default {
     document.querySelector('.footnotes')?.addEventListener('click', e => {
       if (e.target.classList.contains('noteback')) {
         updateSideNotes()
+      }
+    })
+    document.addEventListener('click', e => {
+      if (e.target.classList.contains('see-all-link')) {
+        e.preventDefault()
+        const asideNoteref = e.target.closest('.aside-noteref')
+        if (asideNoteref) {
+          asideNoteref.classList.toggle('clamped')
+        }
       }
     })
 
