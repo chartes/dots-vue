@@ -308,7 +308,7 @@
           <a
             href=""
             class="toc-menu-toggle"
-            :class="leftTOCDisplayIndicator ? TOCMenuBtnCssClass : 'hideLeftToc'"
+            :class="leftTOCDisplayIndicator && flatTOC.filter(item => item.level > 0).length > 0 ? TOCMenuBtnCssClass : 'disabled'"
             @click="toggleTOCMenu"
           ><i class="fa fa-list-ul" aria-hidden="true"></i>
 
@@ -374,7 +374,9 @@
               class="to-previous-fragment"
               :class="previousRefId === '' ? 'disabled' : ''"
               :to="{ name: 'Document', params: {collId: collConfig.identifier, id: resourceId}, query: {refId: previousRefId} }"
-            />
+            >
+              <DirectionArrows size="40" radius="4" direction="left"/>
+            </router-link>
             <!--<to-previous-button
               class="to-previous-button-page-top"
               :class="!refId || firstRef ? 'disabled' : ''"
@@ -385,7 +387,9 @@
               class="to-next-fragment"
               :class="nextRefId === '' ? 'disabled' : ''"
               :to="{ name: 'Document', params: {collId: collConfig.identifier, id: resourceId}, query: {refId: nextRefId} }"
-            />
+            >
+              <DirectionArrows size="40" radius="4" direction="right"/>
+            </router-link>
             <!--<to-next-button
               class="to-next-button-page-top"
               :class="!refId || lastRef ? 'disabled' : ''"
@@ -427,7 +431,12 @@
             class="text-btn"
             aria-label="texte seul"
             @click.prevent="changeViewMode('text-mode')"
-          />
+          >
+            <IconLetterT
+              size="40"
+              radius="4"
+            />
+          </a>
         </li>
         <!--<li>
           <a
@@ -443,7 +452,12 @@
             class="images-btn"
             aria-label="images seules"
             @click.prevent="changeViewMode('images-mode')"
-          />
+          >
+            <IconImage
+              size="40"
+              radius="4"
+            />
+          </a>
         </li>
       </ul>
       <!--<ul class="is-flex">
@@ -574,6 +588,10 @@ import ToPreviousButton from '@/components/ToPreviousButton.vue'
 import ToNextButton from '@/components/ToNextButton.vue'
 import DocumentMetadata from '@/components/DocumentMetadata.vue'
 import CollectionModal from '@/components/CollectionModal.vue'
+import CollectionTOC from '@/components/CollectionTOC.vue'
+import DirectionArrows from '@/assets/images/DirectionArrows.vue'
+import IconLetterT from '@/assets/images/IconLetterT.vue'
+import IconImage from '@/assets/images/IconImage.vue'
 import _ from 'lodash'
 
 import { useStore } from 'vuex'
@@ -597,7 +615,7 @@ import router from '@/router/index.js'
 import fetchMetadata from '@/composables/get-metadata.js'
 import store from '@/store'
 import { getSimpleObject } from '@/composables/utils.js'
-import CollectionTOC from "@/components/CollectionTOC.vue";
+
 
 function findById (array, id) {
   for (const item of array) {
@@ -624,7 +642,10 @@ export default {
     TOC,
     ToPreviousButton,
     ToNextButton,
-    CollectionModal
+    CollectionModal,
+    DirectionArrows,
+    IconLetterT,
+    IconImage
   },
   props: {
     isDocProjectIdIncluded: {
@@ -1807,6 +1828,7 @@ export default {
   align-content: center;
   /*align-items: center;*/
   width: 100%;
+  margin-bottom: 10px;
   margin-left: auto;
   /* border-top: #b9192f 1px dashed;
   border-bottom: #b8b8b8 1px solid;
@@ -1815,8 +1837,8 @@ export default {
   & > ul {
     margin-left: 0px;
     & > li > a.text-btn, a.text-images-btn, a.images-btn {
-      margin-right: 5px;
-      margin-left: 0;
+      margin-right: 0;
+      margin-left: 10px;
     }
     & > li > a.xml-btn {
       margin-right: 0;
@@ -1852,8 +1874,8 @@ export default {
 }
 .controls ul > li > a {
   display: inline-block;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   margin-right: 20px;
 }
 .controls ul > li > a.access_link {
@@ -1862,10 +1884,10 @@ export default {
   margin-left: 15px;
 }
 .controls a.text-btn {
-  background: url(../assets/images/b_text_off.svg) center / cover no-repeat;
+  /*background: url(../assets/images/b_text_off.svg) center / cover no-repeat;*/
 }
 .text-and-images-mode .controls a.text-btn, .text-mode .controls a.text-btn {
-  background-image: url(../assets/images/b_text_on_mika.svg);
+  /*background-image: url(../assets/images/b_text_on_mika.svg);*/
 }
 .controls a.text-images-btn {
   width: 80px;
@@ -1876,10 +1898,10 @@ export default {
   background-image: url(../assets/images/b_text-image_on.svg);
 }
 .controls a.images-btn {
-  background: url(../assets/images/b_image_off.svg) center / cover no-repeat;
+  /*background: url(../assets/images/b_image_off.svg) center / cover no-repeat;*/
 }
 .text-and-images-mode .controls a.images-btn, .images-mode .controls a.images-btn {
-  background-image: url(../assets/images/b_image_on_mika.svg);
+  /*background-image: url(../assets/images/b_image_on_mika.svg);*/
 }
 .text-mode-only .controls a.text-btn {
   pointer-events: none;
@@ -2137,12 +2159,19 @@ div.remove-bottom-padding #article {
     margin-right: 20px;
     text-align: center;
     align-content: center;
-    color: #aeaeae;
-    border: #aeaeae 1px solid;
+    color: var(--text-color);
+    border: var(--text-color) 1px solid;
     border-radius: 4px;
     &.is-opened {
-      color: var(--text-color);
+      color: white;
+      background-color: var(--text-color);
       border: var(--text-color) 1px solid;
+    }
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.2;
+      color: #aeaeae;
+      border: #aeaeae 1px solid;
     }
   }
 }
@@ -2238,7 +2267,7 @@ div.remove-bottom-padding #article {
   align-items: center;
   width: 100%;
   vertical-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 .navigation-document {
   display: flex;
@@ -2599,16 +2628,17 @@ ul.breadcrumb-top li a i {
   line-height: 1;
 }
 .to-next-fragment {
-  display: flex;
+  border-bottom: none !important;
+  /*display: flex;
   flex-shrink: 0;
   width: 40px;
   height: 40px;
   border-bottom: none !important;
-  background: url(../assets/images/page_suivant_mika.svg) center / cover no-repeat;
+  background: url(../assets/images/page_suivant_mika.svg) center / cover no-repeat;*/
   &.disabled {
     pointer-events: none;
-    background: url(../assets/images/page_suivant.svg) center / cover no-repeat;
-    transform: none;
+    /*background: url(../assets/images/page_suivant.svg) center / cover no-repeat;
+    transform: none;*/
   }
   margin-left: 5px;
   margin-right: 0px;
@@ -2616,14 +2646,14 @@ ul.breadcrumb-top li a i {
   margin-top: 0;
 }
 .to-previous-fragment {
-  display: flex;
+  /*display: flex;
   width: 40px;
-  height: 40px;
+  height: 40px;*/
   border-bottom: none !important;
-  background: url(../assets/images/page_avant_mika.svg) center / cover no-repeat;
+  /*background: url(../assets/images/page_avant_mika.svg) center / cover no-repeat;*/
   &.disabled {
     pointer-events: none;
-    background: url(../assets/images/page_avant.svg) center / cover no-repeat;
+    /*background: url(../assets/images/page_avant.svg) center / cover no-repeat;*/
     transform: none;
   }
   margin-left: 0;
