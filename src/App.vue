@@ -38,9 +38,9 @@
         :class="scrollTopIsVisible ? 'is-available' : ''"
         @click.prevent="scrollToTop"
       >
-        <a>
-          <DirectionArrows size="40" radius="4" direction="up"/>
-        </a>
+        <button type="button" aria-label="Retour en haut">
+          <DirectionArrows size="40" :radius="4" direction="up"/>
+        </button>
       </div>
     </div>
     <app-footer
@@ -399,6 +399,27 @@ export default {
         collConfigReady.value = true
       }, { deep: true, immediate: true }
     )
+    watch(() => scrollTopIsVisible.value,(visible) => {
+        if (!visible) return
+        const footer = document.querySelector('.layout-footer')
+        const btn = document.querySelector('.scroll-top')
+
+        if (!footer || !btn) return
+
+        const BASE_BOTTOM = 120;
+        const observer = new IntersectionObserver(([entry]) => {
+            // footer height really visible in viewport
+            const visibleFooter = entry.intersectionRect?.height || 0
+            btn.style.bottom = `${BASE_BOTTOM + visibleFooter}px`
+          },{
+            // progressive thresholds → smooth animation
+            threshold: Array.from({ length: 30 }, (_, i) => i / 30)
+          }
+        )
+        observer.observe(footer)
+      },{ immediate: true }
+    )
+
     onMounted(() => {
       window.addEventListener('scroll', onScroll)
     })
@@ -521,34 +542,49 @@ p.header-baseline span {
   font-style: normal;
 }
 .scroll-top-wrapper {
+  position: relative;
+
   display: flex;
-  flex-direction: row;
-  justify-content: right;
-  width: 100%
+  justify-content: flex-end;
+
+  width: 100%;
 }
 
 .scroll-top {
   position: fixed;
-  /*top: 0;*/
+  right: calc((100vw - 1100px) / 2);
   bottom: 120px;
-  /*right: 0;*/
+
   width: 40px;
   height: 40px;
   pointer-events: none;
   z-index: 9;
+  > button {
+    /* remove default button behavior */
+    appearance: none;
+    -webkit-appearance: none;
+
+    background: transparent;
+    border: none;
+
+    padding: 0;
+    margin: 0;
+
+    cursor: pointer;
+  }
 }
 
-.scroll-top a {
-    position: absolute;
-    right: 0;
-    opacity: 0;
-    pointer-events: none;
-    transition: all ease-out 0.25s;
+.scroll-top button {
+  position: absolute;
+  right: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: all ease-out 0.25s;
 }
 
-.scroll-top.is-available a {
-    opacity: 1;
-    pointer-events: auto;
+.scroll-top.is-available button {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 @media screen and (max-width: 1150px) {

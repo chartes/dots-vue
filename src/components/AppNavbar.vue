@@ -5,7 +5,7 @@
       :class="menuCssClass"
     >
       <div class="level-left">
-        <!--<a
+        <a
           v-if="imgHref !== '/'"
           :href="imgHref"
           target="_blank"
@@ -15,23 +15,18 @@
             class="logo-header"
             :src="imgUrl"
           />
-        </a>-->
+        </a>
         <router-link
+          v-else
           class="logo-header"
           active-class="active"
           :to="{ name: 'Home' }"
         >
-
-          <!--<i class="fa fa-pie-chart" aria-hidden="true">
-
-          </i>-->Elec
-
-          <!-- v-else class="logo-header"
           <img
             v-if="imgUrl"
             class="logo-header"
             :src="imgUrl"
-          >-->
+          >
         </router-link>
         <span class="level-item">
           <!--<router-link
@@ -437,7 +432,8 @@ nav  {
   /*position: fixed;
   top:0;*/
   width: 100vw;
-  padding-right: 20px;
+  padding-left: calc((100vw - 1100px) / 2);
+  padding-right: calc((100vw - 1100px) / 2);
 }
 
 nav span.level-item:not(:last-child)::after {
@@ -447,28 +443,24 @@ nav span.level-item:not(:last-child)::after {
   padding-left: .75rem;
 }
 .logo-header {
-  font-family: "Barlow", sans-serif;
-  align-content: center;
-  display: flex;
-  flex-direction: row;
-  /*display: inline-block;*/
-  width: 30px;
-  height: 30px;
-  margin: 10px 40px 0 -20px;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  margin: 0 40px 0 2px;
   & > img {
-    height: 20px;
-    width: 20px;
+    height: 50px;
+    width: 50px;
   }
 }
 .logo-api {
   display: inline-block;
-  width: 45px;
+  width: 50px;
   height: 50px;
-  margin:0 40px 0 2px;
+  margin:0 0 0 2px;
 }
 .level-left {
   display: flex;
-  font-family: "Libre Baskerville";
+  font-family: "Libre Baskerville", serif;
   font-weight: bold;
   font-size: 20px;
   & > span > a {

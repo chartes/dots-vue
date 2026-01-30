@@ -5,7 +5,10 @@
       :class="currentLevelIndicator === 'renderToc' ? 'remove-bottom-padding' : ''"
     >
       <Suspense @resolve="scrollTo()">
-        <component :is="customDocument" />
+        <component
+          :is="customDocument"
+          @has-notes="onHasNotes"
+        />
       </Suspense>
     </div>
     <!-- Display a TOC of the current item children in 2 scenarios : -->
@@ -71,8 +74,9 @@ export default {
   },
 
   props: ['id', 'level', 'editoriallevel', 'bottomtoc', 'maxcitedepth', 'documenttype', 'editorialLevelIndicator', 'isDocProjectIdIncluded', 'mediaTypeEndpoint', 'collectionCss', 'projectIdentifier', 'iiifManifest'],
+  emits: ['has-notes'],
 
-  async setup (props) {
+  async setup (props, { emit }) {
     // Declare route to capture route hash (used in scrollTo()) to display selected Table Of Content items below the editorial level
     const route = useRoute()
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
@@ -326,6 +330,19 @@ export default {
       if (tmpDom.querySelector('#aside') !== null) {
         tmpDom.querySelector('#aside').remove()
       }
+
+      // Notes detection in the document
+      let notesPresent = false
+      if (mediaType.value === 'tei') {
+        notesPresent = hasNotesInTEI(data)
+      } else if (mediaType.value === 'html') {
+        notesPresent = hasNotesInHTML(data)
+      }
+
+      // Emit presence of notes to parent
+      emit('has-notes', notesPresent)
+      hasNotes.value = notesPresent
+
       console.log('custom document datatei', datatei)
       // Return what will make the async component
       return new Promise((resolve) => {
@@ -384,10 +401,14 @@ export default {
       initAsideNotes()
       updateSideNotes()
     }
-
+    const hasNotes = ref(false)
     let asideNotesParent = null
     let docRoot = null
     let docContentElement = null
+
+    function onHasNotes(value) {
+      emit('has-notes', value) // remonte vers DocumentPage
+    }
 
     const initAsideNotes = () => {
       docRoot = document.documentElement
@@ -511,6 +532,17 @@ export default {
         })
       })
     })
+    function hasNotesInTEI(xmlString) {
+      const parser = new DOMParser()
+      const xml = parser.parseFromString(xmlString, 'text/xml')
+      return xml.querySelector('note') !== null || xml.querySelector('ref[type="note"]') !== null
+    }
+
+    function hasNotesInHTML(htmlString) {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(htmlString, 'text/html')
+      return doc.querySelector('section.footnotes') !== null || doc.querySelector('a.noteref') !== null
+    }
 
 
 
@@ -535,7 +567,8 @@ export default {
       documentType,
       asideTOC,
       customDocument,
-      scrollTo
+      scrollTo,
+      onHasNotes
     }
   }
 }

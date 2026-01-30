@@ -67,7 +67,7 @@ const cssVars = {
   height: 100%;
 }
 
-.text-and-images-mode .controls a.images-btn .icon-wrapper, .images-mode .controls a.images-btn .icon-wrapper {
+.text-and-images-mode .controls button.images-btn .icon-wrapper, .images-mode .controls button.images-btn .icon-wrapper {
   color: var(--fg, var(--text-color));
   background-color: var(--bg);
 }

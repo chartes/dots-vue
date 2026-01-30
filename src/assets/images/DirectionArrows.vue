@@ -73,4 +73,5 @@ const cssVars = {
   transition: transform 0.2s ease;
   transform: rotate(var(--rotate, 0deg));
 }
+
 </style>

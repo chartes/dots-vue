@@ -18,14 +18,16 @@
     />-->
     <div class="navigation-row-top app-width-margin">
       <div class="ariane-collection-top">
-        <ul v-if="arianeCollection.length" class="breadcrumb-top">
+        <ul
+          v-if="arianeCollection.length"
+          class="breadcrumb-top"
+        >
           <li class="first">
             <router-link
               v-if="isDocProjectIdIncluded"
               :to="{ name: 'Home', params: {collId: arianeCollection[0][0].identifier} }"
               class="fa fa-home"
-            >
-            </router-link>
+            />
           </li>
           <li
             v-for="(item, index) in arianeCollection.slice(1)"
@@ -116,7 +118,10 @@
         class="toc-area app-width-margin"
         :class="tocCssClass"
       >
-        <div v-if="topTOCDisplayIndicator" class="toc-area-header">
+        <div
+          v-if="topTOCDisplayIndicator"
+          class="toc-area-header"
+        >
           <a
             href="#"
             @click="toggleTOCContent"
@@ -223,248 +228,132 @@
         </li>
       </ul>
     </nav>-->
-    <div class="navigation-row app-width-margin">
-      <!--<div class="ariane-collection">
-        <ul class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center crumbs">
-          <li
-            v-for="(item, index) in arianeCollection.value"
-            :key="index"
-            :class="item.length > 1 ? 'several-parent' : refId ? item[0].identifier === refId ? 'is-current' : '' : item[0].identifier === resourceId ? 'is-current' : ''"
-          >
-            <template
-              v-for="(ancestor, idx) in item.sort((a,b) => $store.state.collectionId.indexOf(b.identifier) - $store.state.collectionId.indexOf(a.identifier))"
-              :key="idx"
-            >
-              <router-link
-                v-if="isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
-                :to="{ name: 'Home', params: {collId: ancestor.identifier} }"
-              >
-                {{ ancestor.title }}
-              </router-link>
-              <router-link
-                v-else-if="!isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
-                :to="{ name: 'Home' }"
-              >
-                {{ ancestor.title }}
-              </router-link>
-              <a
-                v-else
-                href="#"
-                @click.prevent="toggleCollection(ancestor.identifier)"
-              >
-                {{ ancestor.title }}
-              </a>
-            </template>
-          </li>
-        </ul>
-      </div>-->
-
+    <nav
+      class="navigation-row app-width-margin"
+      aria-label="Navigation du document"
+    >
       <div class="navigation-document">
         <div class="ariane">
-          <a
-            href=""
-            class="toc-menu-toggle"
-            :class="leftTOCDisplayIndicator && flatTOC.filter(item => item.level > 0).length > 0 ? TOCMenuBtnCssClass : 'disabled'"
-            @click="toggleTOCMenu"
-          ><i class="fa fa-list-ul" aria-hidden="true"></i>
-
-            <!-- :class="currentLevelIndicator !== 'toEdit' ? 'hideLeftToc' : TOCMenuBtnCssClass" -->
-          </a>
-          <ul class="is-flex is-flex-direction-row is-align-items-center crumbs">
-            <!--<li v-if="flatTOC.length > 0" class="first">
-              <router-link
-                v-if="isDocProjectIdIncluded"
-                :to="{ name: 'Document', params: {collId: collConfig.identifier, id: resourceId} }"
-              >
-                < !--<i class="fa fa-file-text"></i> -- >
-                {{ flatTOC.find(item => item.citeType === 'Resource').title }}
-
-              </router-link>
-            </li>-->
+          <!-- Document breadcrumb -->
+          <ul class="crumbs">
             <li
-              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash').slice(0,-1)"
+              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')"
               :key="index"
-              :class="refId ? ancestor.identifier === refId ? 'is-current' : '' : ancestor.identifier === resourceId ? 'hide-resource' : ''"
+              :class="refId
+                ? ancestor.identifier === refId ? 'is-current' : ''
+                : ancestor.identifier === resourceId ? 'is-current' : ''"
             >
-              <router-link
-                :to="ancestor.router"
+              <!-- LeftTOC button -->
+              <button
+                v-if="index === 0"
+                type="button"
+                class="toc-menu-toggle"
+                aria-label="Afficher le sommaire"
+                :class="leftTOCDisplayIndicator && flatTOC.filter(item => item.level > 0).length > 0 ? TOCMenuBtnCssClass : 'disabled'"
+                @click="toggleTOCMenu"
               >
-                {{
-                  ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre'
-                }}
-                <!--<span
-                  class="left"
-                  v-html="setText(ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).left"
+                <i
+                  class="fa fa-list-ul"
+                  aria-hidden="true"
                 />
-                <span
-                  class="right"
-                  v-html="setText( ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).right"
-                />-->
+              </button>
+              <router-link :to="ancestor.router">
+                {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
               </router-link>
-            </li>
-            <li
-              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash').slice(-1)"
-              :key="index"
-              :class="refId ? ancestor.identifier === refId ? 'is-current' : '' : ''"
-            ><!-- : ancestor.identifier === resourceId ? 'hide-resource' : ''" -->
-
-              <router-link
-                :to="ancestor.router"
-              >
-                {{
-                  ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre'
-                }}
-                <!--<span
-                  class="left"
-                  v-html="setText(ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).left"
-                />
-                <span
-                  class="right"
-                  v-html="setText( ancestor.title ? ancestor.title : ancestor.dublincore?.title ? ancestor.dublincore?.title : 'fragment courant sans titre' ).right"
-                />-->
-              </router-link>
+              <span class="keep-previous-centered" />
             </li>
           </ul>
-          <div class="navigation-document-top">
+          <!-- Previous / Next navigation buttons -->
+          <div
+            class="navigation-document-top"
+            aria-label="Navigation dans le document"
+          >
             <router-link
               class="to-previous-fragment"
               :class="previousRefId === '' ? 'disabled' : ''"
-              :to="{ name: 'Document', params: {collId: collConfig.identifier, id: resourceId}, query: {refId: previousRefId} }"
+              :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: previousRefId } }"
+              aria-label="Fragment précédent"
             >
-              <DirectionArrows size="40" radius="4" direction="left"/>
+              <DirectionArrows
+                size="40"
+                :radius="4"
+                direction="left"
+              />
             </router-link>
-            <!--<to-previous-button
-              class="to-previous-button-page-top"
-              :class="!refId || firstRef ? 'disabled' : ''"
-              :previousrefid="previousRefId"
-              :previousreftitle="previousRefTitle"
-            />-->
             <router-link
-              class="to-next-fragment"
-              :class="nextRefId === '' ? 'disabled' : ''"
-              :to="{ name: 'Document', params: {collId: collConfig.identifier, id: resourceId}, query: {refId: nextRefId} }"
+              class="to-next-fragment has-tooltip"
+              :class="{ disabled: !nextRefId }"
+              :to="nextRefId
+                ? { name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: nextRefId } }
+                : undefined"
+              :aria-disabled="!nextRefId"
+              :aria-label="'Vers ' + nextRefTitle"
+              :tabindex="nextRefId ? 0 : -1"
             >
-              <DirectionArrows size="40" radius="4" direction="right"/>
+              <DirectionArrows
+                size="40"
+                :radius="4"
+                direction="right"
+                aria-hidden="true"
+              />
+              <span class="tooltip">Vers {{ nextRefTitle }}</span>
             </router-link>
-            <!--<to-next-button
-              class="to-next-button-page-top"
-              :class="!refId || lastRef ? 'disabled' : ''"
-              :nextrefid="nextRefId"
-              :nextreftitle="nextRefTitle"
-            />-->
           </div>
         </div>
       </div>
-      <!--<div class="navigation-document-top">
-        <to-previous-button
-          class="to-previous-button-page-top"
-          :class="!refId || firstRef ? 'disabled' : ''"
-          :previousrefid="previousRefId"
-          :previousreftitle="previousRefTitle"
-        />
-        <to-next-button
-          class="to-next-button-page-top"
-          :class="!refId || lastRef ? 'disabled' : ''"
-          :nextrefid="nextRefId"
-          :nextreftitle="nextRefTitle"
-        />
-      </div>-->
-    </div>
-    <nav class="controls is-flex app-width-margin">
-      <!--<a
-        href=""
-        class="toc-menu-toggle"
-        :class="leftTOCDisplayIndicator ? TOCMenuBtnCssClass : 'hideLeftToc'"
-        @click="toggleTOCMenu"
-      >
-        <! -- :class="currentLevelIndicator !== 'toEdit' ? 'hideLeftToc' : TOCMenuBtnCssClass" -- >
-        Sommaire
-      </a>-->
-      <ul class="is-flex">
-        <li>
-          <a
-            href=""
+    </nav>
+    <div
+      class="controls app-width-margin"
+      role="toolbar"
+      aria-label="Options d’affichage du document"
+    >
+      <ul class="controls-list">
+        <li v-if="manifestIsAvailable">
+          <button
+            type="button"
             class="text-btn"
-            aria-label="texte seul"
-            @click.prevent="changeViewMode('text-mode')"
+            aria-label="Texte seul"
+            @click="changeViewMode('text-mode')"
           >
             <IconLetterT
               size="40"
-              radius="4"
+              :radius="4"
             />
-          </a>
+          </button>
         </li>
-        <!--<li>
-          <a
-            href=""
-            class="text-images-btn"
-            aria-label="texte et images"
-            @click.prevent="changeViewMode('text-and-images-mode')"
-          />
-        </li>-->
-        <li>
-          <a
-            href=""
+
+        <li v-if="manifestIsAvailable">
+          <button
+            type="button"
             class="images-btn"
-            aria-label="images seules"
-            @click.prevent="changeViewMode('images-mode')"
+            aria-label="Images seules"
+            @click="changeViewMode('images-mode')"
           >
             <IconImage
               size="40"
-              radius="4"
+              :radius="4"
             />
-          </a>
+          </button>
         </li>
-        <li>
-          <a
-            href=""
+
+        <li v-if="hasNotes">
+          <button
+            type="button"
             class="notes-btn"
-            :class="isNotesOpened ? 'is-opened' : ''"
-            aria-label="notes de bas de page"
-            @click.prevent="toggleNotes"
+            :class="{ 'is-opened': isNotesOpened }"
+            aria-pressed="isNotesOpened"
+            aria-label="Afficher les notes"
+            @click="toggleNotes"
           >
-            <i class="fa-regular fa-comment-dots"></i>
-          </a>
+            <i
+              class="fa-regular fa-comment-dots"
+              aria-hidden="true"
+            />
+          </button>
         </li>
       </ul>
-      <!--<ul class="is-flex">
-        <li>
-          <a
-            v-if="metadata.downloadPDF"
-            target="_blank"
-            :href="metadata.downloadPDF"
-            class="pdf-btn"
-            aria-label="Télécharger le PDF"
-          />
-        </li>
-        <li>
-          <a
-            v-if="refId && refId.length > 0"
-            target="_blank"
-            :href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}&ref=${refId}`"
-            class="xml-btn"
-            aria-label="Télécharger le XML"
-          />
-          <a
-            v-else
-            target="_blank"
-            :href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}`"
-            class="xml-btn"
-            aria-label="Télécharger le XML"
-          />
-        </li>
-        <li>
-          <a
-            v-if="metadata.thenca"
-            target="_blank"
-            :href="metadata.thenca"
-            class="access_link"
-          >
-            Accès à la thèse
-          </a>
-        </li>
-      </ul>-->
-    </nav>
+    </div>
+
     <div
       class="document-area is-flex app-width-margin"
       :class="tocMenuCssClass"
@@ -511,6 +400,7 @@
             :documenttype="documentType"
             :bottomtoc="bottomTOC"
             :maxcitedepth="TOC_DEPTH"
+            @has-notes="hasNotes = $event"
           />
         </div>
         <div
@@ -532,6 +422,7 @@
             :documenttype="documentType"
             :bottomtoc="bottomTOC"
             :maxcitedepth="TOC_DEPTH"
+            @has-notes="hasNotes = $event"
           />
         </div>
         <div
@@ -552,11 +443,11 @@
 
 <script>
 import DocumentSource from '@/components/Document.vue'
-import TOC from '@/components/TOC.vue'
-import ToPreviousButton from '@/components/ToPreviousButton.vue'
-import ToNextButton from '@/components/ToNextButton.vue'
 import DocumentMetadata from '@/components/DocumentMetadata.vue'
-import CollectionModal from '@/components/CollectionModal.vue'
+import TOC from '@/components/TOC.vue'
+/* import ToPreviousButton from '@/components/ToPreviousButton.vue'
+import ToNextButton from '@/components/ToNextButton.vue'
+import CollectionModal from '@/components/CollectionModal.vue' */
 import CollectionTOC from '@/components/CollectionTOC.vue'
 import DirectionArrows from '@/assets/images/DirectionArrows.vue'
 import IconLetterT from '@/assets/images/IconLetterT.vue'
@@ -572,17 +463,14 @@ import {
   onMounted,
   onUnmounted,
   watch,
-  reactive,
   provide,
   ref,
-  inject,
-  nextTick,
+  inject
 } from 'vue'
 
 import { useRoute } from 'vue-router'
 import router from '@/router/index.js'
 import fetchMetadata from '@/composables/get-metadata.js'
-import store from '@/store'
 import { getSimpleObject } from '@/composables/utils.js'
 
 
@@ -595,12 +483,6 @@ function findById (array, id) {
     }
   }
 }
-/* function findDeep (array, id) {
-  return array.some(function (item) {
-    if (item.id === id) return item
-    else if (item.children?.length) return findDeep(item.children, id)
-  })
-} */
 
 export default {
   name: 'DocumentPage',
@@ -609,9 +491,6 @@ export default {
     DocumentMetadata,
     DocumentSource,
     TOC,
-    ToPreviousButton,
-    ToNextButton,
-    CollectionModal,
     DirectionArrows,
     IconLetterT,
     IconImage
@@ -714,13 +593,13 @@ export default {
     const collection = ref()
 
     const isLoading = ref(false)
-    const TOC_DEPTH = ref(props.collectionConfig.tableOfContentsSettings.tableOfContentDepth)
+    const TOC_DEPTH = ref(props.collectionConfig?.tableOfContentsSettings?.tableOfContentDepth)
     console.log('DocumentPage setup TOC_DEPTH : ', TOC_DEPTH.value)
     const editorialTypesIsValid = ref(false)
     const countEditorialTypes = ref([])
     const currentLevelIndicator = ref(false)
     const currentLevel = ref(1)
-    const editorialLevel = ref(props.collectionConfig.tableOfContentsSettings.editByLevel)
+    const editorialLevel = ref(props.collectionConfig?.tableOfContentsSettings?.editByLevel)
     const flatTOC = ref([])
     const topTOC = ref([])
     const bottomTOC = ref([])
@@ -738,7 +617,8 @@ export default {
     const selectedCollection = ref({})
     const isModalOpened = ref(false)
 
-    const isNotesOpened = ref(false)
+    const isNotesOpened = ref(true)
+    const hasNotes = ref(false)
 
     const miradorInstance = useMirador(miradorContainer, manifest)
     // provide an uninitialized instance of Mirador
@@ -1661,6 +1541,7 @@ export default {
       closeModal,
       isNotesOpened,
       toggleNotes,
+      hasNotes,
       toggleCollection,
       selectedCollectionId,
       selectedCollection,
@@ -1796,22 +1677,77 @@ export default {
 .toc-area.is-opened .toggle-btn {
   background: url(../assets/images/croix.svg) center / cover no-repeat;
 }
-
 .controls {
+  position: sticky;
+  top: 70px;
+  z-index: 100;
+
+  display: flex;
+  justify-content: flex-end;
+
+  width: 100%;
+}
+.controls-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.controls button {
+  /* remove default button behavior */
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: white;
+  border: none;
+
+  padding: 0;
+  margin: 0;
+
+  cursor: pointer;
+}
+.controls-list button {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.controls .notes-btn {
+  color: #C3C3C3;
+  border: 1px solid #C3C3C3;
+  border-radius: 4px;
+  font-size: 20px;
+
+  &.is-opened {
+    color: var(--text-color);
+    border-color: var(--text-color);
+  }
+}
+.controls button:focus-visible {
+  outline: 2px solid #B9192F;
+  outline-offset: 2px;
+}
+
+/*.controls {
   justify-content: right;
   justify-items: right;
   align-items: flex-end;
   align-content: center;
-  /*align-items: center;*/
+  / *align-items: center;* /
   width: 100%;
   margin-bottom: 10px;
   margin-left: auto;
-  /* border-top: #b9192f 1px dashed;
+  / * border-top: #b9192f 1px dashed;
   border-bottom: #b8b8b8 1px solid;
   padding: 12px 0 9px;
-  overflow-x: hidden;*/
+  overflow-x: hidden;* /
   & > ul {
-    margin-left: 0px;
+    margin-left: 0;
     & > li > a.text-btn, a.text-images-btn, a.images-btn, a.notes-btn {
       margin-right: 0;
       margin-left: 10px;
@@ -1860,10 +1796,10 @@ export default {
   margin-left: 15px;
 }
 .controls a.text-btn {
-  /*background: url(../assets/images/b_text_off.svg) center / cover no-repeat;*/
+  / *background: url(../assets/images/b_text_off.svg) center / cover no-repeat;* /
 }
 .text-and-images-mode .controls a.text-btn, .text-mode .controls a.text-btn {
-  /*background-image: url(../assets/images/b_text_on_mika.svg);*/
+  / *background-image: url(../assets/images/b_text_on_mika.svg);* /
 }
 .controls a.text-images-btn {
   width: 80px;
@@ -1874,7 +1810,7 @@ export default {
   background-image: url(../assets/images/b_text-image_on.svg);
 }
 .controls a.images-btn {
-  /*background: url(../assets/images/b_image_off.svg) center / cover no-repeat;*/
+  / *background: url(../assets/images/b_image_off.svg) center / cover no-repeat;* /
 }
 .controls a.notes-btn {
   display: flex;
@@ -1894,7 +1830,7 @@ export default {
 }
 
 .text-and-images-mode .controls a.images-btn, .images-mode .controls a.images-btn {
-  /*background-image: url(../assets/images/b_image_on_mika.svg);*/
+  / *background-image: url(../assets/images/b_image_on_mika.svg);* /
 }
 .text-mode-only .controls a.text-btn {
   pointer-events: none;
@@ -1909,7 +1845,7 @@ export default {
 }
 .controls a.xml-btn {
   background: url(../assets/images/b_XML.svg) center / cover no-repeat;
-}
+}*/
 .document-area {
   width: 100%;
 }
@@ -1937,7 +1873,7 @@ export default {
   position: unset;
   overflow: auto;
   top: 180px;
-  bottom: 0px;
+  bottom: 0;
   margin: 0;
   /*padding: 70px 0 3em 1rem;*/
   padding: 0;
@@ -2126,10 +2062,8 @@ div.remove-bottom-padding #article {
 }
 .ariane {
   display: flex;
-  /*flex-direction: column;*/
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  /* width: 80% !important; */
   width: 100% !important;
   max-width: 1100px !important;
 
@@ -2142,12 +2076,27 @@ div.remove-bottom-padding #article {
     align-items: center;
 
     & > li:first-child {
-      font-variant: small-caps;
       font-weight: bold;
     }
   }
-  > a.toc-menu-toggle {
+  > ul > li > button.toc-menu-toggle {
+    /* remove default button behavior */
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: white;
+    cursor: pointer;
+    &:hover,
+    &:active {
+      background-color: white;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #B9192F;
+      outline-offset: 2px;
+    }
+    /* custom style */
     width: 40px;
+    min-width: 40px;
     height: 40px;
     margin-right: 20px;
     text-align: center;
@@ -2155,21 +2104,23 @@ div.remove-bottom-padding #article {
     color: var(--text-color);
     border: var(--text-color) 1px solid;
     border-radius: 4px;
+
     &.is-opened {
       color: white;
       background-color: var(--text-color);
-      border: var(--text-color) 1px solid;
+      border-color: var(--text-color);
     }
     &.disabled {
       pointer-events: none;
       opacity: 0.2;
       color: #aeaeae;
-      border: #aeaeae 1px solid;
+      border-color: #aeaeae;
     }
   }
 }
+
 .crumbs {
-  width: 80%;
+  margin-left: 0;
 }
 .crumbs li + li:before {
   width: 100% !important;
@@ -2177,13 +2128,13 @@ div.remove-bottom-padding #article {
 }
 
 .crumbs li {
-  /*width: 100% !important;*/
   display: flex;
+  flex-direction: row;
   justify-content: center;
+  align-items: center;
   margin-top: 0;
   margin-bottom: 0;
-  /*margin-left: 20px;*/
-  margin-right: 0px;
+  margin-right: 0;
   padding-right: 20px;
 
   &:last-child:after {
@@ -2253,7 +2204,7 @@ div.remove-bottom-padding #article {
   display: flex;
   flex-direction: column;
   position: sticky;
-  top: 0px; /* hauteur de la navbar + collection navigation */
+  top: 0; /* hauteur de la navbar + collection navigation */
   z-index: 10;
   background: #fff;
   justify-content: center;
@@ -2276,8 +2227,6 @@ div.remove-bottom-padding #article {
   display: flex;
   flex-direction: row;
   justify-content: right;
-  /*align-items: center;*/
-  width: 20%;
   height: 100%;
 }
 .navigation-document-top a span {
@@ -2361,13 +2310,56 @@ div.remove-bottom-padding #article {
   .l-n {
     margin-left: -2.2rem;
   }
+  .ariane {
+    flex-direction: column !important;
+    gap: .5rem;
+  }
+  .crumbs {
+    flex-direction: column !important;
+    width: 100%;
+    margin-left: 0;
+    & > li {
+      justify-content: space-between;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 10px;
+      padding: 0;
+
+      &:after {
+        display: none !important;
+      }
+
+      & > a {
+        max-width: none !important;
+        text-align: center !important;
+      }
+
+      &:first-child {
+        flex-direction: row;
+        padding-right: 0;
+        & > button.toc-menu-toggle {
+          flex: 1;
+          margin-right: auto;
+        }
+        & > a {
+          max-width: none;
+          margin-right: 0;
+          margin-left: -40px;
+          text-align: center;
+          white-space: normal;
+        }
+        & > .keep-previous-centered {
+          flex: 1;
+        }
+      }
+    }
+  }
 }
 @media screen and (max-width: 640px) {
 
   #article {
     padding: 40px 6% 120px;
   }
-
   .several-parent {
     flex-direction: column;
     align-items: center;
@@ -2448,6 +2440,46 @@ div.remove-bottom-padding #article {
       margin-right: 25px;
     }
   }
+  .ariane {
+    flex-direction: column !important;
+    gap: .5rem;
+  }
+  .crumbs {
+    flex-direction: column !important;
+    width: 100%;
+    margin-left: 0;
+    & > li {
+      justify-content: space-between;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 10px;
+      padding: 0;
+
+      & > a {
+        max-width: none !important;
+        text-align: center !important;
+      }
+
+      &:first-child {
+        flex-direction: row;
+        padding-right: 0;
+        & > button.toc-menu-toggle {
+          flex: 1;
+          margin-right: auto;
+        }
+        & > a {
+          max-width: none;
+          margin-right: 0;
+          margin-left: -40px;
+          text-align: center;
+          white-space: normal;
+        }
+        & > .keep-previous-centered {
+          flex: 1;
+        }
+      }
+    }
+  }
 
 }
 
@@ -2468,9 +2500,9 @@ ul.breadcrumb-top {
   max-width: 100%;
 	margin-top: 10px;
   margin-bottom: 20px;
-	padding: 0px;
-	font-size: 0px;
-	line-height: 0px;
+	padding: 0;
+	font-size: 0;
+	line-height: 0;
 	/*@include inline;*/
 	height: 40px;
 
@@ -2478,8 +2510,8 @@ ul.breadcrumb-top {
     display: flex;
     justify-content: left;
 		position: relative;
-		margin: 0px 0px;
-		padding: 0px;
+		margin: 0 0;
+		padding: 0;
 		list-style: none;
 		list-style-image: none;
 		/*@include inline;*/
@@ -2538,7 +2570,7 @@ ul.breadcrumb-top {
 
 			a {
 				padding-left: 20px;
-				border-radius: 5px 0px 0px 5px;
+				border-radius: 5px 0 0 5px;
 			}
 		}
     &.last {
@@ -2550,7 +2582,7 @@ ul.breadcrumb-top {
 			}
 			a {
 				padding-right: 20px;
-				border-radius: 0px 40px 40px 0px;
+				border-radius: 0 40px 40px 0;
 			}
 		}
     &:not(:first-child):not(:last-child) {
@@ -2564,7 +2596,7 @@ ul.breadcrumb-top {
         font-size: 12px;
         line-height: 40px;
         & > i {
-          font-family: "Font Awesome 5 Free" !important;
+          /*font-family: "Font Awesome 6 Free" !important;*/
           font-size: 14px;
           /*width: 25px;
           height: 25px;*/
@@ -2594,7 +2626,7 @@ ul.breadcrumb-top {
 			display: inline-block;
 			font-size: 12px;
 			line-height: 40px;
-			padding: 0px 15px 0px 25px;
+			padding: 0 15px 0 25px;
 			text-decoration: none;
 			background: #fff;
 			border: 1px solid #ddd;
@@ -2634,9 +2666,48 @@ ul.breadcrumb-top li a i {
     transform: none;*/
   }
   margin-left: 5px;
-  margin-right: 0px;
+  margin-right: 0;
   margin-bottom: 0;
   margin-top: 0;
+}
+.has-tooltip {
+  position: relative;
+  display: inline-flex;
+}
+
+.has-tooltip .tooltip {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  transform: translateY(-8px);
+  background: #1b2c39;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 6px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 1000;
+}
+
+.has-tooltip .tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 10px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #1b2c39 transparent transparent transparent;
+}
+
+.has-tooltip:hover .tooltip,
+.has-tooltip:focus-visible .tooltip {
+  opacity: 1;
+  transform: translateY(-12px);
 }
 .to-previous-fragment {
   /*display: flex;

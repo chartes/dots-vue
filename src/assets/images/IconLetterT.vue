@@ -74,7 +74,7 @@ const cssVars = {
   width: 100%;
   height: 100%;
 }
-.text-and-images-mode .controls a.text-btn .icon-wrapper, .text-mode .controls a.text-btn .icon-wrapper {
+.text-and-images-mode .controls button.text-btn .icon-wrapper, .text-mode .controls button.text-btn .icon-wrapper {
   color: var(--fg, var(--text-color));
   background-color: var(--bg);
 }
