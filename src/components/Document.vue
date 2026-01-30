@@ -394,9 +394,16 @@ export default {
           window.scrollTo({ top: y, behavior: 'instant' })
         }
       } else {
-        // Scroll to top if no anchor
-        console.log('Document.vue no anchor scrollTo Page TOP')
-        window.scrollTo({ top: 0, behavior: 'instant' })
+        // Scroll to the top of the document if no anchor
+        console.log('Document.vue no anchor scrollTo Document TOP')
+        // Find nav offset
+        const nav = document.querySelector('.navigation-document')
+        const navHeight = nav?.offsetHeight || 0
+        // Find doc viewer actual position
+        const doc = document.querySelector('.document-views')
+        const docTop = doc.getBoundingClientRect().top + window.scrollY
+        // Get delta and scroll to document top (regardless of its position - for example if metadata are opened above it)
+        window.scrollTo({ top: docTop - navHeight, behavior: 'instant' })
       }
       initAsideNotes()
       updateSideNotes()

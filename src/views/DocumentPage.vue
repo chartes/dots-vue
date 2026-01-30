@@ -465,7 +465,7 @@ import {
   watch,
   provide,
   ref,
-  inject
+  inject, nextTick
 } from 'vue'
 
 import { useRoute } from 'vue-router'
@@ -1308,6 +1308,7 @@ export default {
         nextRefId.value = ''
         nextRefTitle.value = ''
       }
+      scrollCurrentTocItemIntoView()
     }
 
     const setMirador = function () {
@@ -1471,6 +1472,27 @@ export default {
         window.scrollTo({ top: 0, behavior: 'instant' })
       }
     }
+
+    const scrollCurrentTocItemIntoView = () => {
+      nextTick(() => {
+        if (!layout.isTOCMenuOpened.value) return
+
+        const htmlTOC = document.querySelector('.toc-aside-is-opened > div.toc-area-aside.toc-content > aside > nav > nav')
+        const currentLink = htmlTOC.querySelector('a.is-current')
+        if (currentLink && htmlTOC) {
+          const containerRect = htmlTOC.getBoundingClientRect()
+          const linkRect = currentLink.getBoundingClientRect()
+          htmlTOC.scrollTo({
+            top:
+              htmlTOC.scrollTop +
+              (linkRect.top - containerRect.top) -
+              htmlTOC.clientHeight / 2,
+            behavior: 'smooth'
+          })
+        }
+      })
+    }
+
     onMounted(() => {
       const appView = document.getElementById('app')
       appView.addEventListener('scroll', updateMiradorTopPosition)
@@ -1537,6 +1559,7 @@ export default {
       firstRef,
       lastRef,
       scrollTo,
+      scrollCurrentTocItemIntoView,
       isModalOpened,
       closeModal,
       isNotesOpened,
@@ -1851,8 +1874,6 @@ export default {
 }
 .document-area #aside,
 .toc-area #aside {
-  position: unset;
-  float: none;
   margin: 0;
   background: none;
   border: none;
@@ -1869,11 +1890,7 @@ export default {
 }
 .toc-aside-is-opened #aside {
   width: 300px;
-  float: none;
-  position: unset;
-  overflow: auto;
-  top: 180px;
-  bottom: 0;
+  position: relative;
   margin: 0;
   /*padding: 70px 0 3em 1rem;*/
   padding: 0;
@@ -1881,16 +1898,19 @@ export default {
 .toc-aside-is-opened .toc-area-aside {
   display: flex;
   width: 230px;
-  /*position: sticky;
-  top: 40px;
-  align-self: flex-start;*/
-  & > aside > nav {
-    height: calc(100vh - 120px);
-    overflow-y: auto;
+  position: relative;
+    & > aside > nav {
+      position: sticky;
+      top: 80px;
+      height: calc(100vh - 250px);
+      & > nav {
+        height: 100%;
+        overflow-y: auto;
+      }
   }
 }
 .toc-aside-is-opened .document-views {
-  flex: calc(100% - 220px);
+  width: calc(100% - 220px);
 }
 .mirador-view {
   position: relative;
