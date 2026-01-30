@@ -1028,4 +1028,11 @@ $LastChangedDate$, $LastChangedRevision$, $LastChangedBy$
   s {
     text-decoration: none;
   }
+  /* Some tables are too large to fit : allow horizontal scroll */
+  table {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    overflow-x: scroll;
+  }
 }
