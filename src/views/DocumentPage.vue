@@ -469,7 +469,7 @@ import {
 } from 'vue'
 
 import { useRoute } from 'vue-router'
-import router from '@/router/index.js'
+import { router } from '@/router'
 import fetchMetadata from '@/composables/get-metadata.js'
 import { getSimpleObject } from '@/composables/utils.js'
 

@@ -65,7 +65,8 @@ import { defineAsyncComponent, ref, watch } from 'vue'
 import { getCoverDataFromApi, getDocumentFromApi } from '@/api/document'
 import { useRoute } from 'vue-router'
 import TOC from '@/components/TOC.vue'
-import router from '@/router'
+import { router } from '@/router'
+import { previousRoute } from '@/router'
 
 export default {
   name: 'DocumentSource',
@@ -394,16 +395,23 @@ export default {
           window.scrollTo({ top: y, behavior: 'instant' })
         }
       } else {
-        // Scroll to the top of the document if no anchor
-        console.log('Document.vue no anchor scrollTo Document TOP')
-        // Find nav offset
-        const nav = document.querySelector('.navigation-document')
-        const navHeight = nav?.offsetHeight || 0
-        // Find doc viewer actual position
-        const doc = document.querySelector('.document-views')
-        const docTop = doc.getBoundingClientRect().top + window.scrollY
-        // Get delta and scroll to document top (regardless of its position - for example if metadata are opened above it)
-        window.scrollTo({ top: docTop - navHeight, behavior: 'instant' })
+        // Scroll to the top of Page if no anchor and new route
+        if (previousRoute.path !== route.path || !previousRoute.query && route.query || previousRoute.query && !route.query.refId) {
+          console.log('Document.vue no anchor scrollTo -> Page TOP')
+          window.scrollTo({ top: 0, behavior: 'instant' })
+          // Scroll to the top of Document if no anchor and no new route
+        } else {
+          console.log('Document.vue no anchor within same resource context -> scrollTo Document TOP ')
+          // Find nav offset
+          const nav = document.querySelector('.navigation-document')
+          const navHeight = nav?.offsetHeight || 0
+          // Find doc viewer actual position
+          const doc = document.querySelector('.document-views')
+          const docTop = doc.getBoundingClientRect().top + window.scrollY
+          // Get delta and scroll to document top (regardless of its position - for example if metadata are opened above it)
+          window.scrollTo({ top: docTop - navHeight, behavior: 'instant' })
+        }
+
       }
       initAsideNotes()
       updateSideNotes()

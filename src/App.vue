@@ -58,7 +58,7 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import router from '@/router'
+import { router } from '@/router'
 import _ from 'lodash'
 
 import AppNavbar from '@/components/AppNavbar'

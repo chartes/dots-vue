@@ -2,7 +2,7 @@ import '@/assets/css/main.css'
 
 import { createApp, defineAsyncComponent } from 'vue'
 import App from '@/App.vue'
-import router from '@/router'
+import { router } from '@/router'
 import store from '@/store'
 
 import useLayout from '@/composables/use-layout'

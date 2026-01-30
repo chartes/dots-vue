@@ -48,7 +48,7 @@
 
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import router from '@/router'
+import { router } from '@/router'
 import store from '@/store'
 
 export default {

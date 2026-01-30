@@ -12,7 +12,7 @@
 
 <script>
 import { ref, watch } from 'vue'
-import router from '@/router'
+import { router } from '@/router'
 import { useRoute } from 'vue-router'
 
 export default {

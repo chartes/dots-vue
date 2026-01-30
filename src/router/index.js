@@ -18,6 +18,7 @@ const isDocProjectIdIncluded = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_I
 console.log('router const isDocProjectIdIncluded :', isDocProjectIdIncluded)
 // const appBasePath = isDocProjectIdIncluded ? '' : ':collId'
 
+let previousRoute = null
 let router = () => {}
 if (isDocProjectIdIncluded) {
   router = createRouter({
@@ -130,10 +131,18 @@ if (isDocProjectIdIncluded) {
   router.afterEach((to, from, next) => {
     console.log(`Navigated to: ${to.name}, with params.collId: ${to.params.collId}, with params.id: ${to.params.id}, with query: ${to.query.refId}, with hash: ${to.hash}`)
   })
+  router.beforeEach((to, from, next) => {
+    previousRoute = from
+    next()
+  })
 } else {
   router.afterEach((to, from, next) => {
     console.log(`Navigated to: ${to.name}, NO params.collId, with params.id: ${to.params.id}, with query: ${to.query.refId}, with hash: ${to.hash}`)
   })
+  router.beforeEach((to, from, next) => {
+    previousRoute = from
+    next()
+  })
 }
 
-export default router
+export { router, previousRoute }
