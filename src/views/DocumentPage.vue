@@ -283,9 +283,7 @@
             <router-link
               class="to-next-fragment has-tooltip"
               :class="{ disabled: !nextRefId }"
-              :to="nextRefId
-                ? { name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: nextRefId } }
-                : undefined"
+              :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: nextRefId } }"
               :aria-disabled="!nextRefId"
               :aria-label="'Vers ' + nextRefTitle"
               :tabindex="nextRefId ? 0 : -1"
