@@ -16,141 +16,213 @@
       :toc="flatTOC"
       @change="closeModal"
     />-->
-    <div class="navigation-row-top app-width-margin">
-      <div class="ariane-collection-top">
-        <ul
-          v-if="arianeCollection.length"
-          class="breadcrumb-top"
-        >
-          <li class="first">
-            <router-link
-              v-if="isDocProjectIdIncluded"
-              :to="{ name: 'Home', params: {collId: arianeCollection[0][0].identifier} }"
-              class="fa fa-home"
-            />
-          </li>
-          <li
-            v-for="(item, index) in arianeCollection.slice(1)"
-            :key="index"
-            :class="index === activeBreadcrumb ? 'active' : ''"
-            @click.prevent="activeBreadcrumb === index ? activeBreadcrumb = null : activeBreadcrumb = index"
+    <div class="navigation-row-top-container">
+      <div class="navigation-row-top app-width-margin">
+        <div class="ariane-collection-top">
+          <ul
+            v-if="arianeCollection.length"
+            class="breadcrumb-top"
           >
-            <template
-              v-for="(ancestor, idx) in item.sort((a,b) => $store.state.collectionId.indexOf(b.identifier) - $store.state.collectionId.indexOf(a.identifier))"
-              :key="idx"
+            <li class="first">
+              <router-link
+                v-if="isDocProjectIdIncluded"
+                :to="{ name: 'Home', params: { collId: arianeCollection[0][0].identifier } }"
+              >
+                <i class="fa fa-home"></i>
+              </router-link>
+            </li>
+
+            <li
+              v-for="(item, index) in arianeCollection.slice(1)"
+              :key="index"
+              :class="{ active: index === activeBreadcrumb }"
             >
-              <router-link
-                v-if="isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
-                :to="{ name: 'Home', params: {collId: ancestor.identifier} }"
+              <template
+                v-for="ancestor in itemSorted(item)"
+                :key="ancestor.identifier"
               >
-                {{ ancestor.title }}
-              </router-link>
-              <router-link
-                v-else-if="!isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
-                :to="{ name: 'Home' }"
+                <a
+                  :class="selectedCollectionId === ancestor.identifier ? 'active' : ''"
+                  href="#"
+                  @click.prevent="openObject(ancestor, index)"
+                >
+                  <i
+                    :class="ancestor.citeType === 'Collection'
+                      ? 'fa fa-archive'
+                      : 'fa fa-file-text'"
+                  />
+                  {{ ancestorLabel(ancestor) }}
+                </a>
+              </template>
+            </li>
+          </ul>
+          <!--<div
+            v-if="activeObject"
+            class="breadcrumb-panel"
+          >
+            <div class="tab-header">
+              <button
+                :class="{ active: activePanel === 'meta' }"
+                @click="activePanel = 'meta'"
               >
-                {{ ancestor.title }}
-              </router-link>
-              <a
-                v-else
-                href="#"
-                @click.prevent="toggleCollection(ancestor.identifier)"
+                Métadonnées
+              </button>
+
+              <button
+                :class="{ active: activePanel === 'summary' }"
+                @click="activePanel = 'summary'"
               >
-                <i
-                  v-if="ancestor.citeType === 'Collection'"
-                  class="fa fa-archive"
+                Sommaire
+              </button>
+            </div>
+
+            <div class="tab-content">
+              <MetadataPanel
+                v-if="activePanel === 'meta'"
+                :object="activeObject"
+              />
+              <SummaryPanel
+                v-if="activePanel === 'summary'"
+                :object="activeObject"
+              />
+            </div>-->
+          <div v-if="selectedCollectionId.length > 0">
+            <document-metadata
+              :ispopup="false"
+              :metadataprop="selectedCollection"
+              class="metadata-area app-width-margin"
+            />
+            <div
+              v-if="selectedCollection.citeType === 'Collection'"
+              class="toc-area app-width-margin"
+              :class="tocCssClass"
+            >
+              <div class="toc-area-header">
+                <a
+                  href="#"
+                  @click="toggleTOCContent"
+                >
+                  Sommaire
+                </a>
+                <a
+                  href="#"
+                  class="toggle-btn"
+                  @click="toggleTOCContent"
                 />
-                <i
+              </div>
+              <div class="toc-area-content toc-content">
+                <aside>
+                  <nav>
+                    <nav>
+                      <CollectionTOC
+                        :is-doc-projectId-included="isDocProjectIdInc"
+                        :dts-root-collection-identifier="dtsRootCollectionId"
+                        :root-collection-identifier="rootCollectionId"
+                        :collection-config="collConfig"
+                        :current-collection="selectedCollection"
+                        :margin="0"
+                        :toc="selectedCollection.children"
+                      />
+                    </nav>
+                  </nav>
+                </aside>
+              </div>
+            </div>
+            <div
+              v-else
+              class="toc-area app-width-margin"
+              :class="tocCssClass"
+            >
+              <div
+                v-if="topTOCDisplayIndicator"
+                class="toc-area-header"
+              >
+                <a
+                  href="#"
+                  @click="toggleTOCContent"
+                >
+                  Sommaire
+                </a>
+                <a
+                  href="#"
+                  class="toggle-btn"
+                  @click="toggleTOCContent"
+                />
+              </div>
+              <div class="toc-area-content toc-content">
+                <aside>
+                  <nav>
+                    <nav>
+                      <TOC
+                        v-if="flatTOC.length > 0"
+                        :key="arianeDocument"
+                        :is-doc-project-id-included="isDocProjectIdInc"
+                        :margin="0"
+                        :toc="flatTOC.filter(n => n.level > 0)"
+                        :maxcitedepth="TOC_DEPTH"
+                        :refid="refId"
+                        @update-ref-id="getNewRefId"
+                      />
+                    </nav>
+                  </nav>
+                </aside>
+              </div>
+            </div>
+          </div>
+          <!--</div>-->
+
+
+          <!--<ul
+            v-if="arianeCollection.length"
+            class="breadcrumb-top"
+          >
+            <li class="first">
+              <router-link
+                v-if="isDocProjectIdIncluded"
+                :to="{ name: 'Home', params: {collId: arianeCollection[0][0].identifier} }"
+                class="fa fa-home"
+              />
+            </li>
+            <li
+              v-for="(item, index) in arianeCollection.slice(1)"
+              :key="index"
+              :class="index === activeBreadcrumb ? 'active' : ''"
+              @click.prevent="activeBreadcrumb === index ? activeBreadcrumb = null : activeBreadcrumb = index"
+            >
+              <template
+                v-for="(ancestor, idx) in item.sort((a,b) => $store.state.collectionId.indexOf(b.identifier) - $store.state.collectionId.indexOf(a.identifier))"
+                :key="idx"
+              >
+                <router-link
+                  v-if="isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
+                  :to="{ name: 'Home', params: {collId: ancestor.identifier} }"
+                >
+                  {{ ancestor.title }}
+                </router-link>
+                <router-link
+                  v-else-if="!isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
+                  :to="{ name: 'Home' }"
+                >
+                  {{ ancestor.title }}
+                </router-link>
+                <a
                   v-else
-                  class="fa fa-file-text"
-                />
-                {{ ancestor.citeType === 'Resource' && ancestor?.dublincore?.creator ? ancestor.dublincore.creator + ', ' + ancestor.title : ancestor.title }}
-              </a>
-            </template>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div v-if="selectedCollectionId.length > 0">
-      <document-metadata
-        :ispopup="false"
-        :metadataprop="selectedCollection"
-        class="metadata-area app-width-margin"
-      />
-      <div
-        v-if="selectedCollection.citeType === 'Collection'"
-        class="toc-area app-width-margin"
-        :class="tocCssClass"
-      >
-        <div class="toc-area-header">
-          <a
-            href="#"
-            @click="toggleTOCContent"
-          >
-            Sommaire
-          </a>
-          <a
-            href="#"
-            class="toggle-btn"
-            @click="toggleTOCContent"
-          />
-        </div>
-        <div class="toc-area-content toc-content">
-          <aside>
-            <nav>
-              <nav>
-                <CollectionTOC
-                  :is-doc-projectId-included="isDocProjectIdInc"
-                  :dts-root-collection-identifier="dtsRootCollectionId"
-                  :root-collection-identifier="rootCollectionId"
-                  :collection-config="collConfig"
-                  :current-collection="selectedCollection"
-                  :margin="0"
-                  :toc="selectedCollection.children"
-                />
-              </nav>
-            </nav>
-          </aside>
-        </div>
-      </div>
-      <div
-        v-else
-        class="toc-area app-width-margin"
-        :class="tocCssClass"
-      >
-        <div
-          v-if="topTOCDisplayIndicator"
-          class="toc-area-header"
-        >
-          <a
-            href="#"
-            @click="toggleTOCContent"
-          >
-            Sommaire
-          </a>
-          <a
-            href="#"
-            class="toggle-btn"
-            @click="toggleTOCContent"
-          />
-        </div>
-        <div class="toc-area-content toc-content">
-          <aside>
-            <nav>
-              <nav>
-                <TOC
-                  v-if="flatTOC.length > 0"
-                  :key="arianeDocument"
-                  :is-doc-project-id-included="isDocProjectIdInc"
-                  :margin="0"
-                  :toc="flatTOC.filter(n => n.level > 0)"
-                  :maxcitedepth="TOC_DEPTH"
-                  :refid="refId"
-                  @update-ref-id="getNewRefId"
-                />
-              </nav>
-            </nav>
-          </aside>
+                  href="#"
+                  @click.prevent="toggleCollection(ancestor.identifier)"
+                >
+                  <i
+                    v-if="ancestor.citeType === 'Collection'"
+                    class="fa fa-archive"
+                  />
+                  <i
+                    v-else
+                    class="fa fa-file-text"
+                  />
+                  {{ ancestor.citeType === 'Resource' && ancestor?.dublincore?.creator ? ancestor.dublincore.creator + ', ' + ancestor.title : ancestor.title }}
+                </a>
+              </template>
+            </li>
+          </ul>-->
         </div>
       </div>
     </div>
@@ -529,6 +601,8 @@ export default {
     const manifest = ref(null)
     const miradorContainer = ref(null)
     const activeBreadcrumb = ref(null)
+    const activeObject = ref(null)       // collection / resource
+    const activePanel = ref(null)        // 'meta' | 'summary'
 
     // Mirador view sticky behavior
     const miradorViewBoundingTop = ref(0)
@@ -1229,6 +1303,72 @@ export default {
       console.log(' Collection modal was closed : ', selectedCollectionId.value, selectedCollection.value)
     }
 
+    const itemSorted = (item) => {
+      return [...item].sort(
+        (a, b) =>
+          store.state.collectionId.indexOf(b.identifier) -
+          store.state.collectionId.indexOf(a.identifier)
+      )
+    }
+
+    const ancestorLabel = (ancestor) => {
+      if (
+        ancestor.citeType === 'Resource' &&
+        ancestor?.dublincore?.creator
+      ) {
+        return `${ancestor.dublincore.creator}, ${ancestor.title}`
+      }
+      return ancestor.title
+    }
+
+    function openObject(breadcrumbItem, index) {
+      isModalOpened.value = true
+
+      // Cas 1 : même breadcrumb → toggle off
+      if (
+        activeBreadcrumb.value === index &&
+        selectedCollectionId.value === breadcrumbItem.identifier
+      ) {
+        activeBreadcrumb.value = null
+        activeObject.value = null
+        activePanel.value = null
+
+        selectedCollectionId.value = ''
+        selectedCollection.value = {}
+        return
+      }
+
+      // Cas 2 : nouvel objet
+      activeBreadcrumb.value = index
+      activeObject.value = breadcrumbItem
+      activePanel.value = 'meta'
+
+      selectedCollectionId.value = breadcrumbItem.identifier
+
+      const tocItem = flatTOC.value.find(
+        item => item.identifier === selectedCollectionId.value
+      )
+
+      if (!tocItem) {
+        selectedCollection.value = {}
+        return
+      }
+
+      if (tocItem.citeType === 'Collection') {
+        // 🔹 Collection pure
+        selectedCollection.value = tocItem
+      } else {
+        // 🔹 Resource = merge metadata + toc
+        selectedCollection.value = _.merge(
+          {},
+          metadata.value,
+          tocItem
+        )
+      }
+    }
+
+
+
     const toggleCollection = (breadcrumbItem) => {
       console.log('toggleCollection breadcrumbItem : ', breadcrumbItem)
       isModalOpened.value = true
@@ -1443,6 +1583,7 @@ export default {
       () => store.state.collectionModalCollectionId, (newVal, oldVal) => {
         if (newVal) {
           toggleCollection(newVal)
+          openObject(newVal)
         }
         console.log('CollectionModal watch state isModalOpen.value : ')
       }, { immediate: true }
@@ -1525,6 +1666,10 @@ export default {
       miradorViewCssStyle,
       miradorContainer,
       activeBreadcrumb,
+      activeObject,
+      activePanel,
+      itemSorted,
+      ancestorLabel,
       metadata,
       manifestIsAvailable,
       manifest,
@@ -1564,6 +1709,7 @@ export default {
       isNotesOpened,
       toggleNotes,
       hasNotes,
+      openObject,
       toggleCollection,
       selectedCollectionId,
       selectedCollection,
@@ -1587,7 +1733,7 @@ export default {
 .toc-area {
   width: 100%;
   font-family: "Barlow", sans-serif !important;
-  margin-bottom: 30px !important;
+  /*margin-bottom: 30px !important;*/
 }
 .toc-area-header {
   display: flex;
@@ -2507,6 +2653,13 @@ div.remove-bottom-padding #article {
   justify-content: left;
 }
 
+.navigation-row-top-container {
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 15px;
+  background-color: var(--meta-fill-color);
+}
+
 .navigation-row-top {
   width: 100% !important;
   /*position: sticky;
@@ -2518,8 +2671,6 @@ div.remove-bottom-padding #article {
 ul.breadcrumb-top {
   display: flex;
   max-width: 100%;
-	margin-top: 10px;
-  margin-bottom: 20px;
 	padding: 0;
 	font-size: 0;
 	line-height: 0;
@@ -2577,9 +2728,18 @@ ul.breadcrumb-top {
 		&.active {
       flex-shrink: 0 !important;
       width: fit-content !important;
+      &:has(
+        > a:last-child.active
+      ):before {
+        border-left: 10px solid var(--meta-fill-color);
+      }
 			a {
         font-weight: bold;
 				color: #000;
+        &.active {
+          color: var(--text-color);
+          background-color: var(--meta-fill-color);
+        }
 			}
 		}
 
@@ -2745,5 +2905,54 @@ ul.breadcrumb-top li a i {
   margin-bottom: 0;
   margin-top: 0;
 }
+/*.breadcrumb-panel {
+  background: #f6f2ed;
+  margin-top: -1px;
+  padding: 16px 20px;
+  border-radius: 0 0 12px 12px;
+}
+
+.tab-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.tab-header button {
+  background: none;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+}
+
+.tab-header button.active {
+  border-bottom: 2px solid #000;
+}
+.breadcrumb-panel {
+  background: var(--meta-fill-color);
+  margin-top: -1px;
+  padding: 16px 20px;
+  border-radius: 0 0 12px 12px;
+}
+
+.tab-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.tab-header button {
+  background: none;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+}
+
+.tab-header button.active {
+  border-bottom: 2px solid #000;
+}*/
+
 
 </style>
