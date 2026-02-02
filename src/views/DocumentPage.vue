@@ -96,7 +96,7 @@
           />
         </div>
         <div class="toc-area-content toc-content">
-          <aside id="aside">
+          <aside>
             <nav>
               <nav>
                 <CollectionTOC
@@ -135,7 +135,7 @@
           />
         </div>
         <div class="toc-area-content toc-content">
-          <aside id="aside">
+          <aside>
             <nav>
               <nav>
                 <TOC
