@@ -627,6 +627,10 @@ p.header-baseline span {
     width: 60%;
     text-align: center;
   }
+  .toggle-btn {
+    width: 20px;
+    right: 15px;
+  }
 }
 
 /* responsive layout */
@@ -801,4 +805,71 @@ a.noteref sup {
   right: -15px;
   transform: rotate(90deg) translateY(-50%);
 }
+.wrapper {
+  width: 100%;
+}
+
+.collection-toc-area {
+  width: 100%;
+  font-family: "Barlow", sans-serif;
+  margin-bottom: 30px;
+}
+.document-card .collection-toc-area {
+  margin-bottom: 0;
+}
+.collection-toc-area-header {
+  display: flex;
+  width: 100%;
+  padding: 20px;
+  background-color: #f1f1f1;
+  border-radius: 6px;
+  position: relative;
+  &.expanded {
+    border-radius: 6px 6px 0 0;
+  }
+}
+.document-card .collection-toc-area-header {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 0 0 6px 6px;
+}
+.collection-toc-area-header > a {
+  font-family: "Barlow Semi Condensed", sans-serif;
+  font-weight: 500;
+  color: #4a4a4a !important;
+  text-decoration: none;
+  border: none;
+}
+.ariane-collection-top .collection-toc-area {
+  margin-bottom: 0;
+}
+.ariane-collection-top .collection-toc-area-header .collBrowseButton {
+  margin-left: auto;
+  margin-right: 47px;
+}
+.collection-toc-area.is-opened .menu, .expanded.menu {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px 0;
+  /* border-top: solid 2px #fcfcfc; */
+  background-color: #e4e4e4;
+  border-radius: 0 0 6px 6px;
+}
+
+/* toogle */
+.toggle-btn {
+  position: absolute;
+  right: 20px;
+  width: 20px;
+  height: 27px;
+  background: url(./assets/images/chevron_rouge.svg) center top -8px / cover no-repeat;
+  border: none;
+  text-decoration: none;
+}
+.toc-area.is-opened .toggle-btn, .collection-toc-area.is-opened .toggle-btn, .collection-toc-area.expanded .toggle-btn {
+  background: url(./assets/images/croix.svg) center / cover no-repeat;
+}
+
 </style>

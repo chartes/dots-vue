@@ -98,40 +98,36 @@
         </div>
         <div
           v-if="isDocProjectIdInc && item.parent !== rootCollectionId && !componentTOC.map(i => i['@type']).every(t => t === 'Resource')"
-          class="wrapper"
+          class="collection-toc-area"
+          :class="expandedById[item.identifier] ? 'expanded': ''"
+          @click.prevent="toggleExpanded(item.identifier)"
         >
           <div
-            class="collection-toc-area"
-            @click.prevent="toggleExpanded(item.identifier)"
+            class="collection-toc-area-header"
           >
-            <div
-              class="collection-toc-area-header"
+            <a href="#">{{ browseBttnTxt }}</a>
+            <a
+              href="#"
+              class="toggle-btn"
               :class="expandedById[item.identifier] ? 'expanded': ''"
-            >
-              <a href="#">{{ browseBttnTxt }}</a>
-              <a
-                href="#"
-                class="toggle-btn"
-                :class="expandedById[item.identifier] ? 'expanded': ''"
-              />
-            </div>
-            <div
-              v-if="(expandedById[item.identifier] || item.expanded)
-                && item.totalChildren > 0
-                && item.children?.length > 0"
-              class="menu app-width-margin expanded"
-            >
-              <CollectionTOC
-                :is-doc-projectId-included="isDocProjectIdInc"
-                :current-collection="item"
-                :dts-root-collection-identifier="dtsRootCollectionId"
-                :root-collection-identifier="rootCollectionId"
-                :application-config="appConfig"
-                :collection-config="collConfig"
-                :margin="$props.margin"
-                :toc="item.children"
-              />
-            </div>
+            />
+          </div>
+          <div
+            v-if="(expandedById[item.identifier] || item.expanded)
+              && item.totalChildren > 0
+              && item.children?.length > 0"
+            class="menu app-width-margin expanded"
+          >
+            <CollectionTOC
+              :is-doc-projectId-included="isDocProjectIdInc"
+              :current-collection="item"
+              :dts-root-collection-identifier="dtsRootCollectionId"
+              :root-collection-identifier="rootCollectionId"
+              :application-config="appConfig"
+              :collection-config="collConfig"
+              :margin="$props.margin"
+              :toc="item.children"
+            />
           </div>
         </div>
         <div
@@ -550,7 +546,7 @@ export default {
 </script>
 
 <style scoped>
-.wrapper, .modal-wrapper {
+.collection-toc-area, .modal-wrapper {
   .tree {
     /* list-style: none;*/
     padding-top: 10px;
@@ -629,57 +625,6 @@ button {
     /* border: 1px solid #b9192f; */
     border: 1px solid var(--text-color);
   }
-  & > .wrapper {
-    width: 100%;
-    & > .collection-toc-area {
-      margin-bottom: 0 !important;
-      & > .collection-toc-area-header {
-        display: flex;
-        width: 100%;
-        padding-top: 3px;
-        padding-bottom: 3px;
-        padding-left: 10px;
-        padding-right: 10px;
-        background-color: #f1f1f1;
-        border: 1px solid transparent;
-        border-bottom-left-radius: 6px;
-        border-bottom-right-radius: 6px;
-        position: relative;
-        &.expanded {
-          border-radius: 0;
-        }
-
-        & > a {
-          text-transform: uppercase;
-          font-family: "Barlow Semi Condensed", sans-serif;
-          font-weight: 500;
-          color: #4a4a4a !important;
-          text-decoration: none;
-          border: none;
-
-          &:first-child {
-            text-transform: none;
-            /* margin-left: auto;
-            margin-right: 47px; */
-          }
-          /* toggle */
-          &.toggle-btn {
-            position: absolute;
-            right: 20px;
-            width: 20px;
-            height: 20px;
-            background: url(../assets/images/chevron_rouge.svg) center / cover no-repeat;
-            border: none;
-            text-decoration: none;
-            &.expanded {
-              margin-top: 3px;
-              background: url(../assets/images/croix.svg) center / cover no-repeat;
-            }
-          }
-        }
-      }
-    }
-  }
 }
 .document-card .card-header .document-folder {
   width: 100%;
@@ -757,31 +702,8 @@ button {
   border-bottom: 7px solid #e8e7e0;
 }
 
-.collection-toc-area-header > a {
-  text-transform: uppercase;
-  font-family: "Barlow Semi Condensed", sans-serif;
-  font-weight: 500;
-  color: #4a4a4a !important;
-  text-decoration: none;
-  border: none;
-  &:first-child {
-    text-transform: none;
-    /* margin-left: auto;
-    margin-right: 47px; */
-  }
-}
-.expanded.menu {
-  display: flex;
-  flex-direction: column;
-  padding: 0 20px 0;
-  /* border-top: solid 2px #fcfcfc; */
-  background-color: #e4e4e4;
-  border: 1px solid #e4e4e4;
-  border-radius: 0 0 6px 6px;
-}
-
 @media screen and (max-width: 800px) {
-  .wrapper, .modal-wrapper {
+  .collection-toc-area, .modal-wrapper {
     .tree li {
       margin-left: 15px !important;
       margin-bottom: 8px;

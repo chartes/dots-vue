@@ -94,12 +94,13 @@
             />
             <div
               v-if="selectedCollection.citeType === 'Collection'"
-              class="toc-area app-width-margin"
+              class="collection-toc-area app-width-margin"
               :class="tocCssClass"
             >
-              <div class="toc-area-header">
+              <div class="collection-toc-area-header">
                 <a
                   href="#"
+                  class="collBrowseButton"
                   @click="toggleTOCContent"
                 >
                   Sommaire
@@ -110,22 +111,16 @@
                   @click="toggleTOCContent"
                 />
               </div>
-              <div class="toc-area-content toc-content">
-                <aside>
-                  <nav>
-                    <nav>
-                      <CollectionTOC
-                        :is-doc-projectId-included="isDocProjectIdInc"
-                        :dts-root-collection-identifier="dtsRootCollectionId"
-                        :root-collection-identifier="rootCollectionId"
-                        :collection-config="collConfig"
-                        :current-collection="selectedCollection"
-                        :margin="0"
-                        :toc="selectedCollection.children"
-                      />
-                    </nav>
-                  </nav>
-                </aside>
+              <div v-if="tocCssClass" class="menu app-width-margin">
+                <CollectionTOC
+                  :is-doc-projectId-included="isDocProjectIdInc"
+                  :dts-root-collection-identifier="dtsRootCollectionId"
+                  :root-collection-identifier="rootCollectionId"
+                  :collection-config="collConfig"
+                  :current-collection="selectedCollection"
+                  :margin="0"
+                  :toc="selectedCollection.children"
+                />
               </div>
             </div>
             <div
@@ -1838,19 +1833,6 @@ export default {
   color: #000;
 }
 
-/* toogle */
-.toggle-btn {
-  position: absolute;
-  right: 20px;
-  width: 20px;
-  height: 27px;
-  background: url(../assets/images/chevron_rouge.svg) center top -8px / cover no-repeat;
-  border: none;
-  text-decoration: none;
-}
-.toc-area.is-opened .toggle-btn {
-  background: url(../assets/images/croix.svg) center / cover no-repeat;
-}
 .controls {
   position: sticky;
   top: 70px;
@@ -2557,10 +2539,6 @@ div.remove-bottom-padding #article {
   }
   .toc-area .toc-area-content nav > ol.tree {
     columns: 1;
-  }
-  .toggle-btn {
-    width: 20px;
-    right: 15px;
   }
   .controls {
     flex-wrap: wrap;

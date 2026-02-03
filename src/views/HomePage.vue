@@ -193,43 +193,43 @@
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
     </section>
-    <div class="wrapper">
-      <div class="collection-toc-area app-width-margin">
-        <div
-          class="collection-toc-area-header"
-          :class="expandedById[collectionId] ? 'expanded': ''"
-          @click.prevent="toggleExpanded(collectionId)"
+    <div
+      class="collection-toc-area app-width-margin"
+      :class="expandedById[collectionId] ? 'expanded': ''"
+    >
+      <div
+        class="collection-toc-area-header"
+        @click.prevent="toggleExpanded(collectionId)"
+      >
+        <a
+          href="#"
+          class="collBrowseButton"
         >
-          <a
-            href="#"
-            class="collBrowseButton"
-          >
-            {{ browseBttnTxt }}
-          </a>
-          <a
-            href="#"
-            class="toggle-btn"
-            :class="expandedById[collectionId] ? 'expanded': ''"
+          {{ browseBttnTxt }}
+        </a>
+        <a
+          href="#"
+          class="toggle-btn"
+          :class="expandedById[collectionId] ? 'expanded': ''"
+        />
+      </div>
+      <div
+        v-if="componentTOC.length > 0"
+        class="menu app-width-margin"
+        :class="expandedById[collectionId] ? 'expanded': ''"
+      >
+        <div v-if="(expandedById[collectionId] && componentTOC.length > 0)">
+          <CollectionTOC
+            :is-doc-projectId-included="isDocProjectIdInc"
+            :display-option="displayOpt"
+            :current-collection="currCollection"
+            :dts-root-collection-identifier="dtsRootCollectionId"
+            :root-collection-identifier="rootCollectionId"
+            :application-config="appConfig"
+            :collection-config="collConfig"
+            :toc="componentTOC"
+            :margin="0"
           />
-        </div>
-        <div
-          v-if="componentTOC.length > 0"
-          class="menu app-width-margin"
-          :class="expandedById[collectionId] ? 'expanded': ''"
-        >
-          <div v-if="(expandedById[collectionId] && componentTOC.length > 0)">
-            <CollectionTOC
-              :is-doc-projectId-included="isDocProjectIdInc"
-              :display-option="displayOpt"
-              :current-collection="currCollection"
-              :dts-root-collection-identifier="dtsRootCollectionId"
-              :root-collection-identifier="rootCollectionId"
-              :application-config="appConfig"
-              :collection-config="collConfig"
-              :toc="componentTOC"
-              :margin="0"
-            />
-          </div>
         </div>
       </div>
     </div>
@@ -548,60 +548,6 @@ a {
   line-height: 33px;
   text-transform: none;
   color: var(--text-color)
-}
-.home-mask > .wrapper > .collection-toc-area {
-  width: 100%;
-  font-family: "Barlow", sans-serif !important;
-  margin-bottom: 30px !important;
-}
-.collection-toc-area-header {
-  display: flex;
-  width: 100%;
-  padding: 20px;
-  background-color: #f1f1f1;
-  border-radius: 6px;
-  position: relative;
-  &.expanded {
-    border-radius: 6px 6px 0 0;
-  }
-}
-.collection-toc-area-header > a {
-  text-transform: uppercase;
-  font-family: "Barlow Semi Condensed", sans-serif;
-  font-weight: 500;
-  color: #4a4a4a !important;
-  text-decoration: none;
-  border: none;
-  &.collBrowseButton {
-    margin-left: 0;
-  }
-  &:first-child {
-    text-transform: none;
-    /* margin-left: auto;
-    margin-right: 47px; */
-  }
-}
-.expanded.menu {
-  display: flex;
-  flex-direction: column;
-  padding: 0 20px 0;
-  /* border-top: solid 2px #fcfcfc; */
-  background-color: #e4e4e4;
-  border-radius: 0 0 6px 6px;
-}
-
-/* toggle */
-.toggle-btn {
-  position: absolute;
-  right: 20px;
-  width: 27px;
-  height: 27px;
-  background: url(../assets/images/chevron_rouge.svg) center top -7px / cover no-repeat;
-  border: none;
-  text-decoration: none;
-  &.expanded {
-    background: url(../assets/images/croix.svg) center / cover no-repeat;
-  }
 }
 
 #home-article {
