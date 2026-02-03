@@ -295,24 +295,16 @@
         </li>
       </ul>
     </nav>-->
-    <nav
-      class="navigation-row app-width-margin"
-      aria-label="Navigation du document"
-    >
-      <div class="navigation-document">
-        <div class="ariane">
-          <!-- Document breadcrumb -->
-          <ul class="crumbs">
-            <li
-              v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')"
-              :key="index"
-              :class="refId
-                ? ancestor.identifier === refId ? 'is-current' : ''
-                : ancestor.identifier === resourceId ? 'is-current' : ''"
-            >
-              <!-- LeftTOC button -->
+    <div class="nav-controls-wrapper">
+      <nav
+        class="navigation-row app-width-margin"
+        aria-label="Navigation du document"
+      >
+        <div class="navigation-document">
+          <div class="ariane">
+            <div class="ariane-wrapper">
+            <!-- LeftTOC button --><!--v-if="index === 0"-->
               <button
-                v-if="index === 0"
                 type="button"
                 class="toc-menu-toggle"
                 aria-label="Afficher le sommaire"
@@ -324,99 +316,111 @@
                   aria-hidden="true"
                 />
               </button>
-              <router-link :to="ancestor.router">
-                {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
+              <!-- Document breadcrumb -->
+              <ul class="crumbs">
+                <li
+                  v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')"
+                  :key="index"
+                  :class="refId
+                    ? ancestor.identifier === refId ? 'is-current' : ''
+                    : ancestor.identifier === resourceId ? 'is-current' : ''"
+                >
+
+                  <router-link :to="ancestor.router">
+                    {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
+                  </router-link>
+                  <span class="keep-previous-centered" />
+                </li>
+              </ul>
+            </div>
+            <!-- Previous / Next navigation buttons -->
+            <div
+              class="navigation-document-top"
+              aria-label="Navigation dans le document"
+            >
+              <router-link
+                class="to-previous-fragment"
+                :class="previousRefId === '' ? 'disabled' : ''"
+                :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: previousRefId } }"
+                aria-label="Fragment précédent"
+              >
+                <DirectionArrows
+                  size="40"
+                  :radius="4"
+                  direction="left"
+                />
               </router-link>
-              <span class="keep-previous-centered" />
-            </li>
-          </ul>
-          <!-- Previous / Next navigation buttons -->
-          <div
-            class="navigation-document-top"
-            aria-label="Navigation dans le document"
-          >
-            <router-link
-              class="to-previous-fragment"
-              :class="previousRefId === '' ? 'disabled' : ''"
-              :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: previousRefId } }"
-              aria-label="Fragment précédent"
-            >
-              <DirectionArrows
-                size="40"
-                :radius="4"
-                direction="left"
-              />
-            </router-link>
-            <router-link
-              class="to-next-fragment has-tooltip"
-              :class="{ disabled: !nextRefId }"
-              :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: nextRefId } }"
-              :aria-disabled="!nextRefId"
-              :aria-label="'Vers ' + nextRefTitle"
-              :tabindex="nextRefId ? 0 : -1"
-            >
-              <DirectionArrows
-                size="40"
-                :radius="4"
-                direction="right"
-                aria-hidden="true"
-              />
-              <span class="tooltip">Vers {{ nextRefTitle }}</span>
-            </router-link>
+              <router-link
+                class="to-next-fragment has-tooltip"
+                :class="{ disabled: !nextRefId }"
+                :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: nextRefId } }"
+                :aria-disabled="!nextRefId"
+                :aria-label="'Vers ' + nextRefTitle"
+                :tabindex="nextRefId ? 0 : -1"
+              >
+                <DirectionArrows
+                  size="40"
+                  :radius="4"
+                  direction="right"
+                  aria-hidden="true"
+                />
+                <span class="tooltip">Vers {{ nextRefTitle }}</span>
+              </router-link>
+            </div>
           </div>
         </div>
+      </nav>
+      <div
+        class="controls app-width-margin"
+        role="toolbar"
+        aria-label="Options d’affichage du document"
+      >
+        <ul class="controls-list">
+          <li v-if="manifestIsAvailable">
+            <button
+              type="button"
+              class="text-btn"
+              aria-label="Texte seul"
+              @click="changeViewMode('text-mode')"
+            >
+              <IconLetterT
+                size="40"
+                :radius="4"
+              />
+            </button>
+          </li>
+
+          <li v-if="manifestIsAvailable">
+            <button
+              type="button"
+              class="images-btn"
+              aria-label="Images seules"
+              @click="changeViewMode('images-mode')"
+            >
+              <IconImage
+                size="40"
+                :radius="4"
+              />
+            </button>
+          </li>
+
+          <li v-if="hasNotes">
+            <button
+              type="button"
+              class="notes-btn"
+              :class="{ 'is-opened': isNotesOpened }"
+              aria-pressed="isNotesOpened"
+              aria-label="Afficher les notes"
+              @click="toggleNotes"
+            >
+              <i
+                class="fa-regular fa-comment-dots"
+                aria-hidden="true"
+              />
+            </button>
+          </li>
+        </ul>
       </div>
-    </nav>
-    <div
-      class="controls app-width-margin"
-      role="toolbar"
-      aria-label="Options d’affichage du document"
-    >
-      <ul class="controls-list">
-        <li v-if="manifestIsAvailable">
-          <button
-            type="button"
-            class="text-btn"
-            aria-label="Texte seul"
-            @click="changeViewMode('text-mode')"
-          >
-            <IconLetterT
-              size="40"
-              :radius="4"
-            />
-          </button>
-        </li>
-
-        <li v-if="manifestIsAvailable">
-          <button
-            type="button"
-            class="images-btn"
-            aria-label="Images seules"
-            @click="changeViewMode('images-mode')"
-          >
-            <IconImage
-              size="40"
-              :radius="4"
-            />
-          </button>
-        </li>
-
-        <li v-if="hasNotes">
-          <button
-            type="button"
-            class="notes-btn"
-            :class="{ 'is-opened': isNotesOpened }"
-            aria-pressed="isNotesOpened"
-            aria-label="Afficher les notes"
-            @click="toggleNotes"
-          >
-            <i
-              class="fa-regular fa-comment-dots"
-              aria-hidden="true"
-            />
-          </button>
-        </li>
-      </ul>
     </div>
 
     <div
@@ -1834,19 +1838,16 @@ export default {
 }
 
 .controls {
-  position: sticky;
-  top: 70px;
   z-index: 100;
 
   display: flex;
-  justify-content: flex-end;
+  justify-content: right;
 
   width: 100%;
 }
 .controls-list {
   display: flex;
   flex-direction: column;
-  align-items: center;
 
   margin: 0;
   padding: 0;
@@ -1860,6 +1861,8 @@ export default {
   background: white;
   border: none;
 
+  width: 100%;
+  height: 100%;
   padding: 0;
   margin: 0;
 
@@ -2233,47 +2236,56 @@ div.remove-bottom-padding #article {
       font-weight: bold;
     }
   }
-  > ul > li > button.toc-menu-toggle {
-    /* remove default button behavior */
-    appearance: none;
-    -webkit-appearance: none;
-    background-color: white;
-    cursor: pointer;
-    &:hover,
-    &:active {
+  & > .ariane-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    & > button.toc-menu-toggle {
+      /* remove default button behavior */
+      appearance: none;
+      -webkit-appearance: none;
       background-color: white;
-    }
+      cursor: pointer;
 
-    &:focus-visible {
-      outline: 2px solid #B9192F;
-      outline-offset: 2px;
-    }
-    /* custom style */
-    width: 40px;
-    min-width: 40px;
-    height: 40px;
-    margin-right: 20px;
-    text-align: center;
-    align-content: center;
-    color: var(--text-color);
-    border: var(--text-color) 1px solid;
-    border-radius: 4px;
+      &:hover,
+      &:active {
+        background-color: white;
+      }
 
-    &.is-opened {
-      color: white;
-      background-color: var(--text-color);
-      border-color: var(--text-color);
-    }
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.2;
-      color: #aeaeae;
-      border-color: #aeaeae;
+      &:focus-visible {
+        outline: 2px solid #B9192F;
+        outline-offset: 2px;
+      }
+      /* custom style */
+      width: 40px;
+      min-width: 40px;
+      height: 40px;
+      margin-right: 20px;
+      text-align: center;
+      align-content: center;
+      color: var(--text-color);
+      border: var(--text-color) 1px solid;
+      border-radius: 4px;
+
+      &.is-opened {
+        color: white;
+        background-color: var(--text-color);
+        border-color: var(--text-color);
+      }
+      &.disabled {
+        pointer-events: none;
+        opacity: 0.2;
+        color: #aeaeae;
+        border-color: #aeaeae;
+      }
     }
   }
 }
 
 .crumbs {
+  display: flex;
+  flex-direction: row;
   margin-left: 0;
 }
 .crumbs li + li:before {
@@ -2353,12 +2365,17 @@ div.remove-bottom-padding #article {
     }
   }
 }
+.nav-controls-wrapper {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
 
 .navigation-row {
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 0; /* hauteur de la navbar + collection navigation */
   z-index: 10;
   background: #fff;
   justify-content: center;
@@ -2468,6 +2485,9 @@ div.remove-bottom-padding #article {
     flex-direction: column !important;
     gap: .5rem;
   }
+  .ariane-wrapper {
+    justify-content: space-between;
+  }
   .crumbs {
     flex-direction: column !important;
     width: 100%;
@@ -2498,7 +2518,6 @@ div.remove-bottom-padding #article {
         & > a {
           max-width: none;
           margin-right: 0;
-          margin-left: -40px;
           text-align: center;
           white-space: normal;
         }
@@ -2540,7 +2559,10 @@ div.remove-bottom-padding #article {
   .toc-area .toc-area-content nav > ol.tree {
     columns: 1;
   }
-  .controls {
+  .ariane-wrapper {
+    justify-content: space-between;
+  }
+  /*.controls {
     flex-wrap: wrap;
   }
   .controls ul:first-of-type {
@@ -2560,7 +2582,7 @@ div.remove-bottom-padding #article {
   }
   .controls > ul:first-of-type > li:nth-child(2) {
     display: none;
-  }
+  }*/
   #article section.div {
     font-size: 14px;
     line-height: 24px;
@@ -2594,16 +2616,24 @@ div.remove-bottom-padding #article {
     flex-direction: column !important;
     gap: .5rem;
   }
+  button.toc-menu-toggle {
+    flex: 1;
+    margin-right: auto !important;
+  }
   .crumbs {
     flex-direction: column !important;
     width: 100%;
     margin-left: 0;
+    margin-right: 40px;
     & > li {
       justify-content: space-between;
       width: 100%;
       text-align: center;
       margin-bottom: 10px;
       padding: 0;
+      &:last-child {
+        margin-bottom: 0;
+      }
 
       & > a {
         max-width: none !important;
@@ -2620,7 +2650,6 @@ div.remove-bottom-padding #article {
         & > a {
           max-width: none;
           margin-right: 0;
-          margin-left: -40px;
           text-align: center;
           white-space: normal;
         }
@@ -2629,6 +2658,13 @@ div.remove-bottom-padding #article {
         }
       }
     }
+  }
+  .navigation-document-top {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .tooltip {
+    display: none;
   }
 
 }

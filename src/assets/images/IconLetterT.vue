@@ -5,15 +5,15 @@
   >
     <svg
       class="icon"
-      viewBox="0 0 42 42"
+      viewBox="0 0 40 40"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
       <rect
         :x="strokeWidth / 2"
         :y="strokeWidth / 2"
-        :width="42 - strokeWidth"
-        :height="42 - strokeWidth"
+        :width="40 - strokeWidth"
+        :height="40 - strokeWidth"
         :rx="radius"
         :ry="radius"
         fill="none"
@@ -40,7 +40,7 @@
 const props = defineProps({
   bgColor: { type: String, default: 'transparent' },
   fgColor: { type: String, default: 'var(--icon-fg)' },
-  size: { type: Number, default: 42 },
+  size: { type: Number, default: 40 },
   radius: { type: Number, default: 4 },
   strokeWidth: { type: Number, default: 1 }
 })
@@ -55,12 +55,12 @@ const cssVars = {
 
 <style scoped>
 .icon-wrapper {
-  --size: 42px;
+  --size: 40px;
   --radius: 4px;
   --fg: #ffffff;
 
-  width: var(--size, 42px);
-  height: var(--size, 42px);
+  width: var(--size, 40px);
+  height: var(--size, 40px);
   border-radius: var(--radius, 4px);
   color: #C3C3C3;
   background-color: var(--bg);
