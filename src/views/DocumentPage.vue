@@ -20,7 +20,7 @@
       <div class="navigation-row-top app-width-margin">
         <div class="ariane-collection-top">
           <ul
-            v-if="arianeCollection.length"
+            v-if="arianeCollection.length > 2"
             class="breadcrumb-top"
           >
             <li class="first">
@@ -1243,6 +1243,11 @@ export default {
       arianeCollection.value = ancestors.reverse().map((elem) => {
         return elem.filter((e) => e.citeType === 'Collection' || e.citeType === 'Resource')
       }).filter((e) => e.length > 0)
+      if (arianeCollection.value.length <= 2) {
+        console.log('arianeCollection test : ', arianeCollection.value.slice(-1))
+        activeBreadcrumb.value = 0
+        openObject(arianeCollection.value.slice(-1)[0][0], 0)
+      }
 
       // Build the breadcrumb within the resource
       arianeDocument.value = flatTOC.value
@@ -1325,6 +1330,7 @@ export default {
       isModalOpened.value = true
 
       // Cas 1 : même breadcrumb → toggle off
+      console.log('arianeCollection test openObject ', activeBreadcrumb.value, index, breadcrumbItem.identifier)
       if (
         activeBreadcrumb.value === index &&
         selectedCollectionId.value === breadcrumbItem.identifier
