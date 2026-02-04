@@ -16,7 +16,8 @@
 :root {
     --text-color: #8f0e21;
     --fill-color: #8f0e21;
-    --meta-fill-color: #faf6f1;
+    --meta-banner-fill-color: #faf6f1;
+    --meta-area-fill-color: #b8b5ad;
     --icon-text-color: #ffffff;
 }
 

@@ -51,12 +51,19 @@
                       ? 'fa fa-archive'
                       : 'fa fa-file-text'"
                   />
-                  {{ ancestorLabel(ancestor) }}
+                  <span class="breadcrumb-label">
+                    {{ ancestorLabel(ancestor) }}
+                  </span>
+                  <!-- bouton toggle réutilisé -->
+                  <span
+                    class="toggle-btn"
+                    @click.stop.prevent="openObject(ancestor, index)"
+                  />
                 </a>
               </template>
             </li>
           </ul>
-          <!--<div
+          <div
             v-if="activeObject"
             class="breadcrumb-panel"
           >
@@ -65,7 +72,7 @@
                 :class="{ active: activePanel === 'meta' }"
                 @click="activePanel = 'meta'"
               >
-                Métadonnées
+                Notice
               </button>
 
               <button
@@ -77,16 +84,98 @@
             </div>
 
             <div class="tab-content">
-              <MetadataPanel
+              <div
                 v-if="activePanel === 'meta'"
                 :object="activeObject"
-              />
-              <SummaryPanel
+              >
+                <div v-if="selectedCollectionId.length > 0">
+                  <document-metadata
+                    :ispopup="false"
+                    :metadataprop="selectedCollection"
+                    :hasheader="false"
+                    class="metadata-area app-width-margin"
+                  />
+                </div>
+              </div>
+              <div
                 v-if="activePanel === 'summary'"
                 :object="activeObject"
-              />
-            </div>-->
-          <div v-if="selectedCollectionId.length > 0">
+              >
+                <div
+                  v-if="selectedCollection.citeType === 'Collection'"
+                  class="collection-toc-area app-width-margin"
+                  :class="tocCssClass"
+                >
+                  <!--<div class="collection-toc-area-header">
+                    <a
+                      href="#"
+                      class="collBrowseButton"
+                      @click="toggleTOCContent"
+                    >
+                      Sommaire
+                    </a>
+                    <a
+                      href="#"
+                      class="toggle-btn"
+                      @click="toggleTOCContent"
+                    />
+                  </div>-->
+                  <div class="menu app-width-margin">
+                    <CollectionTOC
+                      :is-doc-projectId-included="isDocProjectIdInc"
+                      :dts-root-collection-identifier="dtsRootCollectionId"
+                      :root-collection-identifier="rootCollectionId"
+                      :collection-config="collConfig"
+                      :current-collection="selectedCollection"
+                      :margin="0"
+                      :toc="selectedCollection.children"
+                    />
+                  </div>
+                </div>
+                <div
+                  v-else
+                  class="toc-area app-width-margin is-opened"
+                  :class="is-opened"
+                >
+                  <!--<div
+                    v-if="topTOCDisplayIndicator"
+                    class="toc-area-header"
+                  >
+                    <a
+                      href="#"
+                      @click="toggleTOCContent"
+                    >
+                      Sommaire
+                    </a>
+                    <a
+                      href="#"
+                      class="toggle-btn"
+                      @click="toggleTOCContent"
+                    />
+                  </div>-->
+                  <div class="toc-area-content toc-content">
+                    <aside>
+                      <nav>
+                        <nav>
+                          <TOC
+                            v-if="flatTOC.length > 0"
+                            :key="arianeDocument"
+                            :is-doc-project-id-included="isDocProjectIdInc"
+                            :margin="0"
+                            :toc="flatTOC.filter(n => n.level > 0)"
+                            :maxcitedepth="TOC_DEPTH"
+                            :refid="refId"
+                            @update-ref-id="getNewRefId"
+                          />
+                        </nav>
+                      </nav>
+                    </aside>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--<div v-if="selectedCollectionId.length > 0">
             <document-metadata
               :ispopup="false"
               :metadataprop="selectedCollection"
@@ -163,7 +252,7 @@
                 </aside>
               </div>
             </div>
-          </div>
+          </div>-->
           <!--</div>-->
 
 
@@ -2506,6 +2595,7 @@ div.remove-bottom-padding #article {
       & > a {
         max-width: none !important;
         text-align: center !important;
+        text-wrap: wrap !important;
       }
 
       &:first-child {
@@ -2536,6 +2626,9 @@ div.remove-bottom-padding #article {
   .several-parent {
     flex-direction: column;
     align-items: center;
+  }
+  .toc-aside-is-opened .document-views {
+    width: 100%;
   }
   .document-views {
     /* overflow-x: hidden; */
@@ -2638,6 +2731,7 @@ div.remove-bottom-padding #article {
       & > a {
         max-width: none !important;
         text-align: center !important;
+        text-wrap: wrap !important;
       }
 
       &:first-child {
@@ -2677,7 +2771,7 @@ div.remove-bottom-padding #article {
   width: 100%;
   padding-top: 10px;
   padding-bottom: 15px;
-  background-color: var(--meta-fill-color);
+  background-color: var(--meta-banner-fill-color);
 }
 
 .navigation-row-top {
@@ -2751,14 +2845,14 @@ ul.breadcrumb-top {
       &:has(
         > a:last-child.active
       ):before {
-        border-left: 10px solid var(--meta-fill-color);
+        border-left: 10px solid var(--meta-area-fill-color);
       }
 			a {
         font-weight: bold;
 				color: #000;
         &.active {
-          color: var(--text-color);
-          background-color: var(--meta-fill-color);
+          /*color: var(--text-color);*/
+          background-color: var(--meta-area-fill-color);
         }
 			}
 		}
@@ -2806,7 +2900,7 @@ ul.breadcrumb-top {
 
 		&:last-child {
       flex-shrink: 1;
-      width: fit-content !important;
+      width: fit-content;
       white-space: nowrap !important;
 			overflow: hidden !important;
       text-overflow: ellipsis !important;
@@ -2848,9 +2942,19 @@ ul.breadcrumb-top {
     text-overflow: ellipsis !important;
   }
 }
+ul.breadcrumb-top li a {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-right: 45px; /* place pour le toggle */
+}
+ul.breadcrumb-top li.first a {
+  padding-right: 15px;
+}
 ul.breadcrumb-top li a i {
   font-size: 14px;
   line-height: 1;
+  margin-right: 5px;
 }
 .to-next-fragment {
   border-bottom: none !important;
@@ -2925,12 +3029,6 @@ ul.breadcrumb-top li a i {
   margin-bottom: 0;
   margin-top: 0;
 }
-/*.breadcrumb-panel {
-  background: #f6f2ed;
-  margin-top: -1px;
-  padding: 16px 20px;
-  border-radius: 0 0 12px 12px;
-}
 
 .tab-header {
   display: flex;
@@ -2950,7 +3048,7 @@ ul.breadcrumb-top li a i {
   border-bottom: 2px solid #000;
 }
 .breadcrumb-panel {
-  background: var(--meta-fill-color);
+  background: var(--meta-area-fill-color);
   margin-top: -1px;
   padding: 16px 20px;
   border-radius: 0 0 12px 12px;
@@ -2972,7 +3070,7 @@ ul.breadcrumb-top li a i {
 
 .tab-header button.active {
   border-bottom: 2px solid #000;
-}*/
+}
 
 
 </style>

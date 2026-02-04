@@ -666,6 +666,30 @@ p.header-baseline span {
     max-width: 100%;
     padding: 0 2.5%;
   }
+  .aside-noteref-parent {
+    left: 10px !important;
+    right: 10px !important;
+  }
+  ul.breadcrumb-top {
+    & > li {
+      &.first {
+        & a {
+          padding-left: 10px !important;
+          padding-right: 0 !important;
+        }
+      }
+      &:last-child {
+        width: 100% !important;
+
+        & > a {
+          display: block;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          padding-right: 45px !important;
+        }
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 500px) {
@@ -813,6 +837,11 @@ a.noteref sup {
   width: 100%;
   font-family: "Barlow", sans-serif;
   margin-bottom: 30px;
+  background-color: #e4e4e4;
+  border-radius: 6px;
+}
+.ariane-collection-top .collection-toc-area {
+  padding-left: 15px;
 }
 .document-card .collection-toc-area {
   margin-bottom: 0;
@@ -828,12 +857,18 @@ a.noteref sup {
     border-radius: 6px 6px 0 0;
   }
 }
+.expanded .collection-toc-area-header {
+  border-radius: 6px 6px 0 0;
+}
 .document-card .collection-toc-area-header {
   padding-top: 3px;
   padding-bottom: 3px;
   padding-left: 10px;
   padding-right: 10px;
   border-radius: 0 0 6px 6px;
+}
+.document-card .expanded .collection-toc-area-header {
+  border-radius: 0;
 }
 .collection-toc-area-header > a {
   font-family: "Barlow Semi Condensed", sans-serif;
@@ -870,6 +905,16 @@ a.noteref sup {
 }
 .toc-area.is-opened .toggle-btn, .collection-toc-area.is-opened .toggle-btn, .collection-toc-area.expanded .toggle-btn {
   background: url(./assets/images/croix.svg) center / cover no-repeat;
+}
+ul.breadcrumb-top li.active > a .toggle-btn {
+  background: url(./assets/images/croix_blc.svg) center / cover no-repeat;
+}
+ul.breadcrumb-top li > a .toggle-btn {
+  position: absolute;
+  right: 20px;
+  width: 20px;
+  height: 16px;
+  background: url(./assets/images/chevron.svg) center / cover no-repeat;
 }
 
 </style>

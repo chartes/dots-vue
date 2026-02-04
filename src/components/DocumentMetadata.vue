@@ -4,7 +4,7 @@
     :class="metaDataCssClass"
   >
     <div
-      v-if="!isPopUp"
+      v-if="!isPopUp && hasHeader"
       class="document-metadata-header"
     >
       <div
@@ -38,7 +38,7 @@
       />
     </div>
     <div
-      v-else
+      v-else-if="hasHeader"
       class="document-metadata-header"
     >
       <div
@@ -103,7 +103,6 @@
                     <td>
                       <span
                         class="title"
-                        style="text-transform: uppercase; font-size: 12px"
                       >
                         {{ v }}
                       </span>
@@ -126,7 +125,7 @@
                 <template v-else>
                   <tr class="row">
                     <td><span class="title"><b>dc:{{ name }}</b></span></td>
-                    <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td>
+                    <td><span class="title">{{ value }}</span></td>
                     <td></td>
                   </tr>
                 </template>
@@ -146,7 +145,7 @@
                       </span>
                     </td><!-- {{ Array.isArray(v) ? v[0] : typeof(v) === 'object' ? Object.values(v)[0] : v }} -->
                     <td v-else>
-                      <span class="title" style="text-transform: uppercase; font-size: 12px">
+                      <span class="title">
                         {{ v }}
                       </span>
                     </td><!-- {{ Array.isArray(v) ? v[0] : typeof(v) === 'object' ? Object.values(v)[0] : v }} -->
@@ -189,7 +188,7 @@
                       </span>
                     </td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
                     <td v-else>
-                      <span class="title" style="text-transform: uppercase; font-size: 12px">
+                      <span class="title">
                         {{ value }}
                       </span>
                     </td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
@@ -269,12 +268,14 @@ export default {
 
   props: {
     ispopup: { required: true, default: false, type: Boolean },
-    metadataprop: { required: true, default: () => {}, type: Object }
+    metadataprop: { required: true, default: () => {}, type: Object },
+    hasheader: { required: false, default: true, type: Boolean }
   },
 
   setup (props) {
-    const state = reactive({
-      isOpened: false
+    const hasHeader = ref(props.hasheader)
+    const state = ref({
+      isOpened: !hasHeader.value
     })
     const isPopUp = ref(props.ispopup)
     const isNew = ref(true)
@@ -370,12 +371,12 @@ export default {
     }
 
     const metaDataCssClass = computed(() => {
-      return state.isOpened ? 'is-opened' : ''
+      return state.value.isOpened ? 'is-opened' : ''
     })
 
     const toggleContent = function (event) {
       event.preventDefault()
-      state.isOpened = !state.isOpened
+      state.value.isOpened = !state.value.isOpened
     }
 
     const toggleNew = function (event) {
@@ -401,7 +402,7 @@ export default {
       () => {
         console.log('metadataprop watch current, new : ', metadata.value, props.metadataprop)
 
-        const removedKeys = ['children', 'member', 'editorialLevelIndicator', 'renderToc', 'level', 'expanded', 'router', 'router_params', 'dublincore', 'extensions']/* gerer les 'url' à supp pour les collections seulement */
+        const removedKeys = ['context','children', 'member', 'editorialLevelIndicator', 'renderToc', 'level', 'expanded', 'router', 'router_params', 'dublincore', 'extensions']/* gerer les 'url' à supp pour les collections seulement */
 
         metadata.value = props.metadataprop
 
@@ -422,6 +423,7 @@ export default {
       metaDataCssClass,
       isPopUp,
       isNew,
+      hasHeader,
       toggleContent,
       toggleNew,
       authorThumbnailUrl,
@@ -540,7 +542,7 @@ aside.menu > .columns > .column:nth-child(3) {
 .column {
   font-family: "Barlow", sans-serif;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: normal;
   font-style: normal;
   & > a {
     font-family: "Barlow", sans-serif;
