@@ -503,7 +503,6 @@ export default {
       }
     }
 
-    //const stopHandle =
     watch(props, async newProps => {
       isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
       componentTOC.value = []
@@ -523,12 +522,6 @@ export default {
       browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
     }, { deep: true, immediate: true }
     )
-    //stopHandle()
-
-    /*onMounted(async () => {
-      await nextTick()
-      await openInitialCollections()
-    })*/
 
     return {
       route,
@@ -556,7 +549,6 @@ export default {
 <style scoped>
 .collection-toc-area, .modal-wrapper {
   .tree {
-    /* list-style: none;*/
     padding-top: 10px;
     padding-bottom: 10px;
   }
@@ -623,7 +615,6 @@ button.toc-toggle {
   cursor: pointer;
 }
 .is-current {
-  /* color: #971716 !important; */
   color: var(--text-color) !important;
 }
 .document-card {
@@ -637,13 +628,11 @@ button.toc-toggle {
   border-radius: 6px;
   border: 1px solid transparent;
   &:hover {
-    /* border: 1px solid #b9192f; */
     border: 1px solid var(--text-color);
   }
 }
 .document-card .card-header .document-folder {
   width: 100%;
-  /*border-top: 6px solid #e4e4e4;*/
   border-radius: 6px;
 
   font-family: "Barlow", sans-serif;
