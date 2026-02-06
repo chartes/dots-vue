@@ -394,8 +394,8 @@ export default {
           console.log('Document.vue scrollTo y : ', y)
           window.scrollTo({ top: y, behavior: 'instant' })
         }
-      } else {
-        // Scroll to the top of Page if no anchor and new route
+      } /* removing scroll top for now 06/02/2026 else {
+        // Scroll to the top of Page if no anchor and new route or to reader TOP in reading context
         if (previousRoute.path !== route.path || !previousRoute.query && route.query || previousRoute.query && !route.query.refId) {
           console.log('Document.vue no anchor scrollTo -> Page TOP')
           window.scrollTo({ top: 0, behavior: 'instant' })
@@ -412,7 +412,8 @@ export default {
           window.scrollTo({ top: docTop - navHeight, behavior: 'instant' })
         }
 
-      }
+      }*/
+
       initAsideNotes()
       updateSideNotes()
     }
