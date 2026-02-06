@@ -131,6 +131,7 @@
                       :is-doc-projectId-included="isDocProjectIdInc"
                       :dts-root-collection-identifier="dtsRootCollectionId"
                       :root-collection-identifier="rootCollectionId"
+                      :application-config="appConfig"
                       :collection-config="collConfig"
                       :current-collection="selectedCollection"
                       :margin="0"
@@ -463,6 +464,7 @@ export default {
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const docProjectId = ref('')
     console.log('topTOCDisplayIndicator test : ', topTOCDisplayIndicator)
+    const appConfig = ref(props.applicationConfig)
     const collConfig = ref(props.collectionConfig)
     console.log('DocumentPage props.collectionConfig', props.collectionConfig)
     const manifestIsAvailable = ref(false)
@@ -1347,6 +1349,7 @@ export default {
     )
 
     watch(props, async (newProps) => {
+      appConfig.value = newProps.applicationConfig
       collConfig.value = newProps.collectionConfig
       TOC_DEPTH.value = newProps.collectionConfig.tableOfContentsSettings.tableOfContentDepth
       editorialLevel.value = newProps.collectionConfig.tableOfContentsSettings.editByLevel
@@ -1540,6 +1543,7 @@ export default {
       isDocProjectIdInc,
       dtsRootCollectionId,
       rootCollectionId,
+      appConfig,
       collConfig,
       docProjectId,
       isLoading,
