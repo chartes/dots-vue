@@ -38,26 +38,48 @@
               :class="{ active: index === activeBreadcrumb }"
             >
               <template
-                v-for="ancestor in itemSorted(item)"
-                :key="ancestor.identifier"
+                v-if="item.length > 1"
               >
                 <a
-                  :class="selectedCollectionId === ancestor.identifier ? 'active' : ''"
+                  :class="selectedCollectionId === selectStoreCollection(item) ? 'active' : ''"
                   href="#"
-                  @click.prevent="openObject(ancestor, index)"
+                  @click.prevent="openObject(selectStoreCollection(item), index)"
                 >
                   <i
-                    :class="ancestor.citeType === 'Collection'
+                    :class="selectStoreCollection(item) === 'Collection'
                       ? 'fa fa-archive'
                       : 'fa fa-file-text'"
                   />
                   <span class="breadcrumb-label">
-                    {{ ancestorLabel(ancestor) }}
+                    {{ ancestorLabel(selectStoreCollection(item)) }}
                   </span>
                   <!-- bouton toggle réutilisé -->
                   <span
                     class="toggle-btn"
-                    @click.stop.prevent="openObject(ancestor, index)"
+                    @click.stop.prevent="openObject(selectStoreCollection(item), index)"
+                  />
+                </a>
+              </template>
+              <template
+                v-else
+              >
+                <a
+                  :class="selectedCollectionId === item[0].identifier ? 'active' : ''"
+                  href="#"
+                  @click.prevent="openObject(item[0], index)"
+                >
+                  <i
+                    :class="item[0].citeType === 'Collection'
+                      ? 'fa fa-archive'
+                      : 'fa fa-file-text'"
+                  />
+                  <span class="breadcrumb-label">
+                    {{ ancestorLabel(item[0]) }}
+                  </span>
+                  <!-- bouton toggle réutilisé -->
+                  <span
+                    class="toggle-btn"
+                    @click.stop.prevent="openObject(item[0], index)"
                   />
                 </a>
               </template>
@@ -1172,6 +1194,16 @@ export default {
       return ancestor.title
     }
 
+    function selectStoreCollection(levelListItems) {
+      if (store.state.collectionId && levelListItems.every(coll => coll.citeType === 'Collection')) {
+        console.log('selectStoreCollection multiple items returning context coll', levelListItems.find(coll => coll.identifier === store.state.collectionId))
+        return levelListItems.find(coll => coll.identifier === store.state.collectionId)
+      } else {
+        console.log('selectStoreCollection returning unique item', levelListItems)
+        return levelListItems
+      }
+    }
+
     function openObject(breadcrumbItem, index) {
       isModalOpened.value = true
 
@@ -1538,6 +1570,7 @@ export default {
       isNotesOpened,
       toggleNotes,
       hasNotes,
+      selectStoreCollection,
       openObject,
       selectedCollectionId,
       selectedCollection,
