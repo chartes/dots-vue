@@ -35,18 +35,6 @@
 
           </a><!-- : 'pas de titre' : `Fragment n° ${index + 1}` :title="item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : item.citeType : item.citeType"-->
         </div>
-        <!-- <div
-          v-if="expandedById[item.identifier]"
-        >
-          <TOC
-            v-if="item.level < maxcitedepth && item.children && item.children.length > 0"
-            :margin="$props.margin + 23"
-            :toc="item.children"
-            :maxcitedepth="maxcitedepth"
-            :refid="currentRefId"
-            @update-ref-id="getNewRefId"
-          />
-        </div>-->
       </li>
     </template>
   </ul>
@@ -342,7 +330,6 @@ div.toc-area-content.toc-content {
   }
 
   .tree li {
-    /*margin-left: 10px;*/
     font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 400;
@@ -364,7 +351,6 @@ div.toc-area-content.toc-content {
     }
 
     &.more {
-      /*margin-left: 0px;*/
       display: block;
       padding-left: 0;
       break-inside: avoid;
@@ -388,7 +374,6 @@ div.toc-area-aside.toc-content {
     width: 100%;
   }
   .tree li {
-    /*margin-left: 10px;*/
     font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 400;
@@ -409,7 +394,6 @@ div.toc-area-aside.toc-content {
     }
 
     &.more {
-      /*margin-left: 0;*/
       padding-left: 0;
       & .li.container > a, span {
       margin-top: 4px;
@@ -423,7 +407,6 @@ div.toc-area-aside.toc-content {
 }
 div.bottom-toc {
   .tree li {
-    /*margin-left: 10px;*/
     font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 500;
@@ -444,7 +427,6 @@ div.bottom-toc {
     }
 
     &.more {
-      /*margin-left: 0;*/
       padding-left: 0;
       & .li.container > a {
         margin-top: 4px;
@@ -457,7 +439,6 @@ div.bottom-toc {
 }
 
 .is-current {
-  /* color: #971716 !important; */
   color: var(--text-color) !important;
 }
 
