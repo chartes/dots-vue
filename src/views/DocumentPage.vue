@@ -1666,6 +1666,7 @@ export default {
   width: 100%;
 
   z-index: 100;
+  pointer-events: none;
 }
 .controls-list {
   display: flex;
@@ -1674,6 +1675,8 @@ export default {
   margin: 0;
   padding: 0;
   list-style: none;
+
+  pointer-events: auto;
 }
 .controls button {
   /* remove default button behavior */
@@ -2193,6 +2196,7 @@ div.remove-bottom-padding #article {
   position: sticky;
   top: 0;
   z-index: 10;
+  pointer-events: none;
 }
 
 .navigation-row {
@@ -2205,6 +2209,7 @@ div.remove-bottom-padding #article {
   width: 100%;
   vertical-align: center;
   margin-bottom: 10px;
+  pointer-events: auto;
 }
 .navigation-document {
   display: flex;
