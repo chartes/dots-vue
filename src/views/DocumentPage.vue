@@ -1461,28 +1461,6 @@ export default {
       }
     }
 
-
-
-    const toggleCollection = (breadcrumbItem) => {
-      console.log('toggleCollection breadcrumbItem : ', breadcrumbItem)
-      isModalOpened.value = true
-      if (selectedCollectionId.value === breadcrumbItem) {
-        selectedCollectionId.value = ''
-        Object.assign(selectedCollection.value, {})
-      } else {
-        selectedCollectionId.value = breadcrumbItem
-        if (flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0].citeType === 'Collection') {
-          //Object.assign(selectedCollection.value, flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0])
-          selectedCollection.value = flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0]
-        } else {
-          //Object.assign(selectedCollection.value, _.merge(metadata.value, flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0]))
-          selectedCollection.value = _.merge(metadata.value, flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0])
-        }
-      }
-
-
-      console.log('toggleCollection selectedCollectionId / selectedCollection : ', selectedCollectionId.value, flatTOC.value.filter(item => item.identifier === selectedCollectionId.value)[0])
-    }
     const getNewRefId = function () {
       console.log('getNewRefId check if refId / refId.value', refId, refId.value)
       firstRef.value = false
@@ -1676,7 +1654,6 @@ export default {
     watch(
       () => store.state.collectionModalCollectionId, (newVal, oldVal) => {
         if (newVal) {
-          toggleCollection(newVal)
           openObject(newVal)
         }
         console.log('CollectionModal watch state isModalOpen.value : ')
@@ -1804,7 +1781,6 @@ export default {
       toggleNotes,
       hasNotes,
       openObject,
-      toggleCollection,
       selectedCollectionId,
       selectedCollection,
       currentItem,
