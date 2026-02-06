@@ -39,7 +39,7 @@
         @click.prevent="scrollToTop"
       >
         <button type="button" aria-label="Retour en haut">
-          <DirectionArrows size="40" :radius="4" direction="up"/>
+          <DirectionArrows :size="40" :radius="4" direction="up"/>
         </button>
       </div>
     </div>

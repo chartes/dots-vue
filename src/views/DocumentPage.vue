@@ -434,7 +434,7 @@
                 aria-label="Fragment précédent"
               >
                 <DirectionArrows
-                  size="40"
+                  :size="40"
                   :radius="4"
                   direction="left"
                 />
@@ -448,7 +448,7 @@
                 :tabindex="nextRefId ? 0 : -1"
               >
                 <DirectionArrows
-                  size="40"
+                  :size="40"
                   :radius="4"
                   direction="right"
                   aria-hidden="true"
@@ -473,7 +473,7 @@
               @click="changeViewMode('text-mode')"
             >
               <IconLetterT
-                size="40"
+                :size="40"
                 :radius="4"
               />
             </button>
@@ -487,7 +487,7 @@
               @click="changeViewMode('images-mode')"
             >
               <IconImage
-                size="40"
+                :size="40"
                 :radius="4"
               />
             </button>
