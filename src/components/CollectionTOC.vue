@@ -185,10 +185,18 @@
         <div class="li container">
           <button
             v-if="item.totalChildren > 0"
-            class="expand-collection"
-            :class="expandedById[item.identifier] || item.expanded === true ? 'expanded' : ''"
+            class="toc-toggle"
+            :aria-expanded="expandedById[item.identifier] || item.expanded ? true : false"
+            aria-label="Afficher les éléments enfants"
             @click="toggleExpanded(item.identifier)"
-          />
+          >
+            <TocArrows
+              :key="expandedById[item.identifier] || item.expanded"
+              :direction="expandedById[item.identifier] || item.expanded ? 'down' : 'right'"
+              :size="30"
+              :radius="3"
+            />
+          </button>
           <template
             v-if="item['@type'] === 'Collection' || item.citeType === 'Collection'"
           >
@@ -294,7 +302,7 @@ import { useRoute } from 'vue-router'
 import { getMetadataFromApi } from '@/api/document.js'
 import store from '@/store'
 
-import { getSimpleObject } from '@/composables/utils'
+import TocArrows from '@/assets/images/TocArrows.vue'
 
 const collator = new Intl.Collator('fr', {
   numeric: true,
@@ -304,7 +312,7 @@ const collator = new Intl.Collator('fr', {
 export default {
   name: 'CollectionTOC',
 
-  components: {},
+  components: { TocArrows },
 
   props: {
     isDocProjectIdIncluded: {
@@ -596,16 +604,23 @@ export default {
   }
 }
 
-button {
-  width:30px;
-  height: 30px;
-  border: none;
-  cursor: pointer;
+button.toc-toggle {
+  /* remove default button behavior */
+  appearance: none;
+  -webkit-appearance: none;
 
-  background: url(@/assets/images/chevron_red_rounded.svg) center / 20px auto no-repeat;
-  &.expanded {
-    transform: rotate(90deg);
-  }
+  background: transparent;
+  border: none;
+
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+
+  color: var(--fill-color);
+
+  cursor: pointer;
 }
 .is-current {
   /* color: #971716 !important; */

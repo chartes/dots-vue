@@ -12,10 +12,18 @@
         <div class="li container">
           <button
             v-if="item.level < maxcitedepth && item.children && item.children.length > 0"
-            class="expand-collection"
-            :class="item.expanded === true ? 'expanded' : ''"
+            class="toc-toggle"
+            :aria-expanded="item.expanded ? true : false"
+            aria-label="Afficher les éléments enfants"
             @click="toggleExpanded(item.identifier)"
-          /><!--expandedById[item.identifier] || -->
+          >
+            <TocArrows
+              :key="item.expanded"
+              :direction="item.expanded ? 'down' : 'right'"
+              :size="30"
+              :radius="3"
+            />
+          </button>
           <a
             class="toc-title"
             :title="item.url"
@@ -50,12 +58,14 @@ import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import store from '@/store'
+import TocArrows from '@/assets/images/TocArrows.vue'
 
 export default {
   name: 'TOC',
 
   components: {
-  }, // CarouselPlugin, Slide, Pagination, Navigation
+    TocArrows
+  },
 
   props: {
     isDocProjectIdIncluded: {
@@ -450,19 +460,24 @@ div.bottom-toc {
   /* color: #971716 !important; */
   color: var(--text-color) !important;
 }
-button {
+
+button.toc-toggle {
+  /* remove default button behavior */
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: transparent;
+  border: none;
+
   flex-shrink: 0;
   width: 30px;
   height: 30px;
-  border: none;
+  padding: 0;
+  margin: 0;
+
+  color: var(--fill-color);
+
   cursor: pointer;
-  padding: 0 !important;
-
-  background: url(@/assets/images/chevron_red_rounded.svg) center / 20px auto no-repeat;
-
-  &.expanded {
-    background: url(@/assets/images/chevron_red_rounded.svg) center / 20px auto no-repeat;
-    transform: rotate(90deg);
-  }
 }
+
 </style>
