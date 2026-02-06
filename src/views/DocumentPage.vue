@@ -190,7 +190,10 @@
                 />
               </button>
               <!-- Document breadcrumb -->
-              <ul class="crumbs">
+              <ul
+                v-if="!leftTOCFragmentIsDocument"
+                class="crumbs"
+              >
                 <li
                   v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')"
                   :key="index"
@@ -198,7 +201,23 @@
                     ? ancestor.identifier === refId ? 'is-current' : ''
                     : ancestor.identifier === resourceId ? 'is-current' : ''"
                 >
-
+                  <router-link :to="ancestor.router">
+                    {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
+                  </router-link>
+                  <span class="keep-previous-centered" />
+                </li>
+              </ul>
+              <ul
+                v-else
+                class="crumbs"
+              >
+                <li
+                  v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash').slice(1)"
+                  :key="index"
+                  :class="refId
+                    ? ancestor.identifier === refId ? 'is-current' : ''
+                    : ancestor.identifier === resourceId ? 'is-current' : ''"
+                >
                   <router-link :to="ancestor.router">
                     {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
                   </router-link>
@@ -309,7 +328,7 @@
                 :key="arianeDocument"
                 :is-doc-project-id-included="isDocProjectIdInc"
                 :margin="0"
-                :toc="flatTOC.filter(n => n.level > 0)"
+                :toc="leftTOCFragmentIsDocument && refId ? flatTOC.filter(n => n.ancestor_editorialLevel === refId) : flatTOC.filter(n => n.level > 0)"
                 :maxcitedepth="TOC_DEPTH"
                 :refid="refId"
                 @update-ref-id="getNewRefId"
@@ -459,6 +478,7 @@ export default {
   async setup (props) {
     const topTOCDisplayIndicator = ref(false)
     const leftTOCDisplayIndicator = ref(false)
+    const leftTOCFragmentIsDocument = ref(false)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
@@ -609,6 +629,7 @@ export default {
         console.log('Objectassign collConfig.value : ', collConfig.value)
         topTOCDisplayIndicator.value = collConfig.value.tableOfContentsSettings.displayTopToc !== false
         leftTOCDisplayIndicator.value = collConfig.value.tableOfContentsSettings.displayLeftToc !== false
+        leftTOCFragmentIsDocument.value = collConfig.value.tableOfContentsSettings.leftTocFragmentIsDocument !== false
 
         currentLevelIndicator.value = currentItem.value.editorialLevelIndicator
         refId.value = Object.keys(route.query).length > 0 && Object.keys(route.query).includes('refId')
@@ -1520,6 +1541,7 @@ export default {
     return {
       topTOCDisplayIndicator,
       leftTOCDisplayIndicator,
+      leftTOCFragmentIsDocument,
       tocCssClass: layout.tocCssClass,
       toggleTOCContent: layout.toggleTOCContent,
       tocMenuCssClass: layout.tocMenuCssClass,

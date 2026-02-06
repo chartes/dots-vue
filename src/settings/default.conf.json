@@ -43,7 +43,8 @@
       "countByCiteType": [
       ],
       "displayTopToc": false,
-      "displayLeftToc": false
+      "displayLeftToc": false,
+      "leftTocFragmentIsDocument": false
     },
     "aboutPageSettings": [
       { "tabName": "tabName1", "compName": "about1" },
