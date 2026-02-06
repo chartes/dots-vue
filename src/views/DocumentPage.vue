@@ -86,7 +86,6 @@
             <div class="tab-content">
               <div
                 v-if="activePanel === 'meta'"
-                :object="activeObject"
               >
                 <div v-if="selectedCollectionId.length > 0">
                   <document-metadata
@@ -99,27 +98,12 @@
               </div>
               <div
                 v-if="activePanel === 'summary'"
-                :object="activeObject"
               >
                 <div
                   v-if="selectedCollection.citeType === 'Collection'"
                   class="collection-toc-area app-width-margin"
                   :class="tocCssClass"
                 >
-                  <!--<div class="collection-toc-area-header">
-                    <a
-                      href="#"
-                      class="collBrowseButton"
-                      @click="toggleTOCContent"
-                    >
-                      Sommaire
-                    </a>
-                    <a
-                      href="#"
-                      class="toggle-btn"
-                      @click="toggleTOCContent"
-                    />
-                  </div>-->
                   <div class="menu app-width-margin">
                     <CollectionTOC
                       :is-doc-projectId-included="isDocProjectIdInc"
@@ -135,24 +119,7 @@
                 <div
                   v-else
                   class="toc-area app-width-margin is-opened"
-                  :class="is-opened"
                 >
-                  <!--<div
-                    v-if="topTOCDisplayIndicator"
-                    class="toc-area-header"
-                  >
-                    <a
-                      href="#"
-                      @click="toggleTOCContent"
-                    >
-                      Sommaire
-                    </a>
-                    <a
-                      href="#"
-                      class="toggle-btn"
-                      @click="toggleTOCContent"
-                    />
-                  </div>-->
                   <div class="toc-area-content toc-content">
                     <aside>
                       <nav>
@@ -175,215 +142,9 @@
               </div>
             </div>
           </div>
-          <!--<div v-if="selectedCollectionId.length > 0">
-            <document-metadata
-              :ispopup="false"
-              :metadataprop="selectedCollection"
-              class="metadata-area app-width-margin"
-            />
-            <div
-              v-if="selectedCollection.citeType === 'Collection'"
-              class="collection-toc-area app-width-margin"
-              :class="tocCssClass"
-            >
-              <div class="collection-toc-area-header">
-                <a
-                  href="#"
-                  class="collBrowseButton"
-                  @click="toggleTOCContent"
-                >
-                  Sommaire
-                </a>
-                <a
-                  href="#"
-                  class="toggle-btn"
-                  @click="toggleTOCContent"
-                />
-              </div>
-              <div v-if="tocCssClass" class="menu app-width-margin">
-                <CollectionTOC
-                  :is-doc-projectId-included="isDocProjectIdInc"
-                  :dts-root-collection-identifier="dtsRootCollectionId"
-                  :root-collection-identifier="rootCollectionId"
-                  :collection-config="collConfig"
-                  :current-collection="selectedCollection"
-                  :margin="0"
-                  :toc="selectedCollection.children"
-                />
-              </div>
-            </div>
-            <div
-              v-else
-              class="toc-area app-width-margin"
-              :class="tocCssClass"
-            >
-              <div
-                v-if="topTOCDisplayIndicator"
-                class="toc-area-header"
-              >
-                <a
-                  href="#"
-                  @click="toggleTOCContent"
-                >
-                  Sommaire
-                </a>
-                <a
-                  href="#"
-                  class="toggle-btn"
-                  @click="toggleTOCContent"
-                />
-              </div>
-              <div class="toc-area-content toc-content">
-                <aside>
-                  <nav>
-                    <nav>
-                      <TOC
-                        v-if="flatTOC.length > 0"
-                        :key="arianeDocument"
-                        :is-doc-project-id-included="isDocProjectIdInc"
-                        :margin="0"
-                        :toc="flatTOC.filter(n => n.level > 0)"
-                        :maxcitedepth="TOC_DEPTH"
-                        :refid="refId"
-                        @update-ref-id="getNewRefId"
-                      />
-                    </nav>
-                  </nav>
-                </aside>
-              </div>
-            </div>
-          </div>-->
-          <!--</div>-->
-
-
-          <!--<ul
-            v-if="arianeCollection.length"
-            class="breadcrumb-top"
-          >
-            <li class="first">
-              <router-link
-                v-if="isDocProjectIdIncluded"
-                :to="{ name: 'Home', params: {collId: arianeCollection[0][0].identifier} }"
-                class="fa fa-home"
-              />
-            </li>
-            <li
-              v-for="(item, index) in arianeCollection.slice(1)"
-              :key="index"
-              :class="index === activeBreadcrumb ? 'active' : ''"
-              @click.prevent="activeBreadcrumb === index ? activeBreadcrumb = null : activeBreadcrumb = index"
-            >
-              <template
-                v-for="(ancestor, idx) in item.sort((a,b) => $store.state.collectionId.indexOf(b.identifier) - $store.state.collectionId.indexOf(a.identifier))"
-                :key="idx"
-              >
-                <router-link
-                  v-if="isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
-                  :to="{ name: 'Home', params: {collId: ancestor.identifier} }"
-                >
-                  {{ ancestor.title }}
-                </router-link>
-                <router-link
-                  v-else-if="!isDocProjectIdIncluded && ancestor.identifier === rootCollectionId"
-                  :to="{ name: 'Home' }"
-                >
-                  {{ ancestor.title }}
-                </router-link>
-                <a
-                  v-else
-                  href="#"
-                  @click.prevent="toggleCollection(ancestor.identifier)"
-                >
-                  <i
-                    v-if="ancestor.citeType === 'Collection'"
-                    class="fa fa-archive"
-                  />
-                  <i
-                    v-else
-                    class="fa fa-file-text"
-                  />
-                  {{ ancestor.citeType === 'Resource' && ancestor?.dublincore?.creator ? ancestor.dublincore.creator + ', ' + ancestor.title : ancestor.title }}
-                </a>
-              </template>
-            </li>
-          </ul>-->
         </div>
       </div>
     </div>
-    <!--<nav class="controls is-flex app-width-margin">
-      <a
-        href=""
-        class="toc-menu-toggle"
-        :class="leftTOCDisplayIndicator ? TOCMenuBtnCssClass : 'hideLeftToc'"
-        @click="toggleTOCMenu"
-      >
-        [ :class="currentLevelIndicator !== 'toEdit' ? 'hideLeftToc' : TOCMenuBtnCssClass" ]
-        Sommaire
-      </a>
-      <ul class="is-flex">
-        <li>
-          <a
-            href=""
-            class="text-btn"
-            aria-label="texte seul"
-            @click.prevent="changeViewMode('text-mode')"
-          />
-        </li>
-        <li>
-          <a
-            href=""
-            class="text-images-btn"
-            aria-label="texte et images"
-            @click.prevent="changeViewMode('text-and-images-mode')"
-          />
-        </li>
-        <li>
-          <a
-            href=""
-            class="images-btn"
-            aria-label="images seules"
-            @click.prevent="changeViewMode('images-mode')"
-          />
-        </li>
-      </ul>
-      <ul class="is-flex">
-        <li>
-          <a
-            v-if="metadata.downloadPDF"
-            target="_blank"
-            :href="metadata.downloadPDF"
-            class="pdf-btn"
-            aria-label="Télécharger le PDF"
-          />
-        </li>
-        <li>
-          <a
-            v-if="refId && refId.length > 0"
-            target="_blank"
-            :href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}&ref=${refId}`"
-            class="xml-btn"
-            aria-label="Télécharger le XML"
-          />
-          <a
-            v-else
-            target="_blank"
-            :href="`https://dev.chartes.psl.eu/dots/api/dts/document?resource=${resourceId}`"
-            class="xml-btn"
-            aria-label="Télécharger le XML"
-          />
-        </li>
-        <li>
-          <a
-            v-if="metadata.thenca"
-            target="_blank"
-            :href="metadata.thenca"
-            class="access_link"
-          >
-            Accès à la thèse
-          </a>
-        </li>
-      </ul>
-    </nav>-->
     <div class="nav-controls-wrapper">
       <nav
         class="navigation-row app-width-margin"
@@ -392,7 +153,7 @@
         <div class="navigation-document">
           <div class="ariane">
             <div class="ariane-wrapper">
-            <!-- LeftTOC button --><!--v-if="index === 0"-->
+              <!-- LeftTOC button -->
               <button
                 type="button"
                 class="toc-menu-toggle"
@@ -517,7 +278,6 @@
       :class="tocMenuCssClass"
     >
       <div class="toc-area-aside toc-content">
-        <!-- id="toc-area-aside" -->
         <aside id="aside">
           <nav>
             <nav>
@@ -603,9 +363,7 @@
 import DocumentSource from '@/components/Document.vue'
 import DocumentMetadata from '@/components/DocumentMetadata.vue'
 import TOC from '@/components/TOC.vue'
-/* import ToPreviousButton from '@/components/ToPreviousButton.vue'
-import ToNextButton from '@/components/ToNextButton.vue'
-import CollectionModal from '@/components/CollectionModal.vue' */
+/* import CollectionModal from '@/components/CollectionModal.vue' */
 import CollectionTOC from '@/components/CollectionTOC.vue'
 import DirectionArrows from '@/assets/images/DirectionArrows.vue'
 import IconLetterT from '@/assets/images/IconLetterT.vue'
@@ -1903,12 +1661,11 @@ export default {
 }
 
 .controls {
-  z-index: 100;
-
   display: flex;
   justify-content: right;
-
   width: 100%;
+
+  z-index: 100;
 }
 .controls-list {
   display: flex;
@@ -2736,7 +2493,6 @@ div.remove-bottom-padding #article {
   .tooltip {
     display: none;
   }
-
 }
 
 .ariane-collection-top {
