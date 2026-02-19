@@ -727,6 +727,25 @@ export default {
               })
               appendParentInTOC.children = []
 
+              appendParentInTOC.children = appendParentInTOC.member.filter(item => item.identifier !== node.identifier).map((obj) => {
+                const updatedMember = {
+                  identifier: obj.identifier ? obj.identifier : obj['@id'],
+                  citeType: obj['@type'] ? obj['@type'] : obj.citeType,
+                  expanded: obj.identifier === node.id ? node.expanded : undefined,
+                  title: obj.title,
+                  level: node.level,
+                  editorialLevelIndicator: node.editorialLevelIndicator,
+                  totalChildren: obj.totalChildren,
+                  totalDescendants: obj.totalDescendants,
+                  children: obj.children ? obj.children : [],
+                  member: obj.member ? obj.member : [],
+                  parent: obj.parent,
+                  dublincore: obj.dublincore,
+                  extensions: obj.extensions
+                }
+                return updatedMember
+              })
+              /* causing fecth of all ENCPOS sub-collections / did not find exemple of issues when removing : still necessary ????
               appendParentInTOC.children = await Promise.all(appendParentInTOC.member.filter(item => item.identifier !== node.identifier).map(async (obj) => {
                 const updatedMemberParentResp = await getParentFromApi(obj.identifier)
                 const updatedMemberParent = updatedMemberParentResp.member ? updatedMemberParentResp.member.map(p => p['@id']) : undefined
@@ -746,7 +765,7 @@ export default {
                   extensions: obj.extensions
                 }
                 return updatedMember
-              }))
+              }))*/
               if (appendParentInTOC.member.filter(item => item.identifier === node.identifier).length > 0) {
                 const updatedCurrentNode = appendParentInTOC.member.filter(item => item.identifier === node.identifier)[0]
                 updatedCurrentNode.parent = node.parent
@@ -796,8 +815,28 @@ export default {
             })
             appendParentInTOC.children = []
 
+            appendParentInTOC.children = appendParentInTOC.member.filter(item => item.identifier !== node.identifier).map((obj) => {
+              const updatedMember = {
+                identifier: obj.identifier ? obj.identifier : obj['@id'],
+                citeType: obj['@type'] ? obj['@type'] : obj.citeType,
+                expanded: obj.identifier === node.id ? node.expanded : undefined,
+                title: obj.title,
+                level: node.level,
+                editorialLevelIndicator: node.editorialLevelIndicator,
+                totalChildren: obj.totalChildren,
+                totalDescendants: obj.totalDescendants,
+                children: obj.children ? obj.children : [],
+                member: obj.member ? obj.member : [],
+                parent: obj.parent,
+                dublincore: obj.dublincore,
+                extensions: obj.extensions
+              }
+              return updatedMember
+            })
+            /* causing fecth of all ENCPOS sub-collections / did not find exemple of issues when removing : still necessary ????
             appendParentInTOC.children = await Promise.all(appendParentInTOC.member.filter(item => item.identifier !== node.identifier).map(async (obj) => {
               const updatedMemberParentResp = await getParentFromApi(obj.identifier)
+              console.log('appendParentInTOC Promise all, obj.identifier ', obj.identifier)
               const updatedMemberParent = updatedMemberParentResp.member ? updatedMemberParentResp.member.map(p => p['@id']) : undefined
               const updatedMember = {
                 identifier: obj.identifier ? obj.identifier : obj['@id'],
@@ -810,12 +849,12 @@ export default {
                 totalDescendants: obj.totalDescendants,
                 children: obj.children ? obj.children : [],
                 member: obj.member ? obj.member : [],
-                parent: updatedMemberParent,
+                parent: obj.parent,
                 dublincore: obj.dublincore,
                 extensions: obj.extensions
               }
               return updatedMember
-            }))
+            }))*/
             if (appendParentInTOC.member.filter(item => item.identifier === node.identifier).length > 0) {
               const updatedCurrentNode = appendParentInTOC.member.filter(item => item.identifier === node.identifier)[0]
               updatedCurrentNode.parent = node.parent
