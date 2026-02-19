@@ -349,7 +349,7 @@
         >
           <document-source
             :id="resourceId"
-            :key="resourceId + currentLevelIndicator + manifest"
+            :key="resourceId + currentLevelIndicator"
             :is-doc-project-id-included="isDocProjectIdInc"
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :project-identifier="docProjectId"
@@ -371,7 +371,7 @@
         >
           <document-source
             :id="resourceId + '&ref=' + refId"
-            :key="refId + editorialLevel + manifest"
+            :key="refId + editorialLevel"
             :is-doc-project-id-included="isDocProjectIdInc"
             :media-type-endpoint="collConfig.mediaTypeEndpoint"
             :project-identifier="docProjectId"
