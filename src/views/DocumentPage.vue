@@ -181,7 +181,7 @@
                 type="button"
                 class="toc-menu-toggle"
                 aria-label="Afficher le sommaire"
-                :class="leftTOCDisplayIndicator && flatTOC.filter(item => item.level > 0).length > 0 ? TOCMenuBtnCssClass : 'disabled'"
+                :class="hasValidTOC ? TOCMenuBtnCssClass : 'disabled'"
                 @click="toggleTOCMenu"
               >
                 <i
@@ -1356,6 +1356,15 @@ export default {
       isNotesOpened.value = !isNotesOpened.value
     }
 
+    const hasValidTOC = computed(() => {
+      const hasChildren = refId.value || currentItem.value.identifier
+
+      return (
+        leftTOCDisplayIndicator.value &&
+        flatTOC.value.some(item => item.parent === hasChildren)
+      )
+    })
+
     watch(
       () => metadata.value.iiifManifestUrl,
       () => {
@@ -1474,6 +1483,13 @@ export default {
       }, { immediate: true }
     )
 
+    watch(hasValidTOC, (val) => {
+      console.log('hasValidTOC changed:', val)
+      if (!val && layout.isTOCMenuOpened.value) {
+        layout.isTOCMenuOpened.value = false
+      }
+    })
+
     function scrollTo () {
       // If the selected item is an anchor, capture and scroll to that anchor
       console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
@@ -1546,6 +1562,7 @@ export default {
       toggleTOCContent: layout.toggleTOCContent,
       tocMenuCssClass: layout.tocMenuCssClass,
       toggleTOCMenu: layout.toggleTOCMenu,
+      hasValidTOC,
       TOCMenuBtnCssClass: layout.TOCMenuBtnCssClass,
       changeViewMode: layout.changeViewMode,
       viewModeCssClass: layout.viewModeCssClass,
