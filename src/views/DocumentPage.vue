@@ -1399,8 +1399,8 @@ export default {
       const hasChildren = refId.value || currentItem.value.identifier
 
       return (
-        leftTOCDisplayIndicator.value &&
-        flatTOC.value.some(item => item.parent === hasChildren)
+        leftTOCFragmentIsDocument.value ? leftTOCDisplayIndicator.value &&
+        flatTOC.value.some(item => item.parent === hasChildren) : true
       )
     })
 
