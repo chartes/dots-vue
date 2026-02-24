@@ -578,6 +578,7 @@ export default {
         color: #4a4a4a !important;
         &.is-current {
           font-weight: bold !important;
+          color: var(--text-color) !important;
         }
       }
     }
