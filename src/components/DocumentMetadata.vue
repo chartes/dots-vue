@@ -648,6 +648,7 @@ figure {
 table {
   background-color: #f1f1f1;
   border-radius: 0 0 6px 6px;
+  border: none;
 }
 td {
   vertical-align: middle !important;
