@@ -670,26 +670,6 @@ p.header-baseline span {
     left: 10px !important;
     right: 10px !important;
   }
-  ul.breadcrumb-top {
-    & > li {
-      &.first {
-        & a {
-          padding-left: 10px !important;
-          padding-right: 0 !important;
-        }
-      }
-      &:last-child {
-        width: 100% !important;
-
-        & > a {
-          display: block;
-          overflow: hidden !important;
-          text-overflow: ellipsis !important;
-          padding-right: 45px !important;
-        }
-      }
-    }
-  }
 }
 
 @media screen and (max-width: 500px) {
@@ -837,7 +817,6 @@ a.noteref sup {
   width: 100%;
   font-family: "Barlow", sans-serif;
   margin-bottom: 30px;
-  background-color: #e4e4e4;
   border-radius: 6px;
 }
 .ariane-collection-top .collection-toc-area {
@@ -906,15 +885,12 @@ a.noteref sup {
 .toc-area.is-opened .toggle-btn, .collection-toc-area.is-opened .toggle-btn, .collection-toc-area.expanded .toggle-btn {
   background: url(./assets/images/croix.svg) center / cover no-repeat;
 }
-ul.breadcrumb-top li.active > a .toggle-btn {
-  background: url(./assets/images/croix_blc.svg) center / cover no-repeat;
-}
-ul.breadcrumb-top li > a .toggle-btn {
+.breadcrumb-panel.is-opened .breadcrumb-top-toggle-bttn {
+  color: var(--fill-color);
+
   position: absolute;
   right: 20px;
-  width: 20px;
-  height: 16px;
-  background: url(./assets/images/chevron.svg) center / cover no-repeat;
+  width: 40px;
 }
 
 </style>

@@ -19,18 +19,32 @@
     <div class="navigation-row-top-container">
       <div class="navigation-row-top app-width-margin">
         <div class="ariane-collection-top">
+          <div
+            class="fade-left"
+            :class="{ visible: colFadeLeftVisible }"
+          >
+            <IconCircleArrow
+              class="icon-circle-arrow-left"
+              size="20"
+              fg-color="var(--fill-color)"
+              direction="left"
+              @click.prevent="breadcrumbToLeft"
+            />
+          </div>
           <ul
             v-if="arianeCollection.length > 0"
             class="breadcrumb-top"
+            ref="breadcrumbEl"
+            @scroll="onColBreadcrumbScroll($event)"
           >
-            <li class="first">
+            <!--<li class="first">
               <router-link
                 v-if="isDocProjectIdIncluded"
                 :to="{ name: 'Home', params: { collId: arianeCollection[0][0].identifier } }"
               >
                 <i class="fa fa-home"></i>
               </router-link>
-            </li>
+            </li>-->
 
             <li
               v-for="(item, index) in arianeCollection.slice(1)"
@@ -41,23 +55,25 @@
                 v-if="item.length > 1"
               >
                 <a
-                  :class="selectedCollectionId === selectStoreCollection(item) ? 'active' : ''"
+                  :class="selectedCollectionId === selectStoreCollection(item).identifier ? 'active' : ''"
                   href="#"
                   @click.prevent="openObject(selectStoreCollection(item), index)"
                 >
-                  <i
-                    :class="selectStoreCollection(item) === 'Collection'
-                      ? 'fa fa-archive'
-                      : 'fa fa-file-text'"
+                  <CollectionIcon
+                    v-if="selectStoreCollection(item).citeType === 'Collection'"
+                    class="breadcrumb-top-icon"
+                    :size="30"
+                    :radius="0"
+                  />
+                  <ResourceIcon
+                    v-else
+                    class="breadcrumb-top-icon"
+                    :size="30"
+                    :radius="0"
                   />
                   <span class="breadcrumb-label">
                     {{ ancestorLabel(selectStoreCollection(item)) }}
                   </span>
-                  <!-- bouton toggle réutilisé -->
-                  <span
-                    class="toggle-btn"
-                    @click.stop.prevent="openObject(selectStoreCollection(item), index)"
-                  />
                 </a>
               </template>
               <template
@@ -68,26 +84,40 @@
                   href="#"
                   @click.prevent="openObject(item[0], index)"
                 >
-                  <i
-                    :class="item[0].citeType === 'Collection'
-                      ? 'fa fa-archive'
-                      : 'fa fa-file-text'"
+                  <collection-icon
+                    v-if="item[0].citeType === 'Collection'"
+                    class="breadcrumb-top-icon"
+                    :size="30"
+                    :radius="0"
+                  />
+                  <ResourceIcon
+                    v-else
+                    class="breadcrumb-top-icon"
+                    :size="30"
+                    :radius="0"
                   />
                   <span class="breadcrumb-label">
                     {{ ancestorLabel(item[0]) }}
                   </span>
-                  <!-- bouton toggle réutilisé -->
-                  <span
-                    class="toggle-btn"
-                    @click.stop.prevent="openObject(item[0], index)"
-                  />
                 </a>
               </template>
             </li>
           </ul>
           <div
+            class="fade-right"
+            :class="{ visible: colFadeRightVisible }"
+          >
+            <IconCircleArrow
+              class="icon-circle-arrow-right"
+              size="20"
+              fg-color="var(--fill-color)"
+              direction="right"
+              @click.prevent="breadcrumbToRight"
+            />
+          </div>
+          <div
             v-if="activeObject"
-            class="breadcrumb-panel"
+            class="breadcrumb-panel is-opened"
           >
             <div class="tab-header">
               <button
@@ -103,6 +133,13 @@
               >
                 Sommaire
               </button>
+              <CloseCross
+                href="#"
+                class="breadcrumb-top-toggle-bttn"
+                fg="blue"
+                size="40"
+                @click.prevent="openObject(activeObject, activeBreadcrumb)"
+              />
             </div>
 
             <div class="tab-content">
@@ -114,7 +151,7 @@
                     :ispopup="false"
                     :metadataprop="selectedCollection"
                     :hasheader="false"
-                    class="metadata-area app-width-margin"
+                    class="metadata-area"
                   />
                 </div>
               </div>
@@ -175,7 +212,9 @@
       >
         <div class="navigation-document">
           <div class="ariane">
-            <div class="ariane-wrapper">
+            <div
+              class="ariane-wrapper"
+            >
               <!-- LeftTOC button -->
               <button
                 type="button"
@@ -190,40 +229,56 @@
                 />
               </button>
               <!-- Document breadcrumb -->
-              <ul
-                v-if="!leftTOCFragmentIsDocument"
-                class="crumbs"
+              <div
+                class="ariane-scroll-wrapper"
               >
-                <li
-                  v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')"
-                  :key="index"
-                  :class="refId
-                    ? ancestor.identifier === refId ? 'is-current' : ''
-                    : ancestor.identifier === resourceId ? 'is-current' : ''"
+                <div
+                  class="doc-fade-left"
+                  :class="{ visible: docFadeLeftVisible }"
+                />
+                <ul
+                  v-if="!leftTOCFragmentIsDocument"
+                  ref="arianeDocContainer"
+                  class="crumbs"
+                  @scroll="onDocBreadcrumbScroll($event)"
                 >
-                  <router-link :to="ancestor.router">
-                    {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
-                  </router-link>
-                  <span class="keep-previous-centered" />
-                </li>
-              </ul>
-              <ul
-                v-else
-                class="crumbs"
-              >
-                <li
-                  v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash').slice(1)"
-                  :key="index"
-                  :class="refId
-                    ? ancestor.identifier === refId ? 'is-current' : ''
-                    : ancestor.identifier === resourceId ? 'is-current' : ''"
+                  <li
+                    v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')"
+                    :key="index"
+                    :class="refId
+                      ? ancestor.identifier === refId ? 'is-current' : ''
+                      : ancestor.identifier === resourceId ? 'is-current' : ''"
+                  >
+                    <router-link :to="ancestor.router">
+                      {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
+                    </router-link>
+                    <!--<span class="keep-previous-centered" />-->
+                  </li>
+                </ul>
+                <ul
+                  v-else
+                  ref="arianeDocContainer"
+                  class="crumbs"
+                  @scroll="onDocBreadcrumbScroll($event)"
                 >
-                  <router-link :to="ancestor.router">
-                    {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
-                  </router-link>
-                  <span class="keep-previous-centered" />
-                </li>
-              </ul>
+                  <li
+                    v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash').slice(1)"
+                    :key="index"
+                    :class="refId
+                      ? ancestor.identifier === refId ? 'is-current' : ''
+                      : ancestor.identifier === resourceId ? 'is-current' : ''"
+                  >
+                    <router-link :to="ancestor.router">
+                      {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
+                    </router-link>
+                    <span class="keep-previous-centered" />
+                  </li>
+                </ul>
+                <div
+                  class="doc-fade-right"
+                  :class="{ visible: docFadeRightVisible }"
+                />
+              </div>
             </div>
             <!-- Previous / Next navigation buttons -->
             <div
@@ -430,6 +485,10 @@ import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import fetchMetadata from '@/composables/get-metadata.js'
 import { getSimpleObject } from '@/composables/utils.js'
+import CollectionIcon from '@/assets/images/CollectionIcon.vue'
+import ResourceIcon from '@/assets/images/ResourceIcon.vue'
+import IconCircleArrow from '@/assets/images/IconCircleArrow.vue'
+import CloseCross from '@/assets/images/CloseCross.vue'
 
 
 function findById (array, id) {
@@ -445,13 +504,17 @@ function findById (array, id) {
 export default {
   name: 'DocumentPage',
   components: {
+    IconCircleArrow,
+    ResourceIcon,
+    CollectionIcon,
     CollectionTOC,
     DocumentMetadata,
     DocumentSource,
     TOC,
     DirectionArrows,
     IconLetterT,
-    IconImage
+    IconImage,
+    CloseCross
   },
   props: {
     isDocProjectIdIncluded: {
@@ -582,6 +645,116 @@ export default {
 
     const isNotesOpened = ref(true)
     const hasNotes = ref(false)
+
+    // collection breadcrumb scrolls reactive
+    const colBreadcrumbScrollLeft = ref(0)
+    const colBreadcrumbClientWidth = ref(0)
+    const colBreadcrumbScrollWidth = ref(0)
+
+    // computed fade for collection breadcrumb
+    const colFadeLeftVisible = computed(() => {
+      return (
+        colBreadcrumbScrollWidth.value > colBreadcrumbClientWidth.value && colBreadcrumbScrollLeft.value > 1
+      )
+    })
+
+    const colFadeRightVisible = computed(() => {
+      return colBreadcrumbScrollWidth.value > colBreadcrumbClientWidth.value && colBreadcrumbScrollLeft.value + colBreadcrumbClientWidth.value < colBreadcrumbScrollWidth.value - 1
+    })
+
+    const breadcrumbEl = ref(null)
+    const updateMeasurements = function () {
+      console.log('DOM updateMeasurements', breadcrumbEl.value)
+      if (!breadcrumbEl.value) return
+
+      const el = breadcrumbEl.value
+      colBreadcrumbScrollLeft.value = el.scrollLeft
+      colBreadcrumbClientWidth.value = el.clientWidth
+      colBreadcrumbScrollWidth.value = el.scrollWidth
+    }
+
+    const onColBreadcrumbScroll = (event) => {
+      const target = event.target
+      console.log('onColBreadcrumbScroll')
+      updateMeasurements()
+      colBreadcrumbScrollLeft.value = target.scrollLeft
+      colBreadcrumbClientWidth.value = target.clientWidth
+      colBreadcrumbScrollWidth.value = target.scrollWidth
+    }
+
+    const breadcrumbToLeft = function() {
+      console.log('DOM breadcrumbToLeft', breadcrumbEl.value)
+      if (!breadcrumbEl.value) return
+
+      const el = breadcrumbEl.value
+
+      el.scrollTo({
+        left: 0,
+        behavior: 'smooth'
+      })
+    }
+
+    const breadcrumbToRight = function() {
+      if (!breadcrumbEl.value) return
+
+      const el = breadcrumbEl.value
+
+      el.scrollTo({
+        left: el.scrollWidth,
+        behavior: 'smooth'
+      })
+    }
+
+    // document breadcrumb scrolls reactive
+    const arianeDocContainer = ref(null)
+
+    const docBreadcrumbScrollLeft = ref(0)
+    const docBreadcrumbClientWidth = ref(0)
+    const docBreadcrumbScrollWidth = ref(0)
+
+    // computed fade for document breadcrumb
+    const docFadeLeftVisible = computed(() => {
+      return (
+        docBreadcrumbScrollWidth.value > docBreadcrumbClientWidth.value && docBreadcrumbScrollLeft.value > 1
+      )
+    })
+
+    const docFadeRightVisible = computed(() => {
+      console.log('DOM ariane docFadeRightVisible', docBreadcrumbScrollWidth.value > docBreadcrumbClientWidth.value && docBreadcrumbScrollLeft.value + docBreadcrumbClientWidth.value < docBreadcrumbScrollWidth.value - 1)
+      return docBreadcrumbScrollWidth.value > docBreadcrumbClientWidth.value && docBreadcrumbScrollLeft.value + docBreadcrumbClientWidth.value < docBreadcrumbScrollWidth.value - 1
+    })
+
+    const onDocBreadcrumbScroll = (event) => {
+      const target = event.target
+      console.log('onDocBreadcrumbScroll')
+      updateMeasurementsAriane()
+      docBreadcrumbScrollLeft.value = target.scrollLeft
+      docBreadcrumbClientWidth.value = target.clientWidth
+      docBreadcrumbScrollWidth.value = target.scrollWidth
+    }
+
+    const updateMeasurementsAriane = function () {
+      console.log('DOM ariane updateMeasurements', arianeDocContainer.value)
+      if (!arianeDocContainer.value) return
+
+      const el = arianeDocContainer.value
+      docBreadcrumbScrollLeft.value = el.scrollLeft
+      docBreadcrumbClientWidth.value = el.clientWidth
+      docBreadcrumbScrollWidth.value = el.scrollWidth
+
+    }
+
+    const arianeDocToRight = function() {
+      console.log('DOM arianeDocToRight', arianeDocContainer.value)
+      if (!arianeDocContainer.value) return
+      const el = arianeDocContainer.value
+
+      el.scrollTo({
+        left: el.scrollWidth,
+        behavior: 'smooth'
+      })
+    }
+
 
     const miradorInstance = useMirador(miradorContainer, manifest)
     // provide an uninitialized instance of Mirador
@@ -1529,6 +1702,20 @@ export default {
       }
     })
 
+    watch(breadcrumbEl, (val) => {
+      console.log('DOM breadcrumbEl changed:', val)
+      updateMeasurements()
+    })
+
+    watch(arianeDocContainer, (val) => {
+      console.log('DOM arianeDocContainer changed:', val)
+      updateMeasurementsAriane()
+    })
+    watch(arianeDocument, (val) => {
+      console.log('DOM arianeDocContainer updated:', val)
+      nextTick().then(arianeDocToRight)
+    })
+
     function scrollTo () {
       // If the selected item is an anchor, capture and scroll to that anchor
       console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
@@ -1579,6 +1766,9 @@ export default {
       window.addEventListener('scroll', updateMiradorTopPosition)
       layout.isTOCMenuOpened.value = false
       layout.changeViewMode('init')
+
+      window.addEventListener('resize', updateMeasurements)
+      window.addEventListener('resize', updateMeasurementsAriane)
     })
 
     onUnmounted(() => {
@@ -1591,6 +1781,9 @@ export default {
       }
       appView.removeEventListener('scroll', updateMiradorTopPosition)
       window.removeEventListener('scroll', updateMiradorTopPosition)
+
+      window.removeEventListener('resize', updateMeasurements)
+      window.removeEventListener('resize', updateMeasurementsAriane)
     })
 
     return {
@@ -1607,6 +1800,17 @@ export default {
       viewModeCssClass: layout.viewModeCssClass,
       miradorViewCssStyle,
       miradorContainer,
+      breadcrumbEl,
+      onColBreadcrumbScroll,
+      onDocBreadcrumbScroll,
+      breadcrumbToLeft,
+      breadcrumbToRight,
+      colFadeLeftVisible,
+      colFadeRightVisible,
+      docFadeLeftVisible,
+      docFadeRightVisible,
+      arianeDocContainer,
+      arianeDocToRight,
       activeBreadcrumb,
       activeObject,
       activePanel,
@@ -1667,14 +1871,15 @@ export default {
   width: 100%;
 }
 .metadata-area {
-  margin-top: 15px !important;
-  margin-bottom: 15px !important;
+  /*margin-top: 15px !important;
+  margin-bottom: 15px !important;*/
 }
 .metadata-area .columns {
   margin: 0;
 }
 .toc-area {
   width: 100%;
+  padding: 0;
   font-family: "Barlow", sans-serif !important;
 }
 .toc-area-header {
@@ -2050,8 +2255,10 @@ div.remove-bottom-padding #article {
   width: 100% !important;
   max-width: 1100px !important;
 
-  font-family: "Barlow", sans-serif !important;
-  font-size: 16px;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 400;
+  font-size: var(--font-primary-size);
+  color: #636363;
 
   & > ul {
     display: flex;
@@ -2065,7 +2272,10 @@ div.remove-bottom-padding #article {
   & > .ariane-wrapper {
     display: flex;
     flex-direction: row;
+    justify-items: left;
     width: 100%;
+    max-width: calc(100% - 90px - 20px);
+    margin-right: 20px;
 
     & > button.toc-menu-toggle {
       /* remove default button behavior */
@@ -2108,11 +2318,29 @@ div.remove-bottom-padding #article {
     }
   }
 }
+.ariane-scroll-wrapper {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  height: 40px;
+  max-width: calc(100% - 60px);
+  margin-right: 20px;
+
+  position: relative;
+}
 
 .crumbs {
   display: flex;
+  width: 100%;
+  height: 40px;
   flex-direction: row;
   margin-left: 0;
+
+  overflow-x: auto;   /* scroll horizontal si nécessaire */
+  overflow-y: hidden; /* pas de scroll vertical */
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+
 }
 .crumbs li + li:before {
   width: 100% !important;
@@ -2128,14 +2356,16 @@ div.remove-bottom-padding #article {
   margin-bottom: 0;
   margin-right: 0;
   padding-right: 20px;
+  text-wrap: nowrap;
 
   &:last-child:after {
     display: none;
   }
 
   &:not(:last-child):after {
-    content: ' > ';
     display: inline-block;
+    content: ' > ';
+    font-weight: bold;
     color: var(--text-color);
     padding-left: .75rem;
   }
@@ -2287,49 +2517,31 @@ div.remove-bottom-padding #article {
     margin-left: -2.2rem;
   }
   .ariane {
-    flex-direction: column !important;
-    gap: .5rem;
+    & > .ariane-wrapper {
+      max-width: calc(100% - 90px - 10px);
+      margin-right: 10px;
+
+      & > button.toc-menu-toggle {
+        margin-right: 10px;
+      }
+    }
   }
-  .ariane-wrapper {
-    justify-content: space-between;
+  .ariane-scroll-wrapper {
+    max-width: calc(100% - 50px);
+    margin-right: 10px;
   }
   .crumbs {
-    flex-direction: column !important;
-    width: 100%;
-    margin-left: 0;
-    & > li {
-      justify-content: space-between;
-      width: 100%;
-      text-align: center;
-      margin-bottom: 10px;
-      padding: 0;
-
-      &:after {
-        display: none !important;
+    display: flex;
+  }
+  .crumbs li {
+    &.is-current {
+      & a {
+        text-wrap: nowrap;
       }
-
-      & > a {
-        max-width: none !important;
-        text-align: center !important;
-        text-wrap: wrap !important;
-      }
-
-      &:first-child {
-        flex-direction: row;
-        padding-right: 0;
-        & > button.toc-menu-toggle {
-          flex: 1;
-          margin-right: auto;
-        }
-        & > a {
-          max-width: none;
-          margin-right: 0;
-          text-align: center;
-          white-space: normal;
-        }
-        & > .keep-previous-centered {
-          flex: 1;
-        }
+    }
+    &:not(.is-current) {
+      &::after {
+        padding-left: 0.25rem;
       }
     }
   }
@@ -2367,9 +2579,6 @@ div.remove-bottom-padding #article {
   .toc-area .toc-area-content nav > ol.tree {
     columns: 1;
   }
-  .ariane-wrapper {
-    justify-content: space-between;
-  }
 
   #article section.div {
     font-size: 14px;
@@ -2400,58 +2609,6 @@ div.remove-bottom-padding #article {
       margin-right: 25px;
     }
   }
-  .ariane {
-    flex-direction: column !important;
-    gap: .5rem;
-  }
-  button.toc-menu-toggle {
-    flex: 1;
-    margin-right: auto !important;
-  }
-  .crumbs {
-    flex-direction: column !important;
-    width: 100%;
-    margin-left: 0;
-    margin-right: 40px;
-    & > li {
-      justify-content: space-between;
-      width: 100%;
-      text-align: center;
-      margin-bottom: 10px;
-      padding: 0;
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      & > a {
-        max-width: none !important;
-        text-align: center !important;
-        text-wrap: wrap !important;
-      }
-
-      &:first-child {
-        flex-direction: row;
-        padding-right: 0;
-        & > button.toc-menu-toggle {
-          flex: 1;
-          margin-right: auto;
-        }
-        & > a {
-          max-width: none;
-          margin-right: 0;
-          text-align: center;
-          white-space: normal;
-        }
-        & > .keep-previous-centered {
-          flex: 1;
-        }
-      }
-    }
-  }
-  .navigation-document-top {
-    width: 100%;
-    justify-content: space-between;
-  }
   .tooltip {
     display: none;
   }
@@ -2459,12 +2616,13 @@ div.remove-bottom-padding #article {
 
 .ariane-collection-top {
   justify-content: left;
+  position: relative;
 }
 
 .navigation-row-top-container {
   width: 100%;
-  padding-top: 10px;
-  padding-bottom: 15px;
+  padding-top: 20px;
+  padding-bottom: 20px;
   background-color: var(--meta-banner-fill-color);
 }
 
@@ -2472,169 +2630,225 @@ div.remove-bottom-padding #article {
   width: 100% !important;
 }
 ul.breadcrumb-top {
+  --crumb-radius: 20px;     /* demi-lune (40px hauteur / 2)*/
+  --crumb-gap: -4px;         /* trait visible entre les items*/
+
   display: flex;
-  max-width: 100%;
-	padding: 0;
-	font-size: 0;
-	line-height: 0;
-	height: 40px;
+  height: 40px;
+  padding: 0;
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: var(--font-primary-size);
+  flex-flow: row nowrap;
+  overflow-x: auto;   /* scroll horizontal si nécessaire */
+  overflow-y: hidden; /* pas de scroll vertical */
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
 
-	& > li {
+  > li {
     display: flex;
-    justify-content: left;
-		position: relative;
-		margin: 0 0;
-		padding: 0;
-		list-style: none;
-		list-style-image: none;
-		border-left: 1px solid #ccc;
+    width: fit-content;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 
-		&:hover {
-      flex-shrink: 0 !important;
-      width: auto !important;
-			&:before {
-				border-left: 10px solid var(--text-color);
-			}
-			a {
-				color: #000;
-				background: var(--text-color);
-			}
-		}
+  > li > a {
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+    overflow: hidden;
+    align-items: center;
+    padding: 0 20px 0 20px;
+    height: 40px;
+    background: #CCCCCC;
+    color: black;
+    text-decoration: none;
 
-		&:before {
-			content:"";
-			position: absolute;
-			right: -9px;
-			top: -1px;
-			z-index: 9;
-			border-left: 10px solid #fff;
-			border-top: 22px solid transparent;
-			border-bottom: 22px solid transparent;
-		}
+    border: 2px solid var(--meta-banner-fill-color);
 
-		&:not(:last-child):after {
-			content:"";
-			position: absolute;
-			right: -10px;
-			top: -1px;
-			z-index: 8;
-			border-left: 10px solid #ccc;
-			border-top: 22px solid transparent;
-			border-bottom: 22px solid transparent;
-		}
+    /* demi-lune droite */
+    border-top-right-radius: var(--crumb-radius);
+    border-bottom-right-radius: var(--crumb-radius);
 
+    /* espace pour emboitement */
+    margin-right: var(--crumb-gap);
 
-		&.active {
-      flex-shrink: 0 !important;
-      width: fit-content !important;
-      &:has(
-        > a:last-child.active
-      ):before {
-        border-left: 10px solid var(--meta-area-fill-color);
-      }
-			a {
-        font-weight: bold;
-				color: #000;
-        &.active {
-          background-color: var(--meta-area-fill-color);
-        }
-			}
-		}
-
-		&.first {
-      width: auto;
-      flex-shrink: 0; /* home fixed */
-			border-left: none;
-
-			a {
-				padding-left: 20px;
-				border-radius: 5px 0 0 5px;
-			}
-		}
-    &.last {
-			&:before {
-				display: none;
-			}
-			&:after {
-				display: none;
-			}
-			a {
-				padding-right: 20px;
-				border-radius: 0 40px 40px 0;
-			}
-		}
-    &:not(:first-child):not(:last-child) {
-      flex-shrink: 1; /* middle li can shrink */
-      max-width: fit-content;
-      min-width: 100px;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      > a {
-        font-size: 12px;
-        line-height: 40px;
-        & > i {
-          font-size: 14px;
-        }
-      }
+    & .breadcrumb-top-icon {
+      color: var(--fill-color);
     }
 
-		&:last-child {
-      flex-shrink: 1;
-      width: fit-content;
-      white-space: nowrap !important;
-			overflow: hidden !important;
-      text-overflow: ellipsis !important;
-      border: 1px solid #ddd !important;
-      &:before {
-        z-index: -1 !important;
-      }
-      border-radius: 0 20px 20px 0 !important;
-      a {
-        min-width: 0;
-        border: 1px #ddd !important;
-        border-radius: 0 20px 20px 0 !important;
-      }
-		}
+    & > span {
+      text-wrap: nowrap;
+    }
 
-		a {
-			display: inline-block;
-			font-size: 12px;
-			line-height: 40px;
-			padding: 0 15px 0 25px;
-			text-decoration: none;
-			background: #fff;
-			border: 1px solid #ddd;
-			white-space: nowrap !important;
-			overflow: hidden !important;
-      text-overflow: ellipsis !important;
-		}
-	}
-  &:has(
-    > li:not(:last-child):hover,
-    > li:not(:last-child).active
-  ) > li:last-child {
-    flex-shrink: 1 !important;
-    width: auto !important;
-    min-width: 0;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    &.active {
+      /* font-weight: bold !important; */
+      color: white;
+      background-color: var(--fill-color);
+      /*border-bottom: none;*/
+
+      & .breadcrumb-top-icon {
+        color: white;
+      }
+    }
+  }
+
+  /* creux gauche pour tous sauf premier */
+  > li:not(:first-child) > a {
+    margin-left: calc(var(--crumb-radius) * -1 + var(--crumb-gap));
+    padding-left: 30px;
+    border-top-left-radius: var(--crumb-radius);
+    border-bottom-left-radius: var(--crumb-radius);
+  }
+
+  /* premier élément */
+  > li:first-child > a {
+    margin-left: 0;
+    padding-left: 6px;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+  }
+
+  /* dernier élément */
+  > li:last-child > a {
+    border-top-right-radius: var(--crumb-radius);
+    border-bottom-right-radius: var(--crumb-radius);
   }
 }
-ul.breadcrumb-top li a {
+ul.breadcrumb-top > li:nth-child(1) { z-index: 10; }
+ul.breadcrumb-top > li:nth-child(2) { z-index: 9; }
+ul.breadcrumb-top > li:nth-child(3) { z-index: 8; }
+ul.breadcrumb-top > li:nth-child(4) { z-index: 7; }
+ul.breadcrumb-top > li:nth-child(5) { z-index: 6; }
+ul.breadcrumb-top > li:nth-child(6) { z-index: 5; }
+ul.breadcrumb-top > li:nth-child(7) { z-index: 4; }
+ul.breadcrumb-top > li:nth-child(8) { z-index: 3; }
+ul.breadcrumb-top > li:nth-child(9) { z-index: 2; }
+ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
+
+.fade-right {
   display: flex;
+  justify-content: right;
   align-items: center;
-  position: relative;
-  padding-right: 45px; /* allow space for toggle */
+
+  position: absolute;
+  top: 2px;
+  right: 0;
+  width: 10%; /* largeur du gradient */
+  height: 36px;
+  background: linear-gradient(
+    to left,
+    #CCCCCC 50%,      /* opaque côté droit */
+    transparent 100%  /* transparent côté gauche */
+  );
+
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  & > .icon-circle-arrow-right {
+    margin-right: 5px;
+    cursor: pointer;
+  }
 }
-ul.breadcrumb-top li.first a {
-  padding-right: 15px;
+.fade-right.visible {
+  opacity: 1;
+  z-index: 15;
 }
-ul.breadcrumb-top li a i {
-  font-size: 14px;
-  line-height: 1;
-  margin-right: 5px;
+
+.fade-left {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 10%;
+  height: 36px;
+
+  background: linear-gradient(
+    to right,
+    #CCCCCC 50%,
+    rgba(204, 204, 204, 0) 100%
+  );
+
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 0;
+
+  & > .icon-circle-arrow-left {
+    margin-left: 5px;
+    cursor: pointer;
+  }
 }
+
+.fade-left.visible {
+  opacity: 1;
+  z-index: 15;
+}
+
+.doc-fade-right {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+
+  position: absolute;
+  top: 2px;
+  right: 0;
+  width: 10%; /* largeur du gradient */
+  height: 36px;
+  background: linear-gradient(
+    to left,
+    white 50%,      /* opaque côté droit */
+    transparent 100%  /* transparent côté gauche */
+  );
+
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  & > .icon-circle-arrow-right {
+    margin-right: 5px;
+  }
+}
+.doc-fade-right.visible {
+  opacity: 1;
+  z-index: 15;
+  pointer-events: none;
+}
+.doc-fade-left {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 10%;
+  height: 36px;
+
+  background: linear-gradient(
+    to right,
+    white 50%,
+    rgba(204, 204, 204, 0) 100%
+  );
+
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 0;
+
+  & > .icon-circle-arrow-left {
+    margin-left: 5px;
+  }
+}
+
+.doc-fade-left.visible {
+  opacity: 1;
+  z-index: 15;
+  pointer-events: none;
+}
+
 .to-next-fragment {
   border-bottom: none !important;
   &.disabled {
@@ -2695,47 +2909,69 @@ ul.breadcrumb-top li a i {
   margin-top: 0;
 }
 
-.tab-header {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.tab-header button {
-  background: none;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 6px 10px;
-}
-
-.tab-header button.active {
-  border-bottom: 2px solid #000;
-}
 .breadcrumb-panel {
-  background: var(--meta-area-fill-color);
-  margin-top: -1px;
-  padding: 16px 20px;
-  border-radius: 0 0 12px 12px;
+  margin-top: -2px;
+  padding: 5px;
+  background-color: var(--meta-area-fill-color);
+  border-radius: 6px;
+
+  position: relative;
+  z-index: 11;
 }
 
 .tab-header {
   display: flex;
+  align-items: center;
+  height: 80px;
   gap: 12px;
-  margin-bottom: 10px;
+  padding: 20px;
+  background-color: var(--meta-area-fill-color);
+  border-radius: 6px 6px 0 0;
 }
 
 .tab-header button {
+  height: 40px;
   background: none;
-  border: none;
-  font-weight: 600;
+  border-radius: 4px;
+  font-family: Roboto;
+  font-weight: 700;
+  font-size: 16px;
   cursor: pointer;
-  padding: 6px 10px;
+  padding: 6px 30px;
+  color: var(--fill-color);
+  border: 1px solid var(--fill-color);
 }
 
 .tab-header button.active {
-  border-bottom: 2px solid #000;
+  color: white;
+  background-color: var(--fill-color);
 }
+
+.tab-content {
+  margin: 10px;
+
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -15px;
+    pointer-events: none;
+
+    background:
+      /* Trait horizontal haut (50%) */
+      linear-gradient(to right, transparent, var(--fill-color), transparent)
+      top left / 90% 1px no-repeat;
+  }
+}
+
+.tab-content ul.tree, .tab-content .collection-toc-area, .tab-content .table.is-fullwidth  {
+  margin: 0;
+  border-radius: 0 0 6px 6px;
+  background-color: #e4e4e4;
+}
+
+
 
 
 </style>
