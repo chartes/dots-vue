@@ -14,10 +14,19 @@
 }*/
 /* Using css variables */
 :root {
+    /* Font */
+    --font-primary: Roboto;
+    --font-primary-size : 16px;
+
+    @media screen and (max-width: 800px) {
+        --font-primary-size : 14px;
+    }
+
+    /* Color Theme */
     --text-color: #8f0e21;
     --fill-color: #8f0e21;
-    --meta-banner-fill-color: #faf6f1;
-    --meta-area-fill-color: #b8b5ad;
+    --meta-banner-fill-color: #F3F3F3;/* former beige #faf6f1;*/
+    --meta-area-fill-color: #e4e4e4;
     --icon-text-color: #ffffff;
 }
 

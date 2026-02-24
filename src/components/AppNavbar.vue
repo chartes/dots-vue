@@ -5,7 +5,7 @@
       :class="menuCssClass"
     >
       <div class="level-left">
-        <a
+        <!--<a
           v-if="imgHref !== '/'"
           :href="imgHref"
           target="_blank"
@@ -27,14 +27,14 @@
             class="logo-header"
             :src="imgUrl"
           >
-        </router-link>
+        </router-link>-->
         <span class="level-item">
-          <!--<router-link
+          <router-link
             active-class="active"
             class="level-item-external"
             :to="{ name: 'Home' }"
           >{{ rootShortTitle ? rootShortTitle : rootCollectionId }}
-          </router-link>-->
+          </router-link>
           <template
             v-for="(item, index) in breadCrumb.slice().reverse()"
             :key="index"
@@ -460,14 +460,25 @@ nav span.level-item:not(:last-child)::after {
 }
 .level-left {
   display: flex;
-  font-family: "Libre Baskerville", serif;
+  /*font-family: "Libre Baskerville", serif;
   font-weight: bold;
+  font-size: 20px;*/
+  font-family: var(--font-primary),sans-serif;
+  font-weight: 700;
   font-size: 20px;
   & > span > a {
     text-transform: capitalize;
-    &.level-item-external:not(:last-child)::after {
+    /* &.level-item-external:not(:last-child)::after {
       content: " > ";
       white-space: pre;
+    }*/
+    &.level-item-external:nth-child(2) {
+      border-left: 1px solid white;
+      margin-left: 30px;
+      padding-left: 30px;
+      font-weight: 400;
+      font-size: 18px;
+
     }
   }
 }
