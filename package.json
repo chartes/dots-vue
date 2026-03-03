@@ -23,7 +23,8 @@
     "vue-slider-component": "^4.1.0-beta.7",
     "vue3-carousel": "^0.17.0",
     "vue3-highlightjs": "^1.0.5",
-    "vuex": "4.1.0"
+    "vuex": "4.1.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "5.2.4",
