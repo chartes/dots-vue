@@ -91,3 +91,4 @@ export function useCustomCss(customCssRef) {
     getElement: () => mgr && mgr.element
   };
 }
+export const redText = (text, color = "31;1") => `\x1b[${color}m${text}\x1b[0m`;
