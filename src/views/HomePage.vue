@@ -139,7 +139,10 @@
                 {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
               </p>
             </div>
-            <div class="project-tile">
+            <div
+              v-if="aboutBttnTxt"
+              class="project-tile"
+            >
               <router-link
                 v-if="collectionId !== rootCollectionId"
                 :to="{ name: 'About', params: {collId: collectionId}}"
@@ -170,6 +173,7 @@
           :is="customDescription"
           :dts-collection-description="currCollection.description"
           :custom-collection-description="collectionDescription"
+          :app-root-url="appRootUrl"
         />
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
@@ -281,6 +285,8 @@ export default {
     })
     const layout = inject('variable-layout')
 
+    const appRootUrl = ref(`${import.meta.env.VITE_APP_APP_ROOT_URL}`)
+    console.log('HomePage setup appRootUrl', appRootUrl.value)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
@@ -491,6 +497,7 @@ export default {
     })
 
     return {
+      appRootUrl,
       appConfig,
       collConfig,
       customSort,
