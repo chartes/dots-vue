@@ -2,11 +2,12 @@
   <div
     v-if="(rootCollectionId === dtsRootCollectionId && collectionId === rootCollectionId && displayOpt !== 'list' && currentCollection.member.every(item => item.citeType === 'Collection')) || (displayOpt === 'card' && currentCollection.member.every(item => item.citeType === 'Collection'))"
     class="collection-list"
+    :class="{ 'root-collection-list' : collectionId === rootCollectionId }"
   >
     <div class="tiles">
-      <div class="tile page-header app-width-padding">
-        <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center wrapper">
-          <div class="tile is-child article app-width-margin">
+      <div class="tile page-header">
+        <div class="is-flex is-flex-direction-row wrapper app-width-margin">
+          <div class="tile is-child article">
             <div class="title-tile">
               <p class="title">
                 {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
@@ -29,6 +30,7 @@
               </router-link>
             </div>
           </div>
+          <div class="collection-image"></div>
         </div>
       </div>
     </div>
@@ -127,19 +129,22 @@
   </div>
   <div
     v-else
-    class="home-mask"
+    class="collection-list layout-main home-mask"
     :class="homeCssClass"
   >
     <div class="tiles">
-      <div class="tile page-header app-width-padding">
-        <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center wrapper">
+      <div class="tile page-header">
+        <div class="is-flex is-flex-direction-row wrapper app-width-margin">
           <div class="tile is-child app-width-margin">
             <div class="title-tile">
               <p class="title">
                 {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
               </p>
             </div>
-            <div class="project-tile">
+            <div
+              v-if="aboutBttnTxt"
+              class="project-tile"
+            >
               <router-link
                 v-if="collectionId !== rootCollectionId"
                 :to="{ name: 'About', params: {collId: collectionId}}"
@@ -156,6 +161,7 @@
               </router-link>
             </div>
           </div>
+          <div class="collection-image"></div>
         </div>
       </div>
     </div>
@@ -170,6 +176,7 @@
           :is="customDescription"
           :dts-collection-description="currCollection.description"
           :custom-collection-description="collectionDescription"
+          :app-root-url="appRootUrl"
         />
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
@@ -281,6 +288,8 @@ export default {
     })
     const layout = inject('variable-layout')
 
+    const appRootUrl = ref(`${import.meta.env.VITE_APP_APP_ROOT_URL}`)
+    console.log('HomePage setup appRootUrl', appRootUrl.value)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
@@ -491,6 +500,7 @@ export default {
     })
 
     return {
+      appRootUrl,
       appConfig,
       collConfig,
       customSort,
@@ -551,64 +561,91 @@ a {
 }
 
 #home-article {
-  margin-bottom: 30px !important;
-  padding: 10px 0 10px !important;
+  width: calc(100% - 330px - 5px);
+  margin: 0 0 30px !important;
+  padding: 45px !important;
+  background-color: #f1f1f1;
 }
 .wrapper {
   width: 100%;
 }
-.tile {
+
+.collection-list:not(.root-collection-list) .page-header .wrapper {
+  background: #FFFFFF;
+  gap: 4px;
+}
+
+.page-header .wrapper > .tile {
+  padding: 25px 45px;
+}
+
+.collection-list.root-collection-list .page-header .wrapper > .tile {
+  background: #0f0f0f85;
+}
+
+.collection-list:not(.root-collection-list) .page-header .wrapper > .tile {
+  background: #0f0f0f;
+}
+
+.collection-image {
+  width: 330px;
+  height: 330px;
+  border-bottom-right-radius: 52px;
   background-color: #FBF8F4;
 }
-.page-header {
-  background-color: #FBF8F4;
+
+.collection-list.root-collection-list .collection-image,
+.collection-list:not(.root-collection-list) .tile.page-header {
+  background: transparent;
+}
+
+.collection-list:not(.root-collection-list) .collection-image,
+.collection-list.root-collection-list .tile.page-header {
   background: url(../assets/images/Designer.png) center 80% / cover no-repeat;
-  /* filter: invert(1); */
 }
+
+.collection-list.root-collection-list .collection-image {
+  visibility: hidden;
+}
+
+
 .tile.is-child {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: transparent;
+  position: relative;
   width: 100%;
 }
+
 .title-tile {
   display: flex;
   flex-direction: row;
   justify-content: center;
   width: 100%;
-  margin-top: 30px;
-  margin-bottom: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  background-color: #000000cc;
   border-radius: 6px;
   font-family: "Inter", sans-serif;
   & > p {
       color: white !important;
   }
 }
+
 .project-tile {
+  position: absolute;
+  bottom: 0;
+  left: 45px;
+
   display: flex;
   width: fit-content;
-  margin-bottom: 20px;
   padding: 6px 10px;
-  background-color: #000000cc;
-  /* border: #b9192f 1px solid; */
-  border-radius: 6px;
+  background-color: var(--fill-color);
+  transform: translateY(50%);
+
   & > a {
     font-family: "Barlow Semi Condensed", sans-serif;
     font-weight: 500;
-    /* text-transform: uppercase; */
+    text-transform: uppercase;
     text-decoration: none;
     color: white;
-    /* color: #b9192f; */
   }
 }
-.collection-list {
-  /* background-color: #FBF8F4; */
-}
+
 .document-list {
   display: flex;
   justify-content: center;

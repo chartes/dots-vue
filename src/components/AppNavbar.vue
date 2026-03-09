@@ -404,8 +404,8 @@ nav {
   color: #FFFFFF;
   /* background-color: #8f0e21; */
   background-color: var(--fill-color);
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 15px;
+  padding-bottom: 15px;
   z-index: 10;
 }
 a {
@@ -431,9 +431,10 @@ nav  {
 
   /*position: fixed;
   top:0;*/
-  width: 100vw;
-  padding-left: calc((100vw - 1100px) / 2);
-  padding-right: calc((100vw - 1100px) / 2);
+
+  width: 100%;
+  padding-left: calc((100% - 1100px) / 2);
+  padding-right: calc((100% - 1100px) / 2);
 }
 
 nav span.level-item:not(:last-child)::after {
@@ -454,12 +455,13 @@ nav span.level-item:not(:last-child)::after {
 }
 .logo-api {
   display: inline-block;
-  width: 50px;
-  height: 50px;
-  margin:0 0 0 2px;
+  width: 40px;
+  height: 40px;
+  margin:0;
 }
 .level-left {
   display: flex;
+  width: calc(100% - 50px);
   /*font-family: "Libre Baskerville", serif;
   font-weight: bold;
   font-size: 20px;*/
@@ -486,6 +488,13 @@ nav span.level-item:not(:last-child)::after {
   display: none;
 }
 
+@media screen and (max-width: 1140px) {
+  nav {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
 @media screen and (max-width: 800px) {
   .logo-header {
     margin-right: 10px !important;
@@ -499,7 +508,6 @@ nav span.level-item:not(:last-child)::after {
     position: fixed;
     top:0;
     width: 100vw;
-    padding-right: 20px;
   }
   .logo-header {
     min-width: 45px;
@@ -509,6 +517,9 @@ nav span.level-item:not(:last-child)::after {
   .level-left {
     display: flex;
     width: calc(100% - 60px);
+  }
+  .level-left .level-item {
+    width: 100%;
   }
   .level-left .level-item:not(:last-child),
   .level-right .level-item:not(:last-child) {

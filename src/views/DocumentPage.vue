@@ -2571,11 +2571,29 @@ div.remove-bottom-padding #article {
     font-size: 9px;
   }
 
-  .pb,
-  .controls > a.toc-menu-toggle,
-  .toc-area-aside {
+  .pb {
     display: none !important;
   }
+
+  .controls-list {
+    position: absolute;
+  }
+
+  .controls > a.toc-menu-toggle,
+  .toc-area-aside {
+  }
+
+  .toc-area-aside {
+    display: none;
+  }
+
+  .toc-aside-is-opened .toc-area-aside {
+    position: absolute;
+    z-index: 2;
+    width: 100vw;
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+
   .toc-area .toc-area-content nav > ol.tree {
     columns: 1;
   }
