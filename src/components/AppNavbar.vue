@@ -496,8 +496,8 @@ nav span.level-item:not(:last-child)::after {
     font-size: 16px;
     z-index: 10; /* cf documentation menu */
 
-    position: fixed;
-    top:0;
+    /*position: fixed;
+    top:0;*/
     width: 100vw;
     padding-right: 20px;
   }
@@ -533,7 +533,7 @@ nav span.level-item:not(:last-child)::after {
 }
 @media screen and (max-width: 500px) {
 
-  nav::before {
+  /*nav::before {
     content: '';
     display: block;
     position: absolute;
@@ -541,7 +541,7 @@ nav span.level-item:not(:last-child)::after {
     left:0;
     width: 100vw;
     height: 71px;
-  }
+  }*/
   nav {
     padding: 0;
   }
@@ -553,13 +553,14 @@ nav span.level-item:not(:last-child)::after {
     z-index: 1;
   }
   .level {
-    display: block;
+    display: flex;
+    /*display: block;
     position: absolute;
     z-index: 1;
     top: 0;
     left: 0;
     height: 70px;
-    overflow: hidden;
+    overflow: hidden;*/
   }
   .level .level-item {
     flex-direction: column;
@@ -573,11 +574,11 @@ nav span.level-item:not(:last-child)::after {
       &:not(:first-child) {
         display: none !important;
       }
-      &:first-child {
+      /*&:first-child {
         top: 22px;
         position: fixed;
         left: 63px;
-      }
+      }*/
       &::after {
         display: none;
       }
@@ -615,11 +616,11 @@ nav span.level-item:not(:last-child)::after {
     top:10px;
     z-index: 2;
   }
-  .level-left {
+  /*.level-left {
     display: block;
     margin-top: 71px;
     border-top:#fcaca9 1px solid;
-  }
+  }*/
   .level-right {
     display: block;
   }
