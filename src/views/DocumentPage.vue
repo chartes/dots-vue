@@ -2721,7 +2721,7 @@ div.remove-bottom-padding #article {
     display: none;
   }
 
-  .controls {
+  .controls.is-opened {
     display: flex;
     flex-direction: row;
     align-items: center;
