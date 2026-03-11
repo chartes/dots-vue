@@ -12,7 +12,10 @@
                 {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
               </p>
             </div>
-            <div class="project-tile">
+            <div
+              v-if="aboutBttnTxt"
+              class="project-tile"
+            >
               <router-link
                 v-if="collectionId !== rootCollectionId"
                 :to="{ name: 'About', params: { collId: collectionId } }"
