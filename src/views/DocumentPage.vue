@@ -319,10 +319,26 @@
       </nav>
       <div
         class="controls app-width-margin"
+        :class="isControlsOpened ? 'is-opened' : ''"
         role="toolbar"
         aria-label="Options d’affichage du document"
       >
-        <ul class="controls-list">
+        <button
+          class="controls-toggle"
+          aria-label="Afficher les outils de lecture"
+          :aria-expanded="isControlsOpened"
+          @click="toggleControls"
+        >
+          <IconReadingToolsToggle
+            :size="40"
+            :radius="4"
+            :is-active="isControlsOpened"
+          />
+        </button>
+        <ul
+          class="controls-list"
+          :class="isControlsOpened ? 'is-opened' : ''"
+        >
           <li v-if="manifestIsAvailable">
             <button
               type="button"
@@ -365,6 +381,27 @@
                 aria-hidden="true"
               />
             </button>
+          </li>
+          <li>
+            <a
+              v-if="refId && refId.length > 0"
+              target="_blank"
+              :href="`${dtsUrl}/document?resource=${resourceId}&ref=${refId}`"
+              class="xml-btn"
+              aria-label="Télécharger le XML"
+            >
+              <XMLIcon :size="40" />
+            </a>
+
+            <a
+              v-else
+              target="_blank"
+              :href="`${dtsUrl}/document?resource=${resourceId}`"
+              class="xml-btn"
+              aria-label="Télécharger le XML"
+            >
+              <XMLIcon :size="40" />
+            </a>
           </li>
         </ul>
       </div>
@@ -489,7 +526,8 @@ import CollectionIcon from '@/assets/images/CollectionIcon.vue'
 import ResourceIcon from '@/assets/images/ResourceIcon.vue'
 import IconCircleArrow from '@/assets/images/IconCircleArrow.vue'
 import CloseCross from '@/assets/images/CloseCross.vue'
-
+import IconReadingToolsToggle from '@/assets/images/IconReadingToolsToggle.vue'
+import XMLIcon from '@/assets/images/XMLIcon.vue'
 
 function findById (array, id) {
   for (const item of array) {
@@ -504,6 +542,8 @@ function findById (array, id) {
 export default {
   name: 'DocumentPage',
   components: {
+    XMLIcon,
+    IconReadingToolsToggle,
     IconCircleArrow,
     ResourceIcon,
     CollectionIcon,
@@ -556,6 +596,11 @@ export default {
     const activeBreadcrumb = ref(null)
     const activeObject = ref(null)       // collection / resource
     const activePanel = ref(null)        // 'meta' | 'summary'
+
+    const dtsUrl = computed(() => {
+      const base = import.meta.env.VITE_APP_DTS_ENDPOINT_URL || ''
+      return `${base.replace(/\/$/, '')}`
+    })
 
     // Mirador view sticky behavior
     const miradorViewBoundingTop = ref(0)
@@ -642,6 +687,24 @@ export default {
     const selectedCollectionId = ref('')
     const selectedCollection = ref({})
     const isModalOpened = ref(false)
+
+    // reading options bar
+    let mediaQuery
+
+    const handleBreakpoint = (e) => {
+      if (e.matches) {
+        // ≥ 640px (desktop)
+        isControlsOpened.value = true
+      } else {
+        // < 640px (mobile)
+        isControlsOpened.value = false
+      }
+    }
+
+    const isControlsOpened = ref(false)
+    const toggleControls = () => {
+      isControlsOpened.value = !isControlsOpened.value
+    }
 
     const isNotesOpened = ref(true)
     const hasNotes = ref(false)
@@ -1150,17 +1213,17 @@ export default {
           if (node.level < 0) {
             node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}/${node.identifier}`
             node.router = node.identifier
-            console.log('addFlag on node.level editorialTypes.includes(item.citeType) : < 0', node)
+            //console.log('addFlag on node.level editorialTypes.includes(item.citeType) : < 0', node)
           } else if (node.level === 0) {
             node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}`
             node.router = node.identifier
-            console.log('addFlag on node.level editorialTypes.includes(item.citeType) : = 0', node)
+            //console.log('addFlag on node.level editorialTypes.includes(item.citeType) : = 0', node)
           } else {
             node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
             node.router = `${route.params.id}?refId=${node.identifier}`
             node.router_params = route.params.id
             node.router_refid = node.identifier
-            console.log('addFlag on node.level editorialTypes.includes(item.citeType) : > 0 ', node)
+            //console.log('addFlag on node.level editorialTypes.includes(item.citeType) : > 0 ', node)
           }
         })
       } else {
@@ -1221,21 +1284,21 @@ export default {
           }
           node.router = node.identifier
           node.router_params = node.identifier
-          console.log('addFlag on node.level <0 : ', node)
+          //console.log('addFlag on node.level <0 : ', node)
         } else if (node.level === 0) {
           node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}`
           node.router = node.identifier
           node.router_params = node.identifier
-          console.log('addFlag on node.level === 0 : ', node)
+          //console.log('addFlag on node.level === 0 : ', node)
         } else {
           node.url = `${window.location.origin}${import.meta.env.VITE_APP_APP_ROOT_URL.length > 1 ? import.meta.env.VITE_APP_APP_ROOT_URL + '/' : import.meta.env.VITE_APP_APP_ROOT_URL}${route.path.slice(1, route.path.length)}?refId=${node.identifier}`
           node.router = `${route.params.id}?refId=${node.identifier}`
           node.router_params = route.params.id
           node.router_refid = node.identifier
           if (node.identifier === 'a1') {
-            console.log('addFlag on node.level > 0 node.url ', node.url, '\n', window.location.origin, '\n', import.meta.env.VITE_APP_APP_ROOT_URL, '\n', route.path)
+            //console.log('addFlag on node.level > 0 node.url ', node.url, '\n', window.location.origin, '\n', import.meta.env.VITE_APP_APP_ROOT_URL, '\n', route.path)
           }
-          console.log('addFlag on node.level > 0 : ', node)
+          //console.log('addFlag on node.level > 0 : ', node)
         }
       })
 
@@ -1769,6 +1832,10 @@ export default {
 
       window.addEventListener('resize', updateMeasurements)
       window.addEventListener('resize', updateMeasurementsAriane)
+
+      mediaQuery = window.matchMedia('(min-width: 640px)')
+      handleBreakpoint(mediaQuery)
+      mediaQuery.addEventListener('change', handleBreakpoint)
     })
 
     onUnmounted(() => {
@@ -1784,9 +1851,12 @@ export default {
 
       window.removeEventListener('resize', updateMeasurements)
       window.removeEventListener('resize', updateMeasurementsAriane)
+
+      mediaQuery.removeEventListener('change', handleBreakpoint)
     })
 
     return {
+      dtsUrl,
       topTOCDisplayIndicator,
       leftTOCDisplayIndicator,
       leftTOCFragmentIsDocument,
@@ -1853,6 +1923,8 @@ export default {
       scrollCurrentTocItemIntoView,
       isModalOpened,
       closeModal,
+      isControlsOpened,
+      toggleControls,
       isNotesOpened,
       toggleNotes,
       hasNotes,
@@ -1975,14 +2047,24 @@ export default {
 
 .controls {
   display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   justify-content: right;
   width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
 
   z-index: 100;
   pointer-events: none;
 }
-.controls-list {
+.controls button {
   display: flex;
+  height: 40px;
+  width: 40px;
+  pointer-events: auto;
+}
+.controls-list {
+  display: none;
   flex-direction: column;
 
   margin: 0;
@@ -1990,7 +2072,12 @@ export default {
   list-style: none;
 
   pointer-events: auto;
+
+  &.is-opened {
+    display: flex;
+  }
 }
+
 .controls button {
   /* remove default button behavior */
   appearance: none;
@@ -1999,7 +2086,7 @@ export default {
   background: white;
   border: none;
 
-  width: 100%;
+  /*width: 100%;*/
   height: 100%;
   padding: 0;
   margin: 0;
@@ -2014,6 +2101,24 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
+.controls-toggle .icon-wrapper {
+  color: var(--text-color);
+  height: 40px;
+  width: 40px;
+}
+.controls-toggle[aria-expanded="true"] .icon-wrapper {
+  color: #ffffff;
+  background-color: var(--fill-color);
+  border-radius: 4px;
+  overflow: hidden;
+  /* même couleur que stroke pour que le contour disparaisse visuellement */
+  border: 1px solid var(--fill-color);
+}
+.controls .controls-toggle {
+  display: none;
+}
+
 .controls .notes-btn {
   color: #C3C3C3;
   border: 1px solid #C3C3C3;
@@ -2033,10 +2138,13 @@ export default {
 /* former pdf & xml button to adapt : where ?
 .controls a.pdf-btn {
   background: url(../assets/images/b_PDF.svg) center / cover no-repeat;
-}
-.controls a.xml-btn {
-  background: url(../assets/images/b_XML.svg) center / cover no-repeat;
 }*/
+.controls .xml-btn {
+  height: 40px;
+  width: 40px;
+  color: var(--text-color);
+}
+
 .document-area {
   width: 100%;
 }
@@ -2434,7 +2542,7 @@ div.remove-bottom-padding #article {
   align-items: center;
   width: 100%;
   vertical-align: center;
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
   pointer-events: auto;
 }
 .navigation-document {
@@ -2611,6 +2719,36 @@ div.remove-bottom-padding #article {
   }
   .tooltip {
     display: none;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    background-color: #ffffff;
+  }
+
+  .controls-list.is-opened {
+    display: flex;
+    flex: 1; /* prend tout l’espace restant */
+    justify-content: center; /* centre la liste */
+    gap: 8px;
+  }
+
+  .controls button.controls-toggle {
+    display: flex;
+    margin-left: 0; /* annule margin-left: auto */
+    order: 2;       /* met le bouton à droite */
+    max-height: 40px;
+    margin-top: 0.5ex;
+    margin-bottom: 0.5ex;
+  }
+
+  .controls-list {
+    flex-direction: row;
+    margin-left: 40px;
+    order: 1; /* liste avant le bouton */
   }
 }
 
