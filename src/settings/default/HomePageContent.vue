@@ -56,6 +56,9 @@ export default {
 .home {
   font-family: "Barlow", sans-serif;
 }
+.home-content {
+  padding-top: 10px /* adjust depending if you also have a title - see below */
+}
 .home h1 {
   padding-top: 20px;
   padding-bottom: 20px;
