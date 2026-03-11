@@ -674,9 +674,9 @@ p.header-baseline span {
 
 @media screen and (max-width: 500px) {
   .layout-navbar {
-    position: fixed;
+    /*position: fixed;
     left:0;
-    top:0;
+    top:0;*/
     width: 100vw;
     z-index: 10;
   }
