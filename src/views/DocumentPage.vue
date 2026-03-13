@@ -159,7 +159,7 @@
                 v-if="activePanel === 'summary'"
               >
                 <div
-                  v-if="selectedCollection.citeType === 'Collection'"
+                  v-if="selectedCollection.type || selectedCollection.citeType === 'Collection'"
                   class="collection-toc-area app-width-margin"
                   :class="tocCssClass"
                 >
@@ -522,6 +522,7 @@ import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import fetchMetadata from '@/composables/get-metadata.js'
 import { getSimpleObject } from '@/composables/utils.js'
+import { useMetadataProcessor } from '@/composables/useMetadataProcessor'
 import CollectionIcon from '@/assets/images/CollectionIcon.vue'
 import ResourceIcon from '@/assets/images/ResourceIcon.vue'
 import IconCircleArrow from '@/assets/images/IconCircleArrow.vue'
@@ -652,7 +653,7 @@ export default {
       author_links: [],
       other_links: [], */
 
-    const metadata = ref(initial_metadata)
+    const metadata = ref({})
     const route = useRoute()
     const store = useStore()
 
@@ -838,7 +839,7 @@ export default {
         // await getMetadataFromApi(route.params.id)
         store.commit('setResourceId', route.params.id)
 
-        const response = await getMetadataFromApi(resourceId.value)
+        const response = await getMetadataFromApi(resourceId.value, null, null)
         const parentResponse = await getParentFromApi(response.identifier)
         // console.log("parentResponse", parentResponse["member"][0])
 
@@ -879,7 +880,7 @@ export default {
     }
 
     const getMetadata = async () => {
-      const metadataResponse = await fetchMetadata('DocumentPage', resourceId.value, 'Resource', route)
+      const metadataResponse = await fetchMetadata('DocumentPage', resourceId.value, 'Resource', collConfig.value, route)
       console.log('DocumentPage getMetadata metadataResponse', metadataResponse)
       Object.assign(metadata.value, metadataResponse)
     }
@@ -940,7 +941,7 @@ export default {
             // multiple parents
             for (let i = 0; i < node.parent.length; i += 1) {
               console.log('appendParentInTOC / node.parent / p', node.parent, node.parent[i])
-              const appendParentInTOC = await getMetadataFromApi(node.parent[i])
+              const appendParentInTOC = await getMetadataFromApi(node.parent[i], null, null)
               console.log('appendParentInTOC', appendParentInTOC)
               const parentResponse = await getParentFromApi(appendParentInTOC.identifier)
               // Compute parent level from current node
@@ -1028,7 +1029,7 @@ export default {
               }
             }
           } else {
-            const appendParentInTOC = await getMetadataFromApi(node.parent)
+            const appendParentInTOC = await getMetadataFromApi(node.parent, null, null)
             console.log('appendParentInTOC else', appendParentInTOC)
 
             const parentResponse = await getParentFromApi(appendParentInTOC.identifier)
@@ -1483,11 +1484,14 @@ export default {
     }
 
     const ancestorLabel = (ancestor) => {
-      if (
-        ancestor.citeType === 'Resource' &&
-        ancestor?.dublincore?.creator
-      ) {
-        return `${ancestor.dublincore.creator}, ${ancestor.title}`
+      if ( ancestor.citeType === 'Resource' && ancestor?.dublincore?.creator) {
+        if (Array.isArray(ancestor.dublincore.creator)) {
+          return `${ancestor.dublincore.creator
+            .map(c => typeof c === 'string' ? c : Object.values(c)[0])
+            .join(', ')}, ${ancestor.title}`
+        } else {
+          return `${ancestor.dublincore.creator}, ${ancestor.title}`
+        }
       }
       return ancestor.title
     }
@@ -1523,6 +1527,7 @@ export default {
       // Cas 2 : nouvel objet
       activeBreadcrumb.value = index
       activeObject.value = breadcrumbItem
+      console.log('openObject ', activeObject.value)
       activePanel.value = 'meta'
 
       selectedCollectionId.value = breadcrumbItem.identifier
@@ -1538,13 +1543,15 @@ export default {
 
       if (tocItem.citeType === 'Collection') {
         // 🔹 Collection pure
-        selectedCollection.value = tocItem
+        console.log('tocItem collConfig.value ', tocItem, collConfig.value)
+        const { processMetadata } = useMetadataProcessor()
+        selectedCollection.value = processMetadata(tocItem, collConfig.value, selectedCollectionId.value, route)
+        //selectedCollection.value = tocItem
       } else {
         // 🔹 Resource = merge metadata + toc
         selectedCollection.value = _.merge(
           {},
-          metadata.value,
-          tocItem
+          metadata.value
         )
       }
     }
@@ -1611,7 +1618,7 @@ export default {
     }
 
     const setMirador = function () {
-      fetch(metadata.value.iiifManifestUrl.url, {
+      fetch(getIiifManifestUrl(), {
         method: 'GET'
       })
         .then((r) => {
@@ -1639,12 +1646,35 @@ export default {
         flatTOC.value.some(item => item.parent === hasChildren) : true
       )
     })
+    const getIiifManifestUrl = () => {
+      const dctSource = metadata.value['dct:source']
+
+      if (!dctSource) {
+        return null
+      }
+
+      // cas tableau
+      if (Array.isArray(dctSource)) {
+        const iiifItem = dctSource.find(s => s?.source?.name === 'iiif')
+        if (iiifItem) {
+          return iiifItem.url
+        }
+      }
+
+      // cas objet simple
+      if (dctSource?.source?.name === 'iiif') {
+        return source.url
+      }
+
+      return null
+    }
 
     watch(
-      () => metadata.value.iiifManifestUrl,
+      () => metadata.value['dct:source'],
       () => {
-        if (metadata.value.iiifManifestUrl) {
-          console.log('metadata.iiifManifestUrl is now available !!! : ', metadata.value.iiifManifestUrl, manifestIsAvailable.value)
+        if (metadata.value['dct:source']) {
+          //getIiifManifestUrl()
+          console.log('metadata.iiifManifestUrl is now available !!! : ', getIiifManifestUrl(), manifestIsAvailable.value)
           layout.imageIsAvailable.value = true
           setMirador()
         } else {

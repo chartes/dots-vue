@@ -127,7 +127,7 @@ export default {
     const appendMissingChildren = async () => {
       if (collectionTOC.value.filter(item => item.identifier === collectionId.value)[0].children.length !== collectionTOC.value.filter(item => item.identifier === collectionId.value)[0].totalChildren) {
         console.log('CollectionModal collectionTOC has missing children')
-        const response = await getMetadataFromApi(collectionId.value)
+        const response = await getMetadataFromApi(collectionId.value, null, null)
         console.log('CollectionModal response / response.member :', response, response.member)
         response.member = response.member.map(obj => {
           const updatedMember = {
@@ -172,7 +172,7 @@ export default {
     const toggleExpanded = async (collId) => {
       console.log('Modal toggleExpanded', collectionTOC.value.filter(item => item.identifier === collId)[0].children)
       // Add all members to the expanded collection
-      const response = await getMetadataFromApi(collId)
+      const response = await getMetadataFromApi(collId, null, null)
       if (collConfig.value.excludeCollectionIds && collConfig.value.excludeCollectionIds.length > 0) {
         response.member = response.member.filter(m => !collConfig.value.excludeCollectionIds.includes(m['@id'] || m.identifier))
       }

@@ -50,7 +50,47 @@
       { "tabName": "tabName1", "compName": "about1" },
       { "tabName": "tabName2", "compName": "about2" },
       { "tabName": "tabName3", "compName": "about3" }
-    ]
-  },
-  "excludeCollectionIds": []
+    ],
+    "excludeCollectionIds": [],
+    "keepCollectionMetadata": {
+      "displayOrder": [
+        "identifier",
+        "type",
+        "dc:title",
+        "dc:creator",
+        "dc:contributor",
+        "dc:date",
+        "dc:relation",
+        "downloadXML",
+        "downloadPDF",
+        "dct:publisher",
+        "dct:rights",
+        "dct:isVersionOf",
+        "dct:creator",
+        "url"
+      ],
+      "fields": {
+        "@id": "identifier",
+        "@type": "type",
+        "download": {
+          "XML": "downloadXML",
+          "PDF": "downloadPDF"
+        },
+        "url": "url",
+        "dublincore": {
+          "title": "dc:title",
+          "creator": "dc:creator",
+          "contributor": "dc:contributor",
+          "date": "dc:date",
+          "relation": "dc:relation"
+        },
+        "extensions": {
+          "dct:publisher": null,
+          "dct:rights": null,
+          "dct:isVersionOf": null,
+          "dct:creator": null
+        }
+      }
+    }
+  }
 }
