@@ -13,7 +13,10 @@
                 {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
               </p>
             </div>
-            <div class="project-tile">
+            <div
+              v-if="aboutBttnTxt"
+              class="project-tile"
+            >
               <router-link
                 v-if="collectionId !== rootCollectionId"
                 :to="{ name: 'About', params: { collId: collectionId } }"
@@ -177,6 +180,7 @@
           :dts-collection-description="currCollection.description"
           :custom-collection-description="collectionDescription"
           :app-root-url="appRootUrl"
+          :application-root-url="appRootUrl"
         />
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
@@ -351,7 +355,7 @@ export default {
     const toggleExpanded = async (collId) => {
       console.log('HomePage Modal toggleExpanded', collId, componentTOC.value)
       if (componentTOC.value.length === 0) {
-        const response = await getMetadataFromApi(collId)
+        const response = await getMetadataFromApi(collId, null, null)
         response.member.forEach(m => {
           m.identifier = m['@id']
         })

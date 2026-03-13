@@ -651,6 +651,6 @@ td {
   vertical-align: middle !important;
 }
 .is-24x24 {
-  background-color: #f1f1f1;
+  background-color: #e4e4e4;
 }
 </style>

@@ -1,22 +1,25 @@
 // simplify and sort Object
-export function getSimpleObject (obj) {
-  const simpleObject = {
+export function getSimpleObject(obj) {
+  let simpleObject = {}
+  simpleObject = {
+    ...obj, // garde toutes les clés existantes
+
     identifier: obj.identifier ? obj.identifier : obj['@id'],
     citeType: obj['@type'] ? obj['@type'] : obj.citeType,
-    description: obj?.description,
-    title: obj?.title,
-    expanded: obj?.expanded,
-    level: obj?.level,
-    editorialLevelIndicator: obj?.editorialLevelIndicator,
-    totalChildren: obj?.totalChildren,
-    totalDescendants: obj?.totalDescendants,
-    children: obj?.children,
+
+    dublincore: {
+      ...obj?.dublincore,
+      title: Array.isArray(obj?.dublincore?.title)
+        ? obj?.dublincore?.title?.[0]
+        : obj?.dublincore?.title
+    },
+
     member: obj?.member?.map((m) => getSimpleObject(m)),
-    parent: obj?.parent,
-    dublincore: { ...obj?.dublincore, title: Array.isArray(obj?.dublincore?.title) ? obj?.dublincore?.title?.[0] : obj?.dublincore?.title },
-    extensions: obj?.extensions,
-    context: obj?.['@context'],
+    children: obj?.children ? obj.children.map((m) => getSimpleObject(m)) : [],
+
+    context: obj?.['@context']
   }
+
   return simpleObject
 }
 
@@ -91,3 +94,4 @@ export function useCustomCss(customCssRef) {
     getElement: () => mgr && mgr.element
   };
 }
+export const redText = (text, color = '31;1') => `\x1b[${color}m${text}\x1b[0m`;

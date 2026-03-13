@@ -208,7 +208,7 @@
             <router-link
               v-else-if="isDocProjectIdInc && item.parent === rootCollectionId && rootCollectionId === dtsRootCollectionId"
               :class="route.params.id === item.identifier ? 'is-current' : ''"
-              :to="{ name: 'Home', params: {collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] !== item.parent ? item.extensions['dots:dotsProjectId'] : item.identifier : item.identifier} }"
+              :to="{ name: 'Home', params: {collId: item['dots:dotsProjectId'] ? item['dots:dotsProjectId'] !== item.parent ? item['dots:dotsProjectId'] : item.identifier : item.identifier} }"
             >
               {{ item.title }}
             </router-link>
@@ -241,10 +241,20 @@
           >
             {{ item.title }}
           </span>-->
+          <!-- for items without normalized metadata (extensions['dots:dotsProjectId'] has not been moved to ['dots:dotsProjectId'] -->
           <router-link
-            v-else-if="isDocProjectIdInc && selectedParent !== rootCollectionId && item.extensions['dots:dotsProjectId'] === route.params.collId"
+            v-else-if="isDocProjectIdInc && selectedParent !== rootCollectionId && item.extensions && item.extensions['dots:dotsProjectId'] === route.params.collId"
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }"
+            @click.prevent="setStateCollection(selectedParent)"
+          >
+            {{ item.title }}
+          </router-link>
+          <!-- for items with normalized metadata (extensions['dots:dotsProjectId'] moved to ['dots:dotsProjectId'] -->
+          <router-link
+            v-else-if="isDocProjectIdInc && selectedParent !== rootCollectionId && item['dots:dotsProjectId'] === route.params.collId"
+            :class="route.params.id === item.identifier ? 'is-current' : ''"
+            :to="{ name: 'Document', params: { collId: item['dots:dotsProjectId'] ? item['dots:dotsProjectId'] : item.identifier } }"
             @click.prevent="setStateCollection(selectedParent)"
           >
             {{ item.title }}
@@ -400,7 +410,7 @@ export default {
         const item = componentTOC.value[idx]
 
         if (!item.children || item.children.length === 0) {
-          const response = await getMetadataFromApi(collId)
+          const response = await getMetadataFromApi(collId, null, null)
           console.log('CollectionTOC response', response)
 
           response.member.forEach(m => { m.parent = collId })
