@@ -42,7 +42,7 @@
       class="document-metadata-header"
     >
       <div
-        class="collection" 
+        class="collection"
         @click="toggleContent"
       >
         <span class="metadata-header-label collection">
