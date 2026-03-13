@@ -159,7 +159,7 @@
                 v-if="activePanel === 'summary'"
               >
                 <div
-                  v-if="selectedCollection.type || selectedCollection.citeType === 'Collection'"
+                  v-if="selectedCollection.type === 'Collection' || selectedCollection.citeType === 'Collection'"
                   class="collection-toc-area app-width-margin"
                   :class="tocCssClass"
                 >
