@@ -180,15 +180,17 @@ export default {
       console.log('this is where it fails')
       await mergeSettings()
       let metadataResponse = {}
+      const matchedCollectionConf = appConfig.value.collectionsConf && appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value).length > 0 ? appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value) : {}
+      console.log('App.vue setCurrentCollectionContext collectionId.value collConfig.value', collectionId.value, collConfig.value)
       if (rootCollectionIdentifier.value === dtsRootCollectionId.value && rootCollectionIdentifier.value === collectionId.value) {
-        metadataResponse = await fetchMetadata('app.vue setCurrentCollectionContext fetchMetadata (no id)', null, 'Collection', route)
+        metadataResponse = await fetchMetadata('app.vue setCurrentCollectionContext fetchMetadata (no id)', null, 'Collection', matchedCollectionConf, route)
       } else {
-        metadataResponse = await fetchMetadata('app.vue setCurrentCollectionContext fetchMetadata (with id)', collectionId.value, 'Collection', route)
+        metadataResponse = await fetchMetadata('app.vue setCurrentCollectionContext fetchMetadata (with id)', collectionId.value, 'Collection', matchedCollectionConf, route)
       }
       console.log('App.vue setCurrentCollectionContext collectionId.value ', collectionId.value)
       console.log('App.vue setCurrentCollectionContext metadataResponse', metadataResponse)
       console.log('App.vue setCurrentCollectionContext excludeCollectionIds', collectionId.value, appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value))
-      const matchedCollectionConf = appConfig.value.collectionsConf && appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value).length > 0 ? appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value) : {}
+
       if (matchedCollectionConf && matchedCollectionConf.excludeCollectionIds && matchedCollectionConf.excludeCollectionIds.length > 0) {
         metadataResponse.member = metadataResponse.member.filter(m => !matchedCollectionConf.excludeCollectionIds.includes(m.identifier))
       }
@@ -269,10 +271,13 @@ export default {
           if (!rootCollectionOverrides) {
             rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === 'rootCollection')
           }
+          console.log('App.vue config rootCollectionOverrides appConfig.value.genericConf ', rootCollectionOverrides, appConfig.value.genericConf)
+          console.log('App.vue config merge rootCollectionOverrides appConfig.value.genericConf ', _.merge({}, appConfig.value.genericConf, rootCollectionOverrides))
+
           // const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
           rootCollConfig.value = rootCollectionOverrides ? _.merge({}, appConfig.value.genericConf, rootCollectionOverrides) : appConfig.value.genericConf
           rootShortTitle.value = rootCollConfig.value ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : appConfig.value.genericConf.homePageSettings.appNavBar.collectionShortTitle
-
+          console.log('App.vue rootCollConfig.value ', rootCollConfig.value)
           // Set the project config
           let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
           if (!projectCollectionOverrides && collectionId.value !== rootCollectionIdentifier.value) {
@@ -283,7 +288,7 @@ export default {
             projectCollectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
           }
           projectCollConfig.value = _.merge({}, rootCollConfig.value, projectCollectionOverrides)
-
+          console.log('App.vue projectCollConfig.value ', projectCollConfig.value)
           let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
           if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value && collectionId.value !== projectCollId.value) {
             collectionOverrides = projectCollConfig.value
@@ -293,6 +298,7 @@ export default {
             collectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
           }
           collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
+          console.log('App.vue collConfig.value ', collConfig.value)
           if (collConfig.value.collectionCustomCss) {
             await getCustomCss()
           } else if (customCss.value) {

@@ -1,4 +1,5 @@
 import { getSimpleObject } from '@/composables/utils.js'
+import { useMetadataProcessor } from '@/composables/useMetadataProcessor'
 
 const _baseApiURL = `${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`
 
@@ -20,7 +21,7 @@ async function getCoverDataFromApi (id, options = {}) {
   return coverData
 }
 
-async function getMetadataFromApi (id, options = {}) {
+async function getMetadataFromApi (id, collConfig= null, route = null,  options = {}) {
   const key = id ?? ROOT_KEY
   // console.log('getMetadataFromApi metadataCache : ', metadataCache)
   // console.log('getMetadataFromApi ROOT_KEY : ', ROOT_KEY)
@@ -33,7 +34,15 @@ async function getMetadataFromApi (id, options = {}) {
   // 2. Is metadata for this key already available in cache ? If so return cached metadata
   if (metadataCache.has(key)) {
     console.log('getMetadataFromApi: returning cached metadata for key:', key)
-    return metadataCache.get(key)
+    let normalizedMetadata = {}
+      if (collConfig && route) {
+        console.log('metadata document.js use process', collConfig, key)
+        const { processMetadata } = useMetadataProcessor()
+        normalizedMetadata = processMetadata(metadataCache.get(key), collConfig, key, route)
+        return normalizedMetadata
+      }
+      else
+      return metadataCache.get(key)
   }
 
   // 3. No cache promise or metadata was found, build the request URL to fetch metadata
@@ -72,6 +81,14 @@ async function getMetadataFromApi (id, options = {}) {
           realId
         )
       }
+      let normalizedMetadata = {}
+      if (collConfig && route) {
+        console.log('metadata document.js use process', collConfig, realId)
+        const { processMetadata } = useMetadataProcessor()
+        normalizedMetadata = processMetadata(simpleMetadata, collConfig, realId, route)
+        return normalizedMetadata
+      }
+      else
       return simpleMetadata
     })
     .catch(error => {
@@ -99,7 +116,7 @@ async function getTOCFromApi (id, type = 'Resource', options = {}) {
     return document
   } else {
     console.log('document.js getTOCFromApi id? type? : ', id, type)
-    const document = await getMetadataFromApi(id, options)
+    const document = await getMetadataFromApi(id, null, null, options)
     return document
   }
 }
@@ -161,7 +178,7 @@ async function getProjectFromApi (id, options = {}) {
     console.log('document.js getProjectFromApi: rootCollectionId set from .env:', rootCollectionId)
   } else {
     console.log('document.js getProjectFromApi: retrieving rootCollection from API/cache')
-    const rootCollection = await getMetadataFromApi(null, options)
+    const rootCollection = await getMetadataFromApi(null, null, null, options)
     rootCollectionId = rootCollection['@id']
     console.log('document.js getProjectFromApi rootCollection', rootCollection)
   }

@@ -34,18 +34,28 @@ export default {
     customCollectionDescription: {
       type: String,
       required: false
+    },
+    applicationRootUrl: {
+      type: String,
+      required: true
     }
   },
   setup (props) {
+    /* Use appRootUrl to create links within the application with the relevant base url for the current deployment */
+    const appRootUrl = ref(props.applicationRootUrl)
+    /* Use dtsCollDescription to display the DTS API 'description' data */
     const dtsCollDescription = ref(props.dtsCollectionDescription)
+    /* Use customCollDescription to display the homePageSettings.descriptionSection.collectionDescription data of the collection conf.json */
     const customCollDescription = ref(props.customCollectionDescription)
 
     watch(props, async (newProps) => {
+      appRootUrl.value = newProps.applicationRootUrl
       dtsCollDescription.value = newProps.dtsCollectionDescription
       customCollDescription.value = newProps.customCollectionDescription
     }, { deep: true, immediate: true })
 
     return {
+      appRootUrl,
       dtsCollDescription,
       customCollDescription
     }
