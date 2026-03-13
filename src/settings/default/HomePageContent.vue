@@ -53,13 +53,9 @@ export default {
 }
 </script>
 <style scoped>
-.home {
-  font-family: "Barlow", sans-serif;
-}
 .home h1 {
   padding-top: 20px;
   padding-bottom: 20px;
-  font-family: "Barlow", sans-serif;
   text-align: left;
   font-size: 25px;
   font-weight: 500;
@@ -71,7 +67,6 @@ export default {
   margin: 0 !important;
   padding-top: 20px;
   padding-bottom: 20px;
-  font-family: "Barlow", sans-serif;
   text-align: left;
   font-size:20px;
   font-weight: 500;

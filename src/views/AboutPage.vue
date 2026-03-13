@@ -172,7 +172,6 @@ article.about {
 }
 #article h1,
 #article {
-  font-family: "Barlow", sans-serif !important;
 }
 .tile.is-child {
   display: flex;
@@ -235,7 +234,6 @@ article.about {
 }
 .about .content p,
 .about .content ul {
-  font-family: "Barlow", sans-serif;
   font-size: 20px;
   font-weight: 400;
   line-height: 32px;
@@ -265,7 +263,6 @@ article.about {
   margin: 1em 0 1em 0;
   padding-top: 20px;
   padding-bottom: 20px;
-  font-family: "Barlow", sans-serif;
   font-size: 25px;
   font-weight: 500;
   line-height: 33px;
@@ -274,7 +271,6 @@ article.about {
 .about .about-content h2,
 .about .content h2 {
   margin: 70px 0 30px;
-  font-family: "Barlow", sans-serif;
   font-size: 28px;
   font-weight: 400;
   line-height: 34px;

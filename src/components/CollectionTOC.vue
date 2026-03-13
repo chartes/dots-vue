@@ -1,6 +1,7 @@
 <template>
   <div
     v-if="(currentCollection.identifier === rootCollectionId && displayOpt !== 'list' && currentCollection.member.every(item => item.citeType === 'Collection')) || (displayOpt === 'card' && currentCollection.member.every(item => item.citeType === 'Collection'))"
+    :class="displayOpt === 'card' && currentCollection.identifier !== rootCollectionId ? 'card-view' : 'project-view'"
   >
     <div
       v-for="(item, index) in componentTOC"
@@ -102,16 +103,6 @@
           :class="expandedById[item.identifier] ? 'expanded': ''"
           @click.prevent="toggleExpanded(item.identifier)"
         >
-          <div
-            class="collection-toc-area-header"
-          >
-            <a href="#">{{ browseBttnTxt }}</a>
-            <a
-              href="#"
-              class="toggle-btn"
-              :class="expandedById[item.identifier] ? 'expanded': ''"
-            />
-          </div>
           <div
             v-if="(expandedById[item.identifier] || item.expanded)
               && item.totalChildren > 0
@@ -554,7 +545,7 @@ export default {
   }
 
   .tree li {
-    font-family: "Barlow Semi Condensed", sans-serif;
+    font-family: var(--font-secondary), sans-serif;
     font-size: 15px;
     font-weight: 500;
     line-height: 22px;
@@ -562,7 +553,7 @@ export default {
     margin-bottom: 4px;
 
     &::before {
-      font-family: "Barlow Semi Condensed", sans-serif;
+      font-family: var(--font-secondary), sans-serif;
       margin-left: -8px;
       margin-right: 11px;
       content: '●';
@@ -620,32 +611,27 @@ button.toc-toggle {
 }
 .document-card {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex-direction: row;
   align-content: center;
-  width: 100%;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  border-radius: 6px;
+  gap: 10px;
   border: 1px solid transparent;
+
+  width: 100%;
   &:hover {
     border: 1px solid var(--text-color);
   }
+}
+.document-card .card-header {
+  width: 100%;
 }
 .document-card .card-header .document-folder {
   width: 100%;
   border-radius: 6px;
 
-  font-family: "Barlow", sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
 
-  padding-top: 10px;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 10px;
-  text-transform: uppercase;
   & a {
     border: none;
     color: #333333; /* #485fc7; */
@@ -662,17 +648,22 @@ button.toc-toggle {
       color: #b9192f;
     }
     & > .collection-metadata {
-      width: 80%;
+      width: 100%;
       & > .collection-metadata-title {
+        width: 100%;
         font-weight: 500;
-        color: #000; /* #485fc7; */
+        background-color: #000;
+        color: #FFF;
         margin-bottom: 10px;
+        padding: 10px;
       }
       & > .collection-metadata-author-date {
+        padding: 10px 10px 0;
         color: #4a4a4a;
       }
       & > .collection-description {
         width: 100%;
+        padding: 10px;
         text-align: justify;
         text-transform: none;
         color: #4a4a4a;
@@ -680,10 +671,30 @@ button.toc-toggle {
     }
   }
 }
-.card-header {
+
+.card-view .card-header {
+  width: 432px;
+  align-self: flex-start;
+  border-radius: 42px 42px 0;
+  padding: 20px 20px 35px;
+  background: var(--fill-color) !important;
   box-shadow: none;
 }
+
+.card-view .card-header .collection-metadata .collection-metadata-title {
+    background: transparent !important;
+}
+
+.project-view {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-top: 30px;
+}
+
 .document-card .card-image {
+  display: none !important;
+
   margin: auto;
   & > a {
     align-content: center;
@@ -706,6 +717,13 @@ button.toc-toggle {
   padding: 1.5rem 0;
   border-bottom: 7px solid #e8e7e0;
 }
+
+.project-view > .document-card {
+  flex: calc(33.333% - 20px) 0 0;
+  width: calc(33.333% - 20px);
+  margin: 0;
+}
+
 
 @media screen and (max-width: 800px) {
   .collection-toc-area, .modal-wrapper {

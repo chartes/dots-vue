@@ -547,7 +547,6 @@ a {
 }
 #home-article h1,
 #home-article {
-  font-family: "Barlow", sans-serif !important;
 }
 #home-article h1 {
   margin: 1em 0 1em 0;
@@ -620,7 +619,7 @@ a {
   justify-content: center;
   width: 100%;
   border-radius: 6px;
-  font-family: "Inter", sans-serif;
+
   & > p {
       color: white !important;
   }
@@ -638,8 +637,8 @@ a {
   transform: translateY(50%);
 
   & > a {
-    font-family: "Barlow Semi Condensed", sans-serif;
-    font-weight: 500;
+    font-family: var(--font-secondary), sans-serif;
+    font-weight: 400;
     text-transform: uppercase;
     text-decoration: none;
     color: white;
@@ -690,14 +689,13 @@ a {
   & > input.current-page {
     height: 38px !important;
     padding: 0 !important;
-    /* border: 1px solid #C00055; */
-    border: 1px solid var(--text-color);
+    border: 1px solid #dbdbdb;
     border-radius: 3.2px;
 
     font-family: inherit;
     font-size: 18px;
     /* color: #CB2158; */
-    color: var(--text-color);
+    color: #6e6e6e;
     font-weight: 800;
     text-align: center;
     text-decoration: none;
@@ -735,13 +733,12 @@ a {
   width: 100%;
   margin: 0;
   padding-bottom: 5px;
-  /* border-bottom: solid 1px #b9192f; */
-  border-bottom: solid 1px var(--text-color)
 }
 .pagination-documents-count {
   margin-right: auto;
-  /* color: #b9192f; */
-  color: var(--text-color);
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 30px;
   border: none;
 }
 .no-dts-description {

@@ -305,7 +305,6 @@ export default {
 <style scoped>
 div.toc-area-content.toc-content {
   .tree {
-    font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 500;
     line-height: 22px;
@@ -330,7 +329,6 @@ div.toc-area-content.toc-content {
   }
 
   .tree li {
-    font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 400;
     line-height: 20px;
@@ -367,14 +365,12 @@ div.toc-area-content.toc-content {
 }
 div.toc-area-aside.toc-content {
   .tree {
-    font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 500;
     line-height: 22px;
     width: 100%;
   }
   .tree li {
-    font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 400;
     line-height: 20px;
@@ -407,7 +403,6 @@ div.toc-area-aside.toc-content {
 }
 div.bottom-toc {
   .tree li {
-    font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 500;
     line-height: 22px;

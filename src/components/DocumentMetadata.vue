@@ -438,7 +438,6 @@ export default {
 <style scoped>
 .document-metadata {
   width: 100%;
-  font-family: "Barlow", sans-serif !important;
 }
 .document-metadata-header {
   display: flex;
@@ -466,7 +465,7 @@ export default {
 }
 .document-metadata-header span.metadata-header-label.collection{
   margin-right: 40px;
-  font-family: "Barlow Semi Condensed", sans-serif !important;
+  font-family: var(--font-secondary), sans-serif !important;
   font-weight: 500;
   color: #4a4a4a;
 }
@@ -474,7 +473,7 @@ export default {
   margin-right: 47px;
   margin-left: auto;
   text-align: left;
-  font-family: "Barlow Semi Condensed", sans-serif !important;
+  font-family: var(--font-secondary), sans-serif !important;
   font-weight: 500;
   color: #4a4a4a;
 }
@@ -540,12 +539,10 @@ aside.menu > .columns > .column:nth-child(3) {
 }
 .column .title, span.title,
 .column {
-  font-family: "Barlow", sans-serif;
   font-size: 15px;
   font-weight: normal;
   font-style: normal;
   & > a {
-    font-family: "Barlow", sans-serif;
     font-weight: normal;
     font-style: normal;
     color: #4a4a4a;

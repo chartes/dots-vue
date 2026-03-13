@@ -292,7 +292,6 @@ export default {
     background-color: #b8b5ad;
     border-radius: 6px;
 
-    font-family: "Barlow Semi Condensed", sans-serif !important;
     font-size: 15px;
     font-weight: 500;
     line-height: 25px;
@@ -320,7 +319,7 @@ export default {
     border-radius: 6px;
     position: relative;
 
-    font-family: "Barlow Semi Condensed", sans-serif !important;
+    font-family: var(--font-secondary), sans-serif !important;
     font-size: 15px;
     font-weight: 500;
     line-height: 22px;

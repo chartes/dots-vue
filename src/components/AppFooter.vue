@@ -153,7 +153,6 @@ export default {
 </script>
 <style>
 .footer {
-  font-family: "Barlow", sans-serif;
   background-color: #4C4949;
   /* border-top: #BA0F29 solid 4px; */
   border-top: solid 4px var(--text-color);
@@ -179,7 +178,6 @@ export default {
     margin-top: 12px;
     margin-bottom: 12px;
     text-align: left;
-    font-family: "Barlow", sans-serif ;
     font-style: normal;
     font-size: 100%;
     color: white;

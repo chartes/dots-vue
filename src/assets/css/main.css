@@ -15,8 +15,11 @@
 /* Using css variables */
 :root {
     /* Font */
-    --font-primary: Roboto;
+    --font-primary: "Roboto";
     --font-primary-size : 16px;
+
+    --font-secondary: "Roboto Condensed";
+    --font-serif: "Time New Roman";
 
     @media screen and (max-width: 800px) {
         --font-primary-size : 14px;

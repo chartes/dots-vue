@@ -465,6 +465,7 @@ html,
 body,
 #app {
   height: 100%;
+  font-family: var(--font-primary), sans-serif;
 }
 body {
   background-color: #ffffff;
@@ -511,11 +512,11 @@ body {
   align-items: center;
 }
 .tile.page-header p.title {
-  font-family: "Noto Serif", serif;
-  font-size: 30px;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 45px;
   font-style: normal;
   line-height: 47px;
-  font-weight: 400;
   color: #B9192F;
   margin-bottom: 0;
   text-align: left;
@@ -530,7 +531,6 @@ body {
 
 p.header-baseline {
   width: 345px;
-  font-family: "Noto Serif", serif;
   font-size: 14px;
   color: #5C5241;
   font-style: italic;
@@ -590,10 +590,6 @@ p.header-baseline span {
 @media screen and (max-width: 1150px) {
   .tile.page-header {
     min-height: auto;
-  }
-  .tile.page-header:first-child {
-    padding-top:35px;
-    padding-bottom:35px;
   }
 }
 
@@ -815,7 +811,6 @@ a.noteref sup {
 
 .collection-toc-area {
   width: 100%;
-  font-family: "Barlow", sans-serif;
   margin-bottom: 30px;
   border-radius: 6px;
 }
@@ -850,7 +845,6 @@ a.noteref sup {
   border-radius: 0;
 }
 .collection-toc-area-header > a {
-  font-family: "Barlow Semi Condensed", sans-serif;
   font-weight: 500;
   color: #4a4a4a !important;
   text-decoration: none;

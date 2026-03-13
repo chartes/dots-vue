@@ -1880,7 +1880,6 @@ export default {
 .toc-area {
   width: 100%;
   padding: 0;
-  font-family: "Barlow", sans-serif !important;
 }
 .toc-area-header {
   display: flex;
@@ -1892,7 +1891,7 @@ export default {
 }
 .toc-area-header > a {
   text-transform: uppercase;
-  font-family: "Barlow Semi Condensed", sans-serif;
+  font-family: var(--font-secondary), sans-serif;
   font-weight: 500;
   color: #4a4a4a !important;
   text-decoration: none;
@@ -1956,7 +1955,7 @@ export default {
 }
 .toc-area-aside a,
 .toc-area-content a {
-  font-family: "Barlow Semi Condensed", sans-serif !important;
+  font-family: var(--font-secondary), sans-serif !important;
   font-weight: 400;
   text-align: left;
   line-height: 20px;
@@ -2134,7 +2133,6 @@ div.remove-bottom-padding #article {
 
 #article h1,
 #article .titlepage {
-  font-family: "Barlow", sans-serif !important;
 }
 
 #article h1 {
@@ -2242,7 +2240,6 @@ div.remove-bottom-padding #article {
   margin-top: 10px;
   margin-bottom: 10px;
 
-  font-family: "Barlow", sans-serif;
   font-size: 16px;
   & .crumbs {
     padding-bottom: 5px;

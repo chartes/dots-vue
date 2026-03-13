@@ -167,7 +167,6 @@ a {
 #article h1, #article h2,
 #article {
   text-align: left;
-  font-family: "Barlow", sans-serif !important;
 }
 #article h1 {
   padding-top: 20px;

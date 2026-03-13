@@ -126,7 +126,6 @@ article.documentation {
 }
 .documentation .content p,
 .documentation .content ul {
-  font-family: "Barlow", sans-serif;
   font-size: 20px;
   font-weight: 400;
   line-height: 32px;
@@ -150,7 +149,6 @@ article.documentation {
 }
 .documentation .content h1 {
   margin: 30px 0 !important;
-  font-family: "Noto Serif", serif;
   font-weight: 400;
   font-style: normal;
   font-size: 30px;
@@ -158,7 +156,6 @@ article.documentation {
 }
 .documentation .content h2 {
   margin: 70px 0 30px !important;
-  font-family: "Barlow", sans-serif;
   font-weight: 400;
   font-size: 28px;
   line-height: 34px;
