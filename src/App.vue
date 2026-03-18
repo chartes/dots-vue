@@ -469,19 +469,22 @@ export default {
 <style>
 html,
 body,
-#app {
-  height: 100%;
-  font-family: var(--font-primary), sans-serif;
-}
 body {
   background-color: #ffffff;
   font-size: 20px;
 }
 
 #app {
+  height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  font-family: var(--font-primary), sans-serif;
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--default-text-color);
 }
+
 #nav {
   padding: 30px;
 }
@@ -532,7 +535,7 @@ body {
 
 .tile.page-header .title-tile {
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap:50px;
 }
 

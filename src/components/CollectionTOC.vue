@@ -19,16 +19,18 @@
               :to="{ name: 'Home', params: { collId: item.identifier }}"
             >
               <div class="collection-metadata is-flex-direction-column">
-                <div class="collection-metadata-title">
-                  {{ item.title }}
-                </div>
-                <div class="collection-metadata-author-date is-flex is-flex-direction-column">
+                <div class="collection-metadata-author-date-title">
+                  <div class="collection-metadata-author-date is-flex is-flex-direction-column">
                   <span>
                     {{ item.author }} {{ item.dublincore.creator }}
                   </span>
                   <span>
-                    {{ item.dublincore.date }}
+                  {{ item.dublincore.date }}
                   </span><!-- v-if="c.date" -->
+                  </div>
+                  <div class="collection-metadata-title">
+                    {{ item.title }}
+                  </div>
                 </div>
                 <div class="collection-description">
                   <span>
@@ -638,13 +640,14 @@ button.toc-toggle {
   width: 100%;
   border-radius: 6px;
 
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
-  line-height: 24px;
+  line-height: 1.4;
+  color: var(--default-text-color);
 
-  & a {
+  & > a {
     border: none;
-    color: #333333; /* #485fc7; */
+    color: var(--default-text-color);
   }
   & > .card-header-first-line {
     display: flex;
@@ -659,28 +662,32 @@ button.toc-toggle {
     }
     & > .collection-metadata {
       width: 100%;
-      & > .collection-metadata-title {
+      font-family: var(--font-primary), sans-serif;
+
+      & > .collection-metadata-author-date-title,
+      & > .collection-description {
+        padding: 20px 25px 30px;
+      }
+      & > .collection-metadata-author-date-title {
         width: 100%;
         background-color: #000;
-        margin-bottom: 10px;
-        padding: 15px 20px;
 
-        font-family: var(--font-primary), sans-serif;
-        font-weight:700;
-        font-size:24px;
-        line-height: 1.2;
-        color: #FFF;
-      }
-      & > .collection-metadata-author-date {
-        padding: 10px 10px 0;
-        color: #4a4a4a;
+        & > .collection-metadata-author-date {
+          margin-bottom: 10px;
+          font-size: 16px;
+          color: #FFF;
+        }
+        & > .collection-metadata-title {
+          font-weight:700;
+          font-size:24px;
+          line-height: 1.2;
+          color: #FFF;
+        }
       }
       & > .collection-description {
         width: 100%;
-        padding: 10px;
-        text-align: justify;
+        padding-top: 20px;
         text-transform: none;
-        color: #4a4a4a;
       }
     }
   }

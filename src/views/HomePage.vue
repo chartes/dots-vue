@@ -764,18 +764,28 @@ input::-webkit-inner-spin-button {
 }
 
 .collection-header :deep(.home-content) {
-  font-family: var(--font-primary);
+  font-family: var(--font-primary), sans-serif;
+  font-weight: normal;
+  line-height: 1.4;
   color: var(--default-text-color);
-}
 
-.collection-header :deep(.home-content a) {
-  color: var(--default-text-color);
-  text-decoration: underline;
+  a {
+    color: var(--default-text-color);
+    text-decoration: underline;
 
-  &:hover {
-    color: var(--text-color);
+    &:hover {
+      color: var(--text-color);
+    }
+  }
+  p, ul {
+    margin-bottom: 10px;
+  }
+  li {
+    line-height: 1.4;
   }
 }
+
+
 
 
 /* Firefox */

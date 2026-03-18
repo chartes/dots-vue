@@ -34,10 +34,6 @@
     --icon-text-color: #ffffff;
 }
 
-body {
-    color: var(--default-text-color)
-}
-
 /*=============================================================
  PART 2
  Updating the css of specific elements (HTML) for:
