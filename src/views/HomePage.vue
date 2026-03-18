@@ -555,11 +555,13 @@ a {
   margin: 1em 0 1em 0;
   padding-top: 20px;
   padding-bottom: 20px;
-  font-size: 25px;
-  font-weight: 500;
-  line-height: 33px;
+
+  font-family: var(--font-primary), sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
   text-transform: none;
-  color: var(--text-color)
+  color: #000;
 }
 
 #home-article {
@@ -610,7 +612,7 @@ a {
   visibility: hidden;
 }
 
-
+.tile.article,
 .tile.app-width-margin {
   position: relative;
   width: 100%;

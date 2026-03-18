@@ -74,11 +74,13 @@ export default {
   padding-top: 20px;
   padding-bottom: 20px;
   text-align: left;
-  font-size: 25px;
-  font-weight: 500;
-  line-height: 33px;
+
+  font-family: var(--font-primary), sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
   text-transform: none;
-  color: var(--text-color);
+  color: #000;
 }
 .home h2 {
   margin: 0 !important;
