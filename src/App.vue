@@ -475,6 +475,7 @@ body,
 }
 body {
   background-color: #ffffff;
+  font-size: 20px;
 }
 
 #app {
@@ -518,13 +519,13 @@ body {
   align-items: center;
 }
 .tile.page-header p.title {
+  margin-bottom: 0;
   font-family: var(--font-primary), sans-serif;
   font-weight: 700;
-  font-size: 45px;
+  font-size: 48px;
   font-style: normal;
-  line-height: 47px;
-  color: #B9192F;
-  margin-bottom: 0;
+  line-height: 1.2;
+  color: #FFFFFF;
   text-align: left;
   text-indent: 0;
 }
@@ -599,15 +600,14 @@ p.header-baseline span {
   }
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 1024px) {
   .tile.page-header .title-tile {
     flex-direction: column !important;
     justify-content: flex-start;
     align-items: flex-start;
     gap: 20px;
   }
-}
-@media screen and (max-width: 800px) {
+
   .tile.page-header p.title {
     font-size: 30px;
     line-height: 36px;
@@ -615,15 +615,6 @@ p.header-baseline span {
 }
 
 @media screen and (max-width: 640px) {
-  .tile.page-header p.title {
-    width: 90%;
-    margin: auto;
-    padding-bottom: 5px;
-    font-size: 25px;
-    line-height: 32px;
-    text-align: center;
-  }
-
   p.header-baseline {
     margin: auto;
     width: 60%;
@@ -658,7 +649,7 @@ p.header-baseline span {
   }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   .app-width-padding {
     padding-left: 2.5%;
     padding-right: 2.5%;
@@ -889,7 +880,7 @@ a.noteref sup {
   color: var(--fill-color);
 
   position: absolute;
-  right: 20px;
+  right: 35px;
   width: 40px;
 }
 

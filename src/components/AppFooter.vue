@@ -303,7 +303,7 @@ export default {
     background: url(../assets/images/dots-logo-retro.drawio.svg) center / contain no-repeat;
   }
 }
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   .footer {
     padding: 50px 10% 80px !important;
   }

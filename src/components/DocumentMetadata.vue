@@ -447,11 +447,13 @@ export default {
   border-radius: 6px;
   position: relative;
 
+  font-family: var(--font-primary), sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 22px;
   text-decoration: none;
   border: none;
+
   & > div.resource {
     display: flex;
     flex-direction: row;
@@ -539,9 +541,11 @@ aside.menu > .columns > .column:nth-child(3) {
 }
 .column .title, span.title,
 .column {
-  font-size: 15px;
+  font-family: var(--font-primary), sans-serif;
+  font-size: 16px;
   font-weight: normal;
   font-style: normal;
+
   & > a {
     font-weight: normal;
     font-style: normal;
@@ -594,7 +598,7 @@ figure {
     max-width: 75% !important;
   }
 }
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   aside.menu > .columns > .column:nth-child(1) {
     width: 50% !important;
   }

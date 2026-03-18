@@ -359,7 +359,7 @@ article.about {
   }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   .about .content {
     padding: 0 20px 50px;
   }

@@ -59,7 +59,7 @@ const cssVars = computed(() => ({
 }
 
 .icon {
-  width: 65%;
-  height: 65%;
+  width: auto;
+  height: 80%;
 }
 </style>

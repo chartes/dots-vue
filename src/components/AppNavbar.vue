@@ -398,7 +398,6 @@ export default {
 
 <style scoped>
 nav {
-  font-family: 'Barlow', sans-serif;
   font-size: 18px;
   line-height: 1;
   color: #FFFFFF;
@@ -495,7 +494,7 @@ nav span.level-item:not(:last-child)::after {
   }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   .logo-header {
     margin-right: 10px !important;
   }

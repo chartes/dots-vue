@@ -661,11 +661,15 @@ button.toc-toggle {
       width: 100%;
       & > .collection-metadata-title {
         width: 100%;
-        font-weight: 500;
         background-color: #000;
-        color: #FFF;
         margin-bottom: 10px;
-        padding: 10px;
+        padding: 15px 20px;
+
+        font-family: var(--font-primary), sans-serif;
+        font-weight:700;
+        font-size:24px;
+        line-height: 1.2;
+        color: #FFF;
       }
       & > .collection-metadata-author-date {
         padding: 10px 10px 0;
@@ -734,13 +738,26 @@ button.toc-toggle {
   margin: 0;
 }
 
+@media screen and (max-width: 1024px) {
+  .project-view > .document-card {
+    flex: calc(50% - 15px) 0 0;
+    width: calc(50% - 15px);
+  }
+}
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   .collection-toc-area, .modal-wrapper {
     .tree li {
       margin-left: 15px !important;
       margin-bottom: 8px;
     }
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .project-view > .document-card {
+    flex: 100% 0 0;
+    width: 100%;
   }
 }
 

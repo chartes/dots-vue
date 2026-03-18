@@ -6,8 +6,8 @@
   >
     <div class="tiles">
       <div class="tile page-header">
-        <div class="is-flex is-flex-direction-row wrapper app-width-margin">
-          <div class="tile is-child article">
+        <div class="is-flex is-flex-direction-row wrapper collection-header app-width-margin">
+          <div class="tile article">
             <div class="title-tile">
               <p class="title">
                 {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
@@ -37,7 +37,7 @@
         </div>
       </div>
     </div>
-    <section class="main app-width-margin">
+    <section class="main collection-header app-width-margin">
       <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
       <div
         v-if="customCollectionDescription"
@@ -137,8 +137,8 @@
   >
     <div class="tiles">
       <div class="tile page-header">
-        <div class="is-flex is-flex-direction-row wrapper app-width-margin">
-          <div class="tile is-child app-width-margin">
+        <div class="is-flex is-flex-direction-row wrapper collection-header app-width-margin">
+          <div class="tile app-width-margin">
             <div class="title-tile">
               <p class="title">
                 {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
@@ -168,7 +168,7 @@
         </div>
       </div>
     </div>
-    <section class="main app-width-margin">
+    <section class="main collection-header app-width-margin">
       <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
       <div
         v-if="customCollectionDescription"
@@ -179,7 +179,6 @@
           :is="customDescription"
           :dts-collection-description="currCollection.description"
           :custom-collection-description="collectionDescription"
-          :app-root-url="appRootUrl"
           :application-root-url="appRootUrl"
         />
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
@@ -541,6 +540,9 @@ export default {
 a {
   border-bottom: none;
 }
+.collection-list {
+  --first-column-width: 70%;
+}
 #home-article {
   padding: 40px 10% 120px;
   border-bottom: 1px dotted #ffffff;
@@ -548,9 +550,6 @@ a {
 }
 #home-article article {
   margin: 0;
-}
-#home-article h1,
-#home-article {
 }
 #home-article h1 {
   margin: 1em 0 1em 0;
@@ -564,7 +563,7 @@ a {
 }
 
 #home-article {
-  width: calc(100% - 330px - 5px);
+  width: calc(var(--first-column-width) );
   margin: 0 0 30px !important;
   padding: 45px !important;
   background-color: #f1f1f1;
@@ -591,7 +590,7 @@ a {
 }
 
 .collection-image {
-  width: 330px;
+  width: calc(100% - var(--first-column-width));
   height: 330px;
   border-bottom-right-radius: 52px;
   background-color: #FBF8F4;
@@ -612,7 +611,7 @@ a {
 }
 
 
-.tile.is-child {
+.tile.app-width-margin {
   position: relative;
   width: 100%;
 }
@@ -643,6 +642,7 @@ a {
   & > a {
     font-family: var(--font-secondary), sans-serif;
     font-weight: 400;
+    font-size: 16px;
     text-transform: uppercase;
     text-decoration: none;
     color: white;
@@ -668,30 +668,39 @@ a {
     height: 38px;
     margin-right: 4px;
   }
-  & > a {
+  & > a,
+  & > input.current-page,
+  & > span.total-pages,
+  & > span.label-sur-page {
     display: inline-block;
-    width: 38px;
-    height: 38px;
-    background-color: #C3C3C3;
+    width: 59px;
+    height: 59px;
+    line-height: 59px;
+  }
+  & > span.total-pages,
+  & > a {
+    background-color: #F1F1F1;
     border-radius: 3.2px;
+  }
+  & > a.button {
+    border: solid 1px #dbdbdb;
   }
   & > a.disabled {
     cursor: not-allowed !important;
   }
   & > a.first-page {
-    background: #C3C3C3 url(../assets/images/page_debut.svg)  center / 28px auto no-repeat;
+    background: #F1F1F1 url(../assets/images/page_debut.svg)  center / 17px auto no-repeat;
   }
   & > a.previous-page {
-    background: #C3C3C3 url(../assets/images/page_avant.svg) center / 28px auto no-repeat;
+    background: #F1F1F1 url(../assets/images/page_avant.svg) center / 23px auto no-repeat;
   }
   & > a.next-page {
-    background: #C3C3C3 url(../assets/images/page_suivant.svg) center / 28px auto no-repeat;
+    background: #F1F1F1 url(../assets/images/page_suivant.svg) center / 24px auto no-repeat;
   }
   & > a.last-page {
-    background: #C3C3C3 url(../assets/images/page_fin.svg) center / 28px auto no-repeat;
+    background: #F1F1F1 url(../assets/images/page_fin.svg) center / 17px auto no-repeat;
   }
   & > input.current-page {
-    height: 38px !important;
     padding: 0 !important;
     border: 1px solid #dbdbdb;
     border-radius: 3.2px;
@@ -710,11 +719,12 @@ a {
   }
 
   & > span.label-sur-page {
+    width: auto;
+    padding: 0 3px;
     font-family: inherit;
-    font-size: 11px;
-    line-height: 38px;
+    font-size: 31px;
     color: #979797;
-    font-weight: 500;
+    font-weight: 400;
     text-align: center;
     text-transform: uppercase;
   }
@@ -722,10 +732,7 @@ a {
   & > span.total-pages {
     background-color: #DFDFDF;
     border-radius: 3.2px;
-
     font-family: inherit;
-    font-size: 18px;
-    line-height: 38px;
     color: #818181;
     text-align: center;
     font-weight: 600;
@@ -742,7 +749,8 @@ a {
   margin-right: auto;
   font-family: var(--font-primary), sans-serif;
   font-weight: 700;
-  font-size: 30px;
+  font-size: 48px;
+  color: #000000;
   border: none;
 }
 .no-dts-description {
@@ -755,8 +763,46 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+.collection-header :deep(.home-content) {
+  font-family: var(--font-primary);
+  color: var(--default-text-color);
+}
+
+.collection-header :deep(.home-content a) {
+  color: var(--default-text-color);
+  text-decoration: underline;
+
+  &:hover {
+    color: var(--text-color);
+  }
+}
+
+
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+@media screen and (max-width: 768px) {
+  .collection-list {
+    --first-column-width: 100%;
+  }
+  .collection-header.app-width-margin {
+    padding: 0;
+  }
+
+  .collection-header.app-width-margin :deep(.home-content.app-width-padding)  {
+    padding: 0;
+  }
+
+  .pagination {
+    flex-direction: column !important;
+    justify-content: center;
+  }
+  .pagination-documents-count {
+    margin-right: 0;
+    font-size: 24px;
+  }
+}
+
 </style>

@@ -162,7 +162,7 @@ article.documentation {
   color: #B9192F;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   .documentation .content {
     padding: 0 20px 50px;
   }
