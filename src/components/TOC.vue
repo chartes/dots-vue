@@ -320,7 +320,7 @@ div.toc-area-content.toc-content {
     }
   }
 
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 640px) {
     .tree {
       columns: 1;
       gap: 15px;

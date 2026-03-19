@@ -5,6 +5,7 @@
   >
     <app-navbar
       class="layout-navbar"
+      :class="routeNameCssClass"
       :is-doc-projectId-included="isDocProjectIdInc"
       :dts-root-collection-identifier="dtsRootCollectionId"
       :root-collection-identifier="rootCollectionIdentifier"
@@ -55,7 +56,7 @@
 </template>
 
 <script>
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { router } from '@/router'
@@ -105,6 +106,10 @@ export default {
     const rootCollectionIdentifier = ref('')
     const projectCollId = ref('')
     const collectionId = ref('')
+
+    const routeNameCssClass = computed( () => {
+      return route.name.toLowerCase();
+    })
 
     const appConfig = ref({})
     const rootCollConfig = ref({})
@@ -453,6 +458,7 @@ export default {
       rootCollConfig,
       projectCollConfig,
       collConfig,
+      routeNameCssClass,
       setCurrentCollectionContext,
       getBreadcrumb,
       breadCrumb,
@@ -668,11 +674,13 @@ p.header-baseline span {
   }
 }
 
-@media screen and (max-width: 500px) {
-  .layout-navbar {
-    /*position: fixed;
+@media screen and (max-width: 640px) {
+  .layout-navbar:not(.document) {
+    position: fixed;
     left:0;
-    top:0;*/
+    top:0;
+    height: 70px;
+
     width: 100vw;
     z-index: 10;
   }

@@ -817,4 +817,37 @@ input[type=number] {
   }
 }
 
+
+@media screen and (max-width: 640px) {
+
+  #home-article {
+    padding: 20px !important;
+  }
+
+  .page-header .wrapper > .tile {
+    padding: 25px 20px;
+  }
+
+  .project-tile {
+    left: 20px;
+  }
+
+  .pagination-controls {
+    & > * {
+      width: 38px;
+      height: 38px;
+      margin-right: 4px;
+    }
+    & > a,
+    & > input.current-page,
+    & > span.total-pages,
+    & > span.label-sur-page {
+      display: inline-block;
+      width: 39px;
+      height: 39px;
+      line-height: 39px;
+    }
+  }
+}
+
 </style>
