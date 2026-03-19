@@ -198,13 +198,15 @@
               :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
               @click="toggleExpanded(item.identifier)"
             >
-              {{ item.title }}
+              <collection-icon/>
+             {{ item.title }}
             </span>
             <router-link
               v-else-if="isDocProjectIdInc && item.parent === rootCollectionId && rootCollectionId !== dtsRootCollectionId"
               :class="route.params.id === item.identifier ? 'is-current' : ''"
               :to="{ name: 'Home', params: {collId: item.identifier} }"
             >
+              <collection-icon/>
               {{ item.title }}
             </router-link>
             <router-link
@@ -212,6 +214,7 @@
               :class="route.params.id === item.identifier ? 'is-current' : ''"
               :to="{ name: 'Home', params: {collId: item['dots:dotsProjectId'] ? item['dots:dotsProjectId'] !== item.parent ? item['dots:dotsProjectId'] : item.identifier : item.identifier} }"
             >
+              <collection-icon/>
               {{ item.title }}
             </router-link>
             <span
@@ -219,6 +222,7 @@
               :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
               @click="toggleExpanded(item.identifier)"
             >
+              <collection-icon/>
               {{ item.title }}
             </span>
           </template>
@@ -250,6 +254,7 @@
             :to="{ name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }"
             @click.prevent="setStateCollection(selectedParent)"
           >
+            <resource-icon/>
             {{ item.title }}
           </router-link>
           <!-- for items with normalized metadata (extensions['dots:dotsProjectId'] moved to ['dots:dotsProjectId'] -->
@@ -306,6 +311,8 @@ import { getMetadataFromApi } from '@/api/document.js'
 import store from '@/store'
 
 import TocArrows from '@/assets/images/TocArrows.vue'
+import ResourceIcon from '../assets/images/ResourceIcon.vue';
+import CollectionIcon from '../assets/images/CollectionIcon.vue';
 
 const collator = new Intl.Collator('fr', {
   numeric: true,
@@ -315,7 +322,7 @@ const collator = new Intl.Collator('fr', {
 export default {
   name: 'CollectionTOC',
 
-  components: { TocArrows },
+  components: {CollectionIcon, ResourceIcon, TocArrows },
 
   props: {
     isDocProjectIdIncluded: {
@@ -614,10 +621,9 @@ button.toc-toggle {
   padding: 0;
   margin: 0;
 
-  color: var(--fill-color);
-
   cursor: pointer;
 }
+
 .is-current {
   color: var(--text-color) !important;
 }
@@ -697,13 +703,89 @@ button.toc-toggle {
   width: 432px;
   align-self: flex-start;
   border-radius: 42px 42px 0;
-  padding: 20px 20px 35px;
+  padding: 30px 45px 45px 30px;
   background: var(--fill-color) !important;
   box-shadow: none;
 }
 
 .card-view .card-header .collection-metadata .collection-metadata-title {
-    background: transparent !important;
+  display: block;
+  background: transparent !important;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #FFF;
+}
+
+.card-view .document-card {
+  border: none;
+  margin-bottom: 60px;
+}
+
+.card-view .collection-toc-area .menu::before {
+  content: "Contenu";
+  display: block;
+  padding: 0 30px;
+  margin-bottom: 10px;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--text-color)
+}
+
+.card-view .collection-toc-area .menu {
+  border-radius: 42px 0 0 0;
+}
+
+.card-view .collection-toc-area .menu.expanded {
+  background: #F1F1F1;
+  padding: 30px 0;
+}
+
+.card-view .collection-toc-area .menu.expanded ul.tree {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  border-bottom: 4px solid #FFFFFF;
+}
+
+.card-view .collection-toc-area .menu.expanded ul.tree li:not(:last-of-type),
+.card-view .collection-toc-area .menu.expanded ul.tree:not(:last-of-type) {
+  border-bottom: 4px solid #FFFFFF;
+}
+
+.card-view .collection-toc-area .menu.expanded ul.tree li {
+  padding: 13px 30px 11px;
+  font-family: var(--font-primary), sans-serif;
+  font-size: 18px;
+}
+
+.collection-toc-area .menu.expanded ul.tree li span,
+.collection-toc-area .menu.expanded ul.tree li a {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  align-items: flex-start;
+}
+
+.collection-toc-area .menu.expanded ul.tree li a {
+  padding-left: 29px;
+}
+
+.collection-toc-area .menu.expanded ul.tree li :deep(.icon-wrapper) {
+  --icon-fg: var(--text-color);
+  --size: 33px !important;
+  transform: translateY(-5px);
+}
+
+.collection-toc-area .menu.expanded ul.tree li button.toc-toggle :deep(.icon-wrapper) {
+  --icon-fg: #6E6E6E;
+  transform: none;
+}
+
+.collection-toc-area .menu.expanded ul.tree li::before {
+  display: none;
 }
 
 .project-view {

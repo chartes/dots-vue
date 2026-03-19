@@ -659,6 +659,9 @@ a {
   padding-top: 25px;
   padding-bottom: 25px;
 }
+.document-list .pagination {
+  padding-bottom: 30px;
+}
 .pagination-controls {
   display: flex;
   align-items: center;
