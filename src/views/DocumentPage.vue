@@ -2570,13 +2570,22 @@ div.remove-bottom-padding #article {
 .controls {
   position: sticky;
   top: 85px;
-  z-index: 10;
+  z-index: 11;
+  pointer-events: none;
+}
+
+.controls button {
+  pointer-events: auto;
 }
 
 .document-area {
   position: relative;
-  z-index: 11;
+  z-index: 10;
   top: -70px;
+}
+
+.document-area.toc-aside-is-opened {
+  z-index: 11;
 }
 
 
@@ -2735,7 +2744,7 @@ div.remove-bottom-padding #article {
     z-index: 12;
     width: 90vw;
     background-color: #FFF;
-    box-shadow: 8px 8px 5px 0px rgba(0,0,0,0.5);
+    box-shadow: 8px 8px 5px 0 rgba(0,0,0,0.2);
   }
 
   .toc-area .toc-area-content nav > ol.tree {
@@ -2788,6 +2797,7 @@ div.remove-bottom-padding #article {
     flex: 1; /* prend tout l’espace restant */
     justify-content: center; /* centre la liste */
     gap: 8px;
+    margin-top: 100px;
   }
 
   .controls button.controls-toggle {
