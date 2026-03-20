@@ -599,7 +599,8 @@ export default {
     &.more {
       padding-left: 0 !important;
 
-      &.li.container > a, span {
+      &.li.container > a, span,
+      &.li.container > span {
         margin-top: 4px;
       }
 
@@ -778,6 +779,10 @@ button.toc-toggle {
 
 .collection-toc-area .menu.expanded ul.tree li a {
   padding-left: 29px;
+}
+
+.collection-toc-area .menu.expanded ul.tree li a > span{
+  margin-top: 3px;
 }
 
 .collection-toc-area .menu.expanded ul.tree li :deep(.icon-wrapper) {
