@@ -5,15 +5,15 @@
   >
     <svg
       class="icon"
-      viewBox="0 0 47 47"
+      viewBox="0 0 40 40"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <polygon
-        fill="currentColor"
-        points="24.2474286 15 22.4345714 16.8128571 28.3231429 22.7142857 13 22.7142857 13 25.2857143 28.3231429 25.2857143 22.4217143 31.1871429 24.2474286 33 33.2474286 24"
-        transform="translate(23.123714 24) translate(-23.123714 -24)"
-      />
+      <g transform="translate(8.5,10.5)">
+        <path fill="none" stroke="currentColor" stroke-width="2.1029158" stroke-linecap="square" stroke-miterlimit="10" transform="matrix(-1 0 0 1 20.6669 8.77905)" d="M19.615385 0.5L0.38461539 0.5" fill-rule="evenodd"/>
+        <path fill="none" stroke="currentColor" stroke-width="2.1029158" stroke-linecap="round" stroke-miterlimit="10" transform="matrix(-1 0 0 1 21.6669 0.779053)" d="M0.375 8.625L8.625 0.375" fill-rule="evenodd"/>
+        <path fill="none" stroke="currentColor" stroke-width="2.1029158" stroke-linecap="round" stroke-miterlimit="10" transform="matrix(-1 0 0 -1 21.6669 17.7791)" d="M0.375 8.625L8.625 0.375" fill-rule="evenodd"/>
+      </g>
     </svg>
   </div>
 </template>
@@ -56,15 +56,23 @@ const cssVars = {
   width: var(--size, 40px);
   height: var(--size, 40px);
   border-radius: var(--radius, 4px);
-  color: var(--fg, var(--icon-text-color));
-  background-color: var(--fill-color);
+  background-color: var(--bg);
+  color: var(--fill-color, var(--icon-text-color));
+  border: var(--fill-color) solid 1px;
+
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease;
 }
 
 .disabled .icon-wrapper {
-  background-color: #C3C3C3;
+  color: #e5e5e5;
+  border-color: #e5e5e5;
+}
+
+.icon-wrapper:hover {
+  color: #FFF;
+  background-color: var(--fill-color);
 }
 
 .icon {

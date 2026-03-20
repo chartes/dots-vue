@@ -375,10 +375,7 @@
               aria-label="Afficher les notes"
               @click="toggleNotes"
           >
-            <i
-                class="fa-regular fa-comment-dots"
-                aria-hidden="true"
-            />
+            <icon-notes />
           </button>
         </li>
         <li>
@@ -527,6 +524,7 @@ import IconCircleArrow from '@/assets/images/IconCircleArrow.vue'
 import CloseCross from '@/assets/images/CloseCross.vue'
 import IconReadingToolsToggle from '@/assets/images/IconReadingToolsToggle.vue'
 import XMLIcon from '@/assets/images/XMLIcon.vue'
+import IconNotes from "../assets/images/IconNotes.vue";
 
 function findById (array, id) {
   for (const item of array) {
@@ -541,6 +539,7 @@ function findById (array, id) {
 export default {
   name: 'DocumentPage',
   components: {
+    IconNotes,
     XMLIcon,
     IconReadingToolsToggle,
     IconCircleArrow,
@@ -2154,7 +2153,6 @@ export default {
 
   &.is-opened {
     color: var(--text-color);
-    border-color: var(--text-color);
   }
 }
 .controls button:focus-visible {
@@ -2939,10 +2937,10 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   top: 2px;
   right: 0;
   width: 10%; /* largeur du gradient */
-  height: 36px;
+  height: 43px;
   background: linear-gradient(
     to left,
-    #CCCCCC 50%,      /* opaque côté droit */
+    #e5e5e5 50%,      /* opaque côté droit */
     transparent 100%  /* transparent côté gauche */
   );
 
@@ -2969,11 +2967,11 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   top: 2px;
   left: 0;
   width: 10%;
-  height: 36px;
+  height: 43px;
 
   background: linear-gradient(
     to right,
-    #CCCCCC 50%,
+    #e5e5e5 50%,
     rgba(204, 204, 204, 0) 100%
   );
 
@@ -3001,7 +2999,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   top: 2px;
   right: 0;
   width: 10%; /* largeur du gradient */
-  height: 36px;
+  height: 43px;
   background: linear-gradient(
     to left,
     white 50%,      /* opaque côté droit */
@@ -3030,7 +3028,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   top: 2px;
   left: 0;
   width: 10%;
-  height: 36px;
+  height: 43px;
 
   background: linear-gradient(
     to right,

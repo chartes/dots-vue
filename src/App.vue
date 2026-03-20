@@ -895,4 +895,20 @@ a.noteref sup {
   width: 40px;
 }
 
+
+@media screen and (max-width: 1150px) {
+
+  .aside-noteref-parent {
+    max-width: 100vw;
+    width: 100vw;
+    left: 0;
+    right: 0;
+    margin-left:  -2.5%;
+  }
+  .aside-noteref {
+    padding: 20px 20px 0;
+  }
+}
+
+
 </style>
