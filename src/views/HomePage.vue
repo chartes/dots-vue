@@ -48,6 +48,7 @@
           :is="customDescription"
           :dts-collection-description="currCollection.description"
           :custom-collection-description="collectionDescription"
+          :application-root-url="appRootUrl"
         />
         <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
       </div>
