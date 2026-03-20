@@ -679,7 +679,7 @@ ul.submenu a:hover {
     .level-right {
       position: fixed;
       right: 0;
-      top: 70px;
+      top: 65px;
       z-index: 20;
 
       display: block;

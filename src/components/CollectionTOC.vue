@@ -198,32 +198,32 @@
               :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
               @click="toggleExpanded(item.identifier)"
             >
-              <collection-icon/>
-             {{ item.title }}
+              <collection-icon />
+              <span>{{ item.title }}</span>
             </span>
             <router-link
               v-else-if="isDocProjectIdInc && item.parent === rootCollectionId && rootCollectionId !== dtsRootCollectionId"
               :class="route.params.id === item.identifier ? 'is-current' : ''"
               :to="{ name: 'Home', params: {collId: item.identifier} }"
             >
-              <collection-icon/>
-              {{ item.title }}
+              <collection-icon />
+              <span>{{ item.title }}</span>
             </router-link>
             <router-link
               v-else-if="isDocProjectIdInc && item.parent === rootCollectionId && rootCollectionId === dtsRootCollectionId"
               :class="route.params.id === item.identifier ? 'is-current' : ''"
               :to="{ name: 'Home', params: {collId: item['dots:dotsProjectId'] ? item['dots:dotsProjectId'] !== item.parent ? item['dots:dotsProjectId'] : item.identifier : item.identifier} }"
             >
-              <collection-icon/>
-              {{ item.title }}
+              <collection-icon />
+              <span>{{ item.title }}</span>
             </router-link>
             <span
               v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId"
               :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
               @click="toggleExpanded(item.identifier)"
             >
-              <collection-icon/>
-              {{ item.title }}
+              <collection-icon />
+              <span>{{ item.title }}</span>
             </span>
           </template>
           <!--<span
@@ -254,8 +254,8 @@
             :to="{ name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }"
             @click.prevent="setStateCollection(selectedParent)"
           >
-            <resource-icon/>
-            {{ item.title }}
+            <resource-icon />
+            <span>{{ item.title }}</span>
           </router-link>
           <!-- for items with normalized metadata (extensions['dots:dotsProjectId'] moved to ['dots:dotsProjectId'] -->
           <router-link
@@ -264,7 +264,8 @@
             :to="{ name: 'Document', params: { collId: item['dots:dotsProjectId'] ? item['dots:dotsProjectId'] : item.identifier } }"
             @click.prevent="setStateCollection(selectedParent)"
           >
-            {{ item.title }}
+            <resource-icon />
+            <span>{{ item.title }}</span>
           </router-link>
           <router-link
             v-else-if="isDocProjectIdInc && selectedParent !== rootCollectionId"
@@ -272,14 +273,16 @@
             :to="{ name: 'Document', params: { collId: Array.isArray(item.parent) ? item.parent.find(p => p === route.params.collId) ? route.params.collId : item.parent[0] : item.parent, id: item.identifier } }"
             @click.prevent="setStateCollection(selectedParent)"
           >
-            {{ item.title }}
+            <resource-icon />
+            <span>{{ item.title }}</span>
           </router-link>
           <router-link
             v-else
             :class="route.params.id === item.identifier ? 'is-current' : ''"
             :to="{ name: 'Document', params: { id: item.identifier } }"
           >
-            {{ item.title }}
+            <resource-icon />
+            <span>{{ item.title }}</span>
           </router-link>
         </div>
         <div
@@ -756,8 +759,12 @@ button.toc-toggle {
 
 .card-view .collection-toc-area .menu.expanded ul.tree li {
   padding: 13px 30px 11px;
+}
+
+.collection-toc-area .menu.expanded ul.tree li {
   font-family: var(--font-primary), sans-serif;
   font-size: 18px;
+  line-height: 1.4;
 }
 
 .collection-toc-area .menu.expanded ul.tree li span,
@@ -774,14 +781,12 @@ button.toc-toggle {
 }
 
 .collection-toc-area .menu.expanded ul.tree li :deep(.icon-wrapper) {
-  --icon-fg: var(--text-color);
+  --icon-fg: var(--fill-color);
   --size: 33px !important;
-  transform: translateY(-5px);
 }
 
 .collection-toc-area .menu.expanded ul.tree li button.toc-toggle :deep(.icon-wrapper) {
   --icon-fg: #6E6E6E;
-  transform: none;
 }
 
 .collection-toc-area .menu.expanded ul.tree li::before {

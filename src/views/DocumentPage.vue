@@ -2130,7 +2130,7 @@ export default {
 }
 
 .controls-toggle .icon-wrapper {
-  color: var(--text-color);
+  color: var(--fill-color);
   height: 40px;
   width: 40px;
 }
