@@ -2246,7 +2246,7 @@ export default {
 }
 
 #article {
-  padding: 40px 10% 120px;
+  padding: 20px 10% 120px;
   border-bottom: 1px dotted #ffffff;
   min-height: 100%;
 }
@@ -2269,14 +2269,45 @@ div.remove-bottom-padding #article {
 #article .titlepage {
 }
 
+#article {
+  h1, h2, h3, h4, h5, h6 {
+    padding: 0;
+    margin-bottom: 30px;
+    font-family: var(--font-primary), sans-serif;
+    color: #000;
+    text-transform: none;
+    text-align: left;
+  }
+}
+
 #article h1 {
-  padding: 0;
-  font-size: 25px;
-  font-weight: 500;
-  line-height: 33px;
-  text-transform: none;
-  /* color: #971716; */
-  color: var(--text-color);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+#article h2 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.357;
+}
+
+#article h3 {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.727;
+}
+
+#article h4 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.9;
+}
+
+#article h5 {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 2.111;
 }
 
 #article .titlepage {
@@ -2314,6 +2345,25 @@ div.remove-bottom-padding #article {
   text-transform: uppercase;
   font-style: italic;
   color: #777;
+}
+
+#article .byline {
+  margin: 25px 0 90px;
+}
+
+#article .fileDesc p,
+#article .byline {
+  text-align: left;
+}
+
+#article .fileDesc p.author,
+#article .byline .docAuthor {
+  font-family: var(--font-serif), serif;
+  font-size: 20px;
+  font-variant: unset;
+  line-height: 1.6;
+  color: #5F004D;
+  text-transform: none;
 }
 
 #article section.div {

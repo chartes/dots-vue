@@ -593,6 +593,10 @@ export default {
           font-weight: bold !important;
           color: var(--text-color) !important;
         }
+
+        .icon-wrapper {
+          display: none;
+        }
       }
     }
 
