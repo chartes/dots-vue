@@ -403,9 +403,8 @@ div.toc-area-aside.toc-content {
 }
 div.bottom-toc {
   .tree li {
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 22px;
+    margin-bottom: 5px;
+    padding: 0 0 0 15px;
 
     &:not(.more)::before {
       margin-left: -7px;
@@ -417,12 +416,13 @@ div.bottom-toc {
       margin: 0;
 
       & > a {
-        color: #4a4a4a;
+        color: var(--document-text-color);
       }
     }
 
     &.more {
       padding-left: 0;
+
       & .li.container > a {
         margin-top: 4px;
       }

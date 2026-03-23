@@ -34,7 +34,7 @@
 
 <script setup>
 const props = defineProps({
-  bgColor: { type: String, default: 'transparent' },
+  bgColor: { type: String, default: '#FFF' },
   fgColor: { type: String, default: 'var(--icon-fg)' },
   size: { type: Number, default: 42 },
   radius: { type: Number, default: 4 },

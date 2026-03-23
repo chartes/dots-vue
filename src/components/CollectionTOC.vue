@@ -593,10 +593,6 @@ export default {
           font-weight: bold !important;
           color: var(--text-color) !important;
         }
-
-        .icon-wrapper {
-          display: none;
-        }
       }
     }
 
@@ -768,12 +764,10 @@ button.toc-toggle {
 
 .collection-toc-area .menu.expanded ul.tree li {
   font-family: var(--font-primary), sans-serif;
-  font-size: 18px;
-  line-height: 1.4;
 }
 
-.collection-toc-area .menu.expanded ul.tree li span,
-.collection-toc-area .menu.expanded ul.tree li a {
+.collection-toc-area .menu ul.tree li span,
+.collection-toc-area .menu ul.tree li a {
   display: flex;
   gap: 8px;
   width: 100%;
@@ -781,20 +775,20 @@ button.toc-toggle {
   align-items: flex-start;
 }
 
-.collection-toc-area .menu.expanded ul.tree li a {
+.collection-toc-area .menux ul.tree li a {
   padding-left: 29px;
 }
 
-.collection-toc-area .menu.expanded ul.tree li a > span{
+.collection-toc-area .menu ul.tree li a > span{
   margin-top: 3px;
 }
 
-.collection-toc-area .menu.expanded ul.tree li :deep(.icon-wrapper) {
+.collection-toc-area .menu ul.tree li :deep(.icon-wrapper) {
   --icon-fg: var(--fill-color);
   --size: 33px !important;
 }
 
-.collection-toc-area .menu.expanded ul.tree li button.toc-toggle :deep(.icon-wrapper) {
+.collection-toc-area .menu ul.tree li button.toc-toggle :deep(.icon-wrapper) {
   --icon-fg: #6E6E6E;
 }
 

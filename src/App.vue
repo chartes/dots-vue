@@ -697,11 +697,12 @@ a.noteref sup {
   display: inline-block;
   height: auto;
   padding: 2px 4px 1px;
-  background: #CCF;
+  background: #000;
+  margin:0 4px;
 
   font-weight: bold;
   font-size: 0.8em;
-  color: black;
+  color: #FFF;
   line-height: 1;
   text-indent: 0;
   text-align: center;
@@ -763,10 +764,6 @@ a.noteref sup {
   box-shadow: 0px -4px 4px 0px rgba(0,0,0,0.10);
 }
 
-.aside-noteref .aside-noteref-content {
-  font-size: 0.92em;
-}
-
 .aside-noteref.clamped .aside-noteref-content {
   overflow: hidden;
   display: -webkit-box;
@@ -779,18 +776,27 @@ a.noteref sup {
   margin-bottom: 5px;
 }
 
+.aside-noteref-content {
+  font-family: var(--font-primary), sans-serif;
+  font-size: var(--font-small-size);
+}
+
 .aside-noteref-content a.notebottom,
 .aside-noteref-content > a:first-child {
   display: inline-block;
   margin-right: 5px;
   height: auto;
   padding: 2px 4px 1px;
-  background: #CCF;
 
   font-weight: bold;
-  font-size: 0.8em;
+  font-weight: 700;
+  color: var(--fill-color);
 
   float: left;
+}
+
+.aside-noteref-content > i {
+  font-style: inherit;
 }
 
 .aside-noteref-content a.notebottom:hover,
@@ -895,7 +901,6 @@ a.noteref sup {
   width: 40px;
 }
 
-
 @media screen and (max-width: 1150px) {
 
   .aside-noteref-parent {
@@ -903,10 +908,15 @@ a.noteref sup {
     width: 100vw;
     left: 0;
     right: 0;
-    margin-left:  -2.5%;
   }
   .aside-noteref {
     padding: 20px 20px 0;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .aside-noteref-parent {
+    margin-left:  -2.5%;
   }
 }
 

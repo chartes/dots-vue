@@ -2169,9 +2169,6 @@ export default {
   color: var(--text-color);
 }
 
-.document-area {
-  width: 100%;
-}
 .document-area #aside,
 .toc-area #aside {
   margin: 0;
@@ -2219,6 +2216,11 @@ export default {
   max-height: 100vh;
   max-width: calc(100vw - 20px);
 }
+
+.text-mode {
+  overflow-x: hidden;
+}
+
 .text-mode .text-view,
 .images-mode .mirador-view {
   flex: 100% 0 0;
@@ -2265,16 +2267,14 @@ div.remove-bottom-padding #article {
   display: none;
 }
 
-#article h1,
-#article .titlepage {
-}
-
 #article {
+
+  .titlepage,
   h1, h2, h3, h4, h5, h6 {
     padding: 0;
     margin-bottom: 30px;
     font-family: var(--font-primary), sans-serif;
-    color: #000;
+    color: var(--document-text-color);
     text-transform: none;
     text-align: left;
   }
@@ -2351,6 +2351,11 @@ div.remove-bottom-padding #article {
   margin: 25px 0 90px;
 }
 
+#article .fileDesc > * {
+  margin-bottom: 10px;
+}
+
+#article .fileDesc > .titleStmt,
 #article .fileDesc p,
 #article .byline {
   text-align: left;
@@ -2359,7 +2364,7 @@ div.remove-bottom-padding #article {
 #article .fileDesc p.author,
 #article .byline .docAuthor {
   font-family: var(--font-serif), serif;
-  font-size: 20px;
+  font-size: var(--font-default-size);
   font-variant: unset;
   line-height: 1.6;
   color: #5F004D;
@@ -2370,17 +2375,21 @@ div.remove-bottom-padding #article {
   border: none;
   padding-bottom: 0;
   padding-top: 40px;
-  font-family: "Libre Baskerville", serif !important;
-  font-size: 16px;
   text-align: left;
-  font-weight: 400;
-  line-height: 28px;
-  color: #5f5f5f;
 }
 
+#article section.div:first-child {
+  padding-top: 0;
+}
+
+#article p b.label {
+  text-indent: 0;
+}
+
+
+/*
+
 #article section.div h2.head {
-  line-height: 115%;
-  /* color: #971716; */
   color: var(--text-color);
   border-bottom: none;
   padding: 1em 0 0 0;
@@ -2405,6 +2414,61 @@ div.remove-bottom-padding #article {
   font-size: 15px;
   font-weight: bold;
   padding: 1em 0 1ex 2ex;
+}
+
+*/
+
+#article {
+  .availability, .editionStmt, figcaption, .footnotes, li.bibl, .marginalia, .note, #noterefover, .publicationStmt, .sourceDesc, .speaker, .stage {
+    font-family: var(--font-primary), sans-serif;
+    font-size: var(--font-small-size);
+  }
+
+  .sourceDesc {
+    & head,
+    & trailer,
+    & label {
+      font-family: var(--font-primary), sans-serif;
+      font-weight: 500;
+      font-size: var(--font-default-size);
+      font-variant: none;
+      line-height: 1.4;
+      color: var(--document-text-color);
+      text-shadow: none;
+      text-transform: none;
+    }
+  }
+
+  .footnotes {
+    margin: 90px 0 0;
+    border-top: #E4E4E4 4px solid;
+    padding-top: 26px;
+  }
+
+  .footnotes aside.note {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+
+    padding: 0;
+    margin: 0 0 40px;
+    border: none;
+  }
+
+  .footnotes aside.note > i {
+    font-style: inherit;
+  }
+
+  .footnotes aside.note a.noteback {
+    position: relative;
+    display: inline;
+    width: auto;
+    margin: 0;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--fill-color);
+    text-align: left;
+  }
 }
 
 .toc-area-header a {
@@ -2438,7 +2502,7 @@ div.remove-bottom-padding #article {
 
   font-family: var(--font-primary), sans-serif;
   font-weight: 400;
-  font-size: var(--font-primary-size);
+  font-size: var(--font-default-size);
   color: #636363;
 
   & > ul {
@@ -2628,6 +2692,8 @@ div.remove-bottom-padding #article {
   position: relative;
   z-index: 10;
   top: -70px;
+
+  width: 100%;
 }
 
 .document-area.toc-aside-is-opened {
@@ -2705,7 +2771,7 @@ div.remove-bottom-padding #article {
 }
 @media screen and (max-width: 768px) {
   #article {
-    padding: 40px 4% 120px;
+    padding: 40px 2.5% 120px;
   }
   .toc-area .toc-area-content aside {
     padding: 20px 20px !important;
@@ -2747,7 +2813,6 @@ div.remove-bottom-padding #article {
 @media screen and (max-width: 640px) {
 
   #article {
-    padding: 40px 6% 120px;
   }
   .several-parent {
     flex-direction: column;
@@ -2798,18 +2863,15 @@ div.remove-bottom-padding #article {
   }
 
   #article section.div {
-    font-size: 14px;
-    line-height: 24px;
   }
+
   #article h1 {
-    font-size: 20px;
-    line-height: 25px;
   }
+
   #article section.div h2.head,
   #article section.div h3.head {
-    font-size: 14px;
-    line-height: 24px;
   }
+
   #article section.div {
     padding-top: 10px;
   }
@@ -2885,7 +2947,7 @@ ul.breadcrumb-top {
   margin-bottom: 20px;
   padding: 0;
   font-family: var(--font-primary), sans-serif;
-  font-size: var(--font-primary-size);
+  font-size: var(--font-default-size);
   font-weight: 500;
   flex-flow: row nowrap;
   overflow-x: auto;   /* scroll horizontal si nécessaire */
@@ -3167,6 +3229,10 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   position: relative;
   z-index: 11;
+}
+
+.breadcrumb-panel .collection-toc-area .tree li .li.container .icon-wrapper {
+  /* display: none; */
 }
 
 .tab-header {

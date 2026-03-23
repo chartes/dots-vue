@@ -16,17 +16,19 @@
 :root {
     /* Font */
     --font-primary: "Roboto";
-    --font-primary-size : 16px;
+    --font-default-size : 20px;
+    --font-small-size : 16px; /* document source, notes, ... */
 
     --font-secondary: "Roboto Condensed";
     --font-serif: Georgia, "Time New Roman";
 
     @media screen and (max-width: 768px) {
-        --font-primary-size : 14px;
+        --font-default-size : 16px;
     }
 
     /* Color Theme */
     --default-text-color: #333333;
+    --document-text-color: #303030;
     --text-color: #8f0e21;
     --fill-color: #5f004d;
     --meta-banner-fill-color: #FAFAFA;/* former beige #faf6f1;*/
