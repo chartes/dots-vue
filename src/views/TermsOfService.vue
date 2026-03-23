@@ -185,6 +185,9 @@ section.main {
   color: var(--fill-color);
   text-transform: none;
 }
+#article h2:first-child {
+  margin-top: 0;
+}
 .tile.is-child {
   display: flex;
   flex-direction: column;
@@ -209,6 +212,24 @@ section.main {
   color: var(--fill-color);
   line-height: 33px;
   text-transform: none;
+}
+
+@media screen and (max-width: 1150px) {
+
+  #article,
+  .tile.is-child {
+    padding: 0 50px !important;
+  }
+
+}
+
+@media screen and (max-width: 1024px) {
+
+  #article,
+  .tile.is-child {
+    padding: 0 !important;
+  }
+
 }
 
 </style>

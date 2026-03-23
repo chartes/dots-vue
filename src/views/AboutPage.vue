@@ -306,6 +306,14 @@ article.about .page-header h1,
   margin: 20px 0;
 }
 
+@media screen and (max-width: 1215px) {
+
+  .about-page .content-menu .about-content {
+    padding: 0 !important;
+  }
+
+}
+
 @media screen and (max-width: 1150px) {
   .about-page {
     display: flex;
@@ -314,40 +322,38 @@ article.about .page-header h1,
     align-content: center;
     align-items: center;
     width: 100%;
+    padding-top: 30px;
+    padding-bottom: 150px;
+
     & .tab-menu {
-      margin-top: 20px;
-      margin-bottom: 10px;
-      margin-left: 10px;
-      margin-right: 10px;
-      height: 100%;
+      padding: 0;
+      margin:0 0 30px;
       width: 100%;
-      padding-top: 10px;
-      padding-bottom: 10px;
-      padding-left: 2.5%;
-      padding-right: 2.5%;
+      min-width: 100%;
+      max-width: 100%;
+      height: 100%;
       background-color: white;
       z-index: 10;
+
       & > div > aside {
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-content: center;
+        gap: 30px;
+
         & > p.menu-label {
           margin: 0;
-          padding: 5px 5px 5px 5px;
-          color: #B9192F;
-          font-size: 10px;
-          text-transform: uppercase;
+          padding: 5px 0;
           text-align: center;
 
           &:hover {
-            background-color: rgba(185, 25, 47, 15%);
+            color: var(--fill-color);
           }
 
           &.is-active {
             padding: 5px 5px 5px 5px;
             border-left: none;
-            border-bottom: solid 2px #B9192F;
           }
         }
       }
@@ -374,6 +380,34 @@ article.about .page-header h1,
       }
     }
   }
+
+  .about-page .content-menu,
+  .about .tile.is-child {
+    padding: 0 50px;
+  }
+
+  .about-page .tab-menu {
+    padding: 20px 50px;
+  }
+
+  .about-page .content-menu .about-content {
+    padding: 0 !important;
+  }
+
+}
+
+@media screen and (max-width: 1024px) {
+
+  .about-page .content-menu,
+  .about .tile.is-child {
+    padding: 0;
+  }
+
+  .about-page .tab-menu {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
 }
 
 @media screen and (max-width: 768px) {
@@ -382,7 +416,7 @@ article.about .page-header h1,
   }
   .about .content p,
   .about .content ul {
-    font-size: 16px;
+    font-size: var(--font-default-size);
     line-height: 24px;
     text-align: left !important;
   }
@@ -407,6 +441,7 @@ article.about .page-header h1,
     text-align: left;
     width: 80%;
   }
+
   /*
   .about table thead tr:has(:nth-child(8)) {
     display: flex;

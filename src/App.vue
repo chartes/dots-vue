@@ -474,7 +474,6 @@ export default {
 
 <style>
 html,
-body,
 body {
   background-color: #ffffff;
   font-size: 20px;
@@ -486,7 +485,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   font-family: var(--font-primary), sans-serif;
-  font-size: 20px;
+  font-size: var(--font-default-size);
   line-height: 1.4;
   color: var(--default-text-color);
 }
@@ -650,6 +649,18 @@ p.header-baseline span {
   margin: 0;
   padding-left: calc( 50% - 600px );
   padding-right: calc( 50% - 600px );
+}
+
+@media screen and (max-width: 1280px) {
+  .app-width-padding {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+  .app-width-margin {
+    margin: 0;
+    max-width: 100%;
+    padding: 0 50px;
+  }
 }
 
 @media screen and (max-width: 1150px) {

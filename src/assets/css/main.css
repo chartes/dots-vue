@@ -45,7 +45,7 @@
 .about-page {
     & > .tab-menu {
         position: sticky;
-        top: 80px;
+        top: 0;
     }
 }
 .about-content {
