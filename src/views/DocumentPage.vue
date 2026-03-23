@@ -2435,10 +2435,41 @@ div.remove-bottom-padding #article {
     }
   }
 
+  .argument {
+    font-family: var(--font-primary), sans-serif;
+    font-weight: 400;
+    font-size: var(--font-default-size);
+    font-variant: none;
+    line-height: 1.4;
+    color: var(--document-text-color);
+  }
+
   .footnotes {
     margin: 90px 0 0;
-    border-top: #E4E4E4 4px solid;
-    padding-top: 26px;
+    position: relative;
+  }
+
+  .footnotes::before {
+    content: "Notes";
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fill-color);
+  }
+
+  .footnotes::after {
+    content: "";
+    position: absolute;
+    top: 32px;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top: #E4E4E4 4px solid !important;
+  }
+
+  .footnotes > *:first-child {
+    display: block;
+    margin-top: 45px !important;
   }
 
   .footnotes .note-page {
@@ -2448,6 +2479,13 @@ div.remove-bottom-padding #article {
   .footnotes .note-page a {
     font-weight: 700;
     font-size: 18px;
+    border: none;
+    text-decoration: none;
+  }
+
+  .footnotes aside.note a.noteback:hover,
+  .footnotes .note-page a:hover {
+    text-decoration: underline;
   }
 
   .footnotes aside.note {
@@ -2455,6 +2493,10 @@ div.remove-bottom-padding #article {
     padding: 0 0 0 25px;
     margin: 0 0 40px;
     border: none;
+  }
+
+  .footnotes aside.note:target::before {
+    display: none;
   }
 
   .footnotes aside.note > i {
@@ -2471,6 +2513,7 @@ div.remove-bottom-padding #article {
     font-weight: 700;
     font-size: 18px;
     color: var(--fill-color);
+    text-decoration: none;
     text-align: left;
   }
 }
