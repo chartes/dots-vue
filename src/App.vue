@@ -522,8 +522,8 @@ body {
 /* page header */
 
 .tile.page-header {
-  min-height: 164px;
-  background-color: #FBF8F4;
+  min-height: 184px;
+  background-color: #F5F5F5;
   margin: 0;
   align-items: center;
 }
@@ -531,10 +531,10 @@ body {
   margin-bottom: 0;
   font-family: var(--font-primary), sans-serif;
   font-weight: 700;
-  font-size: 48px;
+  font-size: 40px;
   font-style: normal;
   line-height: 1.2;
-  color: #FFFFFF;
+  color: #737373;
   text-align: left;
   text-indent: 0;
 }
@@ -542,7 +542,7 @@ body {
 .tile.page-header .title-tile {
   justify-content: space-between;
   align-items: flex-start;
-  gap:50px;
+  gap:15px;
 }
 
 p.header-baseline {

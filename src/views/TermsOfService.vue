@@ -3,20 +3,21 @@
     <div class="tiles">
       <div class="tile page-header app-width-padding">
         <div class="tile is-child">
-          <div class="is-flex is-flex-direction-row title-tile">
+          <div class="is-flex is-flex-direction-column title-tile">
             <p class="title">
-              {{ collectionAltTitle ? collectionAltTitle : currCollection.title }} - Terms of service
+              {{ collectionAltTitle ? collectionAltTitle : currentCollection.title }}
             </p>
+            <h1>Terms of service</h1>
           </div>
         </div>
       </div>
     </div>
-    <section class="main app-width-margin">
+    <section class="main app-width-padding">
       <div
         id="article"
         class="article"
       >
-        <h1>Publisher</h1>
+        <h2>Publisher</h2>
         <p>
           École nationale des chartes, Public establishment<br>
           65, rue de Richelieu<br>
@@ -26,13 +27,13 @@
           Siret : 19753478700043
         </p>
         <hr>
-        <h1>Publishing director</h1>
+        <h2>Publishing director</h2>
         <p>
           Michelle Bubenicek, Director of the École nationale des chartes<br>
           secretariat@chartes.psl.eu
         </p>
         <hr>
-        <h1>Web hosting</h1>
+        <h2>Web hosting</h2>
         <p>
           IR* Huma-Num<br>
           Bâtiment de recherche Nord<br>
@@ -40,7 +41,7 @@
           93322 Aubervilliers cedex
         </p>
         <hr>
-        <h1>Personal data</h1>
+        <h2>Personal data</h2>
         <p>
           Refer to the page
           <a
@@ -52,7 +53,7 @@
         </p>
 
         <hr>
-        <h1>Intellectual property</h1>
+        <h2>Intellectual property</h2>
 
         <h2>Website development and content</h2>
         <p>
@@ -153,6 +154,10 @@ export default {
 a {
   border-bottom: none;
 }
+section.main {
+  padding-top: 64px;
+  padding-bottom: 150px;
+}
 #article {
   padding: 40px 10% 120px;
   border-bottom: 1px dotted #ffffff;
@@ -161,6 +166,10 @@ a {
   }
   /* min-height: 100%; */
 }
+#article {
+  margin-bottom: 30px !important;
+  padding: 10px 0 10px !important;
+}
 #article article {
   margin: 0;
 }
@@ -168,27 +177,13 @@ a {
 #article {
   text-align: left;
 }
-#article h1 {
-  padding-top: 20px;
-  padding-bottom: 20px;
-  font-size: 25px;
-  font-weight: 500;
-  line-height: 33px;
-  text-transform: none;
-  /* color: #971716; */
-  color: var(--text-color);
-}
 #article h2 {
-  padding-top: 15px;
-  padding-bottom: 15px;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 25px;
+  margin-bottom: 20px;
+  font-size:24px;
+  font-weight:500;
+  line-height: 1.2;
+  color: var(--fill-color);
   text-transform: none;
-}
-#article {
-  margin-bottom: 30px !important;
-  padding: 10px 0 10px !important;
 }
 .tile.is-child {
   display: flex;
@@ -200,7 +195,20 @@ a {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  width: 100%;
   margin-top: 30px;
   margin-bottom: 30px;
 }
+.page-header h1 {
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 20px;
+  font-family: var(--font-primary), sans-serif;
+  font-size: 25px;
+  font-weight: 900;
+  color: var(--fill-color);
+  line-height: 33px;
+  text-transform: none;
+}
+
 </style>

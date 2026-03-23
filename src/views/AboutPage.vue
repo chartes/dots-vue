@@ -3,10 +3,11 @@
     <div class="tiles">
       <div class="tile page-header app-width-padding">
         <div class="tile is-child">
-          <div class="is-flex is-flex-direction-row title-tile">
+          <div class="is-flex is-flex-direction-column title-tile">
             <p class="title">
               {{ collectionAltTitle ? collectionAltTitle : currentCollection.title }}
             </p>
+            <h1 class="about-title">à propos</h1>
           </div>
         </div>
       </div>
@@ -170,9 +171,7 @@ export default {
 article.about {
   margin-top: 0;
 }
-#article h1,
-#article {
-}
+
 .tile.is-child {
   display: flex;
   flex-direction: column;
@@ -183,6 +182,7 @@ article.about {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  width: 100%;
   margin-top: 30px;
   margin-bottom: 30px;
 }
@@ -191,39 +191,46 @@ article.about {
   justify-content: space-between;
   flex-direction: row;
   align-content: center;
+  padding-top: 64px;
+  padding-bottom: 150px;
+
   & .tab-menu {
-    margin: 20px 10px auto auto;
     height: 100%;
-    width: 20%;
+    min-width: 100px;
+    max-width: 140px;
     z-index: 10;
     background-color: white;
+
     & > div > aside > p.menu-label {
       padding-top: 5px;
       padding-bottom: 5px;
-      padding-left: 20%;
-      color: #B9192F;
-      font-size: 16px;
-      text-transform: uppercase;
+
+      font-family: var(--font-primary), sans-serif;
+      font-size:var(--font-default-size);
+      font-weight: 500;
+      line-height: 1.2;
+      color: #666666;
+      text-transform: none;
       text-align: right;
       text-indent: 0;
-      &:hover {
-        background-color: rgba(185, 25, 47, 15%);
-      }
+      letter-spacing: 0;
+
+      cursor: pointer;
+
       &.is-active {
-        padding-left: calc(20% - 2px);
-        border-left: solid 2px #B9192F;
+        color: var(--fill-color);
+        border-bottom: solid 4px var(--fill-color);
       }
     }
   }
   & .content-menu {
-    margin: 20px 10px auto;
+    margin: 0;
     height: 100%;
     width: 80%;
   }
 }
 .about .content {
   max-width: 100%;
-  font-family: "Libre Baskerville", serif !important;
   font-size: 16px;
   text-align: left;
   font-weight: 400;
@@ -258,27 +265,36 @@ article.about {
   padding-top: 0;
   text-align: left;
 }
+article.about .page-header h1,
 .about .about-content h1,
 .about .content h1 {
-  margin: 1em 0 1em 0;
-  padding-top: 20px;
+  margin: 0;
+  padding-top: 0;
   padding-bottom: 20px;
+  font-family: var(--font-primary), sans-serif;
   font-size: 25px;
-  font-weight: 500;
+  font-weight: 900;
+  color: var(--fill-color);
   line-height: 33px;
   text-transform: none;
 }
 .about .about-content h2,
 .about .content h2 {
-  margin: 70px 0 30px;
-  font-size: 28px;
-  font-weight: 400;
-  line-height: 34px;
-  color: #b9192f;
+  margin: 0 0 45px;
+  font-family: var(--font-primary), sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--document-text-color);
 }
+.about .about-content h3,
+.about .content h3 {
+  color: var(--fill-color);
+}
+
 .about .about-content a,
 .about .content a {
-  color: #B9192F;
+  color: var(--fill-color);
   word-break: break-word;
   &:hover {
     text-decoration: underline !important;
@@ -342,7 +358,8 @@ article.about {
       align-content: center;
       height: 100%;
       width: 100%;
-      margin: 20px 0 50px;
+      margin: 0;
+
       & >.about.content {
         width: 100%;
         padding: 0;
