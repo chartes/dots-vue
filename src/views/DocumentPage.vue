@@ -222,10 +222,7 @@
                 :class="hasValidTOC ? TOCMenuBtnCssClass : 'disabled'"
                 @click="toggleTOCMenu"
             >
-              <i
-                  class="fa fa-list-ul"
-                  aria-hidden="true"
-              />
+              <TocIcon />
             </button>
             <!-- Document breadcrumb -->
             <div
@@ -524,7 +521,8 @@ import IconCircleArrow from '@/assets/images/IconCircleArrow.vue'
 import CloseCross from '@/assets/images/CloseCross.vue'
 import IconReadingToolsToggle from '@/assets/images/IconReadingToolsToggle.vue'
 import XMLIcon from '@/assets/images/XMLIcon.vue'
-import IconNotes from "../assets/images/IconNotes.vue";
+import IconNotes from '@/assets/images/IconNotes.vue'
+import TocIcon from '@/assets/images/TocIcon.vue'
 
 function findById (array, id) {
   for (const item of array) {
@@ -539,6 +537,7 @@ function findById (array, id) {
 export default {
   name: 'DocumentPage',
   components: {
+    TocIcon,
     IconNotes,
     XMLIcon,
     IconReadingToolsToggle,
@@ -2414,6 +2413,8 @@ div.remove-bottom-padding #article {
       appearance: none;
       -webkit-appearance: none;
       background-color: white;
+      border: none;
+      padding: 0;
       cursor: pointer;
 
       &:hover,
@@ -2433,13 +2434,10 @@ div.remove-bottom-padding #article {
       text-align: center;
       align-content: center;
       color: var(--text-color);
-      border: var(--text-color) 1px solid;
       border-radius: 4px;
 
       &.is-opened {
         color: white;
-        background-color: var(--text-color);
-        border-color: var(--text-color);
       }
       &.disabled {
         pointer-events: none;

@@ -58,7 +58,7 @@ const cssVars = {
   border-radius: var(--radius, 4px);
   background-color: var(--bg);
   color: var(--fill-color, var(--icon-text-color));
-  border: var(--fill-color) solid 1px;
+  border: var(--fill-color) solid 2px;
 
   align-items: center;
   justify-content: center;

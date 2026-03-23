@@ -57,6 +57,7 @@ const cssVars = {
   border-color: #e5e5e5;
 }
 
+.is-opened > .icon-wrapper,
 .icon-wrapper:hover {
   color: #FFF;
   background-color: var(--fill-color);
