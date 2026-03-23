@@ -2217,10 +2217,6 @@ export default {
   max-width: calc(100vw - 20px);
 }
 
-.text-mode {
-  overflow-x: hidden;
-}
-
 .text-mode .text-view,
 .images-mode .mirador-view {
   flex: 100% 0 0;
@@ -2445,12 +2441,18 @@ div.remove-bottom-padding #article {
     padding-top: 26px;
   }
 
-  .footnotes aside.note {
-    display: flex;
-    align-items: flex-start;
-    gap: 4px;
+  .footnotes .note-page {
+    margin: 10px 0 22px;
+  }
 
-    padding: 0;
+  .footnotes .note-page a {
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  .footnotes aside.note {
+    position: relative;
+    padding: 0 0 0 25px;
     margin: 0 0 40px;
     border: none;
   }
@@ -2460,7 +2462,9 @@ div.remove-bottom-padding #article {
   }
 
   .footnotes aside.note a.noteback {
-    position: relative;
+    position: absolute;
+    left: 0;
+    top: 0;
     display: inline;
     width: auto;
     margin: 0;
@@ -2811,9 +2815,6 @@ div.remove-bottom-padding #article {
   }
 }
 @media screen and (max-width: 640px) {
-
-  #article {
-  }
   .several-parent {
     flex-direction: column;
     align-items: center;

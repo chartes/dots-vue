@@ -607,6 +607,9 @@ p.header-baseline span {
   .tile.page-header {
     min-height: auto;
   }
+  .scroll-top {
+    right: 20px;
+  }
 }
 
 @media screen and (max-width: 1024px) {
@@ -631,6 +634,9 @@ p.header-baseline span {
   }
   .toggle-btn {
     width: 20px;
+    right: 15px;
+  }
+  .scroll-top {
     right: 15px;
   }
 }
