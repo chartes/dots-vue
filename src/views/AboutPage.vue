@@ -204,6 +204,7 @@ article.about {
     & > div > aside > p.menu-label {
       padding-top: 5px;
       padding-bottom: 5px;
+      border-bottom: solid 4px transparent;
 
       font-family: var(--font-primary), sans-serif;
       font-size:var(--font-default-size);

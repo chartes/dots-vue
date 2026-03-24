@@ -461,9 +461,6 @@ nav span.level-item:not(:last-child)::after {
 .level-left {
   display: flex;
   width: calc(100% - 50px);
-  /*font-family: "Libre Baskerville", serif;
-  font-weight: bold;
-  font-size: 20px;*/
   font-family: var(--font-primary),sans-serif;
   font-weight: 700;
   font-size: 20px;

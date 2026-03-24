@@ -19,6 +19,20 @@
               :to="{ name: 'Home', params: { collId: item.identifier }}"
             >
               <div class="collection-metadata is-flex-direction-column">
+                <div class="card-image is-flex is-justify-content-center">
+                  <router-link :to="{ name: 'Home', params: { collId: item.identifier }}">
+                    <img
+                        v-if="ImgUrl(item.identifier)"
+                        :src="ImgUrl(item.identifier)"
+                        alt=""
+                    />
+                    <img
+                        v-else
+                        src="@/assets/images/dots-logo-retro.drawio.svg"
+                        alt=""
+                    />
+                  </router-link>
+                </div>
                 <div class="collection-metadata-author-date-title">
                   <div class="collection-metadata-author-date is-flex is-flex-direction-column">
                   <span>
@@ -37,20 +51,6 @@
                     {{ item.description }}
                   </span><!-- v-if="c.date" -->
                 </div>
-              </div>
-              <div class="card-image is-flex is-justify-content-center">
-                <router-link :to="{ name: 'Home', params: { collId: item.identifier }}">
-                  <img
-                    v-if="ImgUrl(item.identifier)"
-                    :src="ImgUrl(item.identifier)"
-                    alt=""
-                  />
-                  <img
-                    v-else
-                    src="@/assets/images/dots-logo-retro.drawio.svg"
-                    alt=""
-                  />
-                </router-link>
               </div>
             </router-link>
           </div>
@@ -79,7 +79,7 @@
                   </span><!-- v-if="c.date" -->
                 </div>
               </div>
-              <div class="card-image is-flex is-justify-content-center">
+              <div class="card-image">
                 <a
                   href=""
                   class="disabled"
@@ -645,6 +645,7 @@ button.toc-toggle {
 }
 .document-card .card-header {
   width: 100%;
+  box-shadow: none;
 }
 .document-card .card-header .document-folder {
   width: 100%;
@@ -673,6 +674,24 @@ button.toc-toggle {
     & > .collection-metadata {
       width: 100%;
       font-family: var(--font-primary), sans-serif;
+
+      & > .card-image {
+        a {
+          position: relative;
+          display: block;
+          width: 100%;
+          padding-bottom: 65%;
+
+          img {
+            position: absolute;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+          }
+        }
+      }
 
       & > .collection-metadata-author-date-title,
       & > .collection-description {
@@ -800,12 +819,11 @@ button.toc-toggle {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
-  margin-top: 30px;
 }
 
 .document-card .card-image {
-  display: none !important;
-
+  display: none;
+  /*
   margin: auto;
   & > a {
     align-content: center;
@@ -822,6 +840,7 @@ button.toc-toggle {
       width: 75px;
     }
   }
+  */
 }
 .document-card .card-content {
   color: #000;
