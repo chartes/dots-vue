@@ -572,8 +572,10 @@ p.header-baseline span {
 
   width: 40px;
   height: 40px;
+  background-color: #FFFFFF;
   pointer-events: none;
-  z-index: 9;
+  z-index: 20;
+
   > button {
     /* remove default button behavior */
     appearance: none;

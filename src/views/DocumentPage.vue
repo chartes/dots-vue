@@ -3315,12 +3315,12 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   .table td {
-    padding: 17px 10px
+    padding: 13px 10px
   }
 
   .table td,
   .table tr {
-    border-bottom: 1px solid #C2C2C240;
+    border-bottom: 1px solid #C2C2C2;
   }
 }
 
