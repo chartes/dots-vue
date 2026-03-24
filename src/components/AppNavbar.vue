@@ -432,8 +432,8 @@ nav  {
   top:0;*/
 
   width: 100%;
-  padding-left: calc((100% - 1100px) / 2);
-  padding-right: calc((100% - 1100px) / 2);
+  padding-left: calc((100% - var(--default-content-width)) / 2);
+  padding-right: calc((100% - var(--default-content-width)) / 2);
 }
 
 nav span.level-item:not(:last-child)::after {
@@ -512,12 +512,13 @@ ul.submenu a:hover {
   }
 }
 
-@media screen and (max-width: 1140px) {
+@media screen and (max-width: 1320px) {
   nav {
     padding-left: 20px;
     padding-right: 20px;
   }
 }
+
 @media screen and (max-width: 768px) {
   .logo-header {
     margin-right: 10px !important;

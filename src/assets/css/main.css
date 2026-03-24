@@ -26,6 +26,9 @@
         --font-default-size : 16px;
     }
 
+    /* Site width on large destop - cf media queries : @media screen and (max-width: 1320px) */
+    --default-content-width: 1280px;
+
     /* Color Theme */
     --default-text-color: #333333;
     --document-text-color: #303030;

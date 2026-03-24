@@ -314,7 +314,7 @@ div.toc-area-content.toc-content {
     width: 100%;
   }
 
-  @media screen and (max-width: 1150px) {
+  @media screen and (max-width: 1320px) {
     .tree {
       columns: 3;
     }
@@ -354,8 +354,8 @@ div.toc-area-content.toc-content {
       break-inside: avoid;
 
       & .li.container > a, span {
-      margin-top: 4px;
-    }
+        margin-top: 4px;
+      }
 
       &::before {
         content: none !important;

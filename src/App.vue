@@ -567,7 +567,7 @@ p.header-baseline span {
 
 .scroll-top {
   position: fixed;
-  right: calc((100vw - 1100px) / 2);
+  right: calc((100vw - var(--default-content-width)) / 2);
   bottom: 120px;
 
   width: 40px;
@@ -602,7 +602,7 @@ p.header-baseline span {
   pointer-events: auto;
 }
 
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 1320px) {
   .tile.page-header {
     min-height: auto;
   }
@@ -643,7 +643,7 @@ p.header-baseline span {
 /* responsive layout */
 .app-width-margin {
   margin: 0 auto;
-  max-width: 1100px;
+  max-width: var(--default-content-width);
 }
 .app-width-padding {
   margin: 0;
@@ -651,7 +651,7 @@ p.header-baseline span {
   padding-right: calc( 50% - 600px );
 }
 
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: 1320px) {
   .app-width-padding {
     padding-left: 50px;
     padding-right: 50px;
@@ -663,7 +663,7 @@ p.header-baseline span {
   }
 }
 
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 1320px) {
   .app-width-padding {
     padding-left: 20px;
     padding-right: 20px;
@@ -732,12 +732,12 @@ a.noteref sup {
 .aside-noteref-parent {
   visibility: hidden;
   position: fixed;
-  left: calc((100vw - 1100px) / 2);
-  right: calc((100vw - 1100px) / 2);
+  left: calc((100vw - var(--default-content-width)) / 2);
+  right: calc((100vw - var(--default-content-width)) / 2);
   bottom: 0;
   z-index: 8;
 
-  max-width: 1100px;
+  max-width: var(--default-content-width);
   padding-bottom: 10px;
   /*padding-right: 20px;*/
   background-color: rgba(255, 255, 255, 0.95);
@@ -918,7 +918,7 @@ a.noteref sup {
   width: 40px;
 }
 
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 1320px) {
 
   .aside-noteref-parent {
     max-width: 100vw;

@@ -214,7 +214,7 @@ section.main {
   text-transform: none;
 }
 
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 1320px) {
 
   #article,
   .tile.is-child {

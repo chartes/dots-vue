@@ -578,7 +578,7 @@ figure {
   border: none;
 }
 
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 1320px) {
   .menu-list,
   aside.menu > .columns {
     flex-direction: column;

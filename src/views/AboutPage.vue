@@ -315,7 +315,7 @@ article.about .page-header h1,
 
 }
 
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 1320px) {
   .about-page {
     display: flex;
     justify-content: center;

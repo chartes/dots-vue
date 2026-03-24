@@ -2531,7 +2531,7 @@ div.remove-bottom-padding #article {
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 1100px;
+  max-width: var(--default-content-width);
   margin-top: 10px;
   margin-bottom: 10px;
 
@@ -2545,7 +2545,7 @@ div.remove-bottom-padding #article {
   justify-content: space-between;
   align-items: center;
   width: 100% !important;
-  max-width: 1100px !important;
+  max-width: var(--default-content-width) !important;
 
   font-family: var(--font-primary), sans-serif;
   font-weight: 400;
@@ -2805,7 +2805,7 @@ div.remove-bottom-padding #article {
   visibility: hidden;
 }
 
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 1320px) {
   .toc-area .toc-area-content nav > ol.tree {
     columns: 2;
   }

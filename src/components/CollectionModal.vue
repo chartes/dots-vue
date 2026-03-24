@@ -275,7 +275,7 @@ export default {
     background-color: rgba(0, 0, 0, 0.5);
   }
   .modal-container {
-    max-width: 1100px !important;
+    max-width: var(--default-content-width) !important;
     margin: 150px auto;
     padding: 20px 30px;
     background-color: #fbf8f4;
@@ -371,7 +371,7 @@ export default {
     top: 15px;
   }
 
-  @media screen and (max-width: 1100px) {
+  @media screen and (max-width: 1320px) {
     .modal-wrapper {
       width: 100vw;
       height: 100vh !important;

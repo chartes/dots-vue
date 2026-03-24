@@ -636,12 +636,7 @@ button.toc-toggle {
   flex-direction: row;
   align-content: center;
   gap: 10px;
-  border: 1px solid transparent;
-
   width: 100%;
-  &:hover {
-    border: 1px solid var(--text-color);
-  }
 }
 .document-card .card-header {
   width: 100%;
@@ -799,7 +794,7 @@ button.toc-toggle {
 }
 
 .collection-toc-area .menu ul.tree li a > span{
-  margin-top: 3px;
+  margin-top: 5px;
 }
 
 .collection-toc-area .menu ul.tree li :deep(.icon-wrapper) {
