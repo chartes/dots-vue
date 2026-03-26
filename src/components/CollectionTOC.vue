@@ -513,8 +513,8 @@ export default {
     )
 
     const displayOpt = computed(() =>
-        props.applicationConfig?.homePageSettings?.listSection?.displayMode?.length > 0
-        ? props.applicationConfig.homePageSettings.listSection.displayMode
+        props.collectionConfig?.homePageSettings?.listSection?.displayMode?.length > 0
+        ? props.collectionConfig.homePageSettings.listSection.displayMode
         : props.displayOption
     )
 

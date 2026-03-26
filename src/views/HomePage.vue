@@ -204,7 +204,7 @@ export default {
 
     console.log('HomePage set currentCollection.value / componentTOC.value (not yet set) : ', currCollection.value, componentTOC.value)
 
-    const displayOpt = ref(props.collectionConfig.homePageSettings.listSection.displayMode)
+    const displayOpt = ref(props.collectionConfig?.homePageSettings?.listSection?.displayMode)
     console.log('HomePage set displayOpt :', displayOpt.value)
 
     const expandedById = ref([])
@@ -322,8 +322,6 @@ export default {
       appConfig.value = newProps.applicationConfig
       collConfig.value = newProps.collectionConfig
       console.log('HomePage watch collConfig.value : ', newProps.collectionConfig)
-      displayOpt.value = newProps.collectionConfig.homePageSettings.listSection.displayMode
-      console.log('HomePage watch displayOpt.value : ', newProps.collectionConfig.homePageSettings.listSection.displayMode)
       browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
       collectionAltTitle.value = newProps.collectionConfig.homePageSettings.pageHeader.collectionAltTitle
       aboutBttnTxt.value = newProps.collectionConfig.homePageSettings.pageHeader.aboutButtonText

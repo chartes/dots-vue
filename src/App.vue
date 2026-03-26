@@ -123,9 +123,9 @@ export default {
     useCustomCss(customCss)
 
     const mergeSettings = async () => {
-      if (Object.keys(appConfig.value).length > 0) {
+      /*if (Object.keys(appConfig.value).length > 0) {
         return
-      }
+      }*/
 
       const appSettings = import.meta.glob('confs/*.conf.json', { eager: true })
       console.log('App.vue setup appSettings', appSettings)
@@ -157,18 +157,6 @@ export default {
       }
       console.log('App.vue setup appConfig.value after update 3', appConfig.value)
     }
-    /*if (import.meta.hot) {
-      import.meta.hot.accept(async () => {
-        console.log('HMR confs reload')
-
-        appConfig.value = {}
-
-        await mergeSettings()
-
-        // force refresh complet
-        store.commit('setCollectionId', store.state.collectionId ? store.state.collectionId : rootCollectionIdentifier)
-      })
-    }*/
 
     const setDtsRootResponse = async (source) => {
       console.log('App.vue setDtsRootResponse source', source)
@@ -299,20 +287,20 @@ console.log('this is where it fails 2')
       () => store.state.collectionId, async function () {
         console.log('App.vue watch STATE store.state.collectionId : ', store.state.collectionId)
         collConfigReady.value = false
-        if (!dtsRootCollectionId.value.length || !rootCollectionIdentifier.value.length) {
+        /*if (!dtsRootCollectionId.value.length || !rootCollectionIdentifier.value.length) {
           await setDtsRootResponse()
           if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
             rootCollectionIdentifier.value = dtsRootCollectionId.value
           } else {
             rootCollectionIdentifier.value = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
           }
-        }
+        }*/
 
         console.log('App.vue watch STATE dtsRootCollectionId.value, rootCollectionIdentifier.value', dtsRootCollectionId.value, rootCollectionIdentifier.value)
         if (dtsRootCollectionId.value && rootCollectionIdentifier.value) {
           watcherState.value = true
           collConfig.value = {}
-          collectionId.value = store.state.collectionId?.length ? store.state.collectionId : rootCollectionIdentifier.value
+          //collectionId.value = store.state.collectionId?.length ? store.state.collectionId : rootCollectionIdentifier.value
           console.log('App.vue watch STATE collectionId.value', collectionId.value)
           await setCurrentCollectionContext(route)
           // Collection is loaded
