@@ -4,6 +4,7 @@ import store from '@/store'
 
 
 const _baseApiURL = `${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`
+const rootCollectionId = __APP_ROOT_DTS_COLLECTION_ID__
 
 // --- Cache for getMetadataFromApi ---
 const metadataCache = new Map()
@@ -71,8 +72,7 @@ async function getMetadataFromApi (id, collConfig= null, route = null,  options 
         dtsRootCollectionId = store.state.dtsRootCollectionId
       }
       // add parent and project id for collections if missing
-      if (metadata['@type'] === 'Collection' && metadata.totalParents > 0) {
-        console.log('getMetadataFromApi: metadata.totalParents =', metadata.totalParents)
+      if (metadata['@type'] === 'Collection' && metadata.totalParents > 0 && (id && id !== dtsRootCollectionId && id !== rootCollectionId)) {
         const parentResponse = await getParentFromApi(metadata['@id'])
 
         const getMemberIds = (obj) => {
@@ -86,7 +86,7 @@ async function getMetadataFromApi (id, collConfig= null, route = null,  options 
         metadata.parent = getMemberIds(parentResponse)
         //console.log('getMetadataFromApi: metadata.parent =', metadata.parent)
       }
-      if (id && id !== dtsRootCollectionId) {
+      if (id && id !== dtsRootCollectionId && id !== rootCollectionId) {
         //console.log('getMetadataFromApi: getting project id =', id)
         const projectResponse = await getProjectFromApi(metadata['@id'])
         //console.log('getMetadataFromApi: projectResponse =', projectResponse)

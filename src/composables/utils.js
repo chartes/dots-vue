@@ -1,18 +1,31 @@
 import store from '@/store'
+const rootCollectionId = __APP_ROOT_DTS_COLLECTION_ID__
 
-// simplify and sort Object
 export function getSimpleObject(obj, parentId, projId) {
   const dtsRootCollectionId = store.state.dtsRootCollectionId
   const identifier = obj.identifier ? obj.identifier : obj['@id']
-  //console.log('check dtsRootCollectionId.length > 0 && obj.parent === dtsRootCollectionId', identifier, dtsRootCollectionId, obj.parent, parentId)
-  let projectId
-  // si racine
-  if (projId) {
-    projectId = projId
-  } else if ((dtsRootCollectionId.length > 0 && (obj.parent || parentId) === dtsRootCollectionId) && (dtsRootCollectionId.length > 0 && dtsRootCollectionId !== identifier)  || dtsRootCollectionId.length === 0 && obj.totalParents === 0) {
-    projectId = identifier
-    //console.log('identifier, dtsRootCollectionId, projectId, projId, obj.totalParents, obj.member : ', identifier, dtsRootCollectionId, projectId, projId, obj.totalParents, obj.member)
+
+  const parent = obj.parent || parentId
+
+  let projectId = projId
+
+  // ❌ cas racines → pas de projectIdentifier
+  if (
+    identifier === rootCollectionId ||
+    identifier === dtsRootCollectionId
+  ) {
+    projectId = undefined
   }
+
+  // ✅ parent = root → projectIdentifier = identifier
+  else if (
+    parent === rootCollectionId ||
+    parent === dtsRootCollectionId
+  ) {
+    projectId = identifier
+  }
+
+  // 🔁 sinon → on garde projId (hérité)
 
   const simpleObject = {
     ...obj,
@@ -26,22 +39,29 @@ export function getSimpleObject(obj, parentId, projId) {
         ? obj?.dublincore?.title?.[0]
         : obj?.dublincore?.title
     },
-    parent: obj?.parent ? obj.parent : parentId ? parentId : null,
-    // map + parent assignation
-    member: obj?.member?.map((m) => getSimpleObject(m, identifier, projectId)),
+
+    parent: parent || null,
+
+    member: obj?.member?.map((m) =>
+      getSimpleObject(m, identifier, projectId)
+    ),
 
     children: obj?.children
-      ? obj.children.map((m) => getSimpleObject(m, identifier, projectId))
+      ? obj.children.map((m) =>
+          getSimpleObject(m, identifier, projectId)
+        )
       : obj?.member
-        ? obj.member.map((m) => getSimpleObject(m, identifier, projectId))
+        ? obj.member.map((m) =>
+            getSimpleObject(m, identifier, projectId)
+          )
         : [],
 
     context: obj?.['@context'],
 
-    projectIdentifier: obj?.projectIdentifier ? obj.projectIdentifier : projectId
+    projectIdentifier: obj?.projectIdentifier
+      ? obj.projectIdentifier
+      : projectId
   }
-
-  //console.log('dtsRootCollectionId identifier simpleObject', dtsRootCollectionId, identifier, simpleObject)
 
   return simpleObject
 }

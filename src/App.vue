@@ -167,6 +167,7 @@ export default {
 
     const getBreadcrumb = async (collId) => {
       const ancestors = await getAncestors(currCollection.value)
+      console.log('ancestors', ancestors)
       breadCrumb.value = ancestors.map((collections) => {
         const collection = collections[0]
         const collConfig = appConfig.value.collectionsConf.find((config) => { return config.collectionId === collection.identifier })
@@ -300,7 +301,7 @@ console.log('this is where it fails 2')
         if (dtsRootCollectionId.value && rootCollectionIdentifier.value) {
           watcherState.value = true
           collConfig.value = {}
-          //collectionId.value = store.state.collectionId?.length ? store.state.collectionId : rootCollectionIdentifier.value
+          collectionId.value = store.state.collectionId?.length ? store.state.collectionId : undefined
           console.log('App.vue watch STATE collectionId.value', collectionId.value)
           await setCurrentCollectionContext(route)
           // Collection is loaded

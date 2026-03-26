@@ -23,6 +23,9 @@ export default defineConfig(({ mode }) => {
   return {
     base: env.VITE_APP_APP_ROOT_URL,
     plugins: [vue()],
+    define: {
+      __APP_ROOT_DTS_COLLECTION_ID__: JSON.stringify(env.VITE_APP_ROOT_DTS_COLLECTION_ID)
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),

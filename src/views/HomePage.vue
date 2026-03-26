@@ -72,7 +72,20 @@
       :class="displayOpt !== 'toc' ? `${displayOpt}-mode` : 'toc-mode'"
     >
       <CollectionTOC
-        v-if="displayOpt !== 'list'"
+        v-if="displayOpt !== 'list' && displayOpt !== 'mixed'"
+        :is-doc-projectId-included="isDocProjectIdInc"
+        :display-option="displayOpt"
+        :current-collection="currCollection"
+        :dts-root-collection-identifier="dtsRootCollectionId"
+        :root-collection-identifier="rootCollectionId"
+        :application-config="appConfig"
+        :collection-config="collConfig"
+        :toc="componentTOC"
+        :level="1"
+        :margin="0"
+      />
+      <CollectionCardWithToc
+        v-if="displayOpt === 'mixed'"
         :is-doc-projectId-included="isDocProjectIdInc"
         :display-option="displayOpt"
         :current-collection="currCollection"
@@ -107,6 +120,7 @@ import { getMetadataFromApi } from '@/api/document.js'
 import ResourcesList from '@/components/ResourcesList.vue'
 import CollectionTOC from '@/components/CollectionTOC.vue'
 import { getSimpleObject } from '@/composables/utils.js'
+import CollectionCardWithToc from "@/components/CollectionCardWithToc.vue";
 
 const collator = new Intl.Collator('fr', {
   numeric: true,
@@ -115,7 +129,7 @@ const collator = new Intl.Collator('fr', {
 
 export default {
   name: 'HomePage',
-  components: { ResourcesList, CollectionTOC },
+  components: {CollectionCardWithToc, ResourcesList, CollectionTOC },
   props: {
     isDocProjectIdIncluded: {
       type: Boolean,
