@@ -1,9 +1,9 @@
 <template>
   <div class="collection-list">
     <div class="tiles">
-      <div class="tile page-header app-width-padding">
-        <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center wrapper">
-          <div class="tile is-child article app-width-margin">
+      <div class="tile page-header">
+        <div class="is-flex is-flex-direction-row wrapper collection-header app-width-margin">
+          <div class="tile article">
             <div class="title-tile">
               <p class="title">
                 {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
@@ -29,10 +29,11 @@
               </router-link>
             </div>
           </div>
+          <div class="collection-image"></div>
         </div>
       </div>
     </div>
-    <section class="main app-width-margin">
+    <section class="main collection-header app-width-margin">
       <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
       <div
         v-if="customDescription"
@@ -71,6 +72,7 @@
       class="document-list app-width-margin"
       :class="displayOpt !== 'toc' ? `${displayOpt}-mode` : 'toc-mode'"
     >
+
       <CollectionTOC
         v-if="displayOpt !== 'list' && displayOpt !== 'mixed'"
         :is-doc-projectId-included="isDocProjectIdInc"
@@ -109,6 +111,7 @@
         :is-table-loading="isTableLoading"
         :counts="resultCount"
       />
+
     </div>
   </div>
 </template>
@@ -120,7 +123,7 @@ import { getMetadataFromApi } from '@/api/document.js'
 import ResourcesList from '@/components/ResourcesList.vue'
 import CollectionTOC from '@/components/CollectionTOC.vue'
 import { getSimpleObject } from '@/composables/utils.js'
-import CollectionCardWithToc from "@/components/CollectionCardWithToc.vue";
+import CollectionCardWithToc from '@/components/CollectionCardWithToc.vue';
 
 const collator = new Intl.Collator('fr', {
   numeric: true,
@@ -278,7 +281,7 @@ export default {
       console.log('HomePage getCustomHomeDescription collConfig.value.aboutPageSettings', collConfig.value.homePageSettings)
       const comps = Object.fromEntries(Object.entries(import.meta.glob('confs/**/*.vue')).map(([key, value]) => {
         // remove first / if exists
-        const newKey = key.replace(import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH, "").replace(/^\//, "")
+        const newKey = key.replace(import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH, '').replace(/^\//, '')
         return [newKey, value]
       }))
 
@@ -530,6 +533,9 @@ export default {
 a {
   border-bottom: none;
 }
+.collection-list {
+  --first-column-width: 70%;
+}
 #home-article {
   padding: 40px 10% 120px;
   border-bottom: 1px dotted #ffffff;
@@ -538,80 +544,106 @@ a {
 #home-article article {
   margin: 0;
 }
-#home-article h1,
-#home-article {
-  font-family: "Barlow", sans-serif !important;
-}
 #home-article h1 {
   margin: 1em 0 1em 0;
   padding-top: 20px;
   padding-bottom: 20px;
-  font-size: 25px;
-  font-weight: 500;
-  line-height: 33px;
+
+  font-family: var(--font-primary), sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
   text-transform: none;
-  color: var(--text-color)
+  color: #000;
 }
 
 #home-article {
-  margin-bottom: 30px !important;
-  padding: 10px 0 10px !important;
+  width: calc(var(--first-column-width) );
+  margin: 0 0 30px !important;
+  padding: 45px !important;
+  background-color: #f1f1f1;
 }
 .wrapper {
   width: 100%;
 }
-.tile {
+
+.collection-list:not(.root-collection-list) .page-header .wrapper {
+  background: #FFFFFF;
+  gap: 4px;
+}
+
+.page-header .wrapper > .tile {
+  padding: 25px 45px;
+}
+
+.collection-list.root-collection-list .page-header .wrapper > .tile {
+  background: #0f0f0f85;
+}
+
+.collection-list:not(.root-collection-list) .page-header .wrapper > .tile {
+  background: #0f0f0f;
+}
+
+.collection-image {
+  width: calc(100% - var(--first-column-width));
+  height: 330px;
+  border-bottom-right-radius: 52px;
   background-color: #FBF8F4;
 }
-.page-header {
-  background-color: #FBF8F4;
+
+.collection-list.root-collection-list .collection-image,
+.collection-list:not(.root-collection-list) .tile.page-header {
+  background: transparent;
+}
+
+.collection-list:not(.root-collection-list) .collection-image,
+.collection-list.root-collection-list .tile.page-header {
   background: url(../assets/images/Designer.png) center 80% / cover no-repeat;
-  /* filter: invert(1); */
 }
-.tile.is-child {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: transparent;
+
+.collection-list.root-collection-list .collection-image {
+  visibility: hidden;
+}
+
+.tile.article,
+.tile.app-width-margin {
+  position: relative;
   width: 100%;
 }
+
 .title-tile {
   display: flex;
   flex-direction: row;
   justify-content: center;
   width: 100%;
-  margin-top: 30px;
-  margin-bottom: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  background-color: #000000cc;
   border-radius: 6px;
-  font-family: "Inter", sans-serif;
+
   & > p {
       color: white !important;
   }
 }
+
 .project-tile {
+  position: absolute;
+  bottom: 0;
+  left: 45px;
+
   display: flex;
   width: fit-content;
-  margin-bottom: 20px;
   padding: 6px 10px;
-  background-color: #000000cc;
-  /* border: #b9192f 1px solid; */
-  border-radius: 6px;
+  background-color: var(--fill-color);
+  transform: translateY(50%);
+
   & > a {
-    font-family: "Barlow Semi Condensed", sans-serif;
-    font-weight: 500;
-    /* text-transform: uppercase; */
+    font-family: var(--font-secondary), sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    text-transform: uppercase;
     text-decoration: none;
     color: white;
-    /* color: #b9192f; */
   }
 }
-.collection-list {
-  /* background-color: #FBF8F4; */
-}
+
 .document-list {
   display: flex;
   justify-content: center;
@@ -624,6 +656,7 @@ a {
 .no-dts-description {
   margin: 25px auto 25px;
 }
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -631,8 +664,74 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+.collection-header :deep(.home-content) {
+  font-family: var(--font-primary), sans-serif;
+  font-weight: normal;
+  line-height: 1.4;
+  color: var(--default-text-color);
+
+  a {
+    color: var(--default-text-color);
+    text-decoration: underline;
+
+    &:hover {
+      color: var(--text-color);
+    }
+  }
+  p, ul {
+    margin-bottom: 10px;
+  }
+  li {
+    line-height: 1.4;
+  }
+}
+
+
+
+
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+@media screen and (max-width: 768px) {
+  .collection-list {
+    --first-column-width: 100%;
+  }
+
+  .collection-list:not(.root-collection-list) .page-header .wrapper {
+    gap: 0;
+  }
+
+  .collection-header.app-width-margin {
+    padding: 0;
+  }
+
+  .collection-header.app-width-margin :deep(.home-content.app-width-padding)  {
+    padding: 0;
+  }
+
+  .pagination {
+    flex-direction: column !important;
+    justify-content: center;
+  }
+}
+
+
+@media screen and (max-width: 640px) {
+
+  #home-article {
+    padding: 20px !important;
+  }
+
+  .page-header .wrapper > .tile {
+    padding: 25px 20px;
+  }
+
+  .project-tile {
+    left: 20px;
+  }
+
+}
+
 </style>

@@ -46,16 +46,16 @@
                 />
               </div>
               <div class="collection-metadata">
-                <div class="collection-metadata-author-date">
+                <div class="collection-metadata-author-date-title">
                   <span>
                     {{ Array.isArray(item.dublincore.creator)
                       ? item.dublincore.creator.join(', ')
                       : item.dublincore.creator }}
                   </span>
                   <span>{{ item.dublincore.date }}</span>
-                </div>
-                <div class="collection-metadata-title">
-                  {{ item.title }}
+                  <div class="collection-metadata-title">
+                    {{ item.title }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -153,9 +153,7 @@
       :class="expandedById[currCollection.identifier] ? 'expanded': ''"
     >
       <div v-if="expandedById[currCollection.identifier]">
-        <ul
-          class="tree"
-        >
+        <ul class="tree">
           <template
             v-for="(item, index) in componentTOC"
             :key="item.identifier"
@@ -334,9 +332,7 @@ const collator = new Intl.Collator('fr', {
 
 export default {
   name: 'CollectionTOC',
-
   components: { ResourceIcon, CollectionIcon, TocArrows, Pagination },
-
   props: {
     isDocProjectIdIncluded: {
       type: Boolean,
@@ -931,7 +927,7 @@ export default {
   }
 
   .tree li {
-    font-family: "Barlow Semi Condensed", sans-serif;
+    font-family: var(--font-secondary), sans-serif;
     font-size: 15px;
     font-weight: 500;
     line-height: 22px;
@@ -940,6 +936,15 @@ export default {
 
     &::before {
       display: none;
+
+      /* DENIS MAQUETTE */
+      font-family: var(--font-secondary), sans-serif;
+      margin-left: -8px;
+      margin-right: 11px;
+      content: '●';
+      font-size: 10px;
+      color: #999;
+      float: left;
     }
 
     & > .li.container {
@@ -961,7 +966,9 @@ export default {
     &.more {
       padding-left: 0 !important;
 
-      & > .li.container > a, span {
+      & > .li.container > a, span,
+      &.li.container > a, span, /* DENIS Maquette */
+      &.li.container > span  /* DENIS Maquette */ {
         margin-top: 4px;
         &.is-current {
           font-weight: bold !important;
@@ -990,10 +997,9 @@ button.toc-toggle {
   padding: 0;
   margin: 0;
 
-  color: var(--fill-color);
-
   cursor: pointer;
 }
+
 .is-current {
   color: var(--text-color) !important;
 }
@@ -1168,21 +1174,51 @@ button.toc-toggle {
 
 /* Image */
 .card-mode .card-image {
-  height: 180px;
-  flex-shrink: 0;
-  overflow: hidden;
-  background: var(--fill-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    position: relative;
+    display: block;
+    background: var(--fill-color);
+    width: 100%;
+    padding-bottom: 65%;
+
+    img {
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
 }
 
-.card-mode .card-image img {
-  max-height: 100%;
-  max-width: 100%;
-}
 
 /* Metadata */
+
+.card-mode .collection-metadata-author-date-title,
+.card-mode .collection-description {
+  padding: 20px 25px 30px;
+}
+.card-mode .collection-metadata-author-date-title {
+  width: 100%;
+  background-color: #000;
+
+  & > .collection-metadata-author-date {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #FFF;
+  }
+
+  .card-mode .collection-metadata-title {
+    font-weight:700;
+    font-size:24px;
+    line-height: 1.2;
+    color: #FFF;
+  }
+}
+.card-mode .collection-description {
+  width: 100%;
+  padding-top: 20px;
+  text-transform: none;
+}
 .card-mode .collection-metadata {
   display: flex;
   flex-direction: column;
@@ -1190,35 +1226,20 @@ button.toc-toggle {
   background: black;
 }
 
-.card-mode .collection-metadata-author-date {
-  display: flex;
-  flex-direction: column;
-  padding: 5px 18px;
-  line-height: 1.3;
-  word-break: break-word;
-}
-
-.card-mode .collection-metadata-title {
-  display: block;
-  padding: 5px 18px;
-  font-family: Roboto-Bold, SansSerif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.3;
-  word-break: break-word;
-}
-
 /* Description */
 .card-mode .collection-description {
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100%;
-  padding: 18px;
+  padding-top: 20px;
   border-bottom-right-radius: 18px;
   color: #333333;
   background: var(--meta-area-fill-color);
   overflow: hidden;
+  text-transform: none;
 }
+
 
 .card-mode .collection-description-text {
   --line-clamp: 11;
@@ -1351,15 +1372,15 @@ button.toc-toggle {
 }
 
 .mixed-mode .collection-toc-area-header {
-  padding-left: 18px;
-  padding-top: 18px;
-  border-top-left-radius: 25px;
-  font-family: Roboto-Bold, SansSerif;
-  font-size: 20px;
-  font-weight: 700;
-
-  color: var(--text-color);
+    display: block;
+    padding: 0 30px;
+    margin-bottom: 10px;
+    font-family: var(--font-primary), sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--text-color)
 }
+
 .mixed-mode .expanded.menu {
   border-radius: 0;
 }
@@ -1385,5 +1406,207 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+
+@media screen and (max-width: 1024px) {
+  .card-mode.resources-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .card-mode.resources-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+
+/*  DENIS Maquette
+
+  flex-direction: row;
+  align-content: center;
+  gap: 10px;
+  width: 100%;
+}
+.document-card .card-header {
+  width: 100%;
+  box-shadow: none;
+}
+.document-card .card-header .document-folder {
+  width: 100%;
+  border-radius: 6px;
+
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--default-text-color);
+
+  & > a {
+    border: none;
+    color: var(--default-text-color);
+  }
+  & > .card-header-first-line {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+    & > .collection-elec-id {
+      margin: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #b9192f;
+    }
+    & > .collection-metadata {
+      width: 100%;
+      font-family: var(--font-primary), sans-serif;
+
+      & > .card-image {
+        a {
+          position: relative;
+          display: block;
+          width: 100%;
+          padding-bottom: 65%;
+
+          img {
+            position: absolute;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+          }
+        }
+      }
+
+      & > .collection-metadata-author-date-title,
+      & > .collection-description {
+        padding: 20px 25px 30px;
+      }
+      & > .collection-metadata-author-date-title {
+        width: 100%;
+        background-color: #000;
+
+        & > .collection-metadata-author-date {
+          margin-bottom: 10px;
+          font-size: 16px;
+          color: #FFF;
+        }
+        & > .collection-metadata-title {
+          font-weight:700;
+          font-size:24px;
+          line-height: 1.2;
+          color: #FFF;
+        }
+      }
+      & > .collection-description {
+        width: 100%;
+        padding-top: 20px;
+        text-transform: none;
+      }
+    }
+  }
+}
+
+.card-view .card-header {
+  width: 432px;
+  align-self: flex-start;
+  border-radius: 42px 42px 0;
+  padding: 30px 45px 45px 30px;
+  background: var(--fill-color) !important;
+  box-shadow: none;
+}
+
+.card-view .card-header .collection-metadata .collection-metadata-title {
+  display: block;
+  background: transparent !important;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #FFF;
+}
+
+.card-view .document-card {
+  border: none;
+  margin-bottom: 60px;
+}
+
+.card-view .collection-toc-area .menu {
+  border-radius: 42px 0 0 0;
+}
+
+.card-view .collection-toc-area .menu.expanded {
+  background: #F1F1F1;
+  padding: 30px 0;
+}
+
+.card-view .collection-toc-area .menu.expanded ul.tree {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  border-bottom: 4px solid #FFFFFF;
+}
+
+.card-view .collection-toc-area .menu.expanded ul.tree li:not(:last-of-type),
+.card-view .collection-toc-area .menu.expanded ul.tree:not(:last-of-type) {
+  border-bottom: 4px solid #FFFFFF;
+}
+
+.card-view .collection-toc-area .menu.expanded ul.tree li {
+  padding: 13px 30px 11px;
+}
+
+.collection-toc-area .menu.expanded ul.tree li {
+  font-family: var(--font-primary), sans-serif;
+}
+
+.collection-toc-area .menu ul.tree li span,
+.collection-toc-area .menu ul.tree li a {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  align-items: flex-start;
+}
+
+.collection-toc-area .menux ul.tree li a {
+  padding-left: 29px;
+}
+
+.collection-toc-area .menu ul.tree li a > span{
+  margin-top: 5px;
+}
+
+.collection-toc-area .menu ul.tree li :deep(.icon-wrapper) {
+  --icon-fg: var(--fill-color);
+  --size: 33px !important;
+}
+
+.collection-toc-area .menu ul.tree li button.toc-toggle :deep(.icon-wrapper) {
+  --icon-fg: #6E6E6E;
+}
+
+.collection-toc-area .menu.expanded ul.tree li::before {
+  display: none;
+}
+
+.document-card .card-image {
+  display: none;
+}
+
+.document-card .card-content {
+  color: #000;
+  padding: 1.5rem 0;
+  border-bottom: 7px solid #e8e7e0;
+}
+
+@media screen and (max-width: 768px) {
+  .collection-toc-area, .modal-wrapper {
+    .tree li {
+      margin-left: 15px !important;
+      margin-bottom: 8px;
+    }
+  }
+}
+
+*/
 
 </style>

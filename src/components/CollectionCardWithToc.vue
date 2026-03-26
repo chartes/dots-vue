@@ -866,14 +866,13 @@ button.toc-toggle {
 }
 
 .mixed-mode .collection-toc-area-header {
-  padding-left: 18px;
-  padding-top: 18px;
-  border-top-left-radius: 25px;
-  font-family: Roboto-Bold, SansSerif;
-  font-size: 20px;
+  display: block;
+  padding: 0 30px;
+  margin-bottom: 10px;
+  font-family: var(--font-primary), sans-serif;
   font-weight: 700;
-
-  color: var(--text-color);
+  font-size: 28px;
+  color: var(--text-color)
 }
 .mixed-mode .expanded.menu {
   border-radius: 0;

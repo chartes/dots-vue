@@ -438,7 +438,6 @@ export default {
 <style scoped>
 .document-metadata {
   width: 100%;
-  font-family: "Barlow", sans-serif !important;
 }
 .document-metadata-header {
   display: flex;
@@ -448,11 +447,13 @@ export default {
   border-radius: 6px;
   position: relative;
 
+  font-family: var(--font-primary), sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 22px;
   text-decoration: none;
   border: none;
+
   & > div.resource {
     display: flex;
     flex-direction: row;
@@ -466,7 +467,7 @@ export default {
 }
 .document-metadata-header span.metadata-header-label.collection{
   margin-right: 40px;
-  font-family: "Barlow Semi Condensed", sans-serif !important;
+  font-family: var(--font-secondary), sans-serif !important;
   font-weight: 500;
   color: #4a4a4a;
 }
@@ -474,7 +475,7 @@ export default {
   margin-right: 47px;
   margin-left: auto;
   text-align: left;
-  font-family: "Barlow Semi Condensed", sans-serif !important;
+  font-family: var(--font-secondary), sans-serif !important;
   font-weight: 500;
   color: #4a4a4a;
 }
@@ -540,12 +541,12 @@ aside.menu > .columns > .column:nth-child(3) {
 }
 .column .title, span.title,
 .column {
-  font-family: "Barlow", sans-serif;
-  font-size: 15px;
+  font-family: var(--font-primary), sans-serif;
+  font-size: 16px;
   font-weight: normal;
   font-style: normal;
+
   & > a {
-    font-family: "Barlow", sans-serif;
     font-weight: normal;
     font-style: normal;
     color: #4a4a4a;
@@ -577,7 +578,7 @@ figure {
   border: none;
 }
 
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 1320px) {
   .menu-list,
   aside.menu > .columns {
     flex-direction: column;
@@ -597,7 +598,7 @@ figure {
     max-width: 75% !important;
   }
 }
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   aside.menu > .columns > .column:nth-child(1) {
     width: 50% !important;
   }

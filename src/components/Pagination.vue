@@ -87,6 +87,7 @@ watch(currentPage, (val) => {
 })
 </script>
 <style scoped>
+
 .pagination-controls {
   display: flex;
   align-items: center;
@@ -94,43 +95,49 @@ watch(currentPage, (val) => {
 
   & > * {
     display: inline-block;
-    width: 38px;
-    height: 38px;
     margin-right: 4px;
   }
-  & > a {
+  & > a,
+  & > input.current-page,
+  & span.total-pages,
+  & > span.label-sur-page {
     display: inline-block;
-    width: 38px;
-    height: 38px;
-    background-color: #C3C3C3;
+    width: 59px;
+    height: 59px;
+    line-height: 59px;
+  }
+  & span.total-pages,
+  & > a {
+    background-color: #F1F1F1;
     border-radius: 3.2px;
+  }
+  & > a.button {
+    border: solid 1px #dbdbdb;
   }
   & > a.disabled {
     cursor: not-allowed !important;
   }
   & > a.first-page {
-    background: #C3C3C3 url(../assets/images/page_debut.svg)  center / 28px auto no-repeat;
+    background: #F1F1F1 url(../assets/images/page_debut.svg)  center / 17px auto no-repeat;
   }
   & > a.previous-page {
-    background: #C3C3C3 url(../assets/images/page_avant.svg) center / 28px auto no-repeat;
+    background: #F1F1F1 url(../assets/images/page_avant.svg) center / 23px auto no-repeat;
   }
   & > a.next-page {
-    background: #C3C3C3 url(../assets/images/page_suivant.svg) center / 28px auto no-repeat;
+    background: #F1F1F1 url(../assets/images/page_suivant.svg) center / 24px auto no-repeat;
   }
   & > a.last-page {
-    background: #C3C3C3 url(../assets/images/page_fin.svg) center / 28px auto no-repeat;
+    background: #F1F1F1 url(../assets/images/page_fin.svg) center / 17px auto no-repeat;
   }
   & > input.current-page {
-    height: 38px !important;
     padding: 0 !important;
-    /* border: 1px solid #C00055; */
-    border: 1px solid var(--text-color);
+    border: 1px solid #dbdbdb;
     border-radius: 3.2px;
 
     font-family: inherit;
     font-size: 18px;
     /* color: #CB2158; */
-    color: var(--text-color);
+    color: #6e6e6e;
     font-weight: 800;
     text-align: center;
     text-decoration: none;
@@ -138,78 +145,45 @@ watch(currentPage, (val) => {
     &:focus {
       outline: 1px solid #C00055;
     }
-    &:disabled {
-      cursor: not-allowed !important;
-    }
   }
 
   & > span.label-sur-page {
+    width: auto;
+    padding: 0 3px;
     font-family: inherit;
-    font-size: 11px;
-    line-height: 38px;
+    font-size: 31px;
     color: #979797;
-    font-weight: 500;
+    font-weight: 400;
     text-align: center;
     text-transform: uppercase;
   }
 
-  & > .page-box {
-
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-
-    & > span.total-pages {
-      display: inline-block;
-      width: 100%;
-      background-color: #DFDFDF;
-      border-radius: 3.2px;
-      padding-right: 0;
-
-      font-family: inherit;
-      font-size: 18px;
-      line-height: 38px;
-      color: #818181;
-      text-align: center;
-      font-weight: 600;
-      text-transform: uppercase;
-
-      &.dot-flash {
-        width: 38px;
-        height: 38px;
-
-        background: linear-gradient(
-          90deg,
-          #eee 25%,
-          #ddd 50%,
-          #eee 75%
-        );
-        background-size: 200% 100%; /* width doubled for pour animation */
-        animation: shimmer 1.4s ease infinite;
-      }
-    }
+  & span.total-pages {
+    background-color: #DFDFDF;
+    border-radius: 3.2px;
+    font-family: inherit;
+    color: #818181;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
   }
 }
-
 .pagination {
   gap: 20px;
   width: 100%;
   margin: 0;
-  padding-bottom: 5px;
-  /* border-bottom: solid 1px #b9192f; */
-
-  font-size: 18px;
-  font-weight: 700;
 }
-.toc-mode .pagination {
-  display: none !important;
-}
-
 .pagination-documents-count {
   margin-right: auto;
-  /* color: #b9192f; */
-  color: var(--text-color);
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 48px;
+  color: #000000;
   border: none;
+}
+
+.toc-mode .pagination {
+  display: none !important;
 }
 
 .list-mode .pagination {
@@ -227,4 +201,33 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+
+@media screen and (max-width: 768px) {
+  .pagination-documents-count {
+    margin-right: 0;
+    font-size: 24px;
+  }
+}
+
+@media screen and (max-width: 640px) {
+
+  .pagination-controls {
+    & > * {
+      width: 38px;
+      height: 38px;
+      margin-right: 4px;
+    }
+    & > a,
+    & > input.current-page,
+    & span.total-pages,
+    & > span.label-sur-page {
+      display: inline-block;
+      width: 39px;
+      height: 39px;
+      line-height: 39px;
+    }
+  }
+}
+
 </style>

@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="47px" height="47px" viewBox="0 0 47 47" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
-    <title>Group 4</title>
-    <desc>Created with Sketch.</desc>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="HOME---tableau-01" transform="translate(-1105.000000, -729.000000)">
-            <g id="Group" transform="translate(784.000000, 729.000000)">
-                <g id="Group-4" transform="translate(321.000000, 0.000000)">
-                    <rect id="Rectangle-Copy-5" fill="#C3C3C3" x="0" y="0" width="47" height="47" rx="4"></rect>
-                    <path d="M28.6666667,33 L31.6666667,33 L31.6666667,15 L28.6666667,15 L28.6666667,33 Z M18.115,15 L16,17.1165 L22.885,24 L16,30.885 L18.115,33 L27.115,24 L18.115,15 Z" id="Fill-1" fill="#FFFFFF"></path>
-                </g>
-            </g>
-        </g>
-    </g>
+<svg width="17" height="22" viewBox="0 0 17 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <path fill="none" stroke="#848484" stroke-width="2.1072967" stroke-linecap="round" stroke-miterlimit="10" transform="matrix(-1 0 0 1 10.1021 1.05359)" d="M0.3888889 9L8.9444447 0.39130434" fill-rule="evenodd"/>
+    <path fill="none" stroke="#848484" stroke-width="2.1072967" stroke-linecap="round" stroke-miterlimit="10" transform="matrix(-1 0 0 -1 10.1021 19.0536)" d="M0.3888889 9L8.9444447 0.39130434" fill-rule="evenodd"/>
+    <path fill="none" stroke="#848484" stroke-width="2.1072967" stroke-linecap="square" stroke-miterlimit="10" transform="matrix(-1 0 0 1 15.1021 1.05359)" d="M0.28125 0L0.28125 18" fill-rule="evenodd"/>
 </svg>

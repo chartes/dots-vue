@@ -63,28 +63,29 @@ export default {
 }
 </script>
 <style scoped>
-.home {
-  font-family: "Barlow", sans-serif;
-}
 .home-content {
   padding-top: 10px /* adjust depending if you also have a title - see below */
+}
+.home > * {
+  font-family: var(--font-primary), sans-serif;
+  color: #333333;
 }
 .home h1 {
   padding-top: 20px;
   padding-bottom: 20px;
-  font-family: "Barlow", sans-serif;
   text-align: left;
-  font-size: 25px;
-  font-weight: 500;
-  line-height: 33px;
+
+  font-family: var(--font-primary), sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
   text-transform: none;
-  color: var(--text-color);
+  color: #000;
 }
 .home h2 {
   margin: 0 !important;
   padding-top: 20px;
   padding-bottom: 20px;
-  font-family: "Barlow", sans-serif;
   text-align: left;
   font-size:20px;
   font-weight: 500;
@@ -100,8 +101,8 @@ export default {
 .home a {
   color: #B9192F;
   word-break: break-word;
+  text-decoration: underline;
   &:hover {
-    text-decoration: underline !important;
   }
 }
 .home table,
