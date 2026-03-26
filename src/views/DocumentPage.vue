@@ -25,7 +25,7 @@
           >
             <IconCircleArrow
               class="icon-circle-arrow-left"
-              size="20"
+              :size="20"
               fg-color="var(--fill-color)"
               direction="left"
               @click.prevent="breadcrumbToLeft"
@@ -45,14 +45,13 @@
                 <i class="fa fa-home"></i>
               </router-link>
             </li>-->
-
             <li
-              v-for="(item, index) in arianeCollection.slice(1)"
+              v-for="(item, index) in (arianeCollection.length === 1 ? arianeCollection : isDocProjectIdInc ? arianeCollection.slice(1): arianeCollection)"
               :key="index"
               :class="{ active: index === activeBreadcrumb }"
             >
               <template
-                v-if="item.length > 1"
+                v-if="item.length > 1 && selectStoreCollection(item)?.identifier"
               >
                 <a
                   :class="selectedCollectionId === selectStoreCollection(item).identifier ? 'active' : ''"
@@ -109,7 +108,7 @@
           >
             <IconCircleArrow
               class="icon-circle-arrow-right"
-              size="20"
+              :size="20"
               fg-color="var(--fill-color)"
               direction="right"
               @click.prevent="breadcrumbToRight"
@@ -166,6 +165,7 @@
                   <div class="menu app-width-margin">
                     <CollectionTOC
                       :is-doc-projectId-included="isDocProjectIdInc"
+                      :display-option="'toc'"
                       :dts-root-collection-identifier="dtsRootCollectionId"
                       :root-collection-identifier="rootCollectionId"
                       :application-config="appConfig"
@@ -1497,6 +1497,7 @@ export default {
     }
 
     function selectStoreCollection(levelListItems) {
+      console.log('selectStoreCollection levelListItems', levelListItems)
       if (store.state.collectionId && levelListItems.every(coll => coll.citeType === 'Collection')) {
         console.log('selectStoreCollection multiple items returning context coll', levelListItems.find(coll => coll.identifier === store.state.collectionId))
         return levelListItems.find(coll => coll.identifier === store.state.collectionId)

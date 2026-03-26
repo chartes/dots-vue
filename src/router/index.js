@@ -14,7 +14,7 @@ import { getProjectFromApi } from '@/api/document'
 const rootURL = `${import.meta.env.VITE_APP_APP_ROOT_URL}`
 console.log('router const rootURL :', rootURL)
 
-const isDocProjectIdIncluded = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0 ? true : `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID}`.toLowerCase() === 'true'
+const isDocProjectIdIncluded = `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID}`.toLowerCase() === 'true'
 console.log('router const isDocProjectIdIncluded :', isDocProjectIdIncluded)
 // const appBasePath = isDocProjectIdIncluded ? '' : ':collId'
 
@@ -46,7 +46,7 @@ if (isDocProjectIdIncluded) {
         component: () => import('@/views/TermsOfService.vue')
       },
       {
-        path: '/:collId/document/:id',
+        path: '/:collId?/document/:id',
         name: 'Document',
         component: () => import('@/views/DocumentPage.vue'),
         props: true

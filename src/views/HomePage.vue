@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="(rootCollectionId === dtsRootCollectionId && collectionId === rootCollectionId && displayOpt !== 'list' && currentCollection.member.every(item => item.citeType === 'Collection')) || (displayOpt === 'card' && currentCollection.member.every(item => item.citeType === 'Collection'))"
-    class="collection-list"
-  >
+  <div class="collection-list">
     <div class="tiles">
       <div class="tile page-header app-width-padding">
         <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center wrapper">
@@ -38,7 +35,7 @@
     <section class="main app-width-margin">
       <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
       <div
-        v-if="customCollectionDescription"
+        v-if="customDescription"
         id="home-article"
         class="article app-width-margin"
       >
@@ -72,187 +69,53 @@
     </section>
     <div
       class="document-list app-width-margin"
+      :class="displayOpt !== 'toc' ? `${displayOpt}-mode` : 'toc-mode'"
     >
-      <div class="is-flex">
-        <div
-          v-if="totalPages"
-          class="pagination has-text-centered is-flex is-flex-direction-row is-justify-content-center"
-        >
-          <div class="pagination-documents-count">
-            {{ componentTOC.length }} {{ componentTOC.length === 1 ? 'collection' : 'collections' }}
-          </div>
-          <div class="pagination-controls">
-            <a
-              :class="currentPage <= 1 ? 'button first-page disabled' : 'button first-page'"
-              @click="currentPage <= 1 ? null : currentPage = 1"
-            />
-            <a
-              :class="currentPage <= 1 ? 'button previous-page disabled' : 'button previous-page'"
-              @click="currentPage <= 1 ? null : --currentPage"
-            />
-            <input
-              v-model="currentPage"
-              name="page"
-              type="number"
-              min="1"
-              :max="totalPages"
-              placeholder="Page..."
-              class="current-page"
-              @change.prevent="currentPage = parseInt(p)"
-            >
-            <span class="label-sur-page">/</span>
-            <span class="total-pages">{{ totalPages }}</span>
-            <a
-              :class="currentPage < totalPages ? 'button next-page' : 'button next-page disabled'"
-              @click="currentPage < totalPages ? ++currentPage : null"
-            />
-            <a
-              :class="currentPage < totalPages ? 'button last-page' : 'button last-page disabled'"
-              @click="currentPage < totalPages ? currentPage = totalPages : null"
-            />
-          </div>
-        </div>
-      </div>
-      <div>
-        <CollectionTOC
-          :is-doc-projectId-included="isDocProjectIdInc"
-          :display-option="displayOpt"
-          :current-collection="currCollection"
-          :dts-root-collection-identifier="dtsRootCollectionId"
-          :root-collection-identifier="rootCollectionId"
-          :application-config="appConfig"
-          :collection-config="collConfig"
-          :toc="currentPageData"
-          :margin="0"
-          :key="currentPageData"
-        />
-      </div>
-    </div>
-  </div>
-  <div
-    v-else
-    class="home-mask"
-    :class="homeCssClass"
-  >
-    <div class="tiles">
-      <div class="tile page-header app-width-padding">
-        <div class="is-flex is-flex-direction-column is-align-items-center is-justify-content-center wrapper">
-          <div class="tile is-child app-width-margin">
-            <div class="title-tile">
-              <p class="title">
-                {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
-              </p>
-            </div>
-            <div
-              v-if="aboutBttnTxt"
-              class="project-tile"
-            >
-              <router-link
-                v-if="collectionId !== rootCollectionId"
-                :to="{ name: 'About', params: {collId: collectionId}}"
-                active-class="active"
-              >
-                {{ aboutBttnTxt }}
-              </router-link><!-- , params: {collId: collectionId}  -->
-              <router-link
-                v-else
-                :to="{ name: 'About'}"
-                active-class="active"
-              >
-                {{ aboutBttnTxt }}
-              </router-link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <section class="main app-width-margin">
-      <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
-      <div
-        v-if="customCollectionDescription"
-        id="home-article"
-        class="article app-width-margin"
-      >
-        <component
-          :is="customDescription"
-          :dts-collection-description="currCollection.description"
-          :custom-collection-description="collectionDescription"
-          :application-root-url="appRootUrl"
-        />
-        <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
-      </div>
-      <!-- no homePageSettings.descriptionSection.customCollectionDescription : use DTS API collection description if available -->
-      <div
-        v-else-if="currCollection.description"
-        id="home-article"
-        class="article app-width-margin"
-      >
-        <h1>La collection</h1>
-        {{ currCollection.description }}
-      </div>
-      <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.descriptionSection.collectionDescription) -->
-      <div
-        v-else-if="collectionDescription"
-        id="home-article"
-        class="article app-width-margin"
-      >
-        <h1>La collection</h1>
-        {{ collectionDescription }}
-        <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
-      </div>
-    </section>
-    <div
-      class="collection-toc-area app-width-margin"
-      :class="expandedById[collectionId] ? 'expanded': ''"
-    >
-      <div
-        class="collection-toc-area-header"
-        @click.prevent="toggleExpanded(collectionId)"
-      >
-        <a
-          href="#"
-          class="collBrowseButton"
-        >
-          {{ browseBttnTxt }}
-        </a>
-        <a
-          href="#"
-          class="toggle-btn"
-          :class="expandedById[collectionId] ? 'expanded': ''"
-        />
-      </div>
-      <div
-        v-if="componentTOC.length > 0"
-        class="menu app-width-margin"
-        :class="expandedById[collectionId] ? 'expanded': ''"
-      >
-        <div v-if="(expandedById[collectionId] && componentTOC.length > 0)">
-          <CollectionTOC
-            :is-doc-projectId-included="isDocProjectIdInc"
-            :display-option="displayOpt"
-            :current-collection="currCollection"
-            :dts-root-collection-identifier="dtsRootCollectionId"
-            :root-collection-identifier="rootCollectionId"
-            :application-config="appConfig"
-            :collection-config="collConfig"
-            :toc="componentTOC"
-            :margin="0"
-          />
-        </div>
-      </div>
+      <CollectionTOC
+        v-if="displayOpt !== 'list'"
+        :is-doc-projectId-included="isDocProjectIdInc"
+        :display-option="displayOpt"
+        :current-collection="currCollection"
+        :dts-root-collection-identifier="dtsRootCollectionId"
+        :root-collection-identifier="rootCollectionId"
+        :application-config="appConfig"
+        :collection-config="collConfig"
+        :toc="componentTOC"
+        :level="1"
+        :margin="0"
+      />
+
+      <!-- RESOURCE LIST AS LIST OR TOC (conf: homePageSettings.listSection.displayMode = 'list' or 'toc' or unset) -->
+      <ResourcesList
+        v-else-if="displayOpt === 'list'"
+        :data="dataSource"
+        :columns-config="columns"
+        :page-size="pageSize"
+        :is-doc-project-id-included="isDocProjectIdInc"
+        :root-collection-identifier="rootCollectionId"
+        :is-table-loading="isTableLoading"
+        :counts="resultCount"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { computed, defineAsyncComponent, inject, reactive, ref, shallowRef, watch } from 'vue'
+import { computed, defineAsyncComponent, inject, onBeforeUnmount, reactive, ref, shallowRef, watch } from 'vue'
 
 import { getMetadataFromApi } from '@/api/document.js'
+import ResourcesList from '@/components/ResourcesList.vue'
 import CollectionTOC from '@/components/CollectionTOC.vue'
+import { getSimpleObject } from '@/composables/utils.js'
+
+const collator = new Intl.Collator('fr', {
+  numeric: true,
+  sensitivity: 'base'
+})
 
 export default {
   name: 'HomePage',
-  components: { CollectionTOC },
+  components: { ResourcesList, CollectionTOC },
   props: {
     isDocProjectIdIncluded: {
       type: Boolean,
@@ -283,7 +146,7 @@ export default {
       required: true
     }
   },
-  async setup (props) {
+  setup (props) {
     const state = reactive({
       isTreeOpened: false
     })
@@ -297,6 +160,7 @@ export default {
     const appConfig = ref(props.applicationConfig)
     const collConfig = ref(props.collectionConfig)
     const collectionDescription = ref('')
+
     const customCollectionDescription = ref(props.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription ? props.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription : {})
     console.log('HomePage setup customCollectionDescription', customCollectionDescription.value)
     const customDescription = shallowRef('')
@@ -308,7 +172,12 @@ export default {
     console.log('HomePage setup collectionId', collectionId.value)
 
     const componentTOC = ref([])
-    const currCollection = ref(props.currentCollection)
+    const currCollection = computed(() => props.currentCollection)
+
+    const dataSource = ref([])
+    const pageSize = computed(() =>
+      props.collectionConfig?.homePageSettings?.listSection?.cardCollectionPerPage
+    )
 
     const customSort = (A, B) => {
       const bIndex = new Map(B.map((val, index) => [val, index]))
@@ -326,46 +195,42 @@ export default {
           return -1
         } else if (bInB) {
           return 1
-        } else {
-          return a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1 // alphabetical sort
         }
+
+        // DEFAULT SORTING: natural + French + without diacritics
+        return collator.compare(a.title, b.title)
       })
     }
 
-    if (collConfig.value.homePageSettings && collConfig.value.homePageSettings.listSection && collConfig.value.homePageSettings.listSection.displaySort && collConfig.value.homePageSettings.listSection.displaySort.length > 0) {
-      // console.log('HomePage setup displaySort', collConfig.value.homePageSettings.listSection.displaySort)
-      componentTOC.value = customSort([...currCollection.value.member], collConfig.value.homePageSettings.listSection.displaySort)
-    } else {
-      componentTOC.value = [...currCollection.value.member].sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
-    }
-    console.log('HomePage currentCollection.value / componentTOC.value : ', currCollection.value, componentTOC.value)
-    console.log('HomePage componentTOC / collectionId : ', Object.fromEntries(componentTOC.value.map(col => [col.identifier, false])), componentTOC.value, collectionId, currCollection)
+    console.log('HomePage set currentCollection.value / componentTOC.value (not yet set) : ', currCollection.value, componentTOC.value)
 
     const displayOpt = ref(props.collectionConfig.homePageSettings.listSection.displayMode)
-    const currentPage = ref(1)
-    const pageSize = ref(0)
-    const totalPages = ref(1)
-    const currentPageData = ref([])
+    console.log('HomePage set displayOpt :', displayOpt.value)
 
     const expandedById = ref([])
 
     const toggleExpanded = async (collId) => {
-      console.log('HomePage Modal toggleExpanded', collId, componentTOC.value)
+      console.log('HomePage toggleExpanded currCollection.value, collId, componentTOC.value expandedById.value', currCollection.value, collId, componentTOC.value, expandedById.value)
       if (componentTOC.value.length === 0) {
+        console.log('HomePage toggleExpanded triggered')
         const response = await getMetadataFromApi(collId, null, null)
-        response.member.forEach(m => {
-          m.identifier = m['@id']
-        })
-        response.member.forEach(m => {
-          m.parent = collId
-        })
+        response.member.forEach(m => getSimpleObject(m, collId, currCollection.value?.projectIdentifier))
+
+        // optional rest all resources to toc ?
+        // if (response.member.every(el => el.citeType === 'Resource')) {
+        //   displayOpt.value = 'toc'
+        //   console.log('HomePage toggleExpanded need to update displayOpt !!!!!!!!!!!')
+        // }
         componentTOC.value = response.member
-        // console.log('HomePage toggleExpanded componentTOC', componentTOC.value)
+
+        console.log('HomePage toggleExpanded updated componentTOC.value', componentTOC.value, response)
       }
       expandedById.value[collId] = !expandedById.value[collId]
-      state.isTreeOpened = !state.isTreeOpened
-      // console.log('HomePage toggleExpanded after expandedById[collectionId] : ', collId, expandedById.value)
+      //state.isTreeOpened = !state.isTreeOpened
+      console.log('HomePage toggleExpanded after expandedById[collectionId] : ', collId, expandedById.value)
+
     }
+
 
     const homeCssClass = computed(() => {
       return state.isTreeOpened ? 'is-tree-opened' : ''
@@ -391,19 +256,6 @@ export default {
       } else {
         return false
       }
-    }
-
-    const paginated = () => {
-      const chunkArray = (array, chunkSize) => {
-        const numberOfChunks = Math.ceil(array.length / chunkSize)
-        return [...Array(numberOfChunks)]
-          .map((value, index) => {
-            return array.slice(index * chunkSize, (index + 1) * chunkSize)
-          })
-      }
-      totalPages.value = chunkArray(componentTOC.value, pageSize.value).length
-      console.log('paginated chunkArray', chunkArray)
-      currentPageData.value = chunkArray(componentTOC.value, pageSize.value)[currentPage.value - 1]
     }
 
     const getCustomHomeDescription = async () => {
@@ -464,40 +316,168 @@ export default {
 
     watch(props, async (newProps) => {
       isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
-      componentTOC.value = []
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
       rootCollectionId.value = newProps.rootCollectionIdentifier
       collectionId.value = newProps.collectionIdentifier
       appConfig.value = newProps.applicationConfig
       collConfig.value = newProps.collectionConfig
+      console.log('HomePage watch collConfig.value : ', newProps.collectionConfig)
       displayOpt.value = newProps.collectionConfig.homePageSettings.listSection.displayMode
-      pageSize.value = newProps.collectionConfig.homePageSettings.listSection.cardCollectionPerPage
+      console.log('HomePage watch displayOpt.value : ', newProps.collectionConfig.homePageSettings.listSection.displayMode)
       browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
-      currCollection.value = newProps.currentCollection
       collectionAltTitle.value = newProps.collectionConfig.homePageSettings.pageHeader.collectionAltTitle
       aboutBttnTxt.value = newProps.collectionConfig.homePageSettings.pageHeader.aboutButtonText
       collectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.collectionDescription
       customCollectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription
-      if (collConfig.value.homePageSettings?.listSection?.displaySort?.length > 0) {
-        // console.log('HomePage watch displaySort', collConfig.value.homePageSettings.listSection.displaySort)
-        componentTOC.value = customSort([...currCollection.value.member], collConfig.value.homePageSettings.listSection.displaySort)
-      } else {
-        componentTOC.value = [...currCollection.value.member].sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
-      }
       console.log('HomePage watch collectionConfig collectionDescription : ', collConfig.value, collectionDescription.value)
-      paginated()
+
       if (newProps.collectionConfig.homePageSettings.listSection.openState && !state.isTreeOpened) {
+        console.log('HomePage reopening ???')
         await toggleExpanded(currCollection.value.identifier)
       }
-      if (customCollectionDescription.value) {
-        customDescription.value = await getCustomHomeDescription()
-      } else {
-        customDescription.value = {}
-      }
+
     }, { deep: true, immediate: true })
 
-    watch(currentPage, () => {
-      paginated()
+    watch(
+  () => customCollectionDescription.value,
+  async (newVal) => {
+    if (!newVal) {
+      customDescription.value = null
+      return
+    }
+
+    try {
+      customDescription.value = await getCustomHomeDescription()
+    } catch (e) {
+      console.error('Erreur chargement description:', e)
+      customDescription.value = null
+    }
+  },
+  { immediate: true }
+)
+    watch(
+  () => props.currentCollection,
+  (newVal) => {
+    if (!newVal) return
+    let result
+    //componentTOC.value = []
+
+    if (collConfig.value?.homePageSettings?.listSection?.displaySort?.length > 0) {
+      result = customSort(newVal.member, collConfig.value.homePageSettings.listSection.displaySort)
+    } else {
+      result = [...newVal.member].sort((a, b) =>
+        collator.compare(a.title, b.title)
+      )
+    }
+
+    componentTOC.value.splice(0, componentTOC.value.length, ...result)
+    // optional rest all resources to toc ?
+    // if (componentTOC.value.every(el => el.citeType === 'Resource')) {
+    //   displayOpt.value = 'toc'
+    //   console.log('HomePage toggleExpanded need to update displayOpt !!!!!!!!!!!')
+    // }
+    console.log('HomePage watch props.currentCollection, rebuild componentTOC.value', componentTOC.value)
+  },
+  { deep: true, immediate: true }
+)
+
+
+    // LIST DATA (FETCH ALL RESOURCES)
+    let currentRunId = 0
+    const isTableLoading = ref(true)
+    const resultCount = ref(0)
+    const listOfResources = async (items, runId) => {
+      //console.log('HomePage listOfResources items', items)
+      if (!Array.isArray(items)) return []
+      const result = []
+
+      for (const item of items) {
+        if (runId !== currentRunId) return result
+
+        const type = item.type || item.citeType || item['@type']
+
+        // if RESOURCE → push to results
+        if (type === 'Resource') {
+          console.log('HomePage listOfResources pushing resource items', item)
+
+          result.push(item)
+          resultCount.value += 1
+          continue
+        }
+
+        // if COLLECTION → get descendants
+        if (type === 'Collection') {
+          const collId = item.identifier || item['@id']
+          const projectId = item.projectIdentifier
+          console.log('HomePage listOfResources getting childs of collId', item)
+
+          try {
+            const response = await getMetadataFromApi(collId, null, null)
+
+            const members = response.member.map(m => ({
+              ...m,
+              identifier: m.identifier ?? m['@id'],
+              parent: m.parent ?? collId,
+              projectIdentifier: m.projectIdentifier ?? projectId
+            }))
+
+            console.log('HomePage listOfResources members', members)
+
+            // recursive descendants loop
+            const children = await listOfResources(members, runId)
+
+            if (runId !== currentRunId) return result
+
+            result.push(...children)
+          } catch (e) {
+            console.error('HomePage listOfResources erreur API collection', collId, e)
+          }
+        }
+      }
+      //console.log('HomePage listOfResources result', result)
+      return result
+    }
+
+    const columns = computed(() => {
+      if (
+        displayOpt.value === 'list' &&
+        props.collectionConfig?.homePageSettings?.listSection?.columns?.length > 0
+      ) {
+        return props.collectionConfig.homePageSettings.listSection.columns
+      }
+      return []
+    })
+
+    watch(
+    () => [componentTOC.value, displayOpt.value],
+    async () => {
+        currentRunId++
+        const runId = currentRunId
+
+
+        let base = componentTOC.value || []
+
+        if (displayOpt.value === 'list') {
+          base = await listOfResources(base, runId)
+        } else {
+          base = [...base]
+        }
+
+        if (collConfig.value?.homePageSettings?.listSection?.displaySort?.length > 0) {
+          base = customSort(base, collConfig.value.homePageSettings.listSection.displaySort)
+        } else {
+          base = [...base].sort((a, b) => collator.compare(a.title, b.title))
+        }
+        if (runId !== currentRunId) return
+
+
+        dataSource.value = base
+        isTableLoading.value = false
+      },{ immediate: true }
+    )
+
+    onBeforeUnmount(() => {
+      currentRunId++
     })
 
     return {
@@ -519,16 +499,16 @@ export default {
       componentTOC,
       toggleExpanded,
       expandedById,
-      currentPage,
       displayOpt,
-      pageSize,
       browseBttnTxt,
-      totalPages,
-      paginated,
-      currentPageData,
       customCollectionDescription,
       getCustomHomeDescription,
-      customDescription
+      customDescription,
+      columns,
+      pageSize,
+      dataSource,
+      resultCount,
+      isTableLoading
     }
   }
 }
@@ -628,96 +608,7 @@ a {
   padding-top: 25px;
   padding-bottom: 25px;
 }
-.pagination-controls {
-  display: flex;
-  align-items: center;
-  /*visibility: hidden;*/
 
-  & > * {
-    display: inline-block;
-    width: 38px;
-    height: 38px;
-    margin-right: 4px;
-  }
-  & > a {
-    display: inline-block;
-    width: 38px;
-    height: 38px;
-    background-color: #C3C3C3;
-    border-radius: 3.2px;
-  }
-  & > a.disabled {
-    cursor: not-allowed !important;
-  }
-  & > a.first-page {
-    background: #C3C3C3 url(../assets/images/page_debut.svg)  center / 28px auto no-repeat;
-  }
-  & > a.previous-page {
-    background: #C3C3C3 url(../assets/images/page_avant.svg) center / 28px auto no-repeat;
-  }
-  & > a.next-page {
-    background: #C3C3C3 url(../assets/images/page_suivant.svg) center / 28px auto no-repeat;
-  }
-  & > a.last-page {
-    background: #C3C3C3 url(../assets/images/page_fin.svg) center / 28px auto no-repeat;
-  }
-  & > input.current-page {
-    height: 38px !important;
-    padding: 0 !important;
-    /* border: 1px solid #C00055; */
-    border: 1px solid var(--text-color);
-    border-radius: 3.2px;
-
-    font-family: inherit;
-    font-size: 18px;
-    /* color: #CB2158; */
-    color: var(--text-color);
-    font-weight: 800;
-    text-align: center;
-    text-decoration: none;
-
-    &:focus {
-      outline: 1px solid #C00055;
-    }
-  }
-
-  & > span.label-sur-page {
-    font-family: inherit;
-    font-size: 11px;
-    line-height: 38px;
-    color: #979797;
-    font-weight: 500;
-    text-align: center;
-    text-transform: uppercase;
-  }
-
-  & > span.total-pages {
-    background-color: #DFDFDF;
-    border-radius: 3.2px;
-
-    font-family: inherit;
-    font-size: 18px;
-    line-height: 38px;
-    color: #818181;
-    text-align: center;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-}
-.pagination {
-  gap: 20px;
-  width: 100%;
-  margin: 0;
-  padding-bottom: 5px;
-  /* border-bottom: solid 1px #b9192f; */
-  border-bottom: solid 1px var(--text-color)
-}
-.pagination-documents-count {
-  margin-right: auto;
-  /* color: #b9192f; */
-  color: var(--text-color);
-  border: none;
-}
 .no-dts-description {
   margin: 25px auto 25px;
 }

@@ -159,14 +159,20 @@ export function useMetadataProcessor() {
       const keepConfig = structuredClone(toRaw(collConfig.keepCollectionMetadata))
       keepConfig.fields['member'] = 'member'
       keepConfig.fields['children'] = 'children'
+      keepConfig.fields['projectIdentifier'] = 'projectIdentifier'
       keepConfig.fields['extensions']['dots:dotsProjectId'] = 'dots:dotsProjectId'
+      keepConfig.fields['parent'] = 'parent'
       keepConfig.fields['extensions']['dct:source'] = 'dct:source'
       keepConfig.fields['iiifManifestUrl'] = 'iiifManifestUrl'
+      keepConfig.fields['displayMode'] = 'displayMode'
       keepConfig.displayOrder.push('member')
       keepConfig.displayOrder.push('children')
+      keepConfig.displayOrder.push('projectIdentifier')
       keepConfig.displayOrder.push('dots:dotsProjectId')
+      keepConfig.displayOrder.push('parent')
       keepConfig.displayOrder.push('dct:source')
       keepConfig.displayOrder.push('iiifManifestUrl')
+      keepConfig.displayOrder.push('displayMode')
       metadata = applyKeepConfig(listmetadata, keepConfig)
 
       if (keepConfig.displayOrder) {

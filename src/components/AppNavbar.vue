@@ -482,6 +482,9 @@ nav span.level-item:not(:last-child)::after {
     }
   }
 }
+.level-right {
+  height: 50px !important;
+}
 .mobile-button {
   display: none;
 }

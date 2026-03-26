@@ -81,7 +81,7 @@ export default {
     const route = useRoute()
     const store = useStore()
     const watcherState = ref(false)
-    const watcherRoute = ref(false)
+    const watcherRoute = ref(true)
     const collConfigReady = ref(false)
 
     const currCollection = ref({})
@@ -102,7 +102,7 @@ export default {
     }
 
     const dtsRootCollectionId = ref('')
-    const rootCollectionIdentifier = ref('')
+    const rootCollectionIdentifier = ref(`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`)
     const projectCollId = ref('')
     const collectionId = ref('')
 
@@ -112,7 +112,7 @@ export default {
     const collConfig = ref({})
     const rootShortTitle = ref('')
     const breadCrumb = ref([])
-    const isDocProjectIdInc = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0 ? true : `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID}`.toLowerCase() === 'true'
+    const isDocProjectIdInc = `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID}`.toLowerCase() === 'true'
     console.log('App.vue setup route / route.params.collId / collectionId.value : ', route, route.params.collId ? route.params.collId : 'no param collId', collectionId.value)
     // getting and formatting collection details
 
@@ -142,7 +142,7 @@ export default {
         console.log('App.vue setup appSettings.default updated with custom default', appSettings.default)
       }
       const defaultMatch = appSettings.default.default
-      defaultMatch.collectionId = rootCollectionIdentifier.value
+      //defaultMatch.collectionId = rootCollectionIdentifier.value
       Object.assign(appConfig.value, defaultMatch)
       console.log('App.vue setup defaultMatch', defaultMatch)
       console.log('App.vue setup appConfig.value', appConfig.value)
@@ -152,15 +152,27 @@ export default {
       delete appSettings.default
       console.log('App.vue setup appSettings after update 2', appSettings)
       for (let i = 0; i < Object.keys(appSettings).length; i += 1) {
-        console.log('App.vue setup appSettings collection iteration', appSettings[Object.keys(appSettings)[i]])
+        console.log('App.vue setup appSettings collection iteration', appSettings[Object.keys(appSettings)[i]], appSettings[Object.keys(appSettings)[i]]?.collectionId)
         appConfig.value.collectionsConf.push(appSettings[Object.keys(appSettings)[i]])
       }
       console.log('App.vue setup appConfig.value after update 3', appConfig.value)
     }
+    /*if (import.meta.hot) {
+      import.meta.hot.accept(async () => {
+        console.log('HMR confs reload')
+
+        appConfig.value = {}
+
+        await mergeSettings()
+
+        // force refresh complet
+        store.commit('setCollectionId', store.state.collectionId ? store.state.collectionId : rootCollectionIdentifier)
+      })
+    }*/
 
     const setDtsRootResponse = async (source) => {
       console.log('App.vue setDtsRootResponse source', source)
-      const dtsRootResponse = await getMetadataFromApi()
+      const dtsRootResponse = await getMetadataFromApi(null, null, source)
       dtsRootCollectionId.value = dtsRootResponse.identifier
       console.log('App.vue get dtsRootCollectionId', dtsRootCollectionId.value)
     }
@@ -176,32 +188,61 @@ export default {
     }
 
     const setCurrentCollectionContext = async (route) => {
-      console.log('App.vue setCurrentCollectionContext origin route', origin, route)
+      //console.log('App.vue setCurrentCollectionContext origin route', origin, route)
       console.log('this is where it fails')
       await mergeSettings()
+console.log('this is where it fails 2')
       let metadataResponse = {}
       const matchedCollectionConf = appConfig.value.collectionsConf && appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value).length > 0 ? appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value) : {}
-      console.log('App.vue setCurrentCollectionContext collectionId.value collConfig.value', collectionId.value, collConfig.value)
+      console.log('App.vue setCurrentCollectionContext setUpCollectionId matchedCollectionConf', collectionId.value, matchedCollectionConf)
       if (rootCollectionIdentifier.value === dtsRootCollectionId.value && rootCollectionIdentifier.value === collectionId.value) {
         metadataResponse = await fetchMetadata('app.vue setCurrentCollectionContext fetchMetadata (no id)', null, 'Collection', matchedCollectionConf, route)
       } else {
         metadataResponse = await fetchMetadata('app.vue setCurrentCollectionContext fetchMetadata (with id)', collectionId.value, 'Collection', matchedCollectionConf, route)
       }
+      //collectionId.value = metadataResponse.identifier
       console.log('App.vue setCurrentCollectionContext collectionId.value ', collectionId.value)
       console.log('App.vue setCurrentCollectionContext metadataResponse', metadataResponse)
-      console.log('App.vue setCurrentCollectionContext excludeCollectionIds', collectionId.value, appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value))
+
 
       if (matchedCollectionConf && matchedCollectionConf.excludeCollectionIds && matchedCollectionConf.excludeCollectionIds.length > 0) {
         metadataResponse.member = metadataResponse.member.filter(m => !matchedCollectionConf.excludeCollectionIds.includes(m.identifier))
       }
 
+      if (matchedCollectionConf && matchedCollectionConf?.homePageSettings?.listSection?.displayMode) {
+        metadataResponse.displayMode = matchedCollectionConf?.homePageSettings?.listSection?.displayMode
+      }
+
       console.log('App.vue metadataResponse 1', metadataResponse)
+
       metadataResponse.member.forEach(m => { m.parent = collectionId.value })
+      metadataResponse.children.forEach(m => { m.parent = collectionId.value })
+      if (metadataResponse.projectIdentifier) {
+        console.log('App.vue metadataResponse 1b', metadataResponse.projectIdentifier)
+        metadataResponse.member.forEach(m => { m.projectIdentifier = metadataResponse.projectIdentifier })
+        metadataResponse.children.forEach(m => { m.projectIdentifier = metadataResponse.projectIdentifier })
+      }
       console.log('App.vue metadataResponse 2', metadataResponse)
+
+      metadataResponse.member.forEach(m => {
+        let childMatchedCollectionConf = appConfig.value.collectionsConf.find(c => c.collectionId === m.identifier)
+        if (childMatchedCollectionConf && childMatchedCollectionConf?.homePageSettings?.listSection?.displayMode) {
+          m.displayMode = childMatchedCollectionConf?.homePageSettings?.listSection?.displayMode
+        }
+      })
+      metadataResponse.children.forEach(m => {
+        let childMatchedCollectionConf = appConfig.value.collectionsConf.find(c => c.collectionId === m.identifier)
+        if (childMatchedCollectionConf && childMatchedCollectionConf?.homePageSettings?.listSection?.displayMode) {
+          m.displayMode = childMatchedCollectionConf?.homePageSettings?.listSection?.displayMode
+        }
+      })
+      console.log('App.vue metadataResponse 3', metadataResponse)
+
       currCollection.value = metadataResponse
 
       // Get and set the collection project (only if current collection is not top collection)
       if (collectionId.value !== rootCollectionIdentifier.value) {
+        console.log('App.vue setCurrentCollectionContext get project', collectionId.value, rootCollectionIdentifier.value)
         projectCollId.value = await getProjectFromApi(collectionId.value)
         await getBreadcrumb(collectionId.value)
       } else {
@@ -258,10 +299,21 @@ export default {
       () => store.state.collectionId, async function () {
         console.log('App.vue watch STATE store.state.collectionId : ', store.state.collectionId)
         collConfigReady.value = false
+        if (!dtsRootCollectionId.value.length || !rootCollectionIdentifier.value.length) {
+          await setDtsRootResponse()
+          if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
+            rootCollectionIdentifier.value = dtsRootCollectionId.value
+          } else {
+            rootCollectionIdentifier.value = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
+          }
+        }
+
+        console.log('App.vue watch STATE dtsRootCollectionId.value, rootCollectionIdentifier.value', dtsRootCollectionId.value, rootCollectionIdentifier.value)
         if (dtsRootCollectionId.value && rootCollectionIdentifier.value) {
           watcherState.value = true
           collConfig.value = {}
-          collectionId.value = store.state.collectionId
+          collectionId.value = store.state.collectionId?.length ? store.state.collectionId : rootCollectionIdentifier.value
+          console.log('App.vue watch STATE collectionId.value', collectionId.value)
           await setCurrentCollectionContext(route)
           // Collection is loaded
 
@@ -271,13 +323,13 @@ export default {
           if (!rootCollectionOverrides) {
             rootCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === 'rootCollection')
           }
-          console.log('App.vue config rootCollectionOverrides appConfig.value.genericConf ', rootCollectionOverrides, appConfig.value.genericConf)
-          console.log('App.vue config merge rootCollectionOverrides appConfig.value.genericConf ', _.merge({}, appConfig.value.genericConf, rootCollectionOverrides))
+          console.log('App.vue watch STATE config rootCollectionOverrides appConfig.value.genericConf ', rootCollectionOverrides, appConfig.value.genericConf)
+          console.log('App.vue watch STATE config merge rootCollectionOverrides appConfig.value.genericConf ', _.merge({}, appConfig.value.genericConf, rootCollectionOverrides))
 
-          // const rootCollectionOverrides = rootCollectionIdentifier.value !== dtsRootCollectionId.value ? appConfig.value.collectionsConf.find(coll => coll.collectionId === rootCollectionIdentifier.value) : undefined
+
           rootCollConfig.value = rootCollectionOverrides ? _.merge({}, appConfig.value.genericConf, rootCollectionOverrides) : appConfig.value.genericConf
           rootShortTitle.value = rootCollConfig.value ? rootCollConfig.value.homePageSettings.appNavBar.collectionShortTitle : appConfig.value.genericConf.homePageSettings.appNavBar.collectionShortTitle
-          console.log('App.vue rootCollConfig.value ', rootCollConfig.value)
+          console.log('App.vue watch STATE rootCollConfig.value ', rootCollConfig.value)
           // Set the project config
           let projectCollectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === projectCollId.value)
           if (!projectCollectionOverrides && collectionId.value !== rootCollectionIdentifier.value) {
@@ -288,7 +340,7 @@ export default {
             projectCollectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
           }
           projectCollConfig.value = _.merge({}, rootCollConfig.value, projectCollectionOverrides)
-          console.log('App.vue projectCollConfig.value ', projectCollConfig.value)
+          console.log('App.vue watch STATE projectCollConfig.value ', projectCollConfig.value)
           let collectionOverrides = appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value)
           if (!collectionOverrides && collectionId.value !== rootCollectionIdentifier.value && collectionId.value !== projectCollId.value) {
             collectionOverrides = projectCollConfig.value
@@ -298,7 +350,7 @@ export default {
             collectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
           }
           collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
-          console.log('App.vue collConfig.value ', collConfig.value)
+          console.log('App.vue watch STATE collConfig.value collectionId.value', collConfig.value, collectionId.value)
           if (collConfig.value.collectionCustomCss) {
             await getCustomCss()
           } else if (customCss.value) {
@@ -322,7 +374,7 @@ export default {
       router.currentRoute, async (newRoute, oldRoute) => {
         console.log('App.vue watch ROUTER oldRoute/newRoute : ', oldRoute, newRoute)
         // Do nothing if newRoute and oldRoute are not defined
-        if (!(newRoute && oldRoute)) {
+        if (!newRoute) {
           return
         }
 
@@ -342,12 +394,12 @@ export default {
         watcherRoute.value = true
 
         // fill dtsRootCollectionId with ???
-        await setDtsRootResponse('watch router.currentRoute')
+        await setDtsRootResponse(newRoute)
 
         // true/false, depends on VITE_APP_XXX variables
         if (isDocProjectIdInc) {
           // Do nothing if routes are the same, collId are the same, and collId is stored. Mark collConfigReady as ready (true)
-          if ((newRoute.name === oldRoute.name) && (newRoute.params.collId === oldRoute.params.collId) && (store.state.collectionId === collectionId.value)) {
+          if ((newRoute.name === oldRoute?.name) && (newRoute.params?.collId === oldRoute?.params?.collId) && (store.state.collectionId === collectionId.value)) {
             collConfigReady.value = true
             return
           }
@@ -359,6 +411,7 @@ export default {
             rootCollectionIdentifier.value = `${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`
           }
           // Set the current collection
+          // from the resource id
           if (newRoute.params.id) {
             const parentResponse = await getParentFromApi(newRoute.params.id)
             const currentCollection = parentResponse?.member.find((member) => {
@@ -369,6 +422,7 @@ export default {
 
             collectionId.value = currentCollection
             store.commit('setResourceId', newRoute.params.id)
+          //or directly if available
           } else if (newRoute.params.collId) {
             store.commit('setCurrentItem', {})
             collectionId.value = newRoute.params.collId
@@ -390,14 +444,23 @@ export default {
           }
           // Set the current collection
           if (newRoute.params.id) {
-            const currResource = await fetchMetadata('app.vue', newRoute.params.id, 'Resource', newRoute)
+            const parentResponse = await getParentFromApi(newRoute.params.id)
+            const currentCollection = parentResponse?.member.find((member) => {
+              if (member['@id'] === store.state.collectionId) {
+                return member
+              }
+            })?.['@id'] || parentResponse.member[0]['@id']
+
+            collectionId.value = currentCollection
+            store.commit('setResourceId', newRoute.params.id)
+          } else if (newRoute.params.collId) {
+            store.commit('setCurrentItem', {})
+            collectionId.value = newRoute.params.collId
           } else {
             store.commit('setCurrentItem', {})
+            collectionId.value = rootCollectionIdentifier.value
           }
-          collectionId.value = rootCollectionIdentifier.value
-          // TODO: check if this line is necessary
-          // store.commit('setCollectionId', collectionId.value)
-          await setCurrentCollectionContext(newRoute)
+          store.commit('setCollectionId', collectionId.value)
           // Collection is loaded
         }
 
@@ -888,7 +951,7 @@ a.noteref sup {
   border: none;
   text-decoration: none;
 }
-.toc-area.is-opened .toggle-btn, .collection-toc-area.is-opened .toggle-btn, .collection-toc-area.expanded .toggle-btn {
+.toc-area.is-opened .toggle-btn, .collection-toc-area.is-opened .toggle-btn, .collection-toc-area.expanded .toggle-btn, .toggle-btn.expanded {
   background: url(./assets/images/croix.svg) center / cover no-repeat;
 }
 .breadcrumb-panel.is-opened .breadcrumb-top-toggle-bttn {

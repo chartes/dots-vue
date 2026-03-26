@@ -1,125 +1,151 @@
 <template>
   <div
-    v-if="(currentCollection.identifier === rootCollectionId && displayOpt !== 'list' && currentCollection.member.every(item => item.citeType === 'Collection')) || (displayOpt === 'card' && currentCollection.member.every(item => item.citeType === 'Collection'))"
+    v-if="displayMode !== 'toc'"
+    class="pagination has-text-centered is-flex is-flex-direction-row is-justify-content-center"
+  >
+    <Pagination
+      v-if="displayMode !== 'toc'"
+      v-model="currentPage"
+      :total-pages="totalPages"
+      :is-loading="false"
+      :documents-count-text="documentsCountText"
+    />
+  </div>
+  <!-- RESOURCE LIST AS CARDS (applicable conf (cascade): homePageSettings.listSection.displayMode = 'card') -->
+  <!-- or RESOURCE LIST AS CARDS AND TABLE OF CONTENT (applicable conf (cascade): homePageSettings.listSection.displayMode = 'mixed') -->
+  <div
+    v-if="paginated.length && (displayOpt === 'card' || (displayOpt === 'mixed' && displayMode === 'mixed'))"
+    class="resources-grid"
+    :class="displayMode !== 'toc' ? `${displayMode}-mode` : 'toc-mode'"
   >
     <div
-      v-for="(item, index) in componentTOC"
-      :key="index"
+      v-for="(item, index) in paginated"
+      :key="item.identifier"
       class="document-card"
     >
       <template v-if="item['@type'] === 'Collection' || item.citeType === 'Collection'">
-        <div
-          v-if="isDocProjectIdInc && item.parent === rootCollectionId"
-          class="card-header"
-        >
-          <div class="document-folder">
-            <router-link
-              class="card-header-first-line"
-              :to="{ name: 'Home', params: { collId: item.identifier }}"
+        <div class="collection-wrapper">
+          <div
+            v-if="true"
+            class="card-header"
+          >
+            <div
+              class="card-link"
+              :class="{ clickable: canNavigate(item), disabled: !canNavigate(item) }"
+              @click="handleClick(item)"
             >
-              <div class="collection-metadata is-flex-direction-column">
+              <div class="card-image">
+                <img
+                  v-if="ImgUrl(item.identifier)"
+                  :src="ImgUrl(item.identifier)"
+                  alt=""
+                />
+                <img
+                  v-else
+                  src="@/assets/images/dots-logo-retro.drawio.svg"
+                  alt=""
+                />
+              </div>
+              <div class="collection-metadata">
+                <div class="collection-metadata-author-date">
+                  <span>
+                    {{ Array.isArray(item.dublincore.creator)
+                      ? item.dublincore.creator.join(', ')
+                      : item.dublincore.creator }}
+                  </span>
+                  <span>{{ item.dublincore.date }}</span>
+                </div>
                 <div class="collection-metadata-title">
                   {{ item.title }}
                 </div>
-                <div class="collection-metadata-author-date is-flex is-flex-direction-column">
-                  <span>
-                    {{ item.author }} {{ item.dublincore.creator }}
-                  </span>
-                  <span>
-                    {{ item.dublincore.date }}
-                  </span><!-- v-if="c.date" -->
-                </div>
-                <div class="collection-description">
-                  <span>
-                    {{ item.description }}
-                  </span><!-- v-if="c.date" -->
-                </div>
               </div>
-              <div class="card-image is-flex is-justify-content-center">
-                <router-link :to="{ name: 'Home', params: { collId: item.identifier }}">
-                  <img
-                    v-if="ImgUrl(item.identifier)"
-                    :src="ImgUrl(item.identifier)"
-                    alt=""
-                  />
-                  <img
-                    v-else
-                    src="@/assets/images/dots-logo-retro.drawio.svg"
-                    alt=""
-                  />
-                </router-link>
-              </div>
-            </router-link>
-          </div>
-        </div>
-        <div
-          v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId"
-          class="card-header"
-        >
-          <div class="document-folder">
-            <div class="card-header-first-line">
-              <div class="collection-metadata is-flex-direction-column">
-                <span class="collection-metadata-title">
-                  {{ item.title }}
-                </span>
-                <div class="is-flex is-flex-direction-column">
-                  <span>
-                    {{ item.author }} {{ item.dublincore.creator }}
-                  </span>
-                  <span>
-                    {{ item.dublincore.date }}
-                  </span><!-- v-if="c.date" -->
-                </div>
-                <div class="collection-description">
-                  <span>
-                    {{ item.description }}
-                  </span><!-- v-if="c.date" -->
-                </div>
-              </div>
-              <div class="card-image is-flex is-justify-content-center">
-                <a
-                  href=""
-                  class="disabled"
+            </div>
+            <div
+              class="collection-description"
+            >
+              <span
+                :ref="el => textEls.push(el)"
+                class="collection-description-text"
+                :class=" descExpandedItems[item.identifier] ? 'expanded' : '' "
+              >
+                <span
+                  v-if="item.description"
+                  class="read-more"
+                  @click="expandDescription(item.identifier)"
                 >
-                  <img
-                    v-if="ImgUrl(item.identifier)"
-                    :src="ImgUrl(item.identifier)"
-                    alt=""
-                  />
-                  <img
-                    v-else
-                    src="@/assets/images/dots-logo-retro.drawio.svg"
-                    alt=""
-                  />
-                </a><!-- router-link :to="{ name: 'Home', params: { collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] : item.extensions['dots:dotsProjectId'] }}" -->
+                  {{ descExpandedItems[item.identifier] === true ? '[Lire moins]' : '[Lire la suite]' }}
+                </span>
+                {{ item.description }}
+              </span>
+            </div>
+          </div>
+          <div
+            v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId"
+            class="card-header"
+          >
+            <div class="document-folder">
+              <div class="card-header-first-line">
+                <div class="collection-metadata is-flex-direction-column">
+                  <span class="collection-metadata-title">
+                    {{ item.title }}
+                  </span>
+                  <div class="is-flex is-flex-direction-column">
+                    <span>
+                      {{ Array.isArray(item.dublincore.creator)
+                        ? item.dublincore.creator.join(', ')
+                        : item.dublincore.creator }}
+                    </span>
+                    <span>
+                      {{ item.dublincore.date }}
+                    </span><!-- v-if="c.date" -->
+                  </div>
+                  <div class="collection-description">
+                    <span>
+                      {{ item.description }}
+                    </span>
+                  </div>
+                </div>
+                <div class="card-image is-flex is-justify-content-center">
+                  <a
+                    href=""
+                    class="disabled"
+                  >
+                    <img
+                      v-if="ImgUrl(item.identifier)"
+                      :src="ImgUrl(item.identifier)"
+                      alt=""
+                    />
+                    <img
+                      v-else
+                      src="@/assets/images/dots-logo-retro.drawio.svg"
+                      alt=""
+                    />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div
-          v-if="isDocProjectIdInc && item.parent !== rootCollectionId && !componentTOC.map(i => i['@type']).every(t => t === 'Resource')"
+          v-if="displayOpt === 'mixed'"
           class="collection-toc-area"
-          :class="expandedById[item.identifier] ? 'expanded': ''"
-          @click.prevent="toggleExpanded(item.identifier)"
+          :class="expandedById[item.identifier] || displayMode === 'mixed' ? 'expanded': ''"
+          @click.prevent="toggleExpanded(item)"
         >
           <div
             class="collection-toc-area-header"
           >
-            <a href="#">{{ browseBttnTxt }}</a>
-            <a
-              href="#"
-              class="toggle-btn"
-              :class="expandedById[item.identifier] ? 'expanded': ''"
-            />
+            Contenu
           </div>
           <div
-            v-if="(expandedById[item.identifier] || item.expanded)
+            v-if="(expandedById[item.identifier] || item.expanded || displayMode === 'mixed')
               && item.totalChildren > 0
               && item.children?.length > 0"
             class="menu app-width-margin expanded"
           >
             <CollectionTOC
               :is-doc-projectId-included="isDocProjectIdInc"
+              :display-option="displayOpt"
               :current-collection="item"
               :dts-root-collection-identifier="dtsRootCollectionId"
               :root-collection-identifier="rootCollectionId"
@@ -127,15 +153,10 @@
               :collection-config="collConfig"
               :margin="$props.margin"
               :toc="item.children"
+              :level="lvl+1"
             />
           </div>
         </div>
-        <div
-          v-else-if="!isDocProjectIdInc"
-          class="wrapper"
-        >
-          TO DO : VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID=false && VITE_APP_ROOT_DTS_COLLECTION_ID n'est pas DTS root
-        </div><!-- && item.parent !== rootCollectionId && !componentTOC.map(i => i['@type']).every(t => t === 'Resource')-->
       </template>
       <!-- ELSE resource is a resource of type (@type / citeType) resource  -->
       <template v-else>
@@ -143,15 +164,17 @@
           <div class="document-folder">
             <router-link
               class="card-header-first-line"
-              :to="!isDocProjectIdInc ? { name: 'Document', params: { id: item.identifier }} : { name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }"
+              :to="!isDocProjectIdInc ? { name: 'Document', params: { id: item.identifier }} : { name: 'Document', params: { collId: item.projectIdentifier ? item.projectIdentifier : item.identifier, id: item.identifier } }"
             >
               <div class="collection-metadata is-flex-direction-column">
                 <span class="collection-metadata-title">
-                  {{ item.title }} {{ !isDocProjectIdInc }}
+                  {{ item.title }}
                 </span>
                 <div class="is-flex is-flex-direction-column">
                   <span>
-                    {{ item.author }} {{ item.dublincore.creator }}
+                    {{ Array.isArray(item.dublincore.creator)
+                      ? item.dublincore.creator.join(', ')
+                      : item.dublincore.creator }}
                   </span>
                   <span>
                     {{ item.dublincore.date }}
@@ -170,149 +193,217 @@
       </template>
     </div>
   </div>
-  <ul
-    v-else
-    class="tree"
+
+  <!-- RESOURCE LIST AS TOC (conf: homePageSettings.listSection.displayMode = 'toc' or unset) -->
+
+  <div
+    v-if="(displayMode === 'toc')"
+    :class="`collection-toc-area app-width-margin ${expandedById[currCollection.identifier] ? 'expanded': ''} toc-mode`"
   >
-    <template
-      v-for="(item, index) in componentTOC"
-      :key="index"
-    >
-      <li
-        :style="`margin-left: ${ $props.margin }px;`"
-        :class="item.totalChildren > 0 ? 'more' : ''"
+    <div
+      v-if="(displayMode === 'toc' && lvl < 2)"
+      class="collection-toc-area-header"
+      @click.prevent="toggleExpanded(currCollection)"
+    ><!-- && rootCollectionId === currCollection.identifier -->
+      <a
+        v-if="componentTOC.length === 1 && (componentTOC[0].type === 'Resource' || componentTOC[0]['@type'] === 'Resource')"
+        href="#"
+        class="collBrowseButton"
       >
-        <div class="li container">
-          <button
-            v-if="item.totalChildren > 0"
-            class="toc-toggle"
-            :aria-expanded="expandedById[item.identifier] || item.expanded ? true : false"
-            aria-label="Afficher les éléments enfants"
-            @click="toggleExpanded(item.identifier)"
-          >
-            <TocArrows
-              :key="expandedById[item.identifier] || item.expanded"
-              :direction="expandedById[item.identifier] || item.expanded ? 'down' : 'right'"
-              :size="30"
-              :radius="3"
-            />
-          </button>
-          <template
-            v-if="item['@type'] === 'Collection' || item.citeType === 'Collection'"
-          >
-            <span
-              v-if="!isDocProjectIdInc"
-              :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
-              @click="toggleExpanded(item.identifier)"
-            >
-              {{ item.title }}
-            </span>
-            <router-link
-              v-else-if="isDocProjectIdInc && item.parent === rootCollectionId && rootCollectionId !== dtsRootCollectionId"
-              :class="route.params.id === item.identifier ? 'is-current' : ''"
-              :to="{ name: 'Home', params: {collId: item.identifier} }"
-            >
-              {{ item.title }}
-            </router-link>
-            <router-link
-              v-else-if="isDocProjectIdInc && item.parent === rootCollectionId && rootCollectionId === dtsRootCollectionId"
-              :class="route.params.id === item.identifier ? 'is-current' : ''"
-              :to="{ name: 'Home', params: {collId: item['dots:dotsProjectId'] ? item['dots:dotsProjectId'] !== item.parent ? item['dots:dotsProjectId'] : item.identifier : item.identifier} }"
-            >
-              {{ item.title }}
-            </router-link>
-            <span
-              v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId"
-              :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
-              @click="toggleExpanded(item.identifier)"
-            >
-              {{ item.title }}
-            </span>
-          </template>
-          <!--<span
-            v-if="!isDocProjectIdInc && (item['@type'] === 'Collection' || item.citeType === 'Collection')"
-            :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
-            @click="toggleExpanded(item.identifier)"
-          >
-            {{ item.title }}
-          </span>
-          <router-link
-            v-else-if="isDocProjectIdInc && item.parent === rootCollectionId && (item['@type'] === 'Collection' || item.citeType === 'Collection')"
-            :class="route.params.id === item.identifier ? 'is-current' : ''"
-            :to="{ name: 'Home', params: {collId: item.extensions ? Array.isArray(item.extensions['dots:dotsProjectId']) ? item.extensions['dots:dotsProjectId'].filter(p => p === route.params.collId)[0] : item.extensions['dots:dotsProjectId'] !== item.parent ? item.extensions['dots:dotsProjectId'] : item.identifier : item.identifier} }"
-          >
-            {{ item.title }}
-          </router-link>
-          <span
-            v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId && (item['@type'] === 'Collection' || item.citeType === 'Collection')"
-            :class="route.params.collId ? route.params.collId === item.identifier ? 'is-current' : '' : ''"
-            @click="toggleExpanded(item.identifier)"
-          >
-            {{ item.title }}
-          </span>-->
-          <!-- for items without normalized metadata (extensions['dots:dotsProjectId'] has not been moved to ['dots:dotsProjectId'] -->
-          <router-link
-            v-else-if="isDocProjectIdInc && selectedParent !== rootCollectionId && item.extensions && item.extensions['dots:dotsProjectId'] === route.params.collId"
-            :class="route.params.id === item.identifier ? 'is-current' : ''"
-            :to="{ name: 'Document', params: { collId: item.extensions ? item.extensions['dots:dotsProjectId'] : item.identifier, id: item.identifier } }"
-            @click.prevent="setStateCollection(selectedParent)"
-          >
-            {{ item.title }}
-          </router-link>
-          <!-- for items with normalized metadata (extensions['dots:dotsProjectId'] moved to ['dots:dotsProjectId'] -->
-          <router-link
-            v-else-if="isDocProjectIdInc && selectedParent !== rootCollectionId && item['dots:dotsProjectId'] === route.params.collId"
-            :class="route.params.id === item.identifier ? 'is-current' : ''"
-            :to="{ name: 'Document', params: { collId: item['dots:dotsProjectId'] ? item['dots:dotsProjectId'] : item.identifier } }"
-            @click.prevent="setStateCollection(selectedParent)"
-          >
-            {{ item.title }}
-          </router-link>
-          <router-link
-            v-else-if="isDocProjectIdInc && selectedParent !== rootCollectionId"
-            :class="route.params.id === item.identifier ? 'is-current' : ''"
-            :to="{ name: 'Document', params: { collId: Array.isArray(item.parent) ? item.parent.find(p => p === route.params.collId) ? route.params.collId : item.parent[0] : item.parent, id: item.identifier } }"
-            @click.prevent="setStateCollection(selectedParent)"
-          >
-            {{ item.title }}
-          </router-link>
-          <router-link
-            v-else
-            :class="route.params.id === item.identifier ? 'is-current' : ''"
-            :to="{ name: 'Document', params: { id: item.identifier } }"
-          >
-            {{ item.title }}
-          </router-link>
-        </div>
-        <div
-          v-if="(expandedById[item.identifier] || item.expanded)
-            && item.totalChildren > 0
-            && item.children?.length > 0"
-          class="is-tree-opened menu app-width-margin expanded"
+        Accéder au document
+      </a>
+      <a
+        v-else
+        href="#"
+        class="collBrowseButton"
+      >
+        {{ browseBttnTxt }}
+      </a>
+      <a
+        href="#"
+        class="toggle-btn"
+        :class="expandedById[currCollection.identifier] ? 'expanded' : ''"
+      />
+    </div>
+    <div
+      v-if="displayMode === 'toc'"
+      class="menu app-with-margin"
+      :class="expandedById[currCollection.identifier] ? 'expanded': ''"
+    >
+      <div v-if="expandedById[currCollection.identifier]">
+        <ul
+          class="tree"
         >
-          <CollectionTOC
-            :is-doc-projectId-included="isDocProjectIdInc"
-            :current-collection="item"
-            :dts-root-collection-identifier="dtsRootCollectionId"
-            :root-collection-identifier="rootCollectionId"
-            :application-config="appConfig"
-            :collection-config="collConfig"
-            :margin="$props.margin + 23"
-            :toc="item.children"
-          />
-        </div>
-      </li>
-    </template>
-  </ul>
+          <template
+            v-for="(item, index) in componentTOC"
+            :key="item.identifier"
+          >
+            <li
+              :style="`margin-left: ${ $props.margin }px;`"
+              :class="item.totalChildren > 0 ? 'more' : ''"
+            >
+              <div class="li container">
+                <button
+                  v-if="item.totalChildren > 0"
+                  class="toc-toggle"
+                  :aria-expanded="expandedById[item.identifier] || item.expanded ? true : false"
+                  aria-label="Afficher les éléments enfants"
+                  @click.stop="toggleExpanded(item)"
+                >
+                  <TocArrows
+                    :key="expandedById[item.identifier] || item.expanded"
+                    :direction="expandedById[item.identifier] || item.expanded ? 'down' : 'right'"
+                    :size="30"
+                    :radius="3"
+                  />
+                </button>
+                <template
+                  v-if="item['@type'] === 'Collection' || item.citeType === 'Collection'"
+                >
+                  <Collection-icon
+                    class="collection-icon"
+                    :size="30"
+                    :radius="0"
+                  />
+                  <a
+                    v-if="!isDocProjectIdInc"
+                    :href="getHref(item)"
+                    :class="expandedById[item.identifier] ? 'is-current' : ''"
+                    @click="goToPage(item, $event)"
+                  >
+                    {{ item.title }}
+                  </a>
+                  <a
+                    v-else-if="isDocProjectIdInc && item.parent === rootCollectionId && rootCollectionId !== dtsRootCollectionId"
+                    :href="getHref(item)"
+                    :class="route.params.id === item.identifier ? 'is-current' : ''"
+                    @click="goToPage(item, $event)"
+                  >
+                    {{ item.title }}
+                  </a>
+                  <a
+                    v-else-if="isDocProjectIdInc && item.parent === rootCollectionId && rootCollectionId === dtsRootCollectionId"
+                    :href="getHref(item)"
+                    :class="route.params.id === item.identifier ? 'is-current' : ''"
+                    @click="goToPage(item, $event)"
+                  >
+                    {{ item.title }}
+                  </a>
+                  <a
+                    v-else-if="isDocProjectIdInc && item.parent !== rootCollectionId"
+                    :href="getHref(item)"
+                    :class="expandedById[item.identifier] ? 'is-current' : ''"
+                    @click="goToPage(item, $event)"
+                  >
+                    {{ item.title }}
+                  </a>
+                </template>
+                <a
+                  v-else-if="isDocProjectIdInc && selectedParent === rootCollectionId"
+                  :href="getHref(item)"
+                  :class="route.params.id === item.identifier ? 'is-current' : ''"
+                  @click="goToPage(item, $event)"
+                >
+                  <ResourceIcon
+                    class="resource-icon"
+                    :size="30"
+                    :radius="0"
+                  />
+                  {{ item.title }}
+                </a>
+                <a
+                  v-else-if="isDocProjectIdInc && selectedParent !== rootCollectionId && item.projectIdentifier && !Array.isArray(item.parent)"
+                  :href="getHref(item)"
+                  :class="route.params.id === item.identifier ? 'is-current' : ''"
+                  @click="goToPage(item, $event)"
+                >
+                  <ResourceIcon
+                    class="resource-icon"
+                    :size="30"
+                    :radius="0"
+                  />
+                  {{ item.title }}
+                </a>
+                <a
+                  v-else-if="isDocProjectIdInc && selectedParent !== rootCollectionId"
+                  :href="getHref(item)"
+                  :class="route.params.id === item.identifier ? 'is-current' : ''"
+                  @click="goToPage(item, $event)"
+                >
+                  <ResourceIcon
+                    class="resource-icon"
+                    :size="30"
+                    :radius="0"
+                  />
+                  {{ item.title }}
+                </a>
+                <a
+                  :href="getHref(item)"
+                  v-else-if="!isDocProjectIdInc"
+                  :class="route.params.id === item.identifier ? 'is-current' : ''"
+                  @click="goToPage(item, $event)"
+                >
+                  <ResourceIcon
+                    class="resource-icon"
+                    :size="30"
+                    :radius="0"
+                  />
+                  {{ item.title }}
+                </a>
+                <a
+                  v-else
+                  :href="getHref(item)"
+                  :class="route.params.id === item.identifier ? 'is-current' : ''"
+                  @click="goToPage(item, $event)"
+                >
+                  <ResourceIcon
+                    class="resource-icon"
+                    :size="30"
+                    :radius="0"
+                  />
+                  {{ item.title }}
+                </a>
+              </div>
+              <div
+                v-if="(expandedById[item.identifier] || item.expanded)
+                  && item.totalChildren > 0
+                  && item.children?.length > 0"
+                class="is-tree-opened menu app-width-margin expanded"
+              >
+                <CollectionTOC
+                  :is-doc-projectId-included="isDocProjectIdInc"
+                  :display-option="displayOpt"
+                  :current-collection="item"
+                  :dts-root-collection-identifier="dtsRootCollectionId"
+                  :root-collection-identifier="rootCollectionId"
+                  :application-config="appConfig"
+                  :collection-config="collConfig"
+                  :margin="$props.margin + 23"
+                  :toc="item.children"
+                  :level="lvl+1"
+                />
+              </div>
+            </li>
+          </template>
+        </ul>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { ref, watch, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted, nextTick, onUnmounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { getMetadataFromApi } from '@/api/document.js'
+import { getAncestors, getMetadataFromApi } from '@/api/document.js'
+import { usePagination } from '@/composables/usePagination.js'
+import { getSimpleObject } from '@/composables/utils.js'
+import { router } from '@/router'
 import store from '@/store'
 
 import TocArrows from '@/assets/images/TocArrows.vue'
+import CollectionIcon from '@/assets/images/CollectionIcon.vue'
+import ResourceIcon from '@/assets/images/ResourceIcon.vue'
+import Pagination from '@/components/Pagination.vue'
 
 const collator = new Intl.Collator('fr', {
   numeric: true,
@@ -322,7 +413,7 @@ const collator = new Intl.Collator('fr', {
 export default {
   name: 'CollectionTOC',
 
-  components: { TocArrows },
+  components: { ResourceIcon, CollectionIcon, TocArrows, Pagination },
 
   props: {
     isDocProjectIdIncluded: {
@@ -359,23 +450,14 @@ export default {
       required: true,
       default: 0,
       type: Number
+    },
+    level: {
+      required: false,
+      type: Number
     }
   },
   setup (props) {
-    const route = useRoute()
-    const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
-    const displayOpt = ref(props.displayOption)
-    const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
-    const rootCollectionId = ref(props.rootCollectionIdentifier)
-    const appConfig = ref(props.applicationConfig)
-    const collConfig = ref(props.collectionConfig)
-    const sourceConfig = ref({})
-    const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
-
-    const expandedById = ref({})
-
-    const selectedParent = ref(props.currentCollection ? props.currentCollection.identifier : '')
-
+    // HELPERS
     const customSort = (A, B) => {
       const bIndex = new Map(B.map((val, index) => [val, index]))
 
@@ -398,109 +480,61 @@ export default {
         return collator.compare(a.title, b.title)
       })
     }
-    sourceConfig.value = collConfig.value
 
-    const componentTOC = ref([])
-    if (sourceConfig.value?.homePageSettings?.listSection?.displaySort?.length > 0) {
-      // console.log('CollectionTOC setup displaySort', collConfig.value.homePageSettings.listSection.displaySort)
-      componentTOC.value = customSort(props.toc, sourceConfig.value.homePageSettings.listSection.displaySort)
-    } else {
-      componentTOC.value = props.toc
-      // componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
-      componentTOC.value.sort((a, b) => collator.compare(a.title, b.title))
-    }
-    console.log('componentTOC.value props.toc : ', componentTOC.value)
+    // CONSTANT PROPS
+    const route = useRoute()
 
-    const toggleExpanded = async (collId) => {
-      console.log('CollectionTOC toggleExpanded componentTOC collId source: ', componentTOC.value, collId)
+    const isDocProjectIdInc = computed(() =>
+      props.isDocProjectIdIncluded
+    )
 
-      const idx = componentTOC.value.findIndex(item => item['@id'] === collId || item.identifier === collId)
-      if (idx !== -1) {
-        const item = componentTOC.value[idx]
+    const dtsRootCollectionId = computed(() =>
+      props.dtsRootCollectionIdentifier
+    )
 
-        if (!item.children || item.children.length === 0) {
-          const response = await getMetadataFromApi(collId, null, null)
-          console.log('CollectionTOC response', response)
+    const rootCollectionId = computed(() =>
+      props.rootCollectionIdentifier
+    )
 
-          response.member.forEach(m => { m.parent = collId })
-          console.log('CollectionTOC response after identifier', response)
+    const collectionBreadcrumb = ref([])
 
-          // Reassigning to ensure Vue reactivity
-          componentTOC.value[idx] = {
-            ...item,
-            member: response.member,
-            children: response.member
-          }
-          console.log('CollectionTOC componentTOC', componentTOC.value)
-        }
-      }
-      console.log('CollectionTOC expandedById.value', expandedById.value)
+    const appConfig = computed(() =>
+      props.applicationConfig
+    )
 
-      selectedParent.value = collId
-      console.log('CollectionTOC after selectedParent.value : ', collId)
-      expandedById.value[collId] = !expandedById.value[collId]
-      console.log('CollectionTOC after expandedById[collectionId] : ', collId, expandedById.value)
-    }
+    const collConfig = computed(() =>
+      props.collectionConfig
+    )
 
-    /* expandedById.value = componentTOC.value.filter(item => item.expanded === true).map(col => [col.identifier, true])
-    console.log("componentTOC.value expandedById.value : ", expandedById.value) */
-    /*if (collConfig.value.homePageSettings.listSection.openState) {
-      if (componentTOC.value.filter(item => item.citeType === 'Collection').length > 0) {
-        for (const comp of componentTOC.value.filter(item => item.citeType === 'Collection')) {
-          console.log('CollectionTOC loop comp.identifier ', comp.identifier, appConfig.value.collectionsConf.find(item => item.collectionId === comp.parent) || appConfig.value.collectionsConf.find(item => item.collectionId === comp.identifier))
-          const existingParentCollConfiguration = appConfig.value.collectionsConf.find(item => item.collectionId === comp.parent) || appConfig.value.collectionsConf.find(item => item.collectionId === comp.identifier)
-          if (existingParentCollConfiguration?.homePageSettings?.listSection?.openState) {
-            await toggleExpanded(comp.identifier)
-            expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: true })))
-          }
-          //expandedById.value = Object.assign({}, { comp.identifier: 'true'},  ...expandedById.value)
-        }
-      }
-      //expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: true })))
-    } else {
-      expandedById.value = Object.assign({}, ...componentTOC.value.filter(item => item.citeType === 'Collection').map((x) => ({ [x.identifier]: false })))
-      for (const comp of componentTOC.value.filter(item => item.citeType === 'Collection')) {
-          console.log('CollectionTOC loop comp.identifier ', comp.identifier, appConfig.value.collectionsConf.find(item => item.collectionId === comp.parent) || appConfig.value.collectionsConf.find(item => item.collectionId === comp.identifier))
-          const existingCollConfiguration = appConfig.value.collectionsConf.find(item => item.collectionId === comp.identifier)
-          if (existingCollConfiguration?.homePageSettings?.listSection?.openState) {
-            console.log ('CollectionTOC XXX')
-            await toggleExpanded(comp.identifier)
-            //expandedById.value[comp.identifier] = !expandedById.value[comp.identifier]
-          }
-          //expandedById.value = Object.assign({}, { comp.identifier: 'true'},  ...expandedById.value)
-        }
-    }*/
-    const openInitialCollections = async () => {
-      const collections = componentTOC.value.filter(
-        item => item.citeType === 'Collection'
-      )
+    const currCollection = ref({...props.currentCollection})
 
-      for (const comp of collections) {
-        const conf = appConfig.value.collectionsConf.find(c => c.collectionId === comp.identifier)
+    const browseBttnTxt = computed(() =>
+      props.collectionConfig?.homePageSettings?.listSection?.browseButtonText
+    )
 
-        if (conf?.homePageSettings?.listSection?.openState) {
-          await toggleExpanded(comp.identifier)
+    const displayOpt = computed(() =>
+        props.applicationConfig?.homePageSettings?.listSection?.displayMode?.length > 0
+        ? props.applicationConfig.homePageSettings.listSection.displayMode
+        : props.displayOption
+    )
 
-          // wait next render
-          await nextTick()
-        }
-      }
-    }
 
-    const setStateCollection = (collId) => {
-      store.commit('setCollectionId', collId)
-    }
+    // TABLE OF CONTENT
 
+    // TOC DATA
+    const componentTOC = ref([...props.toc])
+
+    // IMAGES
     const ImgUrl = (source) => {
       // TODO: provide a logo object with url AND legend ?
       const imgSourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
       if (imgSourceConfig?.homePageSettings?.listSection?.logo?.length > 0) {
         // console.log('HomePage ImgUrl found : ', imgSourceConfig.homePageSettings.listSection.logo)
-        const images = Object.fromEntries(Object.entries(import.meta.glob('confs/*/assets/images/*.*', { eager: true })).map(([key, value]) => {
+        const images = Object.fromEntries(Object.entries(import.meta.glob('confs/*/assets/images/*.*', {eager: true})).map(([key, value]) => {
           const newKey = key.split('/').slice(-4).join('/')
           return [newKey, value]
         }))
-        console.log('HomePage ImgUrl images: ', images)
+        //console.log('HomePage ImgUrl images: ', images)
         const match = images[`${imgSourceConfig.collectionId}/assets/images/${imgSourceConfig.homePageSettings.listSection.logo}`]
         // console.log('HomePage ImgUrl match: ', match)
         if (imgSourceConfig.homePageSettings.listSection.logo.includes('https')) {
@@ -513,35 +547,420 @@ export default {
       }
     }
 
-    watch(props, async newProps => {
-      isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
-      componentTOC.value = []
-      collConfig.value = newProps.collectionConfig
-      sourceConfig.value = collConfig.value
-      if (sourceConfig.value?.homePageSettings?.listSection?.displaySort?.length > 0) {
-        componentTOC.value = customSort(newProps.toc, sourceConfig.value.homePageSettings.listSection.displaySort)
-      } else {
-        componentTOC.value = newProps.toc
-        // componentTOC.value.sort((a, b) => a.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') > b.title.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') ? 1 : -1)
-        componentTOC.value.sort((a, b) => collator.compare(a.title, b.title))
+    // REACTIVE TOC
+    const lvl = ref(props.level)
+
+    const expandedById = ref(
+      displayOpt.value === 'toc'
+        ? (
+            lvl.value === 1
+              ? (collConfig.value?.homePageSettings?.listSection?.openState
+                  ? { [currCollection.value.identifier]: true }
+                  : {})
+              : { [currCollection.value.identifier]: true }
+          )
+        : { [currCollection.value.identifier]: true }
+    )
+
+    console.log('CollectionTOC setup vars: ', displayOpt.value, collConfig.value?.collectionId, collConfig.value?.homePageSettings?.listSection?.openState, lvl.value)
+
+    const selectedParent = ref(props.currentCollection ? props.currentCollection.identifier : '')
+
+    const toggleExpanded = async (coll) => {
+      console.log('CollectionTOC toggleExpanded componentTOC collId source: ', componentTOC.value, coll)
+      const collId = coll.identifier || coll['@id']
+      const projectId = coll.projectIdentifier
+
+      const idx = componentTOC.value.findIndex(item => item['@id'] === collId || item.identifier === collId)
+      console.log('CollectionTOC toggleExpanded idx', idx)
+      if (idx !== -1) {
+        const item = componentTOC.value[idx]
+
+        if (!item.children || item.children.length === 0) {
+          let response = await getMetadataFromApi(collId, null, null)
+          console.log('CollectionTOC toggleExpanded response', response)
+
+          response?.member?.forEach(m => getSimpleObject(m, collId, projectId))
+          console.log('CollectionTOC toggleExpanded response after identifier', componentTOC.value, response)
+
+          if ((!coll?.parent?.length && displayOpt.value === 'mixed' && displayMode.value !== 'toc') || displayOpt.value === 'mixed' && displayMode.value === 'toc') {
+            console.log('CollectionTOC toggleExpanded mark deeper levels mixed child members as toc', displayOpt.value, displayMode.value)
+            response.member.forEach(c => c.forcedDisplayOpt = 'toc')
+            console.log('CollectionTOC toggleExpanded mark deeper levels mixed child members as toc updated : ', response.member)
+          }
+
+          // Reassigning to ensure Vue reactivity
+          /*componentTOC.value[idx] = {
+            ...item,
+            member: response.member,
+            children: response.member
+          }*/
+          componentTOC.value[idx].member = response.member
+          componentTOC.value[idx].children = response.member
+
+          console.log('CollectionTOC toggleExpanded componentTOC', componentTOC.value)
+        }
       }
-      await openInitialCollections()
-      displayOpt.value = newProps.displayOption
-      dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
-      rootCollectionId.value = newProps.rootCollectionIdentifier
-      browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
-    }, { deep: true, immediate: true }
+      selectedParent.value = collId
+      //console.log('CollectionTOC after selectedParent.value : ',  selectedParent.value)
+      expandedById.value[collId] = !expandedById.value[collId]
+      console.log('CollectionTOC toggleExpanded after expandedById[collectionId] : ', collId, expandedById.value, componentTOC.value)
+    }
+
+
+    const openInitialCollections = async () => {
+      console.log('CollectionTOC openInitialCollections componentTOC.value', componentTOC.value)
+      const collections = componentTOC.value.filter(
+          item => item.citeType === 'Collection' || item['@type'] === 'Collection'
+      )
+
+      for (const comp of collections) {
+        const conf = appConfig.value.collectionsConf.find(c => c.collectionId === comp.identifier)
+        console.log('CollectionTOC openInitialCollections conf', conf)
+
+        if (displayOpt.value === 'toc') {
+          // Lower levels of Cards are unavailable by design and Lists are not hierarchy objects
+          if (conf?.homePageSettings?.listSection?.openState) {
+            await toggleExpanded(comp)
+            // wait next render
+            await nextTick()
+          }
+        } else if (displayOpt.value === 'mixed' && displayMode.value === 'mixed') {
+          // Lower levels of Mixed mode are opened by default
+          console.log('CollectionTOC openInitialCollections opening mixed first lower level (after first level displayMode is "toc"', comp)
+          await toggleExpanded(comp)
+          // wait next render
+          await nextTick()
+        }
+      }
+    }
+
+
+
+    console.log('CollectionTOC setup componentTOC', currCollection.value.identifier, componentTOC.value, currCollection.value, expandedById, lvl)
+
+    // DISPLAY OPTIONS
+
+    const displayMode = computed(() => {
+      const allowed = ['card', 'list', 'mixed', 'toc']
+
+      const normalize = val =>
+        typeof val === 'string' ? val.toLowerCase() : null
+
+      const forced = normalize(currCollection.value?.forcedDisplayOpt)
+      if (allowed.includes(forced)) return forced
+
+      const mode = normalize(displayOpt.value)
+      if (allowed.includes(mode)) return mode
+      return 'toc'
+    })
+
+    // CARDS EXPANDABLE DESCRIPTION
+    const textEls = ref([])
+    let resizeObserver = null
+    const isTextTruncated = (el) => {
+      if (!el) return
+      const truncated = el.scrollHeight > el.clientHeight
+      el.classList.toggle('truncated', truncated)
+    }
+
+    const descExpandedItems = ref({}) // clé = item.identifier
+
+    const expandDescription = (id) => {
+      descExpandedItems.value[id] = !descExpandedItems.value[id]
+      console.log('expanded', descExpandedItems.value)
+    }
+
+
+    // PAGINATION
+    const pageSize = computed(() =>
+      props.collectionConfig?.homePageSettings?.listSection?.cardCollectionPerPage
+    )
+    const currentPage = ref(1)
+
+    const pagination = usePagination(componentTOC, pageSize, currentPage)
+
+    const totalResults = computed(() => componentTOC.value.length)
+
+    const totalPages = computed(() =>{
+      if (displayOpt.value === 'toc') {
+        return null
+      } else return pagination.totalPages.value
+    })
+    const paginated = computed(() => {
+      return pagination.paginated.value
+    })
+
+    const documentsCountText = computed(() => {
+      const ds = componentTOC.value || []
+      const curr = currCollection.value
+      const rootId = rootCollectionId.value
+      const display = displayOpt.value
+
+      if (!ds.length) return '0 ressources'
+
+      const allCollections = ds.every(
+        item => item.type === 'Collection' || item['@type'] === 'Collection'
+      )
+
+      if (display === 'card' || display === 'mixed') {
+        if (curr?.identifier === rootId) {
+          const label = ds.length <= 1 ? 'projet' : 'projets'
+          return `${ds.length} ${label}`
+        } else if (allCollections) {
+          const label = ds.length <= 1 ? 'collection' : 'collections'
+          return `${ds.length} ${label}`
+        }
+      }
+
+      if (!allCollections) {
+        const label = ds.length <= 1 ? 'ressource' : 'ressources'
+        return `${ds.length} ${label}`
+      }
+
+      return '' // fallback
+    })
+
+    // TOC ACTIONS AND NAVIGATION
+    const setStateCollection = (collId) => {
+      store.commit('setCollectionId', collId)
+    }
+
+    // CARDS (incl. CARDS OF MIXED DISPLAY MODE) LINK MANAGEMENT
+    const canNavigate = (item) => {
+      //console.log('canNavigate isDocProjectIdInc.value item.parent rootCollectionId.value item.identifier item.projectIdentifier ', isDocProjectIdInc.value, item.parent, rootCollectionId.value, item.identifier, item.projectIdentifier)
+      return isDocProjectIdInc.value && (item.parent === rootCollectionId.value || item.identifier === item.projectIdentifier)
+    }
+
+    const handleClick = (item) => {
+      if (!canNavigate(item)) return
+
+      router.push({
+        name: 'Home',
+        params: { collId: item.identifier }
+      })
+    }
+
+    // TOC MODE NAV
+    const goToPage = async (item, event) => {
+      // Browser events handling
+      if (
+        event?.metaKey ||
+        event?.ctrlKey ||
+        event?.shiftKey ||
+        event?.button === 1
+      ) {
+        return
+      }
+
+      const to = getRoute(item)
+
+      // Collections with routing → toggle
+      if (!to) {
+        await toggleExpanded(item)
+        return
+      }
+      event.preventDefault()
+
+      await router.push(to)
+      setStateCollection(selectedParent.value)
+    }
+
+    const getRoute = (item) => {
+      const isCollection =
+        item['@type'] === 'Collection' || item.citeType === 'Collection'
+
+      if (isCollection) {
+        if (!isDocProjectIdInc.value) return null
+
+        if (
+          item.parent === rootCollectionId.value &&
+          rootCollectionId.value !== dtsRootCollectionId.value
+        ) {
+          return {
+            name: 'Home',
+            params: { collId: item.identifier }
+          }
+        }
+
+        if (
+          item.parent === rootCollectionId.value &&
+          rootCollectionId.value === dtsRootCollectionId.value
+        ) {
+          return {
+            name: 'Home',
+            params: {
+              collId: item.projectIdentifier
+                ? (item.projectIdentifier !== item.parent
+                    ? item.projectIdentifier
+                    : item.identifier)
+                : item.identifier
+            }
+          }
+        }
+
+        return null
+      }
+
+      // documents (@type Resource)
+      if (isDocProjectIdInc.value) {
+        if (selectedParent.value === rootCollectionId.value) {
+          return {
+            name: 'Document',
+            params: {
+              collId: rootCollectionId.value,
+              id: item.identifier
+            }
+          }
+        }
+
+        if (
+          selectedParent.value !== rootCollectionId.value &&
+          item.projectIdentifier &&
+          !Array.isArray(item.parent)
+        ) {
+          return {
+            name: 'Document',
+            params: {
+              collId: item.projectIdentifier,
+              id: item.identifier
+            }
+          }
+        }
+
+        if (selectedParent.value !== rootCollectionId.value) {
+          return {
+            name: 'Document',
+            params: {
+              collId: Array.isArray(item.parent)
+                ? (item.parent.find(p => p === route.params.collId)
+                    ? route.params.collId
+                    : item.parent[0])
+                : item.parent,
+              id: item.identifier
+            }
+          }
+        }
+      }
+
+      return {
+        name: 'Document',
+        params: {
+          id: item.identifier
+        }
+      }
+    }
+
+    // TOC MODE GET ROW LINK TO DISPLAY
+    const getHref = (item) => {
+      const to = getRoute(item)
+      return to ? router.resolve(to).href : null
+    }
+
+    onMounted(async () => {
+      //await nextTick()
+      const observer = new ResizeObserver(entries => {
+        entries.forEach(entry => {
+          isTextTruncated(entry.target)
+        })
+      })
+
+      textEls.value.forEach(el => {
+        observer.observe(el)
+        isTextTruncated(el)
+      })
+    })
+
+    onUnmounted(() => {
+      if (resizeObserver && textEls.value) {
+        resizeObserver.unobserve(textEls.value)
+      }
+    })
+
+    watch(
+  () => store.state.currentItem,
+
+        async (newVal) => {
+        if (route.name !== 'Document') return
+        console.log('CollectionTOC watch collectionBreadcrumb.value newVal', newVal)
+
+        const ancestors = await getAncestors(newVal)
+        console.log('CollectionTOC watch collectionBreadcrumb.value ancestors', ancestors)
+        collectionBreadcrumb.value = (ancestors || [])
+          .flat()
+          .filter(anc => anc['@type'] === 'Collection')
+          .map(col => col['@id'])
+        console.log('CollectionTOC watch collectionBreadcrumb.value', collectionBreadcrumb.value)
+        const items = componentTOC.value
+            .filter(it =>
+              it['@type'] === 'Collection' &&
+              collectionBreadcrumb.value.includes(it.identifier)
+            )
+
+        for (const c of items) {
+          if (!expandedById.value?.[c['@id']]) {
+            await toggleExpanded(c)
+          }
+        }
+        await nextTick()
+      },
+      { immediate: true }
+    )
+
+    watch(
+  () => [currCollection.value],
+  async () => {
+        if (displayOpt.value === 'toc' && lvl.value === 1 && props.collectionConfig?.homePageSettings?.listSection?.openState) {
+          console.log('CollectionTOC watch opening first level based on openState : ', props.collectionConfig?.homePageSettings?.listSection?.openState)
+          await openInitialCollections()
+        } else if ((displayOpt.value === 'mixed') && lvl.value < 2) {
+          console.log('CollectionTOC watch opening up to 2nd level')
+          await openInitialCollections()
+        }
+
+        if ((!currCollection.value?.parent?.length && displayOpt.value === 'mixed' && displayMode.value !== 'toc')) {
+          console.log('CollectionTOC watch mark deeper levels mixed child members as toc')
+          componentTOC.value.forEach(c => c.forcedDisplayOpt = 'toc')
+          console.log('CollectionTOC watch mark deeper levels mixed child members as toc, updated : ', componentTOC.value)
+        }
+        console.log('CollectionTOC watch rootCollectionId.value === currCollection.value.parent', rootCollectionId.value, currCollection.value.parent)
+      },{ immediate: true }
+    )
+
+    watch(
+      () => props.toc,
+      async (newVal) => {
+        if (!newVal) return
+        let result
+
+        if (collConfig.value?.homePageSettings?.listSection?.displaySort?.length > 0) {
+          result = customSort(newVal, collConfig.value.homePageSettings.listSection.displaySort)
+        } else {
+          result = [...newVal].sort((a, b) =>
+            collator.compare(a.title, b.title)
+          )
+        }
+
+        componentTOC.value.splice(0, componentTOC.value.length, ...result)
+        if ((!currCollection.value?.parent?.length && displayOpt.value === 'mixed' && displayMode.value !== 'toc') || displayOpt.value === 'mixed' && displayMode.value === 'toc') {
+          console.log('CollectionTOC watch mark deeper levels mixed child members as toc')
+          componentTOC.value.forEach(c => c.forcedDisplayOpt = 'toc')
+          console.log('CollectionTOC watch mark deeper levels mixed child members as toc updated : ', componentTOC.value)
+        }
+      },
+      { immediate: true }
     )
 
     return {
       route,
       isDocProjectIdInc,
+      collectionBreadcrumb,
+      lvl,
       displayOpt,
       dtsRootCollectionId,
       rootCollectionId,
       appConfig,
       collConfig,
-      sourceConfig,
       customSort,
       browseBttnTxt,
       toggleExpanded,
@@ -550,13 +969,39 @@ export default {
       selectedParent,
       componentTOC,
       setStateCollection,
-      openInitialCollections
+      openInitialCollections,
+      textEls,
+      resizeObserver,
+      descExpandedItems,
+      expandDescription,
+      canNavigate,
+      handleClick,
+      displayMode,
+      currCollection,
+      currentPage,
+      pageSize,
+      totalPages,
+      paginated,
+      totalResults,
+      documentsCountText,
+      getHref,
+      getRoute,
+      goToPage
     }
   }
 }
 </script>
 
 <style scoped>
+.document-list {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
 .collection-toc-area, .modal-wrapper {
   .tree {
     padding-top: 10px;
@@ -572,22 +1017,20 @@ export default {
     margin-bottom: 4px;
 
     &::before {
-      font-family: "Barlow Semi Condensed", sans-serif;
-      margin-left: -8px;
-      margin-right: 11px;
-      content: '●';
-      font-size: 10px;
-      color: #999;
-      float: left;
+      display: none;
     }
-    & .li.container {
+
+    & > .li.container {
         display: flex;
         margin: 0;
       & > a {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 0.1rem;
         border-bottom: none;
         color: #4a4a4a !important;
         &.is-current {
-          font-weight: bold !important;
+          font-weight: bolder !important;
           color: var(--text-color) !important;
         }
       }
@@ -596,8 +1039,12 @@ export default {
     &.more {
       padding-left: 0 !important;
 
-      &.li.container > a, span {
+      & > .li.container > a, span {
         margin-top: 4px;
+        &.is-current {
+          font-weight: bold !important;
+          color: var(--text-color) !important;
+        }
       }
 
       &::before {
@@ -628,102 +1075,393 @@ button.toc-toggle {
 .is-current {
   color: var(--text-color) !important;
 }
-.document-card {
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+.toc-mode .document-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-content: center;
-  width: 100%;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  &:hover {
-    border: 1px solid var(--text-color);
-  }
-}
-.document-card .card-header .document-folder {
-  width: 100%;
-  border-radius: 6px;
+  min-height: 580px;
+  height: auto;
 
-  font-family: "Barlow", sans-serif;
+  border-bottom-right-radius: 18px;
+}
+.toc-mode .card-header {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.toc-mode .document-card.expanded {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+
+  border-bottom-right-radius: 18px;
+  margin: 15px;
+}
+.toc-mode .card-link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  border-bottom-right-radius: inherit;
+}
+.toc-mode .card-image {
+  height: 180px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--fill-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toc-mode .card-image img {
+  max-height: 100%;
+  max-width: 100%;
+}
+.toc-mode .collection-metadata {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  background: black;
+}
+.toc-mode .collection-metadata-author-date {
+  display: flex;
+  flex-direction: column;
+  padding-left: 18px;
+  padding-right: 18px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+.toc-mode .collection-metadata-title {
+  display: block;
+  padding-left: 18px;
+  padding-right: 18px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-family: Roboto-Bold, SansSerif;
   font-size: 16px;
-  font-weight: 400;
-  line-height: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+  word-break: break-word;
+}
+.toc-mode .collection-description {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 18px;
+  color: #333333;
+  background: var(--meta-area-fill-color);
+  overflow: hidden;
+}
+.toc-mode .collection-description-text {
+  --line-clamp: 11;
 
-  padding-top: 10px;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 10px;
-  text-transform: uppercase;
-  & a {
-    border: none;
-    color: #333333; /* #485fc7; */
-  }
-  & > .card-header-first-line {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: var(--line-clamp);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.toc-mode .collection-description-text.expanded {
+  display: block;
+  height: 100%;
+  overflow: unset;
+  margin-bottom: 18px;
+}
+.toc-mode .collection-description-text::before {
+  content: '';
+  float: right;
+  height: calc(min((var(--line-clamp) - 1) * 1lh, 100%));
+}
+.toc-mode .collection-description-text.expanded::before {
+  height: 100%;
+}
+.toc-mode .collection-description-text > .read-more {
+  clear: both;
+  float: right;
+  font-weight: 600;
+  margin-left: 0.5em;
+  cursor: pointer;
+}
+/*.collection-description-text:not(.truncated) > .read-more {
+  display: none;
+}*/
 
-    & > .collection-elec-id {
-      margin: 10px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #b9192f;
-    }
-    & > .collection-metadata {
-      width: 80%;
-      & > .collection-metadata-title {
-        font-weight: 500;
-        color: #000; /* #485fc7; */
-        margin-bottom: 10px;
-      }
-      & > .collection-metadata-author-date {
-        color: #4a4a4a;
-      }
-      & > .collection-description {
-        width: 100%;
-        text-align: justify;
-        text-transform: none;
-        color: #4a4a4a;
-      }
-    }
-  }
-}
-.card-header {
-  box-shadow: none;
-}
-.document-card .card-image {
-  margin: auto;
-  & > a {
-    align-content: center;
-    > img {
-      height: auto;
-      width: 75px;
-    }
-  }
-  & > a.disabled {
-    pointer-events: none;
-    align-content: center;
-    > img {
-      height: auto;
-      width: 75px;
-    }
-  }
-}
-.document-card .card-content {
-  color: #000;
-  padding: 1.5rem 0;
-  border-bottom: 7px solid #e8e7e0;
+/* Mode activation */
+.card-mode.resources-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
 }
 
-@media screen and (max-width: 800px) {
-  .collection-toc-area, .modal-wrapper {
-    .tree li {
-      margin-left: 15px !important;
-      margin-bottom: 8px;
-    }
-  }
+/* Cards */
+.card-mode .document-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 580px;
+  height: auto;
+  border-bottom-right-radius: 18px;
 }
+
+.card-mode .document-card.expanded {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  border-bottom-right-radius: 18px;
+  margin: 15px;
+}
+
+/* Header */
+.card-mode .card-header {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-bottom-right-radius: 18px;
+  box-shadow: unset;
+}
+
+/* Link */
+.card-mode .card-link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+.card-mode .card-link.clickable {
+  cursor: pointer;
+}
+
+.card-mode .card-link.disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+/* Image */
+.card-mode .card-image {
+  height: 180px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--fill-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-mode .card-image img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+/* Metadata */
+.card-mode .collection-metadata {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  background: black;
+}
+
+.card-mode .collection-metadata-author-date {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 18px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.card-mode .collection-metadata-title {
+  display: block;
+  padding: 5px 18px;
+  font-family: Roboto-Bold, SansSerif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* Description */
+.card-mode .collection-description {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 18px;
+  border-bottom-right-radius: 18px;
+  color: #333333;
+  background: var(--meta-area-fill-color);
+  overflow: hidden;
+}
+
+.card-mode .collection-description-text {
+  --line-clamp: 11;
+  display: -webkit-box;
+  -webkit-line-clamp: var(--line-clamp);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-mode .collection-description-text.expanded {
+  display: block;
+  height: 100%;
+  overflow: unset;
+  margin-bottom: 18px;
+}
+
+.card-mode .collection-description-text::before {
+  content: '';
+  float: right;
+  height: calc(min((var(--line-clamp) - 1) * 1lh, 100%));
+}
+
+.card-mode .collection-description-text.expanded::before {
+  height: 100%;
+}
+
+.card-mode .collection-description-text > .read-more {
+  clear: both;
+  float: right;
+  font-weight: 600;
+  margin-left: 0.5em;
+  cursor: pointer;
+}
+
+.mixed-mode.resources-grid {
+  display: flex;
+  flex-direction: column;
+}
+.collection-icon {
+  color: var(--text-color);
+}
+.resource-icon {
+  color: var(--text-color);
+}
+
+/* Card */
+.mixed-mode .document-card {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  margin: 20px 0;
+}
+
+.mixed-mode .document-card.expanded {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  border-bottom-right-radius: 18px;
+  margin: 15px;
+}
+
+/* Wrapper gauche */
+.mixed-mode .collection-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  margin-right: 20px;
+
+  border-radius: 25px 25px 0 25px;
+
+  color: white;
+  background-color: var(--fill-color) !important;
+}
+
+/* Header */
+.mixed-mode .card-header {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-align: left;
+  background-color: transparent !important;
+}
+
+/* Metadata */
+.mixed-mode .collection-metadata {
+  display: flex;
+  flex-direction: column;
+}
+
+.mixed-mode .collection-metadata-title {
+  display: block;
+  padding: 18px;
+  font-family: Roboto-Bold, SansSerif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* Description */
+.mixed-mode .collection-description {
+  display: flex;
+  height: 100%;
+  padding: 18px;
+}
+
+/* TOC */
+.mixed-mode .toc-wrapper {
+  width: 100%;
+  padding: 18px;
+  border-top-left-radius: 25px;
+  background-color: #e4e4e4;
+}
+.mixed-mode .card-link.clickable {
+  cursor: pointer;
+}
+
+.mixed-mode .card-link.disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.mixed-mode .toc-header {
+  padding-left: 9px;
+  font-family: Roboto-Bold, SansSerif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.mixed-mode .collection-toc-area-header {
+  padding-left: 18px;
+  padding-top: 18px;
+  border-top-left-radius: 25px;
+  font-family: Roboto-Bold, SansSerif;
+  font-size: 20px;
+  font-weight: 700;
+
+  color: var(--text-color);
+}
+.mixed-mode .expanded.menu {
+  border-radius: 0;
+}
+
+/* useless items in mixed mode */
+.mixed-mode .card-image,
+.mixed-mode .collection-metadata-author-date,
+.mixed-mode .read-more {
+  display: none !important;
+}
+
+.mixed-mode .toc-mode .card-link { display: block !important; }
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 
 </style>

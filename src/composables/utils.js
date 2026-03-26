@@ -1,10 +1,23 @@
-// simplify and sort Object
-export function getSimpleObject(obj) {
-  let simpleObject = {}
-  simpleObject = {
-    ...obj, // garde toutes les clés existantes
+import store from '@/store'
 
-    identifier: obj.identifier ? obj.identifier : obj['@id'],
+// simplify and sort Object
+export function getSimpleObject(obj, parentId, projId) {
+  const dtsRootCollectionId = store.state.dtsRootCollectionId
+  const identifier = obj.identifier ? obj.identifier : obj['@id']
+  //console.log('check dtsRootCollectionId.length > 0 && obj.parent === dtsRootCollectionId', identifier, dtsRootCollectionId, obj.parent, parentId)
+  let projectId
+  // si racine
+  if (projId) {
+    projectId = projId
+  } else if ((dtsRootCollectionId.length > 0 && (obj.parent || parentId) === dtsRootCollectionId) && (dtsRootCollectionId.length > 0 && dtsRootCollectionId !== identifier)  || dtsRootCollectionId.length === 0 && obj.totalParents === 0) {
+    projectId = identifier
+    //console.log('identifier, dtsRootCollectionId, projectId, projId, obj.totalParents, obj.member : ', identifier, dtsRootCollectionId, projectId, projId, obj.totalParents, obj.member)
+  }
+
+  const simpleObject = {
+    ...obj,
+
+    identifier,
     citeType: obj['@type'] ? obj['@type'] : obj.citeType,
 
     dublincore: {
@@ -13,12 +26,22 @@ export function getSimpleObject(obj) {
         ? obj?.dublincore?.title?.[0]
         : obj?.dublincore?.title
     },
+    parent: obj?.parent ? obj.parent : parentId ? parentId : null,
+    // map + parent assignation
+    member: obj?.member?.map((m) => getSimpleObject(m, identifier, projectId)),
 
-    member: obj?.member?.map((m) => getSimpleObject(m)),
-    children: obj?.children ? obj.children.map((m) => getSimpleObject(m)) : [],
+    children: obj?.children
+      ? obj.children.map((m) => getSimpleObject(m, identifier, projectId))
+      : obj?.member
+        ? obj.member.map((m) => getSimpleObject(m, identifier, projectId))
+        : [],
 
-    context: obj?.['@context']
+    context: obj?.['@context'],
+
+    projectIdentifier: obj?.projectIdentifier ? obj.projectIdentifier : projectId
   }
+
+  //console.log('dtsRootCollectionId identifier simpleObject', dtsRootCollectionId, identifier, simpleObject)
 
   return simpleObject
 }
@@ -94,4 +117,3 @@ export function useCustomCss(customCssRef) {
     getElement: () => mgr && mgr.element
   };
 }
-export const redText = (text, color = '31;1') => `\x1b[${color}m${text}\x1b[0m`;

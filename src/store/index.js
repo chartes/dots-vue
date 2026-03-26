@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
+    dtsRootCollectionId: undefined,
     resourceId: undefined,
     collectionId: undefined,
     currentItem: {},
@@ -10,6 +11,9 @@ export default createStore({
     collectionModalCollectionId: false
   },
   mutations: {
+    setDtsRootCollectionId (state, dtsRootCollectionId) {
+      state.dtsRootCollectionId = dtsRootCollectionId
+    },
     setResourceId (state, resourceId) {
       state.resourceId = resourceId
     },

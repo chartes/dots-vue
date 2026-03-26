@@ -1,5 +1,7 @@
 import { getSimpleObject } from '@/composables/utils.js'
 import { useMetadataProcessor } from '@/composables/useMetadataProcessor'
+import store from '@/store'
+
 
 const _baseApiURL = `${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`
 
@@ -22,13 +24,14 @@ async function getCoverDataFromApi (id, options = {}) {
 }
 
 async function getMetadataFromApi (id, collConfig= null, route = null,  options = {}) {
+  let dtsRootCollectionId = ''
   const key = id ?? ROOT_KEY
   // console.log('getMetadataFromApi metadataCache : ', metadataCache)
   // console.log('getMetadataFromApi ROOT_KEY : ', ROOT_KEY)
   // 1. Is a promise already live for this key ? If so return cached promise
   if (metadataPromiseCache.has(key)) {
     console.log('getMetadataFromApi: returning existing promise for key:', key)
-    return metadataPromiseCache.get(key)
+    return metadataPromiseCache.get(key).then(getSimpleObject)
   }
 
   // 2. Is metadata for this key already available in cache ? If so return cached metadata
@@ -38,11 +41,12 @@ async function getMetadataFromApi (id, collConfig= null, route = null,  options 
       if (collConfig && route) {
         console.log('metadata document.js use process', collConfig, key)
         const { processMetadata } = useMetadataProcessor()
-        normalizedMetadata = processMetadata(metadataCache.get(key), collConfig, key, route)
+        normalizedMetadata = processMetadata(getSimpleObject(metadataCache.get(key)), collConfig, key, route)
+        console.log('metadata document.js normalizedMetadata from cache', normalizedMetadata)
         return normalizedMetadata
       }
       else
-      return metadataCache.get(key)
+      return getSimpleObject(metadataCache.get(key))
   }
 
   // 3. No cache promise or metadata was found, build the request URL to fetch metadata
@@ -58,10 +62,42 @@ async function getMetadataFromApi (id, collConfig= null, route = null,  options 
 
   const fetchPromise = fetch(fetchUrl, { mode: 'cors', ...options })
     .then(res => res.json())
-    .then(metadata => {
-      // simplify object
-      const simpleMetadata = getSimpleObject(metadata)
+    .then(async metadata => {
+      if (!id) {
+        dtsRootCollectionId = metadata['@id']
+        console.log('getMetadataFromApi: deduct dtsRootCollectionId :', dtsRootCollectionId)
+        store.commit('setDtsRootCollectionId', dtsRootCollectionId)
+      } else {
+        dtsRootCollectionId = store.state.dtsRootCollectionId
+      }
+      // add parent and project id for collections if missing
+      if (metadata['@type'] === 'Collection' && metadata.totalParents > 0) {
+        console.log('getMetadataFromApi: metadata.totalParents =', metadata.totalParents)
+        const parentResponse = await getParentFromApi(metadata['@id'])
 
+        const getMemberIds = (obj) => {
+          const ids = (obj?.member ?? [])
+            .map(m => m?.['@id'])
+            .filter(Boolean)
+
+          return ids.length === 1 ? ids[0] : ids
+        }
+        //console.log('getMetadataFromApi: getMemberIds =', getMemberIds(parentResponse))
+        metadata.parent = getMemberIds(parentResponse)
+        //console.log('getMetadataFromApi: metadata.parent =', metadata.parent)
+      }
+      if (id && id !== dtsRootCollectionId) {
+        //console.log('getMetadataFromApi: getting project id =', id)
+        const projectResponse = await getProjectFromApi(metadata['@id'])
+        //console.log('getMetadataFromApi: projectResponse =', projectResponse)
+        metadata.projectIdentifier = projectResponse
+        //console.log('getMetadataFromApi: metadata.projectIdentifier =', metadata.projectIdentifier)
+      }
+
+      // simplify object
+      const simpleMetadata = getSimpleObject(metadata, metadata.parent, metadata.projectIdentifier)
+      //const simpleMetadata = getSimpleObject(metadata)
+      console.log('getMetadataFromApi: simpleMetadata =', simpleMetadata)
       // Get the id from the DTS response
       const realId = simpleMetadata?.identifier
 
@@ -86,6 +122,7 @@ async function getMetadataFromApi (id, collConfig= null, route = null,  options 
         console.log('metadata document.js use process', collConfig, realId)
         const { processMetadata } = useMetadataProcessor()
         normalizedMetadata = processMetadata(simpleMetadata, collConfig, realId, route)
+        console.log('metadata document.js normalizedMetadata from simpleMetadata', simpleMetadata, normalizedMetadata)
         return normalizedMetadata
       }
       else
@@ -124,8 +161,9 @@ async function getTOCFromApi (id, type = 'Resource', options = {}) {
 async function getParentFromApi (id, options = {}) {
   console.log('document.js getParentFromApi called with id:', id)
   console.log('parentsCache.has(id):', parentsCache.has(id), 'parentsCache.get(id):', parentsCache.get(id))
+  const dtsRootCollectionId = store.state.dtsRootCollectionId
 
-  if (!id) {
+  if (!id || id === dtsRootCollectionId) {
     console.warn('getParentFromApi called without id')
     return null
   }
@@ -182,7 +220,7 @@ async function getProjectFromApi (id, options = {}) {
     rootCollectionId = rootCollection['@id']
     console.log('document.js getProjectFromApi rootCollection', rootCollection)
   }
-  console.log('document.js getProjectFromApi rootCollectionId', rootCollectionId)
+  console.log('document.js getProjectFromApi rootCollectionId', rootCollectionId, id)
 
   // --- 2. Navigate up the collection tree via /collection?id=X&nav=parents ---
   let loopId = id
@@ -197,8 +235,14 @@ async function getProjectFromApi (id, options = {}) {
     console.log('document.js getProjectFromApi document', document)
 
     if (document.member?.length) {
-      loopId = document.member[0]['@id']
-      console.log('document.js getProjectFromApi next parent loopId:', loopId)
+      if (document.member[0]['@id'] !== rootCollectionId) {
+        loopId = document.member[0]['@id']
+        console.log('document.js getProjectFromApi next parent loopId:', loopId)
+      } else if (document.member[0]['@id'] === rootCollectionId) {
+        loopId = document['@id']
+        console.log('document.js getProjectFromApi next parent is rootCollectionId, using document["@id"]: :', loopId)
+        break
+      }
     } else {
       // No declared parent → set id from the last available parent response and break
       loopId = document['@id']
