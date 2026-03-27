@@ -112,7 +112,7 @@ watch(currentPage, (val) => {
     border-radius: 3.2px;
   }
   & > a.button {
-    border: solid 1px #dbdbdb;
+    border: solid 1px transparent;
   }
   & > a.disabled {
     cursor: not-allowed !important;
@@ -187,7 +187,7 @@ watch(currentPage, (val) => {
 }
 
 .list-mode .pagination {
-  border-bottom: solid 2px var(--fill-color);
+  border-bottom: solid 4px var(--fill-color);
 }
 
 /* Chrome, Safari, Edge, Opera */

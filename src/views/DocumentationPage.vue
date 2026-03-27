@@ -115,7 +115,7 @@ article.documentation {
   margin-top: 0;
 }
 .documentation .content {
-  font-family: "Libre Baskerville", serif !important;
+  font-family: var(--font-primary), sans-serif;
   font-size: 16px;
   text-align: left;
   font-weight: 400;

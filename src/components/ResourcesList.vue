@@ -243,6 +243,18 @@ name: 'CollectionTOC',
 }
 </script>
 <style scoped>
+
+.pagination {
+  padding-bottom: 20px;
+  margin-bottom: 18px;
+}
+
+.pagination :deep(.pagination-documents-count) {
+  font-size: 32px;
+  line-height: 1;
+  align-self: flex-end;
+}
+
 /* GLOBAL */
 .list-mode {
   width: 100%;
@@ -277,41 +289,48 @@ name: 'CollectionTOC',
   width: 100% !important;
   gap: var(--gap);
 
-  font-family: "Barlow", sans-serif !important;
-  font-size: 1em !important;
-  font-weight: 400 !important;
-  line-height: 1.5 !important;
+  font-family: var(--font-primary), sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #000000;
 }
 
 /* HEADER */
 .list-mode .header {
-  font-weight: 700;
+  font-weight: 500;
   border-bottom: 1px solid #ddd;
-  padding: 20px 8px;
+  padding: 20px 0;
 }
 
 /* HEADER CELL */
 .list-mode .header-cell {
   display: flex;
   flex-direction: column;
-
-  font-weight: bold !important;
+  font-weight: 500 !important;
 }
+.list-mode .header-cell > span {
+  display: block;
+  border-bottom: 3px solid #DCDCDC;
+  margin-bottom: 12px;
+}
+
 .list-mode .header-cell-fields {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 8px;
 
   cursor: pointer;
 
-  font-weight: bold !important;
+  font-weight: 500 !important;
 
 }
 
 /* ROW */
 .list-mode .row {
   width: 100%;
-  padding: 10px 8px;
+  padding: 10px 0;
   border-bottom: 1px solid #eee;
   cursor: pointer;
 }
@@ -329,13 +348,31 @@ name: 'CollectionTOC',
   min-width: 0; /* important for ellipsis */
 }
 
+.list-mode .cell a {
+  font-size: 18px;
+  font-weight: 400;
+  color: #000000;
+
+  &:hover {
+    text-decoration: underline dotted;
+  }
+}
+
+.list-mode .cell:nth-child(2n) a {
+  color: #989898;
+}
+
+.list-mode .cell:nth-child(2n + 1) a {
+  color: #000000;
+}
+
 /* FILTER */
 .list-mode .filter {
   width: 100%;
   height: 32px;
   padding: 4px;
   font-size: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid #cecece;
 }
 
 /* RANGE */
@@ -360,7 +397,6 @@ name: 'CollectionTOC',
   min-height: 32px;
   font-size: 10px;
   color: white;
-  background-color: var(--fill-color);
 }
 
 /* CLEAN TREE STUFF */

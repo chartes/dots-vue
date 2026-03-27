@@ -1095,7 +1095,7 @@ button.toc-toggle {
   padding-right: 18px;
   padding-top: 5px;
   padding-bottom: 5px;
-  font-family: Roboto-Bold, SansSerif;
+  font-family: var(--font-primary), sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.3;
@@ -1416,7 +1416,7 @@ button.toc-toggle {
 
 .mixed-mode .toc-header {
   padding-left: 9px;
-  font-family: Roboto-Bold, SansSerif;
+  font-family: var(--font-primary), sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: var(--text-color);

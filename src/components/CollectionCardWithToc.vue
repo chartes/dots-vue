@@ -695,7 +695,6 @@ export default {
   }
 
   .tree li {
-    font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 500;
     line-height: 22px;
@@ -892,7 +891,6 @@ button.toc-toggle {
 
 .mixed-mode .toc-header {
   padding-left: 9px;
-  font-family: Roboto-Bold, SansSerif;
   font-size: 20px;
   font-weight: 700;
   color: var(--text-color);
