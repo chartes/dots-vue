@@ -17,7 +17,7 @@
     <div
       v-for="(item, index) in paginated"
       :key="item.identifier"
-      class="document-card"
+      class="document-card collection-card-with-toc-component"
     >
       <template v-if="item['@type'] === 'Collection' || item.citeType === 'Collection'">
         <div class="collection-wrapper">
@@ -707,8 +707,14 @@ export default {
     }
 
     & > .li.container {
-        display: flex;
-        margin: 0;
+      display: flex;
+      align-items: center;
+      margin: 0;
+
+      & > button {
+        margin-left: 10px;
+      }
+
       & > a {
         display: inline-flex !important;
         align-items: center;
@@ -731,6 +737,18 @@ export default {
           font-weight: bold !important;
           color: var(--text-color) !important;
         }
+      }
+
+      & > .li.container > a {
+        position: relative;
+      }
+
+      & > .li.container > a::before {
+        content: "";
+        display: block;
+        width: 30px;
+        height: 100%;
+        background-color: red;
       }
 
       &::before {
@@ -788,6 +806,10 @@ button.toc-toggle {
   margin: 20px 0;
 }
 
+.mixed-mode .document-card:first-child {
+  margin-top: 0;
+}
+
 .mixed-mode .document-card.expanded {
   display: flex;
   flex-direction: column;
@@ -800,13 +822,27 @@ button.toc-toggle {
 .mixed-mode .collection-wrapper {
   display: flex;
   flex-direction: column;
-  width: 30%;
-  margin-right: 20px;
+  margin-right: 10px;
 
-  border-radius: 25px 25px 0 25px;
+  flex: 432px 0 0;
+  border-radius: 30px 30px 0 30px;
+  align-self: flex-start;
+  padding: 30px 45px 45px 30px;
+  background: var(--fill-color) !important;
+  box-shadow: none;
+}
 
-  color: white;
-  background-color: var(--fill-color) !important;
+.mixed-mode .card-header .collection-metadata .collection-metadata-title {
+  display: block;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #FFF;
+}
+
+.mixed-mode .collection-toc-area {
+  border-radius: 42px 0 0 0;
+  background-color: #F1F1F1;
 }
 
 /* Header */
@@ -815,7 +851,9 @@ button.toc-toggle {
   flex-direction: column;
   height: 100%;
   text-align: left;
-  background-color: transparent !important;
+  background: none !important;
+  box-shadow: none !important;
+  border-radius: 0;
 }
 
 /* Metadata */
@@ -824,21 +862,15 @@ button.toc-toggle {
   flex-direction: column;
 }
 
-.mixed-mode .collection-metadata-title {
-  display: block;
-  padding: 18px;
-  font-family: Roboto-Bold, SansSerif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.3;
-  word-break: break-word;
-}
-
 /* Description */
 .mixed-mode .collection-description {
   display: flex;
   height: 100%;
-  padding: 18px;
+  font-size: 18px;
+  color: #FFFFFF;
+}
+.mixed-mode .card-link + .collection-description {
+  margin-top: 20px;
 }
 
 /* TOC */
@@ -854,7 +886,6 @@ button.toc-toggle {
 
 .mixed-mode .card-link.disabled {
   cursor: default;
-  opacity: 0.7;
 }
 
 .mixed-mode .toc-header {
@@ -867,15 +898,18 @@ button.toc-toggle {
 
 .mixed-mode .collection-toc-area-header {
   display: block;
-  padding: 0 30px;
+  padding: 30px 30px 0 30px;
   margin-bottom: 10px;
+  background: none;
   font-family: var(--font-primary), sans-serif;
   font-weight: 700;
   font-size: 28px;
   color: var(--text-color)
 }
 .mixed-mode .expanded.menu {
+  background: none;
   border-radius: 0;
+  padding: 0;
 }
 
 /* useless items in mixed mode */

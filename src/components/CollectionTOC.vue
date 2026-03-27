@@ -21,7 +21,7 @@
     <div
       v-for="(item, index) in paginated"
       :key="item.identifier"
-      class="document-card"
+      class="document-card collection-toc-component"
     >
       <template v-if="item['@type'] === 'Collection' || item.citeType === 'Collection'">
         <div class="collection-wrapper">
@@ -61,21 +61,21 @@
             </div>
             <div
               class="collection-description"
+              :class=" descExpandedItems[item.identifier] ? 'expanded' : '' "
             >
               <span
                 :ref="el => textEls.push(el)"
                 class="collection-description-text"
-                :class=" descExpandedItems[item.identifier] ? 'expanded' : '' "
               >
-                <span
+                {{ item.description }}
+              </span>
+              <span
                   v-if="item.description"
                   class="read-more"
                   @click="expandDescription(item.identifier)"
-                >
+              >
                   {{ descExpandedItems[item.identifier] === true ? '[Lire moins]' : '[Lire la suite]' }}
                 </span>
-                {{ item.description }}
-              </span>
             </div>
           </div>
         </div>
@@ -579,7 +579,7 @@ export default {
     const isTextTruncated = (el) => {
       if (!el) return
       const truncated = el.scrollHeight > el.clientHeight
-      el.classList.toggle('truncated', truncated)
+      el.parentElement.classList.toggle('truncated', truncated)
     }
 
     const descExpandedItems = ref({}) // clé = item.identifier
@@ -937,7 +937,6 @@ export default {
     &::before {
       display: none;
 
-      /* DENIS MAQUETTE */
       font-family: var(--font-secondary), sans-serif;
       margin-left: -8px;
       margin-right: 11px;
@@ -950,6 +949,8 @@ export default {
     & > .li.container {
         display: flex;
         margin: 0;
+      align-items: center;
+
       & > a {
         display: inline-flex !important;
         align-items: center;
@@ -966,14 +967,33 @@ export default {
     &.more {
       padding-left: 0 !important;
 
-      & > .li.container > a, span,
-      &.li.container > a, span, /* DENIS Maquette */
-      &.li.container > span  /* DENIS Maquette */ {
+      & > .li.container > a, span {
         margin-top: 4px;
         &.is-current {
           font-weight: bold !important;
           color: var(--text-color) !important;
         }
+      }
+
+      & > .li.container > button,
+      & > .li.container > .icon-wrapper {
+        position: relative;
+        z-index: 2;
+      }
+
+      & > .li.container > a {
+        position: relative;
+        z-index: 1;
+      }
+
+      & > .li.container > a::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        transform: translateX(-100%);
+        display: block;
+        width: 60px;
+        height: 100%;
       }
 
       &::before {
@@ -1096,7 +1116,7 @@ button.toc-toggle {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.toc-mode .collection-description-text.expanded {
+.toc-mode .collection-description.expanded .collection-description-text {
   display: block;
   height: 100%;
   overflow: unset;
@@ -1107,7 +1127,7 @@ button.toc-toggle {
   float: right;
   height: calc(min((var(--line-clamp) - 1) * 1lh, 100%));
 }
-.toc-mode .collection-description-text.expanded::before {
+.toc-mode .collection-description.expanded .collection-description-text::before {
   height: 100%;
 }
 .toc-mode .collection-description-text > .read-more {
@@ -1117,6 +1137,11 @@ button.toc-toggle {
   margin-left: 0.5em;
   cursor: pointer;
 }
+.toc-mode > .menu.expanded ul.tree li.more a {
+  padding: 13px 5px 11px 30px;
+}
+
+
 /*.collection-description-text:not(.truncated) > .read-more {
   display: none;
 }*/
@@ -1193,6 +1218,14 @@ button.toc-toggle {
 
 /* Metadata */
 
+.card-mode .collection-wrapper {
+  height: 100%;
+}
+
+.card-mode .card-header {
+  background: #F1F1F1;
+}
+
 .card-mode .collection-metadata-author-date-title,
 .card-mode .collection-description {
   padding: 20px 25px 30px;
@@ -1201,13 +1234,18 @@ button.toc-toggle {
   width: 100%;
   background-color: #000;
 
-  & > .collection-metadata-author-date {
-    margin-bottom: 10px;
+  & > span {
+    display: block;
     font-size: 16px;
     color: #FFF;
   }
 
-  .card-mode .collection-metadata-title {
+  & > span + div.collection-metadata-title {
+    margin-top: 10px;
+  }
+
+  & > div.collection-metadata-title {
+    display: block;
     font-weight:700;
     font-size:24px;
     line-height: 1.2;
@@ -1235,11 +1273,21 @@ button.toc-toggle {
   padding-top: 20px;
   border-bottom-right-radius: 18px;
   color: #333333;
-  background: var(--meta-area-fill-color);
   overflow: hidden;
   text-transform: none;
 }
 
+.card-mode .collection-description.expanded > .read-more,
+.card-mode .collection-description.truncated > .read-more {
+  display: block;
+  margin-top: 18px;
+}
+
+.card-mode .collection-description > .read-more {
+  display: none;
+  font-weight: 600;
+  cursor: pointer;
+}
 
 .card-mode .collection-description-text {
   --line-clamp: 11;
@@ -1249,11 +1297,9 @@ button.toc-toggle {
   overflow: hidden;
 }
 
-.card-mode .collection-description-text.expanded {
+.card-mode .collection-description.expanded .collection-description-text {
   display: block;
-  height: 100%;
   overflow: unset;
-  margin-bottom: 18px;
 }
 
 .card-mode .collection-description-text::before {
@@ -1262,16 +1308,8 @@ button.toc-toggle {
   height: calc(min((var(--line-clamp) - 1) * 1lh, 100%));
 }
 
-.card-mode .collection-description-text.expanded::before {
+.card-mode .collection-description.expanded .collection-description-text::before {
   height: 100%;
-}
-
-.card-mode .collection-description-text > .read-more {
-  clear: both;
-  float: right;
-  font-weight: 600;
-  margin-left: 0.5em;
-  cursor: pointer;
 }
 
 .mixed-mode.resources-grid {
@@ -1308,11 +1346,15 @@ button.toc-toggle {
   flex-direction: column;
   width: 30%;
   margin-right: 20px;
-
+  background-color: var(--fill-color) !important;
   border-radius: 25px 25px 0 25px;
 
   color: white;
   background-color: var(--fill-color) !important;
+}
+
+.mixed-mode .collection-wrapper .collection-toc-area {
+  background-color: #F1F1F1;
 }
 
 /* Header */
@@ -1333,7 +1375,7 @@ button.toc-toggle {
 .mixed-mode .collection-metadata-title {
   display: block;
   padding: 18px;
-  font-family: Roboto-Bold, SansSerif;
+  font-family: var(--font-primary), sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.3;
@@ -1382,7 +1424,72 @@ button.toc-toggle {
 }
 
 .mixed-mode .expanded.menu {
+  background: none;
   border-radius: 0;
+  padding: 0;
+}
+
+.mixed-mode .collection-toc-area {
+}
+
+.mixed-mode .collection-toc-area .menu.expanded,
+.mixed-mode .collection-toc-area .app-width-margin {
+  padding: 0;
+}
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  border-bottom: 4px solid #FFFFFF;
+}
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li:not(:last-of-type),
+.mixed-mode .collection-toc-area .menu.expanded ul.tree:not(:last-of-type) {
+  border-bottom: 4px solid #FFFFFF;
+}
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li {
+  margin-bottom: 0;
+}
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li.more > .li.container > a:hover::before,
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li a:hover {
+  background: #E3E3E3;
+}
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li {
+  &.more {
+    & > .li.container > a {
+      position: relative;
+      z-index: 1;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        transform: translateX(-100%);
+        display: block;
+        width: 60px;
+        height: 100%;
+      }
+    }
+  }
+}
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li.more a {
+  padding-left: 5px;
+}
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li a {
+  width: 100%;
+  padding: 13px 30px 11px;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+}
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li a .icon-wrapper {
+  margin-right: 5px;
 }
 
 /* useless items in mixed mode */
@@ -1393,6 +1500,10 @@ button.toc-toggle {
 }
 
 .mixed-mode .toc-mode .card-link { display: block !important; }
+
+.mixed-mode .toc-mode .collection-toc-area .menu.expanded > div > ul.tree {
+  border-bottom: none;
+}
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -1418,195 +1529,5 @@ input[type=number] {
     grid-template-columns: repeat(1, 1fr);
   }
 }
-
-
-/*  DENIS Maquette
-
-  flex-direction: row;
-  align-content: center;
-  gap: 10px;
-  width: 100%;
-}
-.document-card .card-header {
-  width: 100%;
-  box-shadow: none;
-}
-.document-card .card-header .document-folder {
-  width: 100%;
-  border-radius: 6px;
-
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--default-text-color);
-
-  & > a {
-    border: none;
-    color: var(--default-text-color);
-  }
-  & > .card-header-first-line {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-
-    & > .collection-elec-id {
-      margin: 10px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #b9192f;
-    }
-    & > .collection-metadata {
-      width: 100%;
-      font-family: var(--font-primary), sans-serif;
-
-      & > .card-image {
-        a {
-          position: relative;
-          display: block;
-          width: 100%;
-          padding-bottom: 65%;
-
-          img {
-            position: absolute;
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-          }
-        }
-      }
-
-      & > .collection-metadata-author-date-title,
-      & > .collection-description {
-        padding: 20px 25px 30px;
-      }
-      & > .collection-metadata-author-date-title {
-        width: 100%;
-        background-color: #000;
-
-        & > .collection-metadata-author-date {
-          margin-bottom: 10px;
-          font-size: 16px;
-          color: #FFF;
-        }
-        & > .collection-metadata-title {
-          font-weight:700;
-          font-size:24px;
-          line-height: 1.2;
-          color: #FFF;
-        }
-      }
-      & > .collection-description {
-        width: 100%;
-        padding-top: 20px;
-        text-transform: none;
-      }
-    }
-  }
-}
-
-.card-view .card-header {
-  width: 432px;
-  align-self: flex-start;
-  border-radius: 42px 42px 0;
-  padding: 30px 45px 45px 30px;
-  background: var(--fill-color) !important;
-  box-shadow: none;
-}
-
-.card-view .card-header .collection-metadata .collection-metadata-title {
-  display: block;
-  background: transparent !important;
-  font-family: var(--font-primary), sans-serif;
-  font-weight: 700;
-  font-size: 24px;
-  color: #FFF;
-}
-
-.card-view .document-card {
-  border: none;
-  margin-bottom: 60px;
-}
-
-.card-view .collection-toc-area .menu {
-  border-radius: 42px 0 0 0;
-}
-
-.card-view .collection-toc-area .menu.expanded {
-  background: #F1F1F1;
-  padding: 30px 0;
-}
-
-.card-view .collection-toc-area .menu.expanded ul.tree {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-  border-bottom: 4px solid #FFFFFF;
-}
-
-.card-view .collection-toc-area .menu.expanded ul.tree li:not(:last-of-type),
-.card-view .collection-toc-area .menu.expanded ul.tree:not(:last-of-type) {
-  border-bottom: 4px solid #FFFFFF;
-}
-
-.card-view .collection-toc-area .menu.expanded ul.tree li {
-  padding: 13px 30px 11px;
-}
-
-.collection-toc-area .menu.expanded ul.tree li {
-  font-family: var(--font-primary), sans-serif;
-}
-
-.collection-toc-area .menu ul.tree li span,
-.collection-toc-area .menu ul.tree li a {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-  padding: 0;
-  align-items: flex-start;
-}
-
-.collection-toc-area .menux ul.tree li a {
-  padding-left: 29px;
-}
-
-.collection-toc-area .menu ul.tree li a > span{
-  margin-top: 5px;
-}
-
-.collection-toc-area .menu ul.tree li :deep(.icon-wrapper) {
-  --icon-fg: var(--fill-color);
-  --size: 33px !important;
-}
-
-.collection-toc-area .menu ul.tree li button.toc-toggle :deep(.icon-wrapper) {
-  --icon-fg: #6E6E6E;
-}
-
-.collection-toc-area .menu.expanded ul.tree li::before {
-  display: none;
-}
-
-.document-card .card-image {
-  display: none;
-}
-
-.document-card .card-content {
-  color: #000;
-  padding: 1.5rem 0;
-  border-bottom: 7px solid #e8e7e0;
-}
-
-@media screen and (max-width: 768px) {
-  .collection-toc-area, .modal-wrapper {
-    .tree li {
-      margin-left: 15px !important;
-      margin-bottom: 8px;
-    }
-  }
-}
-
-*/
 
 </style>
