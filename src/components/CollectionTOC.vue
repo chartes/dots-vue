@@ -1184,6 +1184,10 @@ button.toc-toggle {
   box-shadow: unset;
 }
 
+.card-mode .card-header:hover {
+  box-shadow:0 0 20px 0 rgba(0, 0, 0, 0.25);
+}
+
 /* Link */
 .card-mode .card-link {
   display: flex;
