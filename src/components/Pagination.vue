@@ -108,7 +108,7 @@ watch(currentPage, (val) => {
   }
   & span.total-pages,
   & > a {
-    background-color: #F1F1F1;
+    background-color: var(--default-bg-color);
     border-radius: 3.2px;
   }
   & > a.button {
@@ -118,16 +118,16 @@ watch(currentPage, (val) => {
     cursor: not-allowed !important;
   }
   & > a.first-page {
-    background: #F1F1F1 url(../assets/images/page_debut.svg)  center / 17px auto no-repeat;
+    background: var(--default-bg-color) url(../assets/images/page_debut.svg)  center / 17px auto no-repeat;
   }
   & > a.previous-page {
-    background: #F1F1F1 url(../assets/images/page_avant.svg) center / 23px auto no-repeat;
+    background: var(--default-bg-color) url(../assets/images/page_avant.svg) center / 23px auto no-repeat;
   }
   & > a.next-page {
-    background: #F1F1F1 url(../assets/images/page_suivant.svg) center / 24px auto no-repeat;
+    background: var(--default-bg-color) url(../assets/images/page_suivant.svg) center / 24px auto no-repeat;
   }
   & > a.last-page {
-    background: #F1F1F1 url(../assets/images/page_fin.svg) center / 17px auto no-repeat;
+    background: var(--default-bg-color) url(../assets/images/page_fin.svg) center / 17px auto no-repeat;
   }
   & > input.current-page {
     padding: 0 !important;
@@ -159,7 +159,7 @@ watch(currentPage, (val) => {
   }
 
   & span.total-pages {
-    background-color: #DFDFDF;
+    background-color: var(--default-bg-color);
     border-radius: 3.2px;
     font-family: inherit;
     color: #818181;

@@ -1455,8 +1455,9 @@ button.toc-toggle {
   border-bottom: 4px solid #FFFFFF;
 }
 
+.collection-toc-area .menu.expanded ul.tree li.more li,
 .collection-toc-area .menu.expanded ul.tree:first-child:last-child {
-  border-bottom: none;
+  border-bottom: none !important;
 }
 
 .collection-toc-area .menu.expanded ul.tree li {
@@ -1522,6 +1523,15 @@ button.toc-toggle {
   color: var(--fill-color);
   margin-right: 5px;
   align-self: flex-start;
+}
+
+.collection-toc-area .menu.expanded ul.tree li.more li .icon-wrapper {
+  color: #8E8E8E;
+}
+
+.collection-toc-area .menu.expanded ul.tree li.more li a {
+  padding-top: 8px;
+  padding-bottom: 6px;
 }
 
 /* useless items in mixed mode */
