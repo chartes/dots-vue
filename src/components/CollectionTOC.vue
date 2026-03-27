@@ -955,8 +955,10 @@ export default {
         display: inline-flex !important;
         align-items: center;
         gap: 0.1rem;
+        width: 100%;
+        padding: 13px 30px 11px;
         border-bottom: none;
-        color: #4a4a4a !important;
+
         &.is-current {
           font-weight: bolder !important;
           color: var(--text-color) !important;
@@ -1138,9 +1140,12 @@ button.toc-toggle {
   cursor: pointer;
 }
 .toc-mode > .menu.expanded ul.tree li.more a {
-  padding: 13px 5px 11px 30px;
+  padding: 13px 5px 11px 5px;
 }
-
+.toc-mode > .menu.expanded {
+  padding: 0;
+  background: var(--default-bg-color);
+}
 
 /*.collection-description-text:not(.truncated) > .read-more {
   display: none;
@@ -1223,7 +1228,7 @@ button.toc-toggle {
 }
 
 .card-mode .card-header {
-  background: #F1F1F1;
+  background: var(--default-bg-color) !important;
 }
 
 .card-mode .collection-metadata-author-date-title,
@@ -1354,7 +1359,7 @@ button.toc-toggle {
 }
 
 .mixed-mode .collection-wrapper .collection-toc-area {
-  background-color: #F1F1F1;
+  background-color: var(--default-bg-color);
 }
 
 /* Header */
@@ -1429,9 +1434,6 @@ button.toc-toggle {
   padding: 0;
 }
 
-.mixed-mode .collection-toc-area {
-}
-
 .mixed-mode .collection-toc-area .menu.expanded,
 .mixed-mode .collection-toc-area .app-width-margin {
   padding: 0;
@@ -1444,19 +1446,33 @@ button.toc-toggle {
   border-bottom: 4px solid #FFFFFF;
 }
 
-.mixed-mode .collection-toc-area .menu.expanded ul.tree li:not(:last-of-type),
-.mixed-mode .collection-toc-area .menu.expanded ul.tree:not(:last-of-type) {
+.collection-toc-area .menu.expanded ul.tree li:not(:last-of-type),
+.collection-toc-area .menu.expanded ul.tree:not(:last-of-type) {
   border-bottom: 4px solid #FFFFFF;
 }
 
-.mixed-mode .collection-toc-area .menu.expanded ul.tree li {
-  margin-bottom: 0;
+.collection-toc-area .menu.expanded ul.tree:first-child:last-child {
+  border-bottom: none;
 }
 
-.mixed-mode .collection-toc-area .menu.expanded ul.tree li.more > .li.container > a:hover::before,
-.mixed-mode .collection-toc-area .menu.expanded ul.tree li a:hover {
-  background: #E3E3E3;
+.collection-toc-area .menu.expanded ul.tree li {
+  margin-bottom: 0;
+  margin-left: 0 !important;
 }
+
+.collection-toc-area .menu.expanded ul.tree li.more > .li.container > a:hover::before,
+.collection-toc-area .menu.expanded ul.tree li a:hover {
+  background: var(--default-bg-hover-color);
+}
+
+.collection-toc-area .menu.expanded {
+  padding: 0;
+}
+
+.collection-toc-area .menu.expanded ul.tree li ul.tree {
+  margin-left: 50px;
+}
+
 
 .mixed-mode .collection-toc-area .menu.expanded ul.tree li {
   &.more {
@@ -1481,15 +1497,27 @@ button.toc-toggle {
   padding-left: 5px;
 }
 
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li.more li:not(.more) a {
+  padding-left: 0;
+}
+
 .mixed-mode .collection-toc-area .menu.expanded ul.tree li a {
   width: 100%;
   padding: 13px 30px 11px;
+}
+
+
+.collection-toc-area .menu.expanded ul.tree li a {
   font-family: var(--font-primary), sans-serif;
   font-weight: 400;
   font-size: 18px;
+  color: #080808;
 }
-.mixed-mode .collection-toc-area .menu.expanded ul.tree li a .icon-wrapper {
+
+.collection-toc-area .menu.expanded ul.tree li a .icon-wrapper {
+  color: var(--fill-color);
   margin-right: 5px;
+  align-self: flex-start;
 }
 
 /* useless items in mixed mode */

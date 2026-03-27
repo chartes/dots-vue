@@ -561,7 +561,7 @@ a {
   width: calc(var(--first-column-width) );
   margin: 0 0 30px !important;
   padding: 45px !important;
-  background-color: #f1f1f1;
+  background-color: var(--default-bg-color);
 }
 .wrapper {
   width: 100%;

@@ -942,8 +942,10 @@ a.noteref sup {
   border-radius: 0;
 }
 .collection-toc-area-header > a {
-  font-weight: 500;
-  color: #4a4a4a !important;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--fill-color);
   text-decoration: none;
   border: none;
 }
@@ -958,8 +960,7 @@ a.noteref sup {
   display: flex;
   flex-direction: column;
   padding: 0 20px 0;
-  /* border-top: solid 2px #fcfcfc; */
-  background-color: #e4e4e4;
+  background-color: var(--default-bg-color);
   border-radius: 0 0 6px 6px;
 }
 

@@ -719,8 +719,10 @@ export default {
         display: inline-flex !important;
         align-items: center;
         gap: 0.1rem;
+        width: 100%;
+        padding: 13px 30px 11px;
         border-bottom: none;
-        color: #4a4a4a !important;
+
         &.is-current {
           font-weight: bolder !important;
           color: var(--text-color) !important;
@@ -842,7 +844,7 @@ button.toc-toggle {
 
 .mixed-mode .collection-toc-area {
   border-radius: 42px 0 0 0;
-  background-color: #F1F1F1;
+  background-color: var(--default-bg-color);
 }
 
 /* Header */
