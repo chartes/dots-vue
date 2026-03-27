@@ -2550,7 +2550,7 @@ div.remove-bottom-padding #article {
 
   font-family: var(--font-primary), sans-serif;
   font-weight: 400;
-  font-size: var(--font-default-size);
+  font-size: 18px;
   color: #636363;
 
   & > ul {
@@ -2637,6 +2637,10 @@ div.remove-bottom-padding #article {
 .crumbs li + li:before {
   width: 100% !important;
   padding: 20px !important;
+}
+
+.crumbs li a:hover {
+  text-decoration: underline dotted;
 }
 
 .crumbs li {

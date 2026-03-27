@@ -60,23 +60,26 @@ const cssVars = {
   height: var(--size);
   border-radius: var(--radius);
   background-color: var(--bg);
+  color: var(--fg);
   display: flex;
   align-items: center;
   justify-content: center;
 
   &.none {
     background-color: var(--default-bg-color);
+    color: #848484 !important;
+  }
+
+  &:hover {
+    background-color: #848484 !important;
+    color: #FFFFFF !important;
   }
 }
 
 .icon {
   width: 100%;
   height: 100%;
-  color: var(--fg);
-}
-
-.icon-wrapper.none .icon {
-  color: #848484;
+  color: inherit;
 }
 
 .letter {

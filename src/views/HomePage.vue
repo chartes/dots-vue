@@ -630,17 +630,22 @@ a {
 
   display: flex;
   width: fit-content;
-  padding: 6px 10px;
   background-color: var(--fill-color);
   transform: translateY(50%);
 
   & > a {
+    display: inline-block;
+    padding: 6px 10px;
     font-family: var(--font-secondary), sans-serif;
     font-weight: 400;
     font-size: 16px;
     text-transform: uppercase;
     text-decoration: none;
     color: white;
+
+    &:hover {
+      background-color: #000000;
+    }
   }
 }
 
@@ -664,6 +669,9 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+.collection-header {
+  min-height: 30px;
+}
 .collection-header :deep(.home-content) {
   font-family: var(--font-primary), sans-serif;
   font-weight: normal;
