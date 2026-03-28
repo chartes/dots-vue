@@ -1567,8 +1567,27 @@ input[type=number] {
 }
 
 @media screen and (max-width: 640px) {
+
+  .card-mode .collection-metadata-author-date-title,
+  .card-mode .collection-description {
+    padding: 20px var(--mobile-margin) 30px;
+  }
+
   .card-mode.resources-grid {
     grid-template-columns: repeat(1, 1fr);
+  }
+
+  .toc-mode.document-list .collection-toc-area.app-width-margin {
+    padding: 0;
+  }
+
+  .collection-toc-area-header > a {
+    padding: 30px var(--mobile-margin) 0;
+    font-size: 18px;
+  }
+
+  .mixed-mode .collection-toc-area .menu.expanded ul.tree li a {
+    padding: 13px var(--mobile-margin) 11px;
   }
 }
 

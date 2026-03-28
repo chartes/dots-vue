@@ -252,7 +252,6 @@ name: 'CollectionTOC',
 .pagination :deep(.pagination-documents-count) {
   font-size: 32px;
   line-height: 1;
-  align-self: flex-end;
 }
 
 /* GLOBAL */
@@ -457,4 +456,110 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+
+@media screen and (max-width: 1024px) {
+
+  .list-mode.tree,
+  .list-mode .pagination {
+    width: auto;
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  .list-mode.tree > .list-header,
+  .list-mode.tree > li > .li.container.row,
+  .list-mode .pagination {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .list-mode .pagination {
+    margin-bottom: 20px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  /* Table header */
+
+  .list-header {
+    margin-bottom: 0;
+    border-bottom: 2px solid var(--fill-color);
+
+    & > .header {
+      border-bottom: none;
+    }
+  }
+
+  .list-mode .header-cell {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+
+    & > span {
+      flex: 130px 0 0;
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    & > .header-cell-fields {
+      flex: calc(100% - 140px) 0 0;
+    }
+  }
+
+  .list-mode .range-filter {
+    width: 100%;
+  }
+
+  .list-mode .li.container {
+    display: block !important;
+
+    &.header {
+      padding: 5px 0 10px 0;
+    }
+  }
+
+  /* Table rows */
+
+  .list-mode > li > .li.container > .cell:first-child a {
+    color: #000000;
+  }
+
+  .list-mode .cell:not(:nth-child(1)) a,
+  .list-mode .cell:nth-child(2n) a {
+    font-size: 16px;
+    color: #333333;
+  }
+
+  .list-mode > li:nth-child(2) .li.container {
+    padding-top: 20px;
+  }
+}
+
+
+@media screen and (max-width: 640px) {
+
+  .list-mode.tree,
+  .list-mode .pagination {
+    margin-left: calc(-1 * var(--mobile-margin));
+    margin-right: calc(-1 * var(--mobile-margin));
+  }
+
+  .list-mode.tree > li {
+    padding: 0;
+  }
+
+  .list-mode.tree > .list-header,
+  .list-mode.tree > li > .li.container.row,
+  .list-mode .pagination {
+    padding-left: var(--mobile-margin);
+    padding-right: var(--mobile-margin);
+  }
+
+  .pagination :deep(.pagination-documents-count) {
+    font-size: 24px;
+  }
+}
+
 </style>

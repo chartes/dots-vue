@@ -728,18 +728,21 @@ input[type=number] {
 
 @media screen and (max-width: 640px) {
 
-  #home-article {
-    padding: 20px !important;
-  }
-
   .page-header .wrapper > .tile {
-    padding: 25px 20px;
+    padding: 25px var(--mobile-margin);
   }
 
   .project-tile {
-    left: 20px;
+    left: var(--mobile-margin);
   }
 
+  #home-article {
+    padding: 40px var(--mobile-margin) !important;
+  }
+
+  #home-article h1 {
+    font-size: 36px;
+  }
 }
 
 </style>

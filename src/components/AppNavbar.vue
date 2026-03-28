@@ -606,7 +606,7 @@ ul.submenu a:hover {
     justify-content: flex-start;
     align-items: flex-start;
     gap: 0;
-    padding: 20px;
+    padding: 20px var(--mobile-margin);
 
     & > a.level-item-external {
       line-height: 1.2;
@@ -644,7 +644,7 @@ ul.submenu a:hover {
     display: flex;
     align-items: center;
     position: absolute;
-    right: 15px;
+    right: var(--mobile-margin);
     top: 2px;
     z-index: 2;
   }

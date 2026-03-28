@@ -40,7 +40,11 @@
         @click.prevent="scrollToTop"
       >
         <button type="button" aria-label="Retour en haut">
-          <DirectionArrows :size="40" :radius="4" direction="up"/>
+          <DirectionArrows
+              :size="40"
+              :radius="4"
+              direction="up"
+          />
         </button>
       </div>
     </div>
@@ -636,11 +640,12 @@ p.header-baseline span {
 
   width: 40px;
   height: 40px;
-  background-color: #FFFFFF;
   pointer-events: none;
   z-index: 20;
 
   > button {
+    --icon-bg: #FFF;
+
     /* remove default button behavior */
     appearance: none;
     -webkit-appearance: none;
@@ -743,13 +748,13 @@ p.header-baseline span {
 
 @media screen and (max-width: 768px) {
   .app-width-padding {
-    padding-left: 2.5%;
-    padding-right: 2.5%;
+    padding-left: var(--mobile-margin);
+    padding-right: var(--mobile-margin);
   }
   .app-width-margin {
     margin: 0;
     max-width: 100%;
-    padding: 0 2.5%;
+    padding: 0 var(--mobile-margin);
   }
   .aside-noteref-parent {
     left: 10px !important;

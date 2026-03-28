@@ -898,7 +898,7 @@ button.toc-toggle {
 
 .mixed-mode .collection-toc-area-header {
   display: block;
-  padding: 30px 30px 0 30px;
+  padding: 30px 30px 0;
   margin-bottom: 10px;
   background: none;
   font-family: var(--font-primary), sans-serif;
@@ -932,4 +932,36 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+
+
+@media screen and (max-width: 768px) {
+
+  .mixed-mode .collection-toc-area-header {
+    padding: 30px var(--mobile-margin) 0;
+    font-size: 18px;
+  }
+
+  .mixed-mode.resources-grid {
+    gap: 25px;
+  }
+
+  .mixed-mode .document-card {
+    flex-direction: column;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .mixed-mode .collection-wrapper {
+    flex: 100% 0 0;
+    border-radius: 30px 30px 0 0;
+    align-self: unset;
+    margin-right: 0;
+  }
+  .mixed-mode .collection-toc-area {
+    padding-bottom: 50px;
+    border-radius: 0 0 30px 0;
+  }
+}
+
 </style>

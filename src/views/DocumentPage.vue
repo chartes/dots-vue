@@ -2810,168 +2810,6 @@ div.remove-bottom-padding #article {
   visibility: hidden;
 }
 
-@media screen and (max-width: 1320px) {
-  .toc-area .toc-area-content nav > ol.tree {
-    columns: 2;
-  }
-  .controls > a.toc-menu-toggle {
-    margin-left: 20px;
-  }
-  .controls ul > li > a.access_link {
-    margin-right: 20px;
-  }
-}
-@media screen and (max-width: 768px) {
-  #article {
-    padding: 40px 2.5% 120px;
-  }
-  .toc-area .toc-area-content aside {
-    padding: 20px 20px !important;
-  }
-
-  .l-n {
-    margin-left: -2.2rem;
-  }
-  .ariane {
-    & > .ariane-wrapper {
-      max-width: calc(100% - 90px - 10px);
-      margin-right: 10px;
-
-      & > button.toc-menu-toggle {
-        margin-right: 10px;
-      }
-    }
-  }
-  .ariane-scroll-wrapper {
-    max-width: calc(100% - 50px);
-    margin-right: 10px;
-  }
-  .crumbs {
-    display: flex;
-  }
-  .crumbs li {
-    &.is-current {
-      & a {
-        text-wrap: nowrap;
-      }
-    }
-    &:not(.is-current) {
-      &::after {
-        padding-left: 0.25rem;
-      }
-    }
-  }
-}
-@media screen and (max-width: 640px) {
-  .several-parent {
-    flex-direction: column;
-    align-items: center;
-  }
-  .toc-aside-is-opened .document-views {
-    width: 100%;
-  }
-  .document-views {
-    max-width: 100%;
-    position: relative;
-  }
-
-  .l-n {
-    margin-left: -1.5rem;
-  }
-
-  small {
-    font-size: 9px;
-  }
-
-  .pb {
-    display: none !important;
-  }
-
-  .controls-list {
-    position: absolute;
-  }
-
-  .toc-area-aside {
-    display: none;
-  }
-
-  .toc-aside-is-opened #aside {
-    width: 100%;
-  }
-
-  .toc-aside-is-opened .toc-area-aside {
-    position: absolute;
-    z-index: 12;
-    width: 90vw;
-    background-color: #FFF;
-    box-shadow: 8px 8px 5px 0 rgba(0,0,0,0.2);
-  }
-
-  .toc-area .toc-area-content nav > ol.tree {
-    columns: 1;
-  }
-
-  #article section.div {
-  }
-
-  #article h1 {
-  }
-
-  #article section.div h2.head,
-  #article section.div h3.head {
-  }
-
-  #article section.div {
-    padding-top: 10px;
-  }
-  #article p.p {
-    text-align: left;
-  }
-
-  .text-and-images-mode .document-views {
-    display: block !important;
-  }
-  .toc-area-header {
-    & > a:first-child {
-      margin-left: 0;
-      margin-right: 25px;
-    }
-  }
-  .tooltip {
-    display: none;
-  }
-
-  .controls {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-    background-color: transparent;
-  }
-
-  .controls-list.is-opened {
-    display: flex;
-    flex: 1; /* prend tout l’espace restant */
-    justify-content: center; /* centre la liste */
-    gap: 8px;
-    margin-top: 100px;
-  }
-
-  .controls button.controls-toggle {
-    display: flex;
-    margin-left: 0; /* annule margin-left: auto */
-    order: 2;       /* met le bouton à droite */
-    max-height: 40px;
-    margin-top: 0.5ex;
-    margin-bottom: 0.5ex;
-  }
-
-  .controls-list {
-    flex-direction: row;
-    margin-left: 40px;
-    order: 1; /* liste avant le bouton */
-  }
-}
 
 .ariane-collection-top {
   justify-content: left;
@@ -3334,5 +3172,176 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   border-radius: 0 0 6px 6px;
 }
 
+
+@media screen and (max-width: 1320px) {
+  .toc-area .toc-area-content nav > ol.tree {
+    columns: 2;
+  }
+  .controls > a.toc-menu-toggle {
+    margin-left: 20px;
+  }
+  .controls ul > li > a.access_link {
+    margin-right: 20px;
+  }
+}
+@media screen and (max-width: 768px) {
+  .document-area.app-width-margin {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  #article {
+    padding: 40px var(--mobile-margin) 120px;
+  }
+  .toc-area .toc-area-content aside {
+    padding: 20px 20px !important;
+  }
+
+  .l-n {
+    margin-left: -2.2rem;
+  }
+  .ariane {
+    & > .ariane-wrapper {
+      max-width: calc(100% - 90px - 10px);
+      margin-right: 10px;
+
+      & > button.toc-menu-toggle {
+        margin-right: 10px;
+      }
+    }
+  }
+  .ariane-scroll-wrapper {
+    max-width: calc(100% - 50px);
+    margin-right: 10px;
+  }
+  .crumbs {
+    display: flex;
+  }
+  .crumbs li {
+    &.is-current {
+      & a {
+        text-wrap: nowrap;
+      }
+    }
+    &:not(.is-current) {
+      &::after {
+        padding-left: 0.25rem;
+      }
+    }
+  }
+}
+@media screen and (max-width: 640px) {
+  .several-parent {
+    flex-direction: column;
+    align-items: center;
+  }
+  .toc-aside-is-opened .document-views {
+    width: 100%;
+  }
+  .document-views {
+    max-width: 100%;
+    position: relative;
+  }
+
+  .l-n {
+    margin-left: -1.5rem;
+  }
+
+  small {
+    font-size: 9px;
+  }
+
+  .pb {
+    display: none !important;
+  }
+
+  .controls-list {
+    position: absolute;
+  }
+
+  .toc-area-aside {
+    display: none;
+  }
+
+  .toc-aside-is-opened #aside {
+    width: 100%;
+  }
+
+  .toc-aside-is-opened .toc-area-aside {
+    position: absolute;
+    z-index: 12;
+    width: 90vw;
+    background-color: #FFF;
+    box-shadow: 8px 8px 5px 0 rgba(0,0,0,0.2);
+  }
+
+  .toc-area .toc-area-content nav > ol.tree {
+    columns: 1;
+  }
+
+  div.remove-bottom-padding #article {
+    padding: 40px var(--mobile-margin) 10px !important;
+  }
+
+  #article section.div {
+  }
+
+  #article h1 {
+  }
+
+  #article section.div h2.head,
+  #article section.div h3.head {
+  }
+
+  #article section.div {
+    padding-top: 10px;
+  }
+  #article p.p {
+    text-align: left;
+  }
+
+  .text-and-images-mode .document-views {
+    display: block !important;
+  }
+  .toc-area-header {
+    & > a:first-child {
+      margin-left: 0;
+      margin-right: 25px;
+    }
+  }
+  .tooltip {
+    display: none;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    background-color: transparent;
+  }
+
+  .controls-list.is-opened {
+    display: flex;
+    flex: 1; /* prend tout l’espace restant */
+    justify-content: center; /* centre la liste */
+    gap: 8px;
+    margin-top: 100px;
+  }
+
+  .controls button.controls-toggle {
+    display: flex;
+    margin-left: 0; /* annule margin-left: auto */
+    order: 2;       /* met le bouton à droite */
+    max-height: 40px;
+    margin-top: 0.5ex;
+    margin-bottom: 0.5ex;
+  }
+
+  .controls-list {
+    flex-direction: row;
+    margin-left: 40px;
+    order: 1; /* liste avant le bouton */
+  }
+}
 
 </style>

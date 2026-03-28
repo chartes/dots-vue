@@ -128,6 +128,7 @@ watch(currentPage, (val) => {
   }
   & > a.last-page {
     background: var(--default-bg-color) url(../assets/images/page_fin.svg) center / 17px auto no-repeat;
+    margin-right: 0;
   }
   & > input.current-page {
     padding: 0 !important;
@@ -174,6 +175,7 @@ watch(currentPage, (val) => {
   margin: 0;
 }
 .pagination-documents-count {
+  align-self: flex-end;
   margin-right: auto;
   font-family: var(--font-primary), sans-serif;
   font-weight: 700;
@@ -207,10 +209,15 @@ input[type=number] {
   .pagination-documents-count {
     margin-right: 0;
     font-size: 24px;
+    align-self: center;
   }
 }
 
 @media screen and (max-width: 640px) {
+
+  .pagination-documents-count {
+    font-size: 24px;
+  }
 
   .pagination-controls {
     & > * {
