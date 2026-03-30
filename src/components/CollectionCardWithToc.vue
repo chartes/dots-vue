@@ -70,7 +70,6 @@
         <div
           class="collection-toc-area"
           :class="expandedById[item.identifier] ? 'expanded': ''"
-          @click.prevent="toggleExpanded(item)"
         >
           <div
             class="collection-toc-area-header"
