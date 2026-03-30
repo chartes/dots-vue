@@ -7,8 +7,10 @@
     :documents-count-text="documentsCountText"
   />
   <div class="list-mode-wrapper">
-    <ul class="tree list-mode">
-
+    <ul
+      class="tree list-mode"
+      :style="{ '--grid-template-columns': gridTemplateColumns }"
+    >
       <!-- HEADER -->
       <li class="list-header">
         <div class="li container header">
@@ -39,7 +41,11 @@
                 @click.stop
               />
 
-              <div v-else class="range-filter" @click.stop>
+              <div
+                v-else
+                class="range-filter"
+                @click.stop
+              >
                 <input
                   v-model="filters[col.key].from"
                   type="number"
@@ -58,10 +64,17 @@
 
       <!-- LOADING -->
       <template v-if="isTableLoading">
-        <li v-for="n in 5" :key="n">
+        <li
+          v-for="n in 5"
+          :key="n"
+        >
           <div class="li container row">
-            <div v-for="col in columns" :key="col.key" class="cell">
-              <div class="skeleton"></div>
+            <div
+              v-for="col in columns"
+              :key="col.key"
+              class="cell"
+            >
+              <div class="skeleton"/>
             </div>
           </div>
         </li>
@@ -69,9 +82,19 @@
 
       <!-- ROWS -->
       <template v-else>
-        <li v-for="item in paginated" :key="item.identifier">
-          <div class="li container row" @click="goToPageTable(item, $event)">
-            <div v-for="col in columns" :key="col.key" class="cell">
+        <li
+          v-for="item in paginated"
+          :key="item.identifier"
+        >
+          <div
+            class="li container row"
+            @click="goToPageTable(item, $event)"
+          >
+            <div
+              v-for="col in columns"
+              :key="col.key"
+              class="cell"
+            >
               <a :href="getTableHref(item)">
                 {{ getValue(item, col.key) }}
               </a>
@@ -118,7 +141,7 @@ name: 'CollectionTOC',
     const resultsCounts = computed(() => props.counts)
 
     // TABLE
-    const columns = ref([...props.columnsConfig])
+    const columns = ref([...(props.columnsConfig || []).filter(Boolean)])
 
     const table = useTable(dataSource, columns, pageSize, currentPage)
 
@@ -181,6 +204,21 @@ name: 'CollectionTOC',
       }
     }
 
+    // DYNAMIC COLUMNS CSS
+    const gridTemplateColumns = computed(() => {
+      const cols = columns.value || []
+
+      if (!cols.length) return ''
+
+      // Width defined in conf.json files → use it
+      if (cols.some(col => col.width)) {
+        return cols.map(col => col.width || '1fr').join(' ')
+      }
+
+      // else → equal columns width
+      return `repeat(${cols.length}, 1fr)`
+    })
+
     // NAVIGATION
     const setStateCollection = (collId) => {
       store.commit('setCollectionId', collId)
@@ -237,7 +275,8 @@ name: 'CollectionTOC',
       setStateCollection,
       buildDocumentRoute,
       getTableHref,
-      goToPageTable
+      goToPageTable,
+      gridTemplateColumns
     }
   }
 }
@@ -258,12 +297,8 @@ name: 'CollectionTOC',
 .list-mode {
   width: 100%;
   display: block;
-
-  --col-count: 4;
   --row-gap: 0px;
   --column-gap: 60px;
-  /* columns control */
-  --grid-template-columns: 35% calc(25% - var(--column-gap)) calc(25% - var(--column-gap)) calc(15% - var(--column-gap)); /* columns widths */
 }
 .list-mode-wrapper {
   width: 100%;
@@ -287,11 +322,12 @@ name: 'CollectionTOC',
 .list-mode .container {
   max-width: none !important;
 }
+
 .list-mode .li.container {
-  display: grid !important;
+  display: grid;
   grid-template-columns: var(--grid-template-columns);
   align-items: center;
-  width: 100% !important;
+  width: 100%;
   gap: var(--row-gap) var(--column-gap);
 
   font-family: var(--font-primary), sans-serif;
