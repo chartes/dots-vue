@@ -413,7 +413,7 @@ a {
   background-color: transparent !important;
 }
 a:hover {
-  text-decoration: underline dotted;
+  text-decoration: var(--text-decoration-hover);
   color: #FFFFFF;
 }
 .active {
@@ -656,7 +656,6 @@ ul.submenu a:hover {
   .level-item {
     padding: 5px 0;
     font-size: 18px;
-    font-weight: 400;
     line-height: 52px;
   }
   .level-right .level-item:last-of-type {
@@ -680,13 +679,14 @@ ul.submenu a:hover {
     .level-right {
       position: fixed;
       right: 0;
-      top: 65px;
+      top: 70px;
       z-index: 20;
 
       display: block;
       padding: 20px 0 10px;
       background: #FFF;
       width: 100%;
+      height: auto !important;
       box-shadow: 0 8px 5px 0 rgba(0,0,0,0.2);
     }
   }

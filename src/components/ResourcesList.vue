@@ -353,7 +353,7 @@ name: 'CollectionTOC',
   color: #000000;
 
   &:hover {
-    text-decoration: underline dotted;
+    text-decoration: var(--text-decoration-hover);
   }
 }
 

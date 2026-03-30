@@ -554,7 +554,7 @@ body {
 
   font-family: var(--font-primary), sans-serif;
   font-size: var(--font-default-size);
-  line-height: 1.4;
+  line-height: var(--font-default-line-heigth);
   color: var(--default-text-color);
 }
 
@@ -871,15 +871,13 @@ a.noteref sup {
 
 .aside-noteref-content a.notebottom,
 .aside-noteref-content > a:first-child {
-  display: inline-block;
+  display: block;
   margin-right: 5px;
   height: auto;
-  padding: 2px 4px 1px;
-
-  font-weight: bold;
+  padding: 2px 2px 1px 0;
+  border: none;
   font-weight: 700;
   color: var(--fill-color);
-
   float: left;
 }
 
@@ -899,12 +897,13 @@ a.noteref sup {
   display: inline-block;
   width: 20px;
   height: 20px;
+  border: none;
   transform-origin: 50% 50%;
   transform: rotate(-90deg) translateY(-50%);
 }
 
 .aside-noteref.clamped a.see-all-link {
-  right: -15px;
+  right: -8px;
   transform: rotate(90deg) translateY(-50%);
 }
 .wrapper {
@@ -999,13 +998,14 @@ a.noteref sup {
     right: 0;
   }
   .aside-noteref {
-    padding: 20px 20px 0;
+    padding: 20px 30px 0 var(--mobile-margin);
   }
 }
 
 @media screen and (max-width: 768px) {
   .aside-noteref-parent {
-    margin-left:  -2.5%;
+    margin-left:  calc(-1 * var(--mobile-margin));
+    margin-right:  calc(-1 * var(--mobile-margin));
   }
 }
 

@@ -412,6 +412,7 @@ article.about .page-header h1,
 }
 
 @media screen and (max-width: 768px) {
+
   .about .content {
     padding: 0 20px 50px;
   }
@@ -441,6 +442,11 @@ article.about .page-header h1,
   .about .content h2 {
     text-align: left;
     width: 80%;
+  }
+
+  .about-page .tab-menu {
+    padding: 0;
+    margin: 0 0 40px;
   }
 
   /*

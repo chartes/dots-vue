@@ -17,13 +17,15 @@
     /* Font */
     --font-primary: "Roboto";
     --font-default-size : 20px;
+    --font-default-line-heigth : 1.4;
     --font-small-size : 16px; /* document source, notes, ... */
 
     --font-secondary: "Roboto Condensed";
     --font-serif: Georgia, "Time New Roman";
 
     @media screen and (max-width: 768px) {
-        --font-default-size : 16px;
+        --font-default-size : 18px;
+        --font-default-line-heigth : 1.6;
     }
 
     /* Site width on large destop - cf media queries : @media screen and (max-width: 1320px) */
@@ -42,6 +44,8 @@
     --icon-text-color: #ffffff;
 
     --mobile-margin: 12px;
+
+    --text-decoration-hover: underline dotted;
 }
 
 /*=============================================================

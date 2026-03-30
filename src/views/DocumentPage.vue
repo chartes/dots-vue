@@ -2050,7 +2050,7 @@ export default {
   background-color: transparent !important;
   border-radius: unset !important;
   color: #000;
-  text-decoration: underline dotted !important;
+  text-decoration: var(--text-decoration-hover) !important;
 }
 .toc-area-aside a,
 .toc-area-content a {
@@ -2640,7 +2640,7 @@ div.remove-bottom-padding #article {
 }
 
 .crumbs li a:hover {
-  text-decoration: underline dotted;
+  text-decoration: var(--text-decoration-hover);
 }
 
 .crumbs li {
@@ -3251,7 +3251,9 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   .pb {
-    display: none !important;
+    float: right;
+    margin-right: 0;
+    padding: 0 0 20px 5px;
   }
 
   .controls-list {
@@ -3282,10 +3284,12 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     padding: 40px var(--mobile-margin) 10px !important;
   }
 
-  #article section.div {
+  #article .byline {
+    margin: 15px 0 50px;
   }
 
   #article h1 {
+    font-size: 30px;
   }
 
   #article section.div h2.head,
@@ -3321,11 +3325,12 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   .controls-list.is-opened {
+    position: absolute;
+    top: 64px;
+
     display: flex;
-    flex: 1; /* prend tout l’espace restant */
-    justify-content: center; /* centre la liste */
-    gap: 8px;
-    margin-top: 100px;
+    flex-direction: column;
+    gap: 5px;
   }
 
   .controls button.controls-toggle {

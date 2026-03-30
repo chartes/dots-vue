@@ -741,6 +741,7 @@ input[type=number] {
   }
 
   #home-article h1 {
+    padding: 0;
     font-size: 36px;
   }
 }

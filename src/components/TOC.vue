@@ -402,9 +402,12 @@ div.toc-area-aside.toc-content {
   }
 }
 div.bottom-toc {
+  .tree {
+    margin-left: -9px;
+  }
   .tree li {
     margin-bottom: 5px;
-    padding: 0 0 0 15px;
+    padding: 0 0 0 14px;
 
     &:not(.more)::before {
       margin-left: -7px;
@@ -417,6 +420,10 @@ div.bottom-toc {
 
       & > a {
         color: var(--document-text-color);
+
+        &:hover {
+          text-decoration: var(--text-decoration-hover);
+        }
       }
     }
 
