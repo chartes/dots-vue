@@ -21,7 +21,7 @@
     <div
       v-for="(item, index) in paginated"
       :key="item.identifier"
-      class="document-card"
+      class="document-card collection-toc-component"
     >
       <template v-if="item['@type'] === 'Collection' || item.citeType === 'Collection'">
         <div class="collection-wrapper">
@@ -46,36 +46,36 @@
                 />
               </div>
               <div class="collection-metadata">
-                <div class="collection-metadata-author-date">
+                <div class="collection-metadata-author-date-title">
                   <span>
                     {{ Array.isArray(item.dublincore.creator)
                       ? item.dublincore.creator.join(', ')
                       : item.dublincore.creator }}
                   </span>
                   <span>{{ item.dublincore.date }}</span>
-                </div>
-                <div class="collection-metadata-title">
-                  {{ item.title }}
+                  <div class="collection-metadata-title">
+                    {{ item.title }}
+                  </div>
                 </div>
               </div>
             </div>
             <div
               class="collection-description"
+              :class=" descExpandedItems[item.identifier] ? 'expanded' : '' "
             >
               <span
                 :ref="el => textEls.push(el)"
                 class="collection-description-text"
-                :class=" descExpandedItems[item.identifier] ? 'expanded' : '' "
               >
-                <span
+                {{ item.description }}
+              </span>
+              <span
                   v-if="item.description"
                   class="read-more"
                   @click="expandDescription(item.identifier)"
-                >
+              >
                   {{ descExpandedItems[item.identifier] === true ? '[Lire moins]' : '[Lire la suite]' }}
                 </span>
-                {{ item.description }}
-              </span>
             </div>
           </div>
         </div>
@@ -153,9 +153,7 @@
       :class="expandedById[currCollection.identifier] ? 'expanded': ''"
     >
       <div v-if="expandedById[currCollection.identifier]">
-        <ul
-          class="tree"
-        >
+        <ul class="tree">
           <template
             v-for="(item, index) in componentTOC"
             :key="item.identifier"
@@ -334,9 +332,7 @@ const collator = new Intl.Collator('fr', {
 
 export default {
   name: 'CollectionTOC',
-
   components: { ResourceIcon, CollectionIcon, TocArrows, Pagination },
-
   props: {
     isDocProjectIdIncluded: {
       type: Boolean,
@@ -583,7 +579,7 @@ export default {
     const isTextTruncated = (el) => {
       if (!el) return
       const truncated = el.scrollHeight > el.clientHeight
-      el.classList.toggle('truncated', truncated)
+      el.parentElement.classList.toggle('truncated', truncated)
     }
 
     const descExpandedItems = ref({}) // clé = item.identifier
@@ -931,7 +927,7 @@ export default {
   }
 
   .tree li {
-    font-family: "Barlow Semi Condensed", sans-serif;
+    font-family: var(--font-secondary), sans-serif;
     font-size: 15px;
     font-weight: 500;
     line-height: 22px;
@@ -940,17 +936,29 @@ export default {
 
     &::before {
       display: none;
+
+      font-family: var(--font-secondary), sans-serif;
+      margin-left: -8px;
+      margin-right: 11px;
+      content: '●';
+      font-size: 10px;
+      color: #999;
+      float: left;
     }
 
     & > .li.container {
         display: flex;
         margin: 0;
+      align-items: center;
+
       & > a {
         display: inline-flex !important;
         align-items: center;
         gap: 0.1rem;
+        width: 100%;
+        padding: 13px 30px 11px;
         border-bottom: none;
-        color: #4a4a4a !important;
+
         &.is-current {
           font-weight: bolder !important;
           color: var(--text-color) !important;
@@ -967,6 +975,27 @@ export default {
           font-weight: bold !important;
           color: var(--text-color) !important;
         }
+      }
+
+      & > .li.container > button,
+      & > .li.container > .icon-wrapper {
+        position: relative;
+        z-index: 2;
+      }
+
+      & > .li.container > a {
+        position: relative;
+        z-index: 1;
+      }
+
+      & > .li.container > a::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        transform: translateX(-100%);
+        display: block;
+        width: 60px;
+        height: 100%;
       }
 
       &::before {
@@ -990,10 +1019,9 @@ button.toc-toggle {
   padding: 0;
   margin: 0;
 
-  color: var(--fill-color);
-
   cursor: pointer;
 }
+
 .is-current {
   color: var(--text-color) !important;
 }
@@ -1067,7 +1095,7 @@ button.toc-toggle {
   padding-right: 18px;
   padding-top: 5px;
   padding-bottom: 5px;
-  font-family: Roboto-Bold, SansSerif;
+  font-family: var(--font-primary), sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.3;
@@ -1090,7 +1118,7 @@ button.toc-toggle {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.toc-mode .collection-description-text.expanded {
+.toc-mode .collection-description.expanded .collection-description-text {
   display: block;
   height: 100%;
   overflow: unset;
@@ -1101,7 +1129,7 @@ button.toc-toggle {
   float: right;
   height: calc(min((var(--line-clamp) - 1) * 1lh, 100%));
 }
-.toc-mode .collection-description-text.expanded::before {
+.toc-mode .collection-description.expanded .collection-description-text::before {
   height: 100%;
 }
 .toc-mode .collection-description-text > .read-more {
@@ -1111,6 +1139,14 @@ button.toc-toggle {
   margin-left: 0.5em;
   cursor: pointer;
 }
+.toc-mode > .menu.expanded ul.tree li.more a {
+  padding: 13px 5px 11px 5px;
+}
+.toc-mode > .menu.expanded {
+  padding: 0;
+  background: var(--default-bg-color);
+}
+
 /*.collection-description-text:not(.truncated) > .read-more {
   display: none;
 }*/
@@ -1148,6 +1184,10 @@ button.toc-toggle {
   box-shadow: unset;
 }
 
+.card-mode .card-header:hover {
+  box-shadow:0 0 20px 0 rgba(0, 0, 0, 0.25);
+}
+
 /* Link */
 .card-mode .card-link {
   display: flex;
@@ -1168,21 +1208,64 @@ button.toc-toggle {
 
 /* Image */
 .card-mode .card-image {
-  height: 180px;
-  flex-shrink: 0;
-  overflow: hidden;
-  background: var(--fill-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    position: relative;
+    display: block;
+    background: var(--fill-color);
+    width: 100%;
+    padding-bottom: 65%;
+
+    img {
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
 }
 
-.card-mode .card-image img {
-  max-height: 100%;
-  max-width: 100%;
-}
 
 /* Metadata */
+
+.card-mode .collection-wrapper {
+  height: 100%;
+}
+
+.card-mode .card-header {
+  background: var(--default-bg-color) !important;
+}
+
+.card-mode .collection-metadata-author-date-title,
+.card-mode .collection-description {
+  padding: 20px 25px 30px;
+}
+.card-mode .collection-metadata-author-date-title {
+  width: 100%;
+  background-color: #000;
+
+  & > span {
+    display: block;
+    font-size: 16px;
+    color: #FFF;
+  }
+
+  & > span + div.collection-metadata-title {
+    margin-top: 10px;
+  }
+
+  & > div.collection-metadata-title {
+    display: block;
+    font-weight:700;
+    font-size:24px;
+    line-height: 1.2;
+    color: #FFF;
+  }
+}
+.card-mode .collection-description {
+  width: 100%;
+  padding-top: 20px;
+  text-transform: none;
+}
 .card-mode .collection-metadata {
   display: flex;
   flex-direction: column;
@@ -1190,34 +1273,29 @@ button.toc-toggle {
   background: black;
 }
 
-.card-mode .collection-metadata-author-date {
-  display: flex;
-  flex-direction: column;
-  padding: 5px 18px;
-  line-height: 1.3;
-  word-break: break-word;
-}
-
-.card-mode .collection-metadata-title {
-  display: block;
-  padding: 5px 18px;
-  font-family: Roboto-Bold, SansSerif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.3;
-  word-break: break-word;
-}
-
 /* Description */
 .card-mode .collection-description {
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100%;
-  padding: 18px;
+  padding-top: 20px;
   border-bottom-right-radius: 18px;
   color: #333333;
-  background: var(--meta-area-fill-color);
   overflow: hidden;
+  text-transform: none;
+}
+
+.card-mode .collection-description.expanded > .read-more,
+.card-mode .collection-description.truncated > .read-more {
+  display: block;
+  margin-top: 18px;
+}
+
+.card-mode .collection-description > .read-more {
+  display: none;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .card-mode .collection-description-text {
@@ -1228,11 +1306,9 @@ button.toc-toggle {
   overflow: hidden;
 }
 
-.card-mode .collection-description-text.expanded {
+.card-mode .collection-description.expanded .collection-description-text {
   display: block;
-  height: 100%;
   overflow: unset;
-  margin-bottom: 18px;
 }
 
 .card-mode .collection-description-text::before {
@@ -1241,16 +1317,8 @@ button.toc-toggle {
   height: calc(min((var(--line-clamp) - 1) * 1lh, 100%));
 }
 
-.card-mode .collection-description-text.expanded::before {
+.card-mode .collection-description.expanded .collection-description-text::before {
   height: 100%;
-}
-
-.card-mode .collection-description-text > .read-more {
-  clear: both;
-  float: right;
-  font-weight: 600;
-  margin-left: 0.5em;
-  cursor: pointer;
 }
 
 .mixed-mode.resources-grid {
@@ -1287,11 +1355,15 @@ button.toc-toggle {
   flex-direction: column;
   width: 30%;
   margin-right: 20px;
-
+  background-color: var(--fill-color) !important;
   border-radius: 25px 25px 0 25px;
 
   color: white;
   background-color: var(--fill-color) !important;
+}
+
+.mixed-mode .collection-wrapper .collection-toc-area {
+  background-color: var(--default-bg-color);
 }
 
 /* Header */
@@ -1312,7 +1384,7 @@ button.toc-toggle {
 .mixed-mode .collection-metadata-title {
   display: block;
   padding: 18px;
-  font-family: Roboto-Bold, SansSerif;
+  font-family: var(--font-primary), sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.3;
@@ -1344,24 +1416,122 @@ button.toc-toggle {
 
 .mixed-mode .toc-header {
   padding-left: 9px;
-  font-family: Roboto-Bold, SansSerif;
+  font-family: var(--font-primary), sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: var(--text-color);
 }
 
 .mixed-mode .collection-toc-area-header {
-  padding-left: 18px;
-  padding-top: 18px;
-  border-top-left-radius: 25px;
-  font-family: Roboto-Bold, SansSerif;
-  font-size: 20px;
-  font-weight: 700;
-
-  color: var(--text-color);
+    display: block;
+    padding: 0 30px;
+    margin-bottom: 10px;
+    font-family: var(--font-primary), sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--text-color)
 }
+
 .mixed-mode .expanded.menu {
+  background: none;
   border-radius: 0;
+  padding: 0;
+}
+
+.mixed-mode .collection-toc-area .menu.expanded,
+.mixed-mode .collection-toc-area .app-width-margin {
+  padding: 0;
+}
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  border-bottom: 4px solid #FFFFFF;
+}
+
+.collection-toc-area .menu.expanded ul.tree li:not(:last-of-type),
+.collection-toc-area .menu.expanded ul.tree:not(:last-of-type) {
+  border-bottom: 4px solid #FFFFFF;
+}
+
+.collection-toc-area .menu.expanded ul.tree li.more li,
+.collection-toc-area .menu.expanded ul.tree:first-child:last-child {
+  border-bottom: none !important;
+}
+
+.collection-toc-area .menu.expanded ul.tree li {
+  margin-bottom: 0;
+  margin-left: 0 !important;
+}
+
+.collection-toc-area .menu.expanded ul.tree li.more > .li.container > a:hover::before,
+.collection-toc-area .menu.expanded ul.tree li a:hover {
+  background: var(--default-bg-hover-color);
+}
+
+.collection-toc-area .menu.expanded {
+  padding: 0;
+}
+
+.collection-toc-area .menu.expanded ul.tree li ul.tree {
+  margin-left: 50px;
+}
+
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li {
+  &.more {
+    & > .li.container > a {
+      position: relative;
+      z-index: 1;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        transform: translateX(-100%);
+        display: block;
+        width: 60px;
+        height: 100%;
+      }
+    }
+  }
+}
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li.more a {
+  padding-left: 5px;
+}
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li.more li:not(.more) a {
+  padding-left: 0;
+}
+
+.mixed-mode .collection-toc-area .menu.expanded ul.tree li a {
+  width: 100%;
+  padding: 13px 30px 11px;
+}
+
+
+.collection-toc-area .menu.expanded ul.tree li a {
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  color: #080808;
+}
+
+.collection-toc-area .menu.expanded ul.tree li a .icon-wrapper {
+  color: var(--fill-color);
+  margin-right: 5px;
+  align-self: flex-start;
+}
+
+.collection-toc-area .menu.expanded ul.tree li.more li .icon-wrapper {
+  color: #8E8E8E;
+}
+
+.collection-toc-area .menu.expanded ul.tree li.more li a {
+  padding-top: 8px;
+  padding-bottom: 6px;
 }
 
 /* useless items in mixed mode */
@@ -1372,6 +1542,10 @@ button.toc-toggle {
 }
 
 .mixed-mode .toc-mode .card-link { display: block !important; }
+
+.mixed-mode .toc-mode .collection-toc-area .menu.expanded > div > ul.tree {
+  border-bottom: none;
+}
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -1385,5 +1559,36 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+
+@media screen and (max-width: 1024px) {
+  .card-mode.resources-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 640px) {
+
+  .card-mode .collection-metadata-author-date-title,
+  .card-mode .collection-description {
+    padding: 20px var(--mobile-margin) 30px;
+  }
+
+  .card-mode.resources-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .toc-mode.document-list .collection-toc-area.app-width-margin {
+    padding: 0;
+  }
+
+  .collection-toc-area-header > a {
+    padding: 30px var(--mobile-margin) 0;
+    font-size: 18px;
+  }
+
+  .mixed-mode .collection-toc-area .menu.expanded ul.tree li a {
+    padding: 13px var(--mobile-margin) 11px;
+  }
+}
 
 </style>

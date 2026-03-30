@@ -9,18 +9,6 @@
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <!-- Rectangle bordure -->
-      <rect
-        x="0.5"
-        y="0.5"
-        width="41"
-        height="41"
-        rx="4"
-        ry="4"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1"
-      />
 
       <!-- Group des chemins -->
       <g fill="currentColor" stroke="currentColor" stroke-width="0">
@@ -46,7 +34,7 @@
 
 <script setup>
 const props = defineProps({
-  bgColor: { type: String, default: 'transparent' },
+  bgColor: { type: String, default: '#FFF' },
   fgColor: { type: String, default: 'var(--icon-fg)' },
   size: { type: Number, default: 42 },
   radius: { type: Number, default: 4 },
@@ -63,15 +51,25 @@ const cssVars = {
 
 <style scoped>
 .icon-wrapper {
-  width: var(--size, 42px);
-  height: var(--size, 42px);
-  border-radius: var(--radius, 4px);
-  color: var(--fg);
-  background-color: var(--bg);
+  --size: 40px;
+  --radius: 4px;
+  --fg: #ffffff;
 
-  display: flex;
+  width: var(--size, 40px);
+  height: var(--size, 40px);
+  border-radius: var(--radius, 4px);
+  background-color: var(--bg);
+  color: var(--fill-color, var(--icon-text-color));
+  border: var(--fill-color) solid 1px;
+
   align-items: center;
   justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.icon-wrapper:hover {
+  color: #FFF;
+  background-color: var(--fill-color);
 }
 
 .icon {

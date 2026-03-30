@@ -115,7 +115,7 @@ article.documentation {
   margin-top: 0;
 }
 .documentation .content {
-  font-family: "Libre Baskerville", serif !important;
+  font-family: var(--font-primary), sans-serif;
   font-size: 16px;
   text-align: left;
   font-weight: 400;
@@ -126,7 +126,6 @@ article.documentation {
 }
 .documentation .content p,
 .documentation .content ul {
-  font-family: "Barlow", sans-serif;
   font-size: 20px;
   font-weight: 400;
   line-height: 32px;
@@ -150,7 +149,6 @@ article.documentation {
 }
 .documentation .content h1 {
   margin: 30px 0 !important;
-  font-family: "Noto Serif", serif;
   font-weight: 400;
   font-style: normal;
   font-size: 30px;
@@ -158,14 +156,13 @@ article.documentation {
 }
 .documentation .content h2 {
   margin: 70px 0 30px !important;
-  font-family: "Barlow", sans-serif;
   font-weight: 400;
   font-size: 28px;
   line-height: 34px;
   color: #B9192F;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   .documentation .content {
     padding: 0 20px 50px;
   }

@@ -348,12 +348,15 @@ export default {
       // Return what will make the async component
       return new Promise((resolve) => {
         const doc = new DOMParser().parseFromString(tmpDom.innerHTML, 'text/html')
-        console.log('custom document html', doc, mediaType.value === 'html' || (currentLevel.value === 0 && currentLevelIndicator.value === 'renderToc') ? doc.getElementById('center').innerHTML : 'not html')
+        const docCenter = doc.getElementById('center');
+        const docCenterInnerHtml = docCenter && docCenter.innerHTML ? docCenter.innerHTML : '';
+
+        console.log('custom document html', doc, mediaType.value === 'html' || (currentLevel.value === 0 && currentLevelIndicator.value === 'renderToc') ? docCenterInnerHtml : 'not html')
         console.log('custom document tei', datatei, mediaType.value === 'tei' && currentLevelIndicator.value === 'toEdit' ? datatei.getElementsByTagName('tei')[0] : 'not tei')
         if (mediaType.value === 'html' || (currentLevel.value === 0 && currentLevelIndicator.value === 'renderToc')) {
-          console.log('custom document cas 0', doc.getElementById('center').innerHTML)
+          console.log('custom document cas 0', docCenterInnerHtml)
           resolve({
-            template: doc.getElementById('center').innerHTML
+            template: docCenterInnerHtml
           })
         } else if (currentLevel.value === 0 && mediaType.value === 'tei' && currentLevelIndicator.value === 'toEdit' && documentType.value === 'Resource') {
           const serializer = new XMLSerializer()

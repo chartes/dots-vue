@@ -305,7 +305,6 @@ export default {
 <style scoped>
 div.toc-area-content.toc-content {
   .tree {
-    font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 500;
     line-height: 22px;
@@ -315,13 +314,13 @@ div.toc-area-content.toc-content {
     width: 100%;
   }
 
-  @media screen and (max-width: 1150px) {
+  @media screen and (max-width: 1320px) {
     .tree {
       columns: 3;
     }
   }
 
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 640px) {
     .tree {
       columns: 1;
       gap: 15px;
@@ -330,7 +329,6 @@ div.toc-area-content.toc-content {
   }
 
   .tree li {
-    font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 400;
     line-height: 20px;
@@ -356,8 +354,8 @@ div.toc-area-content.toc-content {
       break-inside: avoid;
 
       & .li.container > a, span {
-      margin-top: 4px;
-    }
+        margin-top: 4px;
+      }
 
       &::before {
         content: none !important;
@@ -367,14 +365,12 @@ div.toc-area-content.toc-content {
 }
 div.toc-area-aside.toc-content {
   .tree {
-    font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 500;
     line-height: 22px;
     width: 100%;
   }
   .tree li {
-    font-family: "Barlow Semi Condensed", sans-serif;
     font-size: 15px;
     font-weight: 400;
     line-height: 20px;
@@ -406,11 +402,12 @@ div.toc-area-aside.toc-content {
   }
 }
 div.bottom-toc {
+  .tree {
+    margin-left: -9px;
+  }
   .tree li {
-    font-family: "Barlow Semi Condensed", sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 22px;
+    margin-bottom: 5px;
+    padding: 0 0 0 14px;
 
     &:not(.more)::before {
       margin-left: -7px;
@@ -422,12 +419,17 @@ div.bottom-toc {
       margin: 0;
 
       & > a {
-        color: #4a4a4a;
+        color: var(--document-text-color);
+
+        &:hover {
+          text-decoration: var(--text-decoration-hover);
+        }
       }
     }
 
     &.more {
       padding-left: 0;
+
       & .li.container > a {
         margin-top: 4px;
       }

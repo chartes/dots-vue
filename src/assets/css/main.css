@@ -15,19 +15,37 @@
 /* Using css variables */
 :root {
     /* Font */
-    --font-primary: Roboto;
-    --font-primary-size : 16px;
+    --font-primary: "Roboto";
+    --font-default-size : 20px;
+    --font-default-line-heigth : 1.4;
+    --font-small-size : 16px; /* document source, notes, ... */
 
-    @media screen and (max-width: 800px) {
-        --font-primary-size : 14px;
+    --font-secondary: "Roboto Condensed";
+    --font-serif: Georgia, "Time New Roman";
+
+    @media screen and (max-width: 768px) {
+        --font-default-size : 18px;
+        --font-default-line-heigth : 1.6;
     }
 
+    /* Site width on large destop - cf media queries : @media screen and (max-width: 1320px) */
+    --default-content-width: 1280px;
+
     /* Color Theme */
+    --default-text-color: #333333;
+    --document-text-color: #303030;
     --text-color: #8f0e21;
-    --fill-color: #8f0e21;
-    --meta-banner-fill-color: #F3F3F3;/* former beige #faf6f1;*/
-    --meta-area-fill-color: #e4e4e4;
+    --fill-color: #5f004d;
+    --default-bg-color: #F1F1F1;
+    --default-bg-hover-color: #E3E3E3;
+
+    --meta-banner-fill-color: #FAFAFA;/* former beige #faf6f1;*/
+    --meta-area-fill-color: #F5F5F5;
     --icon-text-color: #ffffff;
+
+    --mobile-margin: 12px;
+
+    --text-decoration-hover: underline dotted;
 }
 
 /*=============================================================
@@ -39,7 +57,7 @@
 .about-page {
     & > .tab-menu {
         position: sticky;
-        top: 80px;
+        top: 0;
     }
 }
 .about-content {

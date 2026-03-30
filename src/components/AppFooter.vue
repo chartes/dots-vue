@@ -1,93 +1,97 @@
 <template>
   <footer class="footer is-flex-align-items-flex-end mt-auto">
-    <div class="columns app-width-margin">
-      <div class="column description">
+    <div class="columns">
+      <div class="column app-title left-column">
         <div class="title-container">
           <span class="title">
             {{ footTitle ? footTitle : currCollection.title }}
           </span>
           <span
-            v-for="(subtitle, index) in footSubtitles"
-            :key="index"
-            class="subtitle"
+              v-for="(subtitle, index) in footSubtitles"
+              :key="index"
+              class="subtitle"
           >
             {{ subtitle }}
           </span>
         </div>
-        <div class="column description">
-          <div class="row description">
-            {{ footDescription }}
-          </div>
-        </div>
       </div>
-      <div class="column logos">
-        <div class="logo-institutions">
-          <a
-            target="_blank"
-            href="https://www.chartes.psl.eu/"
-          >
-            <img
-              class="enc-logo"
-              alt="Logo de l'École nationale des chartes"
-              src="@/assets/images/footer_enc_logo.png"
-            />
-          </a>
-          <a
-            target="_blank"
-            href="https://projet.biblissima.fr/fr"
-          >
-            <img
-              class="biblissima-logo"
-              alt="Logo de Biblissima+"
-              src="@/assets/images/logo_biblissima_footer_white.png"
-            />
-          </a>
-        </div>
-        <div class="logo">
+      <div class="column right-columns">
+        <div class="columns">
+          <div class="column description">
+            <div class="row description">
+              {{ footDescription }}
+            </div>
+          </div>
+          <div class="column logos">
+            <div class="logo-institutions">
+              <a
+                  target="_blank"
+                  href="https://www.chartes.psl.eu/"
+              >
+                <img
+                    class="enc-logo"
+                    alt="Logo de l'École nationale des chartes"
+                    src="@/assets/images/footer_enc_logo.png"
+                />
+              </a>
+              <a
+                  target="_blank"
+                  href="https://projet.biblissima.fr/fr"
+              >
+                <img
+                    class="biblissima-logo"
+                    alt="Logo de Biblissima+"
+                    src="@/assets/images/logo_biblissima_footer_white.png"
+                />
+              </a>
+            </div>
+            <div class="logo">
           <span>
             Powered by
           </span>
-          <a
-            class="dots-logo"
-            target="_blank"
-            href="https://chartes.github.io/dots_documentation/"
-          >
-            <!--<img
-              class="dots-logo"
-              alt="Logo de DoTS"
-              src="@/assets/images/logo_dots.png"
-            />-->
-          </a>
+              <a
+                  class="dots-logo"
+                  target="_blank"
+                  href="https://chartes.github.io/dots_documentation/"
+              >
+                <!--<img
+                  class="dots-logo"
+                  alt="Logo de DoTS"
+                  src="@/assets/images/logo_dots.png"
+                />-->
+              </a>
+            </div>
+          </div>
+          <div class="row links">
+            <ul class="footer-links">
+              <li>
+                <router-link
+                    :to="{ name: 'Terms'}"
+                    active-class="active"
+                >
+                  Terms of service
+                </router-link>
+              </li>
+              <li>
+                <a
+                    target="_blank"
+                    href="https://www.chartes.psl.eu/contact"
+                >
+                  Contact
+                </a>
+              </li>
+              <li>
+                <a
+                    target="_blank"
+                    href="https://www.huma-num.fr/"
+                >
+                  Huma-Num
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row links">
-      <ul class="footer-links">
-        <li>
-          <a
-            target="_blank"
-            href="https://www.chartes.psl.eu/contact"
-          >
-            Contact
-          </a>
-        </li>
-        <li>
-          <router-link
-            :to="{ name: 'Terms'}"
-            active-class="active"
-          >
-            Terms of service
-          </router-link>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://www.huma-num.fr/"
-          >
-            Huma-Num
-          </a>
-        </li>
-      </ul>
     </div>
   </footer>
 </template>
@@ -153,23 +157,48 @@ export default {
 </script>
 <style>
 .footer {
-  font-family: "Barlow", sans-serif;
   background-color: #4C4949;
   /* border-top: #BA0F29 solid 4px; */
   border-top: solid 4px var(--text-color);
   /* max-height: 400px; */
   width: 100%;
-  text-align: center;
-  padding: 50px;
+  padding: 0;
   transform: rotateZ(0);
-  margin-top: 20px !important;
+  margin-top: 100px !important;
 }
+
+.footer .columns {
+  display: flex !important;
+  margin: 0;
+}
+
+.footer > .columns > .column {
+  padding: 48px 40px;
+}
+
+.footer > .columns > .column.left-column {
+  flex: 400px 0 0;
+  background-color: #302C2C;
+}
+
+.footer > .columns > .column.right-columns > .columns {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.footer > .columns > .column.right-columns > .columns > .row.links {
+  flex: 100% 0 0;
+}
+
 .footer .title-container {
   display: flex;
   flex-direction: column;
   justify-content: left;
   text-align: left;
   color: white;
+  width: 400px;
+
   & >.title {
     text-align: left;
     font-style: normal;
@@ -177,35 +206,38 @@ export default {
   }
   & >.subtitle {
     margin-top: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 0;
     text-align: left;
-    font-family: "Barlow", sans-serif ;
+    font-size: 110%;
     font-style: normal;
-    font-size: 100%;
     color: white;
   }
 }
 .footer .column {
   padding: 0;
 }
+
 .footer .column .description {
   display: flex;
   justify-content: left;
   flex-direction: column;
-  margin-top: 12px;
-  margin-bottom: 12px;
   padding: 0;
   &.row.description {
     text-align: left;
     color: white;
   }
 }
+
+.footer .row.description:not(:empty) {
+  margin-bottom: 100px;
+}
+
 .footer-links {
   display: inline-block;
-  margin-top: 20px;
   text-transform: uppercase;
   color: white;
 }
+
 .footer-links li {
   position: relative;
   display: inline;
@@ -247,22 +279,19 @@ export default {
 .footer .logos {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  flex-grow: 1;
+  align-items: flex-end;
+
   & > .logo-institutions {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
-    justify-content: center;
-    align-items: center;
-    vertical-align: center;
+    align-items: flex-end;
+    gap: 10px;
 
     & > a {
       display: flex;
       justify-content: center;
       align-items: center;
       vertical-align: center;
-      margin: 10px;
       border-bottom: none;
       color: #FFFFFF;
     }
@@ -293,8 +322,8 @@ export default {
   height: 70px;
 }
 .biblissima-logo {
-  width: auto;
-  height: 70px;
+  width: 320px;
+  height: auto;
 }
 .dots-logo {
   display: inline-block;
@@ -305,28 +334,69 @@ export default {
     background: url(../assets/images/dots-logo-retro.drawio.svg) center / contain no-repeat;
   }
 }
-@media screen and (max-width: 800px) {
-  .footer {
-    padding: 50px 10% 80px !important;
+
+@media screen and (min-width: 1300px) {
+  .footer > .columns > .column.right-columns {
+    padding-right: calc( 50% - 650px );
+  }
+
+}
+
+@media screen and (min-width: 1900px) {
+
+  .footer > .columns > .column.left-column {
+    /* = 50% - 950px + 400px */
+    flex: calc( 50% - 550px ) 0 0;
+    width: calc( 50% - 550px );
+    padding-left: calc( 50% - 950px + 20px );
+  }
+  .footer > .columns > .column.right-columns {
+    flex: calc( 50% + 550px ) 0 0;
+    width: calc( 50% + 550px );
+  }
+
+}
+
+@media screen and (max-width: 1320px) {
+  .footer > .columns > .column.right-columns > .columns {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .footer .row.description:not(:empty) {
+    margin-bottom: 50px;
   }
   .footer .logos {
-    gap: 50px;
+    align-items: flex-start;
+  }
+  .footer .logos > .logo-institutions {
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .footer .logos > .logo {
+    justify-content: flex-start;
   }
 }
-@media screen and (max-width: 640px) {
-  .footer {
-    padding: 30px 10% 50px !important;
+
+@media screen and (max-width: 1024px) {
+  footer > .columns {
+    flex-direction: column;
   }
+  .footer > .columns > .column {
+    padding: 30px var(--mobile-margin);
+  }
+  .footer > .columns > .column.left-column {
+    flex: auto;
+    padding-bottom: 50px;
+  }
+}
+
+@media screen and (max-width: 640px) {
   .enc-logo {
     height: 40px;
   }
   .dots-logo {
     height: 40px;
-  }
-  .footer-links {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
   }
   .footer-links li:not(:last-child) {
     padding-right: 0;

@@ -5,6 +5,7 @@
   >
     <app-navbar
       class="layout-navbar"
+      :class="routeNameCssClass"
       :is-doc-projectId-included="isDocProjectIdInc"
       :dts-root-collection-identifier="dtsRootCollectionId"
       :root-collection-identifier="rootCollectionIdentifier"
@@ -39,7 +40,11 @@
         @click.prevent="scrollToTop"
       >
         <button type="button" aria-label="Retour en haut">
-          <DirectionArrows :size="40" :radius="4" direction="up"/>
+          <DirectionArrows
+              :size="40"
+              :radius="4"
+              direction="up"
+          />
         </button>
       </div>
     </div>
@@ -55,7 +60,7 @@
 </template>
 
 <script>
-import {onBeforeUnmount, onMounted, ref, watch, watchEffect} from 'vue'
+import {onBeforeUnmount, onMounted, ref, computed, watch, watchEffect} from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { router } from '@/router'
@@ -104,6 +109,10 @@ export default {
     const rootCollectionIdentifier = ref(`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`)
     const projectCollId = ref('')
     const collectionId = ref('')
+
+    const routeNameCssClass = computed( () => {
+      return route.name.toLowerCase();
+    })
 
     const appConfig = ref({})
     const rootCollConfig = ref({})
@@ -517,6 +526,7 @@ export default {
       rootCollConfig,
       projectCollConfig,
       collConfig,
+      routeNameCssClass,
       setCurrentCollectionContext,
       getBreadcrumb,
       breadCrumb,
@@ -532,18 +542,22 @@ export default {
 
 <style>
 html,
-body,
-#app {
-  height: 100%;
-}
 body {
   background-color: #ffffff;
+  font-size: 20px;
 }
 
 #app {
+  height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  font-family: var(--font-primary), sans-serif;
+  font-size: var(--font-default-size);
+  line-height: var(--font-default-line-heigth);
+  color: var(--default-text-color);
 }
+
 #nav {
   padding: 30px;
 }
@@ -575,32 +589,31 @@ body {
 /* page header */
 
 .tile.page-header {
-  min-height: 164px;
-  background-color: #FBF8F4;
+  min-height: 184px;
+  background-color: #F5F5F5;
   margin: 0;
   align-items: center;
 }
 .tile.page-header p.title {
-  font-family: "Noto Serif", serif;
-  font-size: 30px;
-  font-style: normal;
-  line-height: 47px;
-  font-weight: 400;
-  color: #B9192F;
   margin-bottom: 0;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  font-style: normal;
+  line-height: 1.2;
+  color: #737373;
   text-align: left;
   text-indent: 0;
 }
 
 .tile.page-header .title-tile {
   justify-content: space-between;
-  align-items: center;
-  gap:50px;
+  align-items: flex-start;
+  gap:15px;
 }
 
 p.header-baseline {
   width: 345px;
-  font-family: "Noto Serif", serif;
   font-size: 14px;
   color: #5C5241;
   font-style: italic;
@@ -622,14 +635,17 @@ p.header-baseline span {
 
 .scroll-top {
   position: fixed;
-  right: calc((100vw - 1100px) / 2);
+  right: calc((100vw - var(--default-content-width)) / 2);
   bottom: 120px;
 
   width: 40px;
   height: 40px;
   pointer-events: none;
-  z-index: 9;
+  z-index: 20;
+
   > button {
+    --icon-bg: #FFF;
+
     /* remove default button behavior */
     appearance: none;
     -webkit-appearance: none;
@@ -657,25 +673,23 @@ p.header-baseline span {
   pointer-events: auto;
 }
 
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 1320px) {
   .tile.page-header {
     min-height: auto;
   }
-  .tile.page-header:first-child {
-    padding-top:35px;
-    padding-bottom:35px;
+  .scroll-top {
+    right: 20px;
   }
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 1024px) {
   .tile.page-header .title-tile {
     flex-direction: column !important;
     justify-content: flex-start;
     align-items: flex-start;
     gap: 20px;
   }
-}
-@media screen and (max-width: 800px) {
+
   .tile.page-header p.title {
     font-size: 30px;
     line-height: 36px;
@@ -683,15 +697,6 @@ p.header-baseline span {
 }
 
 @media screen and (max-width: 640px) {
-  .tile.page-header p.title {
-    width: 90%;
-    margin: auto;
-    padding-bottom: 5px;
-    font-size: 25px;
-    line-height: 32px;
-    text-align: center;
-  }
-
   p.header-baseline {
     margin: auto;
     width: 60%;
@@ -701,12 +706,15 @@ p.header-baseline span {
     width: 20px;
     right: 15px;
   }
+  .scroll-top {
+    right: 15px;
+  }
 }
 
 /* responsive layout */
 .app-width-margin {
   margin: 0 auto;
-  max-width: 1100px;
+  max-width: var(--default-content-width);
 }
 .app-width-padding {
   margin: 0;
@@ -714,7 +722,19 @@ p.header-baseline span {
   padding-right: calc( 50% - 600px );
 }
 
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 1320px) {
+  .app-width-padding {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+  .app-width-margin {
+    margin: 0;
+    max-width: 100%;
+    padding: 0 50px;
+  }
+}
+
+@media screen and (max-width: 1320px) {
   .app-width-padding {
     padding-left: 20px;
     padding-right: 20px;
@@ -726,15 +746,15 @@ p.header-baseline span {
   }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   .app-width-padding {
-    padding-left: 2.5%;
-    padding-right: 2.5%;
+    padding-left: var(--mobile-margin);
+    padding-right: var(--mobile-margin);
   }
   .app-width-margin {
     margin: 0;
     max-width: 100%;
-    padding: 0 2.5%;
+    padding: 0 var(--mobile-margin);
   }
   .aside-noteref-parent {
     left: 10px !important;
@@ -742,11 +762,13 @@ p.header-baseline span {
   }
 }
 
-@media screen and (max-width: 500px) {
-  .layout-navbar {
-    /*position: fixed;
+@media screen and (max-width: 640px) {
+  .layout-navbar:not(.document) {
+    position: fixed;
     left:0;
-    top:0;*/
+    top:0;
+    height: 70px;
+
     width: 100vw;
     z-index: 10;
   }
@@ -763,11 +785,12 @@ a.noteref sup {
   display: inline-block;
   height: auto;
   padding: 2px 4px 1px;
-  background: #CCF;
+  background: #000;
+  margin:0 4px;
 
   font-weight: bold;
   font-size: 0.8em;
-  color: black;
+  color: #FFF;
   line-height: 1;
   text-indent: 0;
   text-align: center;
@@ -780,12 +803,12 @@ a.noteref sup {
 .aside-noteref-parent {
   visibility: hidden;
   position: fixed;
-  left: calc((100vw - 1100px) / 2);
-  right: calc((100vw - 1100px) / 2);
+  left: calc((100vw - var(--default-content-width)) / 2);
+  right: calc((100vw - var(--default-content-width)) / 2);
   bottom: 0;
   z-index: 8;
 
-  max-width: 1100px;
+  max-width: var(--default-content-width);
   padding-bottom: 10px;
   /*padding-right: 20px;*/
   background-color: rgba(255, 255, 255, 0.95);
@@ -829,10 +852,6 @@ a.noteref sup {
   box-shadow: 0px -4px 4px 0px rgba(0,0,0,0.10);
 }
 
-.aside-noteref .aside-noteref-content {
-  font-size: 0.92em;
-}
-
 .aside-noteref.clamped .aside-noteref-content {
   overflow: hidden;
   display: -webkit-box;
@@ -845,18 +864,25 @@ a.noteref sup {
   margin-bottom: 5px;
 }
 
+.aside-noteref-content {
+  font-family: var(--font-primary), sans-serif;
+  font-size: var(--font-small-size);
+}
+
 .aside-noteref-content a.notebottom,
 .aside-noteref-content > a:first-child {
-  display: inline-block;
+  display: block;
   margin-right: 5px;
   height: auto;
-  padding: 2px 4px 1px;
-  background: #CCF;
-
-  font-weight: bold;
-  font-size: 0.8em;
-
+  padding: 2px 2px 1px 0;
+  border: none;
+  font-weight: 700;
+  color: var(--fill-color);
   float: left;
+}
+
+.aside-noteref-content > i {
+  font-style: inherit;
 }
 
 .aside-noteref-content a.notebottom:hover,
@@ -871,12 +897,13 @@ a.noteref sup {
   display: inline-block;
   width: 20px;
   height: 20px;
+  border: none;
   transform-origin: 50% 50%;
   transform: rotate(-90deg) translateY(-50%);
 }
 
 .aside-noteref.clamped a.see-all-link {
-  right: -15px;
+  right: -8px;
   transform: rotate(90deg) translateY(-50%);
 }
 .wrapper {
@@ -885,7 +912,6 @@ a.noteref sup {
 
 .collection-toc-area {
   width: 100%;
-  font-family: "Barlow", sans-serif;
   margin-bottom: 30px;
   border-radius: 6px;
 }
@@ -920,9 +946,10 @@ a.noteref sup {
   border-radius: 0;
 }
 .collection-toc-area-header > a {
-  font-family: "Barlow Semi Condensed", sans-serif;
-  font-weight: 500;
-  color: #4a4a4a !important;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--fill-color);
   text-decoration: none;
   border: none;
 }
@@ -937,8 +964,7 @@ a.noteref sup {
   display: flex;
   flex-direction: column;
   padding: 0 20px 0;
-  /* border-top: solid 2px #fcfcfc; */
-  background-color: #e4e4e4;
+  background-color: var(--default-bg-color);
   border-radius: 0 0 6px 6px;
 }
 
@@ -959,8 +985,29 @@ a.noteref sup {
   color: var(--fill-color);
 
   position: absolute;
-  right: 20px;
+  right: 35px;
   width: 40px;
 }
+
+@media screen and (max-width: 1320px) {
+
+  .aside-noteref-parent {
+    max-width: 100vw;
+    width: 100vw;
+    left: 0;
+    right: 0;
+  }
+  .aside-noteref {
+    padding: 20px 30px 0 var(--mobile-margin);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .aside-noteref-parent {
+    margin-left:  calc(-1 * var(--mobile-margin));
+    margin-right:  calc(-1 * var(--mobile-margin));
+  }
+}
+
 
 </style>

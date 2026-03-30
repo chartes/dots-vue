@@ -64,6 +64,7 @@ export default {
     width: 33px;
     background-color: #FFFFFF;
     height: 3px;
+    right: 0;
   }
   .navbar-burger span:nth-child(1) {
     top: calc(50% - 12px);

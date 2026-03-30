@@ -4,7 +4,7 @@
       <div class="pb-label">
         <a :href="imageInfo" />
       </div>
-      <div>
+      <div class="pb-thumbnail-parent">
         <img
           class="pb-thumbnail"
           :src="thumbnail"
@@ -69,7 +69,7 @@ export default {
 }
 .pb {
   position: absolute;
-  left: -80px;
+  left: -72px;
 }
 .pb-component:hover {
   cursor: pointer;
@@ -77,7 +77,20 @@ export default {
 .pb-thumbnail {
   max-width: 60px;
 }
+.pb-thumbnail-parent {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 30px;
+  background: url(../assets/images/icone-media.svg) top center / 24px auto no-repeat;
+  margin-top: -8px;
+}
+.pb-thumbnail-parent img {
+  opacity: 0;
+}
 .pb-label {
+  position: relative;
+  z-index: 2;
   font-size: large;
   text-align: center;
   margin-top: 16px;

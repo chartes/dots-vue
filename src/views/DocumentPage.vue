@@ -205,206 +205,198 @@
         </div>
       </div>
     </div>
-    <div class="nav-controls-wrapper">
-      <nav
+    <nav
         class="navigation-row app-width-margin"
         aria-label="Navigation du document"
-      >
-        <div class="navigation-document">
-          <div class="ariane">
-            <div
+    >
+      <div class="navigation-document">
+        <div class="ariane">
+          <div
               class="ariane-wrapper"
-            >
-              <!-- LeftTOC button -->
-              <button
+          >
+            <!-- LeftTOC button -->
+            <button
                 type="button"
                 class="toc-menu-toggle"
                 aria-label="Afficher le sommaire"
                 :class="hasValidTOC ? TOCMenuBtnCssClass : 'disabled'"
                 @click="toggleTOCMenu"
-              >
-                <i
-                  class="fa fa-list-ul"
-                  aria-hidden="true"
-                />
-              </button>
-              <!-- Document breadcrumb -->
-              <div
+            >
+              <TocIcon />
+            </button>
+            <!-- Document breadcrumb -->
+            <div
                 class="ariane-scroll-wrapper"
-              >
-                <div
+            >
+              <div
                   class="doc-fade-left"
                   :class="{ visible: docFadeLeftVisible }"
-                />
-                <ul
+              />
+              <ul
                   v-if="!leftTOCFragmentIsDocument"
                   ref="arianeDocContainer"
                   class="crumbs"
                   @scroll="onDocBreadcrumbScroll($event)"
-                >
-                  <li
+              >
+                <li
                     v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')"
                     :key="index"
                     :class="refId
                       ? ancestor.identifier === refId ? 'is-current' : ''
                       : ancestor.identifier === resourceId ? 'is-current' : ''"
-                  >
-                    <router-link :to="ancestor.router">
-                      {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
-                    </router-link>
-                    <!--<span class="keep-previous-centered" />-->
-                  </li>
-                </ul>
-                <ul
+                >
+                  <router-link :to="ancestor.router">
+                    {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
+                  </router-link>
+                  <!--<span class="keep-previous-centered" />-->
+                </li>
+              </ul>
+              <ul
                   v-else
                   ref="arianeDocContainer"
                   class="crumbs"
                   @scroll="onDocBreadcrumbScroll($event)"
-                >
-                  <li
+              >
+                <li
                     v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash').slice(1)"
                     :key="index"
                     :class="refId
                       ? ancestor.identifier === refId ? 'is-current' : ''
                       : ancestor.identifier === resourceId ? 'is-current' : ''"
-                  >
-                    <router-link :to="ancestor.router">
-                      {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
-                    </router-link>
-                    <span class="keep-previous-centered" />
-                  </li>
-                </ul>
-                <div
+                >
+                  <router-link :to="ancestor.router">
+                    {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
+                  </router-link>
+                  <span class="keep-previous-centered" />
+                </li>
+              </ul>
+              <div
                   class="doc-fade-right"
                   :class="{ visible: docFadeRightVisible }"
-                />
-              </div>
+              />
             </div>
-            <!-- Previous / Next navigation buttons -->
-            <div
+          </div>
+          <!-- Previous / Next navigation buttons -->
+          <div
               class="navigation-document-top"
               aria-label="Navigation dans le document"
-            >
-              <router-link
+          >
+            <router-link
                 class="to-previous-fragment"
                 :class="previousRefId === '' ? 'disabled' : ''"
                 :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: previousRefId } }"
                 aria-label="Fragment précédent"
-              >
-                <DirectionArrows
+            >
+              <DirectionArrows
                   :size="40"
                   :radius="4"
                   direction="left"
-                />
-              </router-link>
-              <router-link
+              />
+            </router-link>
+            <router-link
                 class="to-next-fragment has-tooltip"
                 :class="{ disabled: !nextRefId }"
                 :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: nextRefId } }"
                 :aria-disabled="!nextRefId"
                 :aria-label="'Vers ' + nextRefTitle"
                 :tabindex="nextRefId ? 0 : -1"
-              >
-                <DirectionArrows
+            >
+              <DirectionArrows
                   :size="40"
                   :radius="4"
                   direction="right"
                   aria-hidden="true"
-                />
-                <span class="tooltip">Vers {{ nextRefTitle }}</span>
-              </router-link>
-            </div>
+              />
+              <span class="tooltip">Vers {{ nextRefTitle }}</span>
+            </router-link>
           </div>
         </div>
-      </nav>
-      <div
+      </div>
+    </nav>
+    <div
         class="controls app-width-margin"
         :class="isControlsOpened ? 'is-opened' : ''"
         role="toolbar"
         aria-label="Options d’affichage du document"
-      >
-        <button
+    >
+      <button
           class="controls-toggle"
           aria-label="Afficher les outils de lecture"
           :aria-expanded="isControlsOpened"
           @click="toggleControls"
-        >
-          <IconReadingToolsToggle
+      >
+        <IconReadingToolsToggle
             :size="40"
             :radius="4"
             :is-active="isControlsOpened"
-          />
-        </button>
-        <ul
+        />
+      </button>
+      <ul
           class="controls-list"
           :class="isControlsOpened ? 'is-opened' : ''"
-        >
-          <li v-if="manifestIsAvailable">
-            <button
+      >
+        <li v-if="manifestIsAvailable">
+          <button
               type="button"
               class="text-btn"
               aria-label="Texte seul"
               @click="changeViewMode('text-mode')"
-            >
-              <IconLetterT
+          >
+            <IconLetterT
                 :size="40"
                 :radius="4"
-              />
-            </button>
-          </li>
+            />
+          </button>
+        </li>
 
-          <li v-if="manifestIsAvailable">
-            <button
+        <li v-if="manifestIsAvailable">
+          <button
               type="button"
               class="images-btn"
               aria-label="Images seules"
               @click="changeViewMode('images-mode')"
-            >
-              <IconImage
+          >
+            <IconImage
                 :size="40"
                 :radius="4"
-              />
-            </button>
-          </li>
+            />
+          </button>
+        </li>
 
-          <li v-if="hasNotes">
-            <button
+        <li v-if="hasNotes">
+          <button
               type="button"
               class="notes-btn"
               :class="{ 'is-opened': isNotesOpened }"
               aria-pressed="isNotesOpened"
               aria-label="Afficher les notes"
               @click="toggleNotes"
-            >
-              <i
-                class="fa-regular fa-comment-dots"
-                aria-hidden="true"
-              />
-            </button>
-          </li>
-          <li>
-            <a
+          >
+            <icon-notes />
+          </button>
+        </li>
+        <li>
+          <a
               v-if="refId && refId.length > 0"
               target="_blank"
               :href="`${dtsUrl}/document?resource=${resourceId}&ref=${refId}`"
               class="xml-btn"
               aria-label="Télécharger le XML"
-            >
-              <XMLIcon :size="40" />
-            </a>
+          >
+            <XMLIcon :size="40" />
+          </a>
 
-            <a
+          <a
               v-else
               target="_blank"
               :href="`${dtsUrl}/document?resource=${resourceId}`"
               class="xml-btn"
               aria-label="Télécharger le XML"
-            >
-              <XMLIcon :size="40" />
-            </a>
-          </li>
-        </ul>
-      </div>
+          >
+            <XMLIcon :size="40" />
+          </a>
+        </li>
+      </ul>
     </div>
 
     <div
@@ -529,6 +521,8 @@ import IconCircleArrow from '@/assets/images/IconCircleArrow.vue'
 import CloseCross from '@/assets/images/CloseCross.vue'
 import IconReadingToolsToggle from '@/assets/images/IconReadingToolsToggle.vue'
 import XMLIcon from '@/assets/images/XMLIcon.vue'
+import IconNotes from '@/assets/images/IconNotes.vue'
+import TocIcon from '@/assets/images/TocIcon.vue'
 
 function findById (array, id) {
   for (const item of array) {
@@ -543,6 +537,8 @@ function findById (array, id) {
 export default {
   name: 'DocumentPage',
   components: {
+    TocIcon,
+    IconNotes,
     XMLIcon,
     IconReadingToolsToggle,
     IconCircleArrow,
@@ -1983,7 +1979,6 @@ export default {
 .toc-area {
   width: 100%;
   padding: 0;
-  font-family: "Barlow", sans-serif !important;
 }
 .toc-area-header {
   display: flex;
@@ -1995,7 +1990,7 @@ export default {
 }
 .toc-area-header > a {
   text-transform: uppercase;
-  font-family: "Barlow Semi Condensed", sans-serif;
+  font-family: var(--font-secondary), sans-serif;
   font-weight: 500;
   color: #4a4a4a !important;
   text-decoration: none;
@@ -2055,11 +2050,11 @@ export default {
   background-color: transparent !important;
   border-radius: unset !important;
   color: #000;
-  text-decoration: underline dotted !important;
+  text-decoration: var(--text-decoration-hover) !important;
 }
 .toc-area-aside a,
 .toc-area-content a {
-  font-family: "Barlow Semi Condensed", sans-serif !important;
+  font-family: var(--font-secondary), sans-serif !important;
   font-weight: 400;
   text-align: left;
   line-height: 20px;
@@ -2134,7 +2129,7 @@ export default {
 }
 
 .controls-toggle .icon-wrapper {
-  color: var(--text-color);
+  color: var(--fill-color);
   height: 40px;
   width: 40px;
 }
@@ -2158,7 +2153,6 @@ export default {
 
   &.is-opened {
     color: var(--text-color);
-    border-color: var(--text-color);
   }
 }
 .controls button:focus-visible {
@@ -2176,9 +2170,6 @@ export default {
   color: var(--text-color);
 }
 
-.document-area {
-  width: 100%;
-}
 .document-area #aside,
 .toc-area #aside {
   margin: 0;
@@ -2210,6 +2201,7 @@ export default {
       position: sticky;
       top: 80px;
       height: calc(100vh - 250px);
+      padding-bottom: 20px;
       & > nav {
         height: 100%;
         overflow-y: auto;
@@ -2225,6 +2217,7 @@ export default {
   max-height: 100vh;
   max-width: calc(100vw - 20px);
 }
+
 .text-mode .text-view,
 .images-mode .mirador-view {
   flex: 100% 0 0;
@@ -2252,7 +2245,7 @@ export default {
 }
 
 #article {
-  padding: 40px 10% 120px;
+  padding: 20px 10% 120px;
   border-bottom: 1px dotted #ffffff;
   min-height: 100%;
 }
@@ -2271,19 +2264,47 @@ div.remove-bottom-padding #article {
   display: none;
 }
 
-#article h1,
-#article .titlepage {
-  font-family: "Barlow", sans-serif !important;
+#article {
+
+  .titlepage,
+  h1, h2, h3, h4, h5, h6 {
+    padding: 0;
+    margin-bottom: 30px;
+    font-family: var(--font-primary), sans-serif;
+    color: var(--document-text-color);
+    text-transform: none;
+    text-align: left;
+  }
 }
 
 #article h1 {
-  padding: 0;
-  font-size: 25px;
-  font-weight: 500;
-  line-height: 33px;
-  text-transform: none;
-  /* color: #971716; */
-  color: var(--text-color);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+#article h2 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.357;
+}
+
+#article h3 {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.727;
+}
+
+#article h4 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.9;
+}
+
+#article h5 {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 2.111;
 }
 
 #article .titlepage {
@@ -2323,21 +2344,49 @@ div.remove-bottom-padding #article {
   color: #777;
 }
 
+#article .byline {
+  margin: 25px 0 90px;
+}
+
+#article .fileDesc > * {
+  margin-bottom: 10px;
+}
+
+#article .fileDesc > .titleStmt,
+#article .fileDesc p,
+#article .byline {
+  text-align: left;
+}
+
+#article .fileDesc p.author,
+#article .byline .docAuthor {
+  font-family: var(--font-serif), serif;
+  font-size: var(--font-default-size);
+  font-variant: unset;
+  line-height: 1.6;
+  color: #5F004D;
+  text-transform: none;
+}
+
 #article section.div {
   border: none;
   padding-bottom: 0;
   padding-top: 40px;
-  font-family: "Libre Baskerville", serif !important;
-  font-size: 16px;
   text-align: left;
-  font-weight: 400;
-  line-height: 28px;
-  color: #5f5f5f;
 }
 
+#article section.div:first-child {
+  padding-top: 0;
+}
+
+#article p b.label {
+  text-indent: 0;
+}
+
+
+/*
+
 #article section.div h2.head {
-  line-height: 115%;
-  /* color: #971716; */
   color: var(--text-color);
   border-bottom: none;
   padding: 1em 0 0 0;
@@ -2364,6 +2413,112 @@ div.remove-bottom-padding #article {
   padding: 1em 0 1ex 2ex;
 }
 
+*/
+
+#article {
+  .availability, .editionStmt, figcaption, .footnotes, li.bibl, .marginalia, .note, #noterefover, .publicationStmt, .sourceDesc, .speaker, .stage {
+    font-family: var(--font-primary), sans-serif;
+    font-size: var(--font-small-size);
+  }
+
+  .sourceDesc {
+    & head,
+    & trailer,
+    & label {
+      font-family: var(--font-primary), sans-serif;
+      font-weight: 500;
+      font-size: var(--font-default-size);
+      font-variant: none;
+      line-height: 1.4;
+      color: var(--document-text-color);
+      text-shadow: none;
+      text-transform: none;
+    }
+  }
+
+  .argument {
+    font-family: var(--font-primary), sans-serif;
+    font-weight: 400;
+    font-size: var(--font-default-size);
+    font-variant: none;
+    line-height: 1.4;
+    color: var(--document-text-color);
+  }
+
+  .footnotes {
+    margin: 90px 0 0;
+    position: relative;
+  }
+
+  .footnotes::before {
+    content: "Notes";
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fill-color);
+  }
+
+  .footnotes::after {
+    content: "";
+    position: absolute;
+    top: 32px;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top: #E4E4E4 4px solid !important;
+  }
+
+  .footnotes > *:first-child {
+    display: block;
+    margin-top: 45px !important;
+  }
+
+  .footnotes .note-page {
+    margin: 10px 0 22px;
+  }
+
+  .footnotes .note-page a {
+    font-weight: 700;
+    font-size: 18px;
+    border: none;
+    text-decoration: none;
+  }
+
+  .footnotes aside.note a.noteback:hover,
+  .footnotes .note-page a:hover {
+    text-decoration: underline;
+  }
+
+  .footnotes aside.note {
+    position: relative;
+    padding: 0 0 0 25px;
+    margin: 0 0 40px;
+    border: none;
+  }
+
+  .footnotes aside.note:target::before {
+    display: none;
+  }
+
+  .footnotes aside.note > i {
+    font-style: inherit;
+  }
+
+  .footnotes aside.note a.noteback {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: inline;
+    width: auto;
+    margin: 0;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--fill-color);
+    text-decoration: none;
+    text-align: left;
+  }
+}
+
 .toc-area-header a {
   color: inherit;
 }
@@ -2377,11 +2532,10 @@ div.remove-bottom-padding #article {
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 1100px;
+  max-width: var(--default-content-width);
   margin-top: 10px;
   margin-bottom: 10px;
 
-  font-family: "Barlow", sans-serif;
   font-size: 16px;
   & .crumbs {
     padding-bottom: 5px;
@@ -2392,11 +2546,11 @@ div.remove-bottom-padding #article {
   justify-content: space-between;
   align-items: center;
   width: 100% !important;
-  max-width: 1100px !important;
+  max-width: var(--default-content-width) !important;
 
   font-family: var(--font-primary), sans-serif;
   font-weight: 400;
-  font-size: var(--font-primary-size);
+  font-size: 18px;
   color: #636363;
 
   & > ul {
@@ -2421,6 +2575,8 @@ div.remove-bottom-padding #article {
       appearance: none;
       -webkit-appearance: none;
       background-color: white;
+      border: none;
+      padding: 0;
       cursor: pointer;
 
       &:hover,
@@ -2440,13 +2596,10 @@ div.remove-bottom-padding #article {
       text-align: center;
       align-content: center;
       color: var(--text-color);
-      border: var(--text-color) 1px solid;
       border-radius: 4px;
 
       &.is-opened {
         color: white;
-        background-color: var(--text-color);
-        border-color: var(--text-color);
       }
       &.disabled {
         pointer-events: none;
@@ -2484,6 +2637,10 @@ div.remove-bottom-padding #article {
 .crumbs li + li:before {
   width: 100% !important;
   padding: 20px !important;
+}
+
+.crumbs li a:hover {
+  text-decoration: var(--text-decoration-hover);
 }
 
 .crumbs li {
@@ -2555,19 +2712,14 @@ div.remove-bottom-padding #article {
     }
   }
 }
-.nav-controls-wrapper {
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  pointer-events: none;
-}
 
 .navigation-row {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+
   display: flex;
   flex-direction: column;
-  z-index: 10;
   background: #fff;
   justify-content: center;
   align-items: center;
@@ -2576,15 +2728,40 @@ div.remove-bottom-padding #article {
   /*margin-bottom: 10px;*/
   pointer-events: auto;
 }
+
+.controls {
+  position: sticky;
+  top: 85px;
+  z-index: 11;
+  pointer-events: none;
+}
+
+.controls button {
+  pointer-events: auto;
+}
+
+.document-area {
+  position: relative;
+  z-index: 10;
+  top: -70px;
+
+  width: 100%;
+}
+
+.document-area.toc-aside-is-opened {
+  z-index: 11;
+}
+
+
 .navigation-document {
   display: flex;
   flex-direction: row;
   justify-content: left;
   align-items: center;
   width: 100%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #5f004d !important;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--fill-color) !important;
 }
 .navigation-document-top {
   display: flex;
@@ -2633,155 +2810,6 @@ div.remove-bottom-padding #article {
   visibility: hidden;
 }
 
-@media screen and (max-width: 1150px) {
-  .toc-area .toc-area-content nav > ol.tree {
-    columns: 2;
-  }
-  .controls > a.toc-menu-toggle {
-    margin-left: 20px;
-  }
-  .controls ul > li > a.access_link {
-    margin-right: 20px;
-  }
-}
-@media screen and (max-width: 800px) {
-  #article {
-    padding: 40px 4% 120px;
-  }
-  .toc-area .toc-area-content aside {
-    padding: 20px 20px !important;
-  }
-
-  .l-n {
-    margin-left: -2.2rem;
-  }
-  .ariane {
-    & > .ariane-wrapper {
-      max-width: calc(100% - 90px - 10px);
-      margin-right: 10px;
-
-      & > button.toc-menu-toggle {
-        margin-right: 10px;
-      }
-    }
-  }
-  .ariane-scroll-wrapper {
-    max-width: calc(100% - 50px);
-    margin-right: 10px;
-  }
-  .crumbs {
-    display: flex;
-  }
-  .crumbs li {
-    &.is-current {
-      & a {
-        text-wrap: nowrap;
-      }
-    }
-    &:not(.is-current) {
-      &::after {
-        padding-left: 0.25rem;
-      }
-    }
-  }
-}
-@media screen and (max-width: 640px) {
-
-  #article {
-    padding: 40px 6% 120px;
-  }
-  .several-parent {
-    flex-direction: column;
-    align-items: center;
-  }
-  .toc-aside-is-opened .document-views {
-    width: 100%;
-  }
-  .document-views {
-    max-width: 100%;
-    position: relative;
-  }
-
-  .l-n {
-    margin-left: -1.5rem;
-  }
-
-  small {
-    font-size: 9px;
-  }
-
-  .pb,
-  .controls > a.toc-menu-toggle,
-  .toc-area-aside {
-    display: none !important;
-  }
-  .toc-area .toc-area-content nav > ol.tree {
-    columns: 1;
-  }
-
-  #article section.div {
-    font-size: 14px;
-    line-height: 24px;
-  }
-  #article h1 {
-    font-size: 20px;
-    line-height: 25px;
-  }
-  #article section.div h2.head,
-  #article section.div h3.head {
-    font-size: 14px;
-    line-height: 24px;
-  }
-  #article section.div {
-    padding-top: 10px;
-  }
-  #article p.p {
-    text-align: left;
-  }
-
-  .text-and-images-mode .document-views {
-    display: block !important;
-  }
-  .toc-area-header {
-    & > a:first-child {
-      margin-left: 0;
-      margin-right: 25px;
-    }
-  }
-  .tooltip {
-    display: none;
-  }
-
-  .controls {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-    background-color: #ffffff;
-  }
-
-  .controls-list.is-opened {
-    display: flex;
-    flex: 1; /* prend tout l’espace restant */
-    justify-content: center; /* centre la liste */
-    gap: 8px;
-  }
-
-  .controls button.controls-toggle {
-    display: flex;
-    margin-left: 0; /* annule margin-left: auto */
-    order: 2;       /* met le bouton à droite */
-    max-height: 40px;
-    margin-top: 0.5ex;
-    margin-bottom: 0.5ex;
-  }
-
-  .controls-list {
-    flex-direction: row;
-    margin-left: 40px;
-    order: 1; /* liste avant le bouton */
-  }
-}
 
 .ariane-collection-top {
   justify-content: left;
@@ -2791,7 +2819,6 @@ div.remove-bottom-padding #article {
 .navigation-row-top-container {
   width: 100%;
   padding-top: 20px;
-  padding-bottom: 20px;
   background-color: var(--meta-banner-fill-color);
 }
 
@@ -2799,15 +2826,16 @@ div.remove-bottom-padding #article {
   width: 100% !important;
 }
 ul.breadcrumb-top {
-  --crumb-radius: 20px;     /* demi-lune (40px hauteur / 2)*/
-  --crumb-gap: -4px;         /* trait visible entre les items*/
+  --crumb-radius: 30px;     /* demi-lune (40px hauteur / 2)*/
+  --crumb-gap: 0;        /* trait visible entre les items*/
 
   display: flex;
-  height: 40px;
+
+  margin-bottom: 20px;
   padding: 0;
-  font-family: Roboto;
+  font-family: var(--font-primary), sans-serif;
+  font-size: var(--font-default-size);
   font-weight: 500;
-  font-size: var(--font-primary-size);
   flex-flow: row nowrap;
   overflow-x: auto;   /* scroll horizontal si nécessaire */
   overflow-y: hidden; /* pas de scroll vertical */
@@ -2816,28 +2844,35 @@ ul.breadcrumb-top {
 
   > li {
     display: flex;
+    align-items: center;
     width: fit-content;
     margin-top: 0;
     margin-bottom: 0;
+  }
+
+  > li:not(:last-child)::after {
+    content: "";
+    display: inline-block;
+    background: url(../assets/images/breadcrumb-separator.svg) center / 19px auto no-repeat;
+    width: 19px;
+    height: 32px;
+    margin: 0 14px;
   }
 
   > li > a {
     position: relative;
     display: flex;
     flex-flow: row nowrap;
+    gap: 5px;
     overflow: hidden;
     align-items: center;
-    padding: 0 20px 0 20px;
-    height: 40px;
-    background: #CCCCCC;
+    padding: 7px 20px;
+    background: #E5E5E5;
     color: black;
     text-decoration: none;
 
     border: 2px solid var(--meta-banner-fill-color);
-
-    /* demi-lune droite */
-    border-top-right-radius: var(--crumb-radius);
-    border-bottom-right-radius: var(--crumb-radius);
+    border-radius: var(--crumb-radius);
 
     /* espace pour emboitement */
     margin-right: var(--crumb-gap);
@@ -2864,18 +2899,13 @@ ul.breadcrumb-top {
 
   /* creux gauche pour tous sauf premier */
   > li:not(:first-child) > a {
-    margin-left: calc(var(--crumb-radius) * -1 + var(--crumb-gap));
-    padding-left: 30px;
-    border-top-left-radius: var(--crumb-radius);
-    border-bottom-left-radius: var(--crumb-radius);
+    margin-left: var(--crumb-gap);
+    border-radius: var(--crumb-radius);
   }
 
   /* premier élément */
   > li:first-child > a {
-    margin-left: 0;
-    padding-left: 6px;
-    border-top-left-radius: 6px;
-    border-bottom-left-radius: 6px;
+    padding-left: 15px;
   }
 
   /* dernier élément */
@@ -2904,10 +2934,10 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   top: 2px;
   right: 0;
   width: 10%; /* largeur du gradient */
-  height: 36px;
+  height: 43px;
   background: linear-gradient(
     to left,
-    #CCCCCC 50%,      /* opaque côté droit */
+    #e5e5e5 50%,      /* opaque côté droit */
     transparent 100%  /* transparent côté gauche */
   );
 
@@ -2934,11 +2964,11 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   top: 2px;
   left: 0;
   width: 10%;
-  height: 36px;
+  height: 43px;
 
   background: linear-gradient(
     to right,
-    #CCCCCC 50%,
+    #e5e5e5 50%,
     rgba(204, 204, 204, 0) 100%
   );
 
@@ -2966,7 +2996,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   top: 2px;
   right: 0;
   width: 10%; /* largeur du gradient */
-  height: 36px;
+  height: 43px;
   background: linear-gradient(
     to left,
     white 50%,      /* opaque côté droit */
@@ -2995,7 +3025,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   top: 2px;
   left: 0;
   width: 10%;
-  height: 36px;
+  height: 43px;
 
   background: linear-gradient(
     to right,
@@ -3080,7 +3110,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
 .breadcrumb-panel {
   margin-top: -2px;
-  padding: 5px;
+  padding: 5px 5px 45px 5px;
   background-color: var(--meta-area-fill-color);
   border-radius: 6px;
 
@@ -3088,21 +3118,24 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   z-index: 11;
 }
 
+.breadcrumb-panel .collection-toc-area .tree li .li.container .icon-wrapper {
+  /* display: none; */
+}
+
 .tab-header {
   display: flex;
   align-items: center;
   height: 80px;
   gap: 12px;
-  padding: 20px;
+  padding: 20px 56px;
   background-color: var(--meta-area-fill-color);
-  border-radius: 6px 6px 0 0;
 }
 
 .tab-header button {
   height: 40px;
-  background: none;
+  background: #FFF;
   border-radius: 4px;
-  font-family: Roboto;
+  font-family: var(--font-primary), sans-serif;
   font-weight: 700;
   font-size: 16px;
   cursor: pointer;
@@ -3117,30 +3150,203 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 }
 
 .tab-content {
-  margin: 10px;
+  padding: 10px 56px;
 
-  position: relative;
+  table {
+    border: none;
+    background: none;
+  }
 
-  &::before {
-    content: "";
-    position: absolute;
-    inset: -15px;
-    pointer-events: none;
+  .table td {
+    padding: 13px 10px
+  }
 
-    background:
-      /* Trait horizontal haut (50%) */
-      linear-gradient(to right, transparent, var(--fill-color), transparent)
-      top left / 90% 1px no-repeat;
+  .table td,
+  .table tr {
+    border-bottom: 1px solid #C2C2C2;
   }
 }
 
 .tab-content ul.tree, .tab-content .collection-toc-area, .tab-content .table.is-fullwidth  {
   margin: 0;
   border-radius: 0 0 6px 6px;
-  background-color: #e4e4e4;
 }
 
 
+@media screen and (max-width: 1320px) {
+  .toc-area .toc-area-content nav > ol.tree {
+    columns: 2;
+  }
+  .controls > a.toc-menu-toggle {
+    margin-left: 20px;
+  }
+  .controls ul > li > a.access_link {
+    margin-right: 20px;
+  }
+}
+@media screen and (max-width: 768px) {
+  .document-area.app-width-margin {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  #article {
+    padding: 40px var(--mobile-margin) 120px;
+  }
+  .toc-area .toc-area-content aside {
+    padding: 20px 20px !important;
+  }
 
+  .l-n {
+    margin-left: -2.2rem;
+  }
+  .ariane {
+    & > .ariane-wrapper {
+      max-width: calc(100% - 90px - 10px);
+      margin-right: 10px;
+
+      & > button.toc-menu-toggle {
+        margin-right: 10px;
+      }
+    }
+  }
+  .ariane-scroll-wrapper {
+    max-width: calc(100% - 50px);
+    margin-right: 10px;
+  }
+  .crumbs {
+    display: flex;
+  }
+  .crumbs li {
+    &.is-current {
+      & a {
+        text-wrap: nowrap;
+      }
+    }
+    &:not(.is-current) {
+      &::after {
+        padding-left: 0.25rem;
+      }
+    }
+  }
+}
+@media screen and (max-width: 640px) {
+  .several-parent {
+    flex-direction: column;
+    align-items: center;
+  }
+  .toc-aside-is-opened .document-views {
+    width: 100%;
+  }
+  .document-views {
+    max-width: 100%;
+    position: relative;
+  }
+
+  .l-n {
+    margin-left: -1.5rem;
+  }
+
+  small {
+    font-size: 9px;
+  }
+
+  .pb {
+    float: right;
+    margin-right: 0;
+    padding: 0 0 20px 5px;
+  }
+
+  .controls-list {
+    position: absolute;
+  }
+
+  .toc-area-aside {
+    display: none;
+  }
+
+  .toc-aside-is-opened #aside {
+    width: 100%;
+  }
+
+  .toc-aside-is-opened .toc-area-aside {
+    position: absolute;
+    z-index: 12;
+    width: 90vw;
+    background-color: #FFF;
+    box-shadow: 8px 8px 5px 0 rgba(0,0,0,0.2);
+  }
+
+  .toc-area .toc-area-content nav > ol.tree {
+    columns: 1;
+  }
+
+  div.remove-bottom-padding #article {
+    padding: 40px var(--mobile-margin) 10px !important;
+  }
+
+  #article .byline {
+    margin: 15px 0 50px;
+  }
+
+  #article h1 {
+    font-size: 30px;
+  }
+
+  #article section.div h2.head,
+  #article section.div h3.head {
+  }
+
+  #article section.div {
+    padding-top: 10px;
+  }
+  #article p.p {
+    text-align: left;
+  }
+
+  .text-and-images-mode .document-views {
+    display: block !important;
+  }
+  .toc-area-header {
+    & > a:first-child {
+      margin-left: 0;
+      margin-right: 25px;
+    }
+  }
+  .tooltip {
+    display: none;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    background-color: transparent;
+  }
+
+  .controls-list.is-opened {
+    position: absolute;
+    top: 64px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .controls button.controls-toggle {
+    display: flex;
+    margin-left: 0; /* annule margin-left: auto */
+    order: 2;       /* met le bouton à droite */
+    max-height: 40px;
+    margin-top: 0.5ex;
+    margin-bottom: 0.5ex;
+  }
+
+  .controls-list {
+    flex-direction: row;
+    margin-left: 40px;
+    order: 1; /* liste avant le bouton */
+  }
+}
 
 </style>
