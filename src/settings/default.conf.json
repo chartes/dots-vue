@@ -2,6 +2,7 @@
   "genericConf": {
     "mediaTypeEndpoint": "tei",
     "homePageSettings": {
+      "favicon": "favicon.ico",
       "appNavBar": {
         "appNavBarLogo": {
         "imgName": "logo_dots_circle.svg",

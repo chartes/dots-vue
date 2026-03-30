@@ -41,9 +41,9 @@
       >
         <button type="button" aria-label="Retour en haut">
           <DirectionArrows
-              :size="40"
-              :radius="4"
-              direction="up"
+            :size="40"
+            :radius="4"
+            direction="up"
           />
         </button>
       </div>
@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import {onBeforeUnmount, onMounted, ref, computed, watch, watchEffect} from 'vue'
+import { onBeforeUnmount, onMounted, ref, computed, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { router } from '@/router'
@@ -73,6 +73,7 @@ import fetchMetadata from '@/composables/get-metadata'
 import { getMetadataFromApi, getParentFromApi, getProjectFromApi, getAncestors } from '@/api/document'
 import { getSimpleObject } from '@/composables/utils.js'
 import { useCustomCss } from '@/composables/utils.js'
+import { mergeSettings } from '@/composables/mergeSettings'
 
 export default {
   name: 'App',
@@ -129,45 +130,9 @@ export default {
 
     useCustomCss(customCss)
 
-    const mergeSettings = async () => {
-      /*if (Object.keys(appConfig.value).length > 0) {
-        return
-      }*/
-
-      const appSettings = import.meta.glob('confs/*.conf.json', { eager: true })
-      console.log('App.vue setup appSettings', appSettings)
-
-      const defaultSettings = await import('./settings/default.conf.json')
-      appSettings.default = defaultSettings
-
-      // Check if a default custom collection exists in Custom settings
-      let defaultCustomSettings = {}
-      if (`${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}`.length > 0) {
-        defaultCustomSettings = Object.entries(import.meta.glob('confs/custom.conf.json', { eager: true })).map(([key, value]) => value)[0]
-        console.log('App.vue setup defaultCustomSettings', defaultCustomSettings)
-        appSettings.default = defaultCustomSettings ? _.merge({}, appSettings.default, defaultCustomSettings) : appSettings.default
-        console.log('App.vue setup appSettings.default updated with custom default', appSettings.default)
-      }
-      const defaultMatch = appSettings.default.default
-      //defaultMatch.collectionId = rootCollectionIdentifier.value
-      Object.assign(appConfig.value, defaultMatch)
-      console.log('App.vue setup defaultMatch', defaultMatch)
-      console.log('App.vue setup appConfig.value', appConfig.value)
-      console.log('App.vue setup appSettings after update 1', appSettings)
-      appConfig.value.collectionsConf = []
-      appConfig.value.collectionsConf.push(appSettings.default.default.genericConf)
-      delete appSettings.default
-      console.log('App.vue setup appSettings after update 2', appSettings)
-      for (let i = 0; i < Object.keys(appSettings).length; i += 1) {
-        console.log('App.vue setup appSettings collection iteration', appSettings[Object.keys(appSettings)[i]], appSettings[Object.keys(appSettings)[i]]?.collectionId)
-        appConfig.value.collectionsConf.push(appSettings[Object.keys(appSettings)[i]])
-      }
-      console.log('App.vue setup appConfig.value after update 3', appConfig.value)
-    }
-
-    const setDtsRootResponse = async (source) => {
-      console.log('App.vue setDtsRootResponse source', source)
-      const dtsRootResponse = await getMetadataFromApi(null, null, source)
+    const setDtsRootResponse = async (route) => {
+      console.log('App.vue setDtsRootResponse source', route)
+      const dtsRootResponse = await getMetadataFromApi(null, null, route)
       dtsRootCollectionId.value = dtsRootResponse.identifier
       console.log('App.vue get dtsRootCollectionId', dtsRootCollectionId.value)
     }
@@ -186,7 +151,7 @@ export default {
     const setCurrentCollectionContext = async (route) => {
       //console.log('App.vue setCurrentCollectionContext origin route', origin, route)
       console.log('this is where it fails')
-      await mergeSettings()
+      await mergeSettings(appConfig)
       console.log('this is where it fails 2')
       let metadataResponse = {}
       const matchedCollectionConf = appConfig.value.collectionsConf && appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value).length > 0 ? appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value) : {}
@@ -196,7 +161,7 @@ export default {
       } else {
         metadataResponse = await fetchMetadata('app.vue setCurrentCollectionContext fetchMetadata (with id)', collectionId.value, 'Collection', matchedCollectionConf, route)
       }
-      //collectionId.value = metadataResponse.identifier
+
       console.log('App.vue setCurrentCollectionContext collectionId.value ', collectionId.value)
       console.log('App.vue setCurrentCollectionContext metadataResponse', metadataResponse)
 
@@ -294,7 +259,7 @@ export default {
     watchEffect(async () => {
       const collectionIdFromStore = store.state.collectionId
 
-      // 🚫 garde-fous
+      // Safeguards
       if (isInitializing.value) return
       if (!collectionIdFromStore) return
       if (!dtsRootCollectionId.value || !rootCollectionIdentifier.value) return
@@ -312,7 +277,7 @@ export default {
 
         await setCurrentCollectionContext(route)
 
-        // 🔁 EXACTEMENT ton code existant (copié tel quel)
+        // Setting up root, project and collection configs
 
         let rootCollectionOverrides =
           appConfig.value.collectionsConf.find(
@@ -403,7 +368,7 @@ export default {
           // fill dtsRootCollectionId with ???
           await setDtsRootResponse(newRoute)
 
-          // true/false, depends on VITE_APP_XXX variables
+          // Portal mode (multi-projects)
           if (isDocProjectIdInc) {
             // Do nothing if routes are the same, collId are the same, and collId is stored. Mark collConfigReady as ready (true)
             if ((newRoute.name === oldRoute?.name) && (newRoute.params?.collId === oldRoute?.params?.collId) && (store.state.collectionId === collectionId.value)) {
@@ -441,6 +406,7 @@ export default {
             store.commit('setCollectionId', collectionId.value)
             // Collection is loaded
 
+          // Single project mode
           } else {
             // Set the app rootCollection
             if (`${import.meta.env.VITE_APP_ROOT_DTS_COLLECTION_ID}`.length === 0) {
@@ -492,7 +458,7 @@ export default {
             const visibleFooter = entry.intersectionRect?.height || 0
             btn.style.bottom = `${BASE_BOTTOM + visibleFooter}px`
           },{
-            // progressive thresholds → smooth animation
+            // progressive thresholds for smooth animation
             threshold: Array.from({ length: 30 }, (_, i) => i / 30)
           }
         )
@@ -530,7 +496,6 @@ export default {
       setCurrentCollectionContext,
       getBreadcrumb,
       breadCrumb,
-      mergeSettings,
       getCustomCss,
       removeCustomCss,
       scrollTopIsVisible,
