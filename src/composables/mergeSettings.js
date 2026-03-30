@@ -1,27 +1,61 @@
 import _ from 'lodash'
 
-// Import all custom favicons from confs/default
-const customFaviconModules = import.meta.glob('confs/default/*.ico', { eager: true, as: 'url' })
+// Import all favicon files from confs/default as resolved URLs (handled by Vite asset pipeline)
+// Using `query: '?url'` ensures proper URL transformation (with hashing in build)
+// `import: 'default'` gives direct access to the URL string
+const customFaviconModules = import.meta.glob(
+  'confs/default/*.ico',
+  { eager: true, query: '?url', import: 'default' }
+)
 
 /**
- * Get the final favicon URL to use
- * @param {string} faviconName - name of the favicon file (e.g., 'enc.ico')
- * @returns {string|null} URL of the favicon or null if not found
+ * Build a stable map of favicon file names : resolved URLs
+ * Example:
+ * {
+ *   "enc.ico": "/assets/enc.abc123.ico"
+ * }
+ */
+const faviconMap = Object.fromEntries(
+  Object.entries(customFaviconModules).map(([path, url]) => {
+    const fileName = path.split('/').pop() // Extract file name (e.g. "enc.ico")
+    return [fileName, url]
+  })
+)
+
+/**
+ * Get the resolved favicon URL from its file name
+ *
+ * @param {string} faviconName - Name of the favicon file (e.g. "enc.ico")
+ * @returns {string|null} Resolved URL of the favicon, or null if not found
  */
 function getFaviconUrl(faviconName) {
   if (!faviconName) return null
-  const urls = Object.values(customFaviconModules)
-  return urls.find(url => url.endsWith(faviconName)) || null
+
+  const url = faviconMap[faviconName]
+
+  if (!url) {
+    console.warn(`Favicon "${faviconName}" not found in confs/default`)
+  }
+
+  return url || null
 }
 
 /**
- * Update the favicon in the <head>
- * @param {string|null} faviconName - name of the favicon file
+ * Update (or create) the favicon in the document <head>
+ *
+ * - Reuses existing <link rel="icon"> if present
+ * - Otherwise creates one dynamically
+ * - Falls back to browser default (/public/favicon.ico) if no match is found
+ *
+ * @param {string|null} faviconName - Name of the favicon file (e.g. "enc.ico")
  */
 export function updateFavicon(faviconName) {
   const faviconUrl = getFaviconUrl(faviconName)
 
+  // Try to find an existing favicon link element
   let link = document.querySelector('link[rel*="icon"]')
+
+  // If none exists, create it
   if (!link) {
     link = document.createElement('link')
     link.type = 'image/x-icon'
@@ -30,10 +64,11 @@ export function updateFavicon(faviconName) {
   }
 
   if (faviconUrl) {
+    // Apply resolved favicon URL
     link.href = faviconUrl
     console.log('Favicon applied:', faviconUrl)
   } else {
-    // Do nothing and let browser use /public/favicon.ico
+    // Do nothing : browser will fallback to default /public/favicon.ico
     console.log('No custom favicon found, using browser default')
   }
 }
