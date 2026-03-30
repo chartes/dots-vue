@@ -260,9 +260,10 @@ name: 'CollectionTOC',
   display: block;
 
   --col-count: 4;
-  --gap: 15px;
+  --row-gap: 0px;
+  --column-gap: 60px;
   /* columns control */
-  --grid-template-columns: 40% calc(20% - var(--gap)) calc(25% - var(--gap)) calc(15% - var(--gap)); /* columns widths */
+  --grid-template-columns: 35% calc(25% - var(--column-gap)) calc(25% - var(--column-gap)) calc(15% - var(--column-gap)); /* columns widths */
 }
 .list-mode-wrapper {
   width: 100%;
@@ -272,6 +273,11 @@ name: 'CollectionTOC',
   padding-bottom: 36px;
   border-bottom: 2px solid var(--fill-color);
 }
+
+.list-header {
+  margin-bottom: 15px;
+}
+
 
 .list-mode li::before {
   display: none !important;
@@ -286,7 +292,7 @@ name: 'CollectionTOC',
   grid-template-columns: var(--grid-template-columns);
   align-items: center;
   width: 100% !important;
-  gap: var(--gap);
+  gap: var(--row-gap) var(--column-gap);
 
   font-family: var(--font-primary), sans-serif;
   font-size: 16px;
@@ -298,7 +304,6 @@ name: 'CollectionTOC',
 /* HEADER */
 .list-mode .header {
   font-weight: 500;
-  border-bottom: 1px solid #ddd;
   padding: 20px 0;
 }
 
@@ -311,7 +316,7 @@ name: 'CollectionTOC',
 .list-mode .header-cell > span {
   display: block;
   border-bottom: 3px solid #DCDCDC;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
 }
 
 .list-mode .header-cell-fields {
@@ -329,7 +334,7 @@ name: 'CollectionTOC',
 /* ROW */
 .list-mode .row {
   width: 100%;
-  padding: 10px 0;
+  padding: 15px 0;
   border-bottom: 1px solid #eee;
   cursor: pointer;
 }
@@ -368,32 +373,43 @@ name: 'CollectionTOC',
 /* FILTER */
 .list-mode .filter {
   width: 100%;
-  height: 32px;
-  padding: 4px;
-  font-size: 12px;
+}
+
+.list-mode .filter,
+.list-mode .range-filter input {
+  height: auto;
+  padding: 7px 6px;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1;
   border: 1px solid #cecece;
+  border-radius: 4px;
+  outline: none;
+
+  &:focus {
+    border-color: var(--fill-color);
+  }
 }
 
 /* RANGE */
 .list-mode .range-filter {
   display: flex;
-  height: 32px;
-  gap: 20px;
+  gap: 10px;
 }
 
 .list-mode .range-filter input {
   width: 50%;
-  border: 1px solid #ddd;
 }
 
 /* ICON */
 .list-mode .icons {
   display: flex;
   flex-direction: column;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
   font-size: 10px;
   color: white;
 }
@@ -457,6 +473,12 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+
+@media screen and (max-width: 1280px) {
+  .list-mode {
+    --column-gap : 20px;
+  }
+}
 
 @media screen and (max-width: 1024px) {
 
