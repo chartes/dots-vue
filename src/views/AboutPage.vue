@@ -307,7 +307,7 @@ article.about .page-header h1,
   margin: 20px 0;
 }
 
-@media screen and (max-width: 1215px) {
+@media screen and (max-width: 1320px) {
 
   .about-page .content-menu .about-content {
     padding: 0 !important;

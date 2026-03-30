@@ -89,6 +89,8 @@ watch(currentPage, (val) => {
 <style scoped>
 
 .pagination-controls {
+  --border-radius: 4.8px;
+
   display: flex;
   align-items: center;
   /*visibility: hidden;*/
@@ -109,7 +111,7 @@ watch(currentPage, (val) => {
   & span.total-pages,
   & > a {
     background-color: var(--default-bg-color);
-    border-radius: 3.2px;
+    border-radius: var(--border-radius);
   }
   & > a.button {
     border: solid 1px transparent;
@@ -133,7 +135,7 @@ watch(currentPage, (val) => {
   & > input.current-page {
     padding: 0 !important;
     border: 1px solid #dbdbdb;
-    border-radius: 3.2px;
+    border-radius: var(--border-radius);
 
     font-family: inherit;
     font-size: 18px;
@@ -161,7 +163,7 @@ watch(currentPage, (val) => {
 
   & span.total-pages {
     background-color: var(--default-bg-color);
-    border-radius: 3.2px;
+    border-radius: var(--border-radius);
     font-family: inherit;
     color: #818181;
     text-align: center;

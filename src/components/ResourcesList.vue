@@ -474,7 +474,7 @@ input[type=number] {
 }
 
 
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: 1320px) {
   .list-mode {
     --column-gap : 20px;
   }
