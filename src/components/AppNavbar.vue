@@ -5,7 +5,7 @@
       :class="menuCssClass"
     >
       <div class="level-left">
-        <!--<a
+        <a
           v-if="imgHref !== '/'"
           :href="imgHref"
           target="_blank"
@@ -27,7 +27,7 @@
             class="logo-header"
             :src="imgUrl"
           >
-        </router-link>-->
+        </router-link>
         <span class="level-item">
           <router-link
             active-class="active"
@@ -444,12 +444,12 @@ nav span.level-item:not(:last-child)::after {
 }
 .logo-header {
   display: inline-block;
-  width: 50px;
+  width: 150px;
   height: 50px;
   margin: 0 40px 0 2px;
   & > img {
+    width: 100%;
     height: 50px;
-    width: 50px;
   }
 }
 .logo-api {

@@ -7,9 +7,9 @@
             {{ footTitle ? footTitle : currCollection.title }}
           </span>
           <span
-              v-for="(subtitle, index) in footSubtitles"
-              :key="index"
-              class="subtitle"
+            v-for="(subtitle, index) in footSubtitles"
+            :key="index"
+            class="subtitle"
           >
             {{ subtitle }}
           </span>
@@ -25,34 +25,34 @@
           <div class="column logos">
             <div class="logo-institutions">
               <a
-                  target="_blank"
-                  href="https://www.chartes.psl.eu/"
+                target="_blank"
+                href="https://www.chartes.psl.eu/"
               >
                 <img
-                    class="enc-logo"
-                    alt="Logo de l'École nationale des chartes"
-                    src="@/assets/images/footer_enc_logo.png"
+                  class="enc-logo"
+                  alt="Logo de l'École nationale des chartes"
+                  src="@/assets/images/logo_enc_white.svg"
                 />
               </a>
               <a
-                  target="_blank"
-                  href="https://projet.biblissima.fr/fr"
+                target="_blank"
+                href="https://projet.biblissima.fr/fr"
               >
                 <img
-                    class="biblissima-logo"
-                    alt="Logo de Biblissima+"
-                    src="@/assets/images/logo_biblissima_footer_white.png"
+                  class="biblissima-logo"
+                  alt="Logo de Biblissima+"
+                  src="@/assets/images/logo_biblissima_footer_white.png"
                 />
               </a>
             </div>
             <div class="logo">
-          <span>
-            Powered by
-          </span>
+              <span>
+                Powered by
+              </span>
               <a
-                  class="dots-logo"
-                  target="_blank"
-                  href="https://chartes.github.io/dots_documentation/"
+                class="dots-logo"
+                target="_blank"
+                href="https://chartes.github.io/dots_documentation/"
               >
                 <!--<img
                   class="dots-logo"
@@ -66,24 +66,24 @@
             <ul class="footer-links">
               <li>
                 <router-link
-                    :to="{ name: 'Terms'}"
-                    active-class="active"
+                  :to="{ name: 'Terms'}"
+                  active-class="active"
                 >
                   Terms of service
                 </router-link>
               </li>
               <li>
                 <a
-                    target="_blank"
-                    href="https://www.chartes.psl.eu/contact"
+                  target="_blank"
+                  href="https://www.chartes.psl.eu/contact"
                 >
                   Contact
                 </a>
               </li>
               <li>
                 <a
-                    target="_blank"
-                    href="https://www.huma-num.fr/"
+                  target="_blank"
+                  href="https://www.huma-num.fr/"
                 >
                   Huma-Num
                 </a>
@@ -319,7 +319,7 @@ export default {
 }
 .enc-logo {
   width: auto;
-  height: 70px;
+  height: 50px;
 }
 .biblissima-logo {
   width: 320px;
