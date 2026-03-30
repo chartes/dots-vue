@@ -255,11 +255,9 @@
 </template>
 
 <script>
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import md5 from 'md5'
 import * as $rdf from 'rdflib'
-// import node from "rdflib/src/node.js";
-import { removeKeys } from '@/composables/utils'
 
 export default {
   name: 'DocumentMetadata',
@@ -268,6 +266,10 @@ export default {
 
   props: {
     ispopup: { required: true, default: false, type: Boolean },
+    collectionConfig: {
+      type: Object,
+      required: false
+    },
     metadataprop: { required: true, default: () => {}, type: Object },
     hasheader: { required: false, default: true, type: Boolean }
   },
@@ -281,6 +283,24 @@ export default {
     const isNew = ref(true)
     const metadata = ref(props.metadataprop)
     const authorThumbnailUrl = ref(null)
+
+    const filteredMetadata = computed(() => {
+      const source = props.metadataprop
+      const config = props.collectionConfig?.keepCollectionMetadata
+
+      if (!source) return {}
+      if (!config) return source
+
+      const result = {}
+
+      config.displayOrder.forEach((key) => {
+        if (source[key] !== undefined) {
+          result[key] = source[key]
+        }
+      })
+
+      return result
+    })
 
     const getValue = (data) => {
       function getLink (string) {
@@ -395,28 +415,15 @@ export default {
       }
     }
 
-    // when the component is created
-    // and when the metadata changes
     watch(
-      () => props.metadataprop,
-      () => {
-        console.log('metadataprop watch current, new : ', metadata.value, props.metadataprop)
-
-        const removedKeys = ['context','children', 'member', 'editorialLevelIndicator', 'renderToc', 'level', 'expanded', 'router', 'router_params', 'dublincore', 'extensions']/* gerer les 'url' à supp pour les collections seulement */
-
-        metadata.value = props.metadataprop
-
-        let filteredMetadata = {}
-        // Object.assign(filteredMetadata, {})
-        filteredMetadata = removeKeys(metadata.value, removedKeys)
-        console.log('filteredMetadata', filteredMetadata)
-        metadata.value = filteredMetadata
-        // Object.assign(metadata, filteredMetadata)
+      filteredMetadata,
+      (newValue) => {
+        metadata.value = newValue
         fetchAuthorThumbnailUrl()
         fetchBiblioData()
         fetchRDF()
       },
-      { deep: true, immediate: true }
+      { immediate: true }
     )
 
     return {

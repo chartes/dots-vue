@@ -148,6 +148,7 @@
                 <div v-if="selectedCollectionId.length > 0">
                   <document-metadata
                     :ispopup="false"
+                    :collection-config="collConfig"
                     :metadataprop="selectedCollection"
                     :hasheader="false"
                     class="metadata-area"
@@ -206,44 +207,44 @@
       </div>
     </div>
     <nav
-        class="navigation-row app-width-margin"
-        aria-label="Navigation du document"
+      class="navigation-row app-width-margin"
+      aria-label="Navigation du document"
     >
       <div class="navigation-document">
         <div class="ariane">
           <div
-              class="ariane-wrapper"
+            class="ariane-wrapper"
           >
             <!-- LeftTOC button -->
             <button
-                type="button"
-                class="toc-menu-toggle"
-                aria-label="Afficher le sommaire"
-                :class="hasValidTOC ? TOCMenuBtnCssClass : 'disabled'"
-                @click="toggleTOCMenu"
+              type="button"
+              class="toc-menu-toggle"
+              aria-label="Afficher le sommaire"
+              :class="hasValidTOC ? TOCMenuBtnCssClass : 'disabled'"
+              @click="toggleTOCMenu"
             >
               <TocIcon />
             </button>
             <!-- Document breadcrumb -->
             <div
-                class="ariane-scroll-wrapper"
+              class="ariane-scroll-wrapper"
             >
               <div
-                  class="doc-fade-left"
-                  :class="{ visible: docFadeLeftVisible }"
+                class="doc-fade-left"
+                :class="{ visible: docFadeLeftVisible }"
               />
               <ul
-                  v-if="!leftTOCFragmentIsDocument"
-                  ref="arianeDocContainer"
-                  class="crumbs"
-                  @scroll="onDocBreadcrumbScroll($event)"
+                v-if="!leftTOCFragmentIsDocument"
+                ref="arianeDocContainer"
+                class="crumbs"
+                @scroll="onDocBreadcrumbScroll($event)"
               >
                 <li
-                    v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')"
-                    :key="index"
-                    :class="refId
-                      ? ancestor.identifier === refId ? 'is-current' : ''
-                      : ancestor.identifier === resourceId ? 'is-current' : ''"
+                  v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash')"
+                  :key="index"
+                  :class="refId
+                    ? ancestor.identifier === refId ? 'is-current' : ''
+                    : ancestor.identifier === resourceId ? 'is-current' : ''"
                 >
                   <router-link :to="ancestor.router">
                     {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
@@ -252,17 +253,17 @@
                 </li>
               </ul>
               <ul
-                  v-else
-                  ref="arianeDocContainer"
-                  class="crumbs"
-                  @scroll="onDocBreadcrumbScroll($event)"
+                v-else
+                ref="arianeDocContainer"
+                class="crumbs"
+                @scroll="onDocBreadcrumbScroll($event)"
               >
                 <li
-                    v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash').slice(1)"
-                    :key="index"
-                    :class="refId
-                      ? ancestor.identifier === refId ? 'is-current' : ''
-                      : ancestor.identifier === resourceId ? 'is-current' : ''"
+                  v-for="(ancestor, index) in arianeDocument.filter(item => item.editorialLevelIndicator !== 'hash').slice(1)"
+                  :key="index"
+                  :class="refId
+                    ? ancestor.identifier === refId ? 'is-current' : ''
+                    : ancestor.identifier === resourceId ? 'is-current' : ''"
                 >
                   <router-link :to="ancestor.router">
                     {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
@@ -271,41 +272,41 @@
                 </li>
               </ul>
               <div
-                  class="doc-fade-right"
-                  :class="{ visible: docFadeRightVisible }"
+                class="doc-fade-right"
+                :class="{ visible: docFadeRightVisible }"
               />
             </div>
           </div>
           <!-- Previous / Next navigation buttons -->
           <div
-              class="navigation-document-top"
-              aria-label="Navigation dans le document"
+            class="navigation-document-top"
+            aria-label="Navigation dans le document"
           >
             <router-link
-                class="to-previous-fragment"
-                :class="previousRefId === '' ? 'disabled' : ''"
-                :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: previousRefId } }"
-                aria-label="Fragment précédent"
+              class="to-previous-fragment"
+              :class="previousRefId === '' ? 'disabled' : ''"
+              :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: previousRefId } }"
+              aria-label="Fragment précédent"
             >
               <DirectionArrows
-                  :size="40"
-                  :radius="4"
-                  direction="left"
+                :size="40"
+                :radius="4"
+                direction="left"
               />
             </router-link>
             <router-link
-                class="to-next-fragment has-tooltip"
-                :class="{ disabled: !nextRefId }"
-                :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: nextRefId } }"
-                :aria-disabled="!nextRefId"
-                :aria-label="'Vers ' + nextRefTitle"
-                :tabindex="nextRefId ? 0 : -1"
+              class="to-next-fragment has-tooltip"
+              :class="{ disabled: !nextRefId }"
+              :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: nextRefId } }"
+              :aria-disabled="!nextRefId"
+              :aria-label="'Vers ' + nextRefTitle"
+              :tabindex="nextRefId ? 0 : -1"
             >
               <DirectionArrows
-                  :size="40"
-                  :radius="4"
-                  direction="right"
-                  aria-hidden="true"
+                :size="40"
+                :radius="4"
+                direction="right"
+                aria-hidden="true"
               />
               <span class="tooltip">Vers {{ nextRefTitle }}</span>
             </router-link>
@@ -314,84 +315,84 @@
       </div>
     </nav>
     <div
-        class="controls app-width-margin"
-        :class="isControlsOpened ? 'is-opened' : ''"
-        role="toolbar"
-        aria-label="Options d’affichage du document"
+      class="controls app-width-margin"
+      :class="isControlsOpened ? 'is-opened' : ''"
+      role="toolbar"
+      aria-label="Options d’affichage du document"
     >
       <button
-          class="controls-toggle"
-          aria-label="Afficher les outils de lecture"
-          :aria-expanded="isControlsOpened"
-          @click="toggleControls"
+        class="controls-toggle"
+        aria-label="Afficher les outils de lecture"
+        :aria-expanded="isControlsOpened"
+        @click="toggleControls"
       >
         <IconReadingToolsToggle
-            :size="40"
-            :radius="4"
-            :is-active="isControlsOpened"
+          :size="40"
+          :radius="4"
+          :is-active="isControlsOpened"
         />
       </button>
       <ul
-          class="controls-list"
-          :class="isControlsOpened ? 'is-opened' : ''"
+        class="controls-list"
+        :class="isControlsOpened ? 'is-opened' : ''"
       >
         <li v-if="manifestIsAvailable">
           <button
-              type="button"
-              class="text-btn"
-              aria-label="Texte seul"
-              @click="changeViewMode('text-mode')"
+            type="button"
+            class="text-btn"
+            aria-label="Texte seul"
+            @click="changeViewMode('text-mode')"
           >
             <IconLetterT
-                :size="40"
-                :radius="4"
+              :size="40"
+              :radius="4"
             />
           </button>
         </li>
 
         <li v-if="manifestIsAvailable">
           <button
-              type="button"
-              class="images-btn"
-              aria-label="Images seules"
-              @click="changeViewMode('images-mode')"
+            type="button"
+            class="images-btn"
+            aria-label="Images seules"
+            @click="changeViewMode('images-mode')"
           >
             <IconImage
-                :size="40"
-                :radius="4"
+              :size="40"
+              :radius="4"
             />
           </button>
         </li>
 
         <li v-if="hasNotes">
           <button
-              type="button"
-              class="notes-btn"
-              :class="{ 'is-opened': isNotesOpened }"
-              aria-pressed="isNotesOpened"
-              aria-label="Afficher les notes"
-              @click="toggleNotes"
+            type="button"
+            class="notes-btn"
+            :class="{ 'is-opened': isNotesOpened }"
+            aria-pressed="isNotesOpened"
+            aria-label="Afficher les notes"
+            @click="toggleNotes"
           >
             <icon-notes />
           </button>
         </li>
         <li>
           <a
-              v-if="refId && refId.length > 0"
-              target="_blank"
-              :href="`${dtsUrl}/document?resource=${resourceId}&ref=${refId}`"
-              class="xml-btn"
-              aria-label="Télécharger le XML"
+            v-if="refId && refId.length > 0"
+            target="_blank"
+            :href="`${dtsUrl}/document?resource=${resourceId}&ref=${refId}`"
+            class="xml-btn"
+            aria-label="Télécharger le XML"
           >
             <XMLIcon :size="40" />
           </a>
 
           <a
-              v-else
-              target="_blank"
-              :href="`${dtsUrl}/document?resource=${resourceId}`"
-              class="xml-btn"
-              aria-label="Télécharger le XML"
+            v-else
+            target="_blank"
+            :href="`${dtsUrl}/document?resource=${resourceId}`"
+            class="xml-btn"
+            aria-label="Télécharger le XML"
           >
             <XMLIcon :size="40" />
           </a>
@@ -626,28 +627,6 @@ export default {
         right: text.slice(splitIndex)
       }
     }
-
-    const initial_metadata = {
-      id: null,
-      title: null,
-      author: null,
-      rights: null,
-      sudoc: null,
-      benc: null,
-      thenca: null,
-      data_bnf: null,
-      dbpedia: null,
-      idref: null,
-      catalogue_bnf: null,
-      hal: null,
-      wikidata: null,
-      wikipedia: null,
-      iiifManifestUrl: null,
-      downloadPDF: null,
-      downloadXML: null
-    }/* document_links: [],
-      author_links: [],
-      other_links: [], */
 
     const metadata = ref({})
     const route = useRoute()
@@ -978,27 +957,7 @@ export default {
                 }
                 return updatedMember
               })
-              /* causing fecth of all ENCPOS sub-collections / did not find exemple of issues when removing : still necessary ????
-              appendParentInTOC.children = await Promise.all(appendParentInTOC.member.filter(item => item.identifier !== node.identifier).map(async (obj) => {
-                const updatedMemberParentResp = await getParentFromApi(obj.identifier)
-                const updatedMemberParent = updatedMemberParentResp.member ? updatedMemberParentResp.member.map(p => p['@id']) : undefined
-                const updatedMember = {
-                  identifier: obj.identifier ? obj.identifier : obj['@id'],
-                  citeType: obj['@type'] ? obj['@type'] : obj.citeType,
-                  expanded: obj.identifier === node.id ? node.expanded : undefined,
-                  title: obj.title,
-                  level: node.level,
-                  editorialLevelIndicator: node.editorialLevelIndicator,
-                  totalChildren: obj.totalChildren,
-                  totalDescendants: obj.totalDescendants,
-                  children: obj.children ? obj.children : [],
-                  member: obj.member ? obj.member : [],
-                  parent: updatedMemberParent,
-                  dublincore: obj.dublincore,
-                  extensions: obj.extensions
-                }
-                return updatedMember
-              }))*/
+
               if (appendParentInTOC.member.filter(item => item.identifier === node.identifier).length > 0) {
                 const updatedCurrentNode = appendParentInTOC.member.filter(item => item.identifier === node.identifier)[0]
                 updatedCurrentNode.parent = node.parent
@@ -1006,8 +965,7 @@ export default {
                 updatedCurrentNode.member = node.member ? node.member : []
                 appendParentInTOC.children.push(getSimpleObject(updatedCurrentNode))
               }
-              // appendParentInTOC.member = appendParentInTOC.member.map(m => { return getSimpleObject(m)})
-              // appendParentInTOC.children = appendParentInTOC.member
+
               appendParentInTOC.expanded = true
               // Check if the parent has itself a parent
               if (parentResponse.member) {
@@ -1066,28 +1024,7 @@ export default {
               }
               return updatedMember
             })
-            /* causing fecth of all ENCPOS sub-collections / did not find exemple of issues when removing : still necessary ????
-            appendParentInTOC.children = await Promise.all(appendParentInTOC.member.filter(item => item.identifier !== node.identifier).map(async (obj) => {
-              const updatedMemberParentResp = await getParentFromApi(obj.identifier)
-              console.log('appendParentInTOC Promise all, obj.identifier ', obj.identifier)
-              const updatedMemberParent = updatedMemberParentResp.member ? updatedMemberParentResp.member.map(p => p['@id']) : undefined
-              const updatedMember = {
-                identifier: obj.identifier ? obj.identifier : obj['@id'],
-                citeType: obj['@type'] ? obj['@type'] : obj.citeType,
-                expanded: obj.identifier === node.id ? node.expanded : undefined,
-                title: obj.title,
-                level: node.level,
-                editorialLevelIndicator: node.editorialLevelIndicator,
-                totalChildren: obj.totalChildren,
-                totalDescendants: obj.totalDescendants,
-                children: obj.children ? obj.children : [],
-                member: obj.member ? obj.member : [],
-                parent: obj.parent,
-                dublincore: obj.dublincore,
-                extensions: obj.extensions
-              }
-              return updatedMember
-            }))*/
+
             if (appendParentInTOC.member.filter(item => item.identifier === node.identifier).length > 0) {
               const updatedCurrentNode = appendParentInTOC.member.filter(item => item.identifier === node.identifier)[0]
               updatedCurrentNode.parent = node.parent
@@ -1096,8 +1033,6 @@ export default {
               appendParentInTOC.children.push(getSimpleObject(updatedCurrentNode))
             }
 
-            // appendParentInTOC.member = appendParentInTOC.member.map(m => { return getSimpleObject(m)})
-            // appendParentInTOC.children = appendParentInTOC.member
             appendParentInTOC.expanded = true
 
             // Check if the parent has itself a parent
@@ -1180,7 +1115,7 @@ export default {
 
       const startTimeBuildTOC = new Date()
 
-      // initialise the children of the flatTOC fragments (descendant of the resource)
+      // Initialise the children of the flatTOC fragments (descendant of the resource)
       processFlatTOC.filter(item => item.level >= 0).forEach((node) => { node.children = [] })
 
       function countDescendants (node, count = 0) {
@@ -1370,7 +1305,7 @@ export default {
         if (item.parent === null) return [item]
         const parent = []
         if (Array.isArray(item.parent)) {
-          // multiple parents
+          // Multiple parents
           for (let i = 0; i < item.parent.length; i += 1) {
             const parentId = item.parent[i]
             // console.log("findAncestors item.parent", item.parent, i, item.parent[i])
@@ -1506,7 +1441,7 @@ export default {
     function openObject(breadcrumbItem, index) {
       isModalOpened.value = true
 
-      // Cas 1 : même breadcrumb → toggle off
+      // Case 1 : same breadcrumb then toggle off
       // console.log('arianeCollection test openObject ', activeBreadcrumb.value, index, breadcrumbItem.identifier)
       if (
         activeBreadcrumb.value === index &&
@@ -1521,7 +1456,7 @@ export default {
         return
       }
 
-      // Cas 2 : nouvel objet
+      // Case 2 : new objet
       activeBreadcrumb.value = index
       activeObject.value = breadcrumbItem
       console.log('openObject ', activeObject.value)
@@ -1539,13 +1474,13 @@ export default {
       }
 
       if (tocItem.citeType === 'Collection') {
-        // 🔹 Collection pure
+        // Collection pure
         console.log('tocItem collConfig.value ', tocItem, collConfig.value)
         const { processMetadata } = useMetadataProcessor()
         selectedCollection.value = processMetadata(tocItem, collConfig.value, selectedCollectionId.value, route)
         //selectedCollection.value = tocItem
       } else {
-        // 🔹 Resource = merge metadata + toc
+        // Resource = merge metadata + toc
         selectedCollection.value = _.merge(
           {},
           metadata.value
@@ -1810,11 +1745,11 @@ export default {
       // If the selected item is an anchor, capture and scroll to that anchor
       console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
       if (hash.value.length > 0) {
-        // bump the hash to ensure change detection
+        // Bump the hash to ensure change detection
         const bumpPath = `${import.meta.env.VITE_APP_APP_ROOT_URL}`.length <= 1 ? `${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}` : `${import.meta.env.VITE_APP_APP_ROOT_URL}${router.currentRoute.value.fullPath.split('#')[0]}#${hash.value}`
         history.replaceState(history.state, '', bumpPath)
 
-        // target element and scroll
+        // Target element and scroll
         const el = document.getElementById(hash.value)
         console.log('DocumentPage.vue scrollTo el : ', el)
         if (el) {
