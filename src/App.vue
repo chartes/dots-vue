@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { onBeforeUnmount, onMounted, ref, computed, watch, watchEffect } from 'vue'
+import { onBeforeUnmount, onMounted, ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { router } from '@/router'
@@ -367,10 +367,9 @@ export default {
           // Same collection
           if (
             newName === oldName &&
-            JSON.stringify(newParams) === JSON.stringify(oldParams) &&
-            JSON.stringify(newQuery) === JSON.stringify(oldQuery)
+            JSON.stringify(newParams) === JSON.stringify(oldParams)
           ) {
-            console.log('App.vue watch ROUTER same collection do nothing')
+            console.log('App.vue watch ROUTER same collection or same document do nothing')
             return
           }
 
