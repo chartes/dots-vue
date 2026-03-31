@@ -1,5 +1,5 @@
 <template>
-  <div class="collection-list">
+  <div class="collection-list" :class="{ 'root-collection-list' : collectionId === rootCollectionId }">
     <div class="tiles">
       <div class="tile page-header">
         <div class="is-flex is-flex-direction-row wrapper collection-header app-width-margin">
