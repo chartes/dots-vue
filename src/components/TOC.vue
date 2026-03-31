@@ -441,7 +441,14 @@ div.bottom-toc {
 }
 
 .is-current {
-  color: var(--text-color) !important;
+  background-color: #F9F9F9;
+  border-left: 1px solid var(--fill-color);
+  padding: 10px 20px;
+  margin: 10px 0;
+
+  &:hover {
+    background-color: #F9F9F9 !important;
+  }
 }
 
 button.toc-toggle {

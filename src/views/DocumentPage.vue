@@ -2624,12 +2624,9 @@ div.remove-bottom-padding #article {
 
     & a {
       width: 100%;
-      color: var(--text-color);
+      color: var(--fill-color);
       font-weight: bold;
       border: none;
-      &:hover {
-        color: #B9192F;
-      }
     }
   }
   &:not(.is-current) {
@@ -3188,6 +3185,9 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     float: right;
     margin-right: 0;
     padding: 0 0 20px 5px;
+
+    position: absolute;
+    left: unset;
   }
 
   .controls-list {
