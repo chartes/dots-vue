@@ -2090,7 +2090,7 @@ export default {
   font-size: 20px;
 
   &.is-opened {
-    color: var(--text-color);
+    color: var(--fill-color);
   }
 }
 .controls button:focus-visible {
@@ -2105,7 +2105,7 @@ export default {
 .controls .xml-btn {
   height: 40px;
   width: 40px;
-  color: var(--text-color);
+  color: var(--fill-color);
 }
 
 .document-area #aside,
@@ -2600,7 +2600,7 @@ div.remove-bottom-padding #article {
     display: inline-block;
     content: ' > ';
     font-weight: bold;
-    color: var(--text-color);
+    color: var(--fill-color);
     padding-left: .75rem;
   }
   &:not(:last-child) {
@@ -2642,7 +2642,7 @@ div.remove-bottom-padding #article {
       }
 
       &:hover {
-        color: #B9192F !important;
+        color: var(--fill-color) !important;
       }
     }
   }
