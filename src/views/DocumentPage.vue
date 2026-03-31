@@ -1992,21 +1992,21 @@ export default {
 }
 .toc-area-aside a,
 .toc-area-content a {
-  font-family: var(--font-secondary), sans-serif !important;
+  font-family: var(--font-primary), sans-serif !important;
   font-weight: 400;
+  color: var(--document-text-color);
   text-align: left;
-  line-height: 20px;
   letter-spacing: 0;
   border: none;
   box-shadow: none;
 }
 .toc-area-content a {
   font-size: 17px;
-  color: #252525;
+  line-height: 20px;
 }
 .toc-area-aside a {
   font-size: 16px;
-  color: #000;
+  line-height: 19px;
 }
 
 .controls {
