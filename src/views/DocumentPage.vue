@@ -50,6 +50,7 @@
               :key="index"
               :class="{ active: index === activeBreadcrumb }"
             >
+              <ArianeArrowSeparatorIcon v-if="index > 0" class="separator" />
               <template
                 v-if="item.length > 1 && selectStoreCollection(item)?.identifier"
               >
@@ -524,6 +525,7 @@ import IconReadingToolsToggle from '@/assets/images/IconReadingToolsToggle.vue'
 import XMLIcon from '@/assets/images/XMLIcon.vue'
 import IconNotes from '@/assets/images/IconNotes.vue'
 import TocIcon from '@/assets/images/TocIcon.vue'
+import ArianeArrowSeparatorIcon from "@/assets/images/ArianeArrowSeparatorIcon.vue";
 
 function findById (array, id) {
   for (const item of array) {
@@ -538,6 +540,7 @@ function findById (array, id) {
 export default {
   name: 'DocumentPage',
   components: {
+    ArianeArrowSeparatorIcon,
     TocIcon,
     IconNotes,
     XMLIcon,
@@ -2299,7 +2302,7 @@ div.remove-bottom-padding #article {
   font-size: var(--font-default-size);
   font-variant: unset;
   line-height: 1.6;
-  color: #5F004D;
+  color: var(--fill-color);
   text-transform: none;
 }
 
@@ -2785,12 +2788,8 @@ ul.breadcrumb-top {
     margin-bottom: 0;
   }
 
-  > li:not(:last-child)::after {
-    content: "";
-    display: inline-block;
-    background: url(../assets/images/breadcrumb-separator.svg) center / 19px auto no-repeat;
-    width: 19px;
-    height: 32px;
+  > li .separator {
+    color: var(--fill-color);
     margin: 0 14px;
   }
 
