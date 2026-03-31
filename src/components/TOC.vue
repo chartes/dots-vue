@@ -440,8 +440,20 @@ div.bottom-toc {
   }
 }
 
-.is-current {
-  color: var(--text-color) !important;
+.toc-area-aside .is-current {
+  background-color: #F9F9F9;
+  border-left: 1px solid var(--fill-color);
+  padding: 10px 20px;
+  margin: 10px 0;
+
+  &:hover {
+    background-color: #F9F9F9 !important;
+  }
+}
+
+div.toc-area-content.toc-content .tree li .li.container a.is-current {
+  font-weight: 500;
+  color: var(--fill-color);
 }
 
 button.toc-toggle {

@@ -50,6 +50,7 @@
               :key="index"
               :class="{ active: index === activeBreadcrumb }"
             >
+              <ArianeArrowSeparatorIcon v-if="index > 0" class="separator" />
               <template
                 v-if="item.length > 1 && selectStoreCollection(item)?.identifier"
               >
@@ -524,6 +525,7 @@ import IconReadingToolsToggle from '@/assets/images/IconReadingToolsToggle.vue'
 import XMLIcon from '@/assets/images/XMLIcon.vue'
 import IconNotes from '@/assets/images/IconNotes.vue'
 import TocIcon from '@/assets/images/TocIcon.vue'
+import ArianeArrowSeparatorIcon from "@/assets/images/ArianeArrowSeparatorIcon.vue";
 
 function findById (array, id) {
   for (const item of array) {
@@ -538,6 +540,7 @@ function findById (array, id) {
 export default {
   name: 'DocumentPage',
   components: {
+    ArianeArrowSeparatorIcon,
     TocIcon,
     IconNotes,
     XMLIcon,
@@ -1989,21 +1992,21 @@ export default {
 }
 .toc-area-aside a,
 .toc-area-content a {
-  font-family: var(--font-secondary), sans-serif !important;
+  font-family: var(--font-primary), sans-serif !important;
   font-weight: 400;
+  color: var(--document-text-color);
   text-align: left;
-  line-height: 20px;
   letter-spacing: 0;
   border: none;
   box-shadow: none;
 }
 .toc-area-content a {
   font-size: 17px;
-  color: #252525;
+  line-height: 20px;
 }
 .toc-area-aside a {
   font-size: 16px;
-  color: #000;
+  line-height: 19px;
 }
 
 .controls {
@@ -2087,7 +2090,7 @@ export default {
   font-size: 20px;
 
   &.is-opened {
-    color: var(--text-color);
+    color: var(--fill-color);
   }
 }
 .controls button:focus-visible {
@@ -2102,7 +2105,7 @@ export default {
 .controls .xml-btn {
   height: 40px;
   width: 40px;
-  color: var(--text-color);
+  color: var(--fill-color);
 }
 
 .document-area #aside,
@@ -2299,7 +2302,7 @@ div.remove-bottom-padding #article {
   font-size: var(--font-default-size);
   font-variant: unset;
   line-height: 1.6;
-  color: #5F004D;
+  color: var(--fill-color);
   text-transform: none;
 }
 
@@ -2597,7 +2600,7 @@ div.remove-bottom-padding #article {
     display: inline-block;
     content: ' > ';
     font-weight: bold;
-    color: var(--text-color);
+    color: var(--fill-color);
     padding-left: .75rem;
   }
   &:not(:last-child) {
@@ -2621,12 +2624,9 @@ div.remove-bottom-padding #article {
 
     & a {
       width: 100%;
-      color: var(--text-color);
+      color: var(--fill-color);
       font-weight: bold;
       border: none;
-      &:hover {
-        color: #B9192F;
-      }
     }
   }
   &:not(.is-current) {
@@ -2642,7 +2642,7 @@ div.remove-bottom-padding #article {
       }
 
       &:hover {
-        color: #B9192F !important;
+        color: var(--fill-color) !important;
       }
     }
   }
@@ -2785,12 +2785,8 @@ ul.breadcrumb-top {
     margin-bottom: 0;
   }
 
-  > li:not(:last-child)::after {
-    content: "";
-    display: inline-block;
-    background: url(../assets/images/breadcrumb-separator.svg) center / 19px auto no-repeat;
-    width: 19px;
-    height: 32px;
+  > li .separator {
+    color: var(--fill-color);
     margin: 0 14px;
   }
 
@@ -3189,6 +3185,9 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     float: right;
     margin-right: 0;
     padding: 0 0 20px 5px;
+
+    position: absolute;
+    left: unset;
   }
 
   .controls-list {
