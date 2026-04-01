@@ -596,23 +596,26 @@ ul.submenu a:hover {
 
   .level-left {
     width: 100%;
+    overflow: hidden;
   }
 
   .level-left .level-item {
     display: flex;
     text-overflow: unset;
-    overflow: auto;
     max-width: 100%;
     white-space: normal;
   }
 
   .mobile-button {
-    display: flex;
-    align-items: center;
     position: absolute;
     right: var(--mobile-margin);
     top: 2px;
     z-index: 2;
+
+    display: flex;
+    align-items: center;
+    width: 40px;
+    background: var(--fill-color);
   }
   /*.level-left {
     display: block;

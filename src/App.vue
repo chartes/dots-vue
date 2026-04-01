@@ -552,6 +552,7 @@ body {
 }
 .layout-footer {
   grid-area: footer;
+  overflow: hidden;
 }
 .layout-grid-container {
   display: grid;

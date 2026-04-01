@@ -58,13 +58,16 @@ export default {
 
 <style>
   a.navbar-burger {
+    display: block;
     border: none;
+    width: 100%;
   }
   .navbar-burger span {
     width: 33px;
     background-color: #FFFFFF;
     height: 3px;
     right: 0;
+    left: unset;
   }
   .navbar-burger span:nth-child(1) {
     top: calc(50% - 12px);
