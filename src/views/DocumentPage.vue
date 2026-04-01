@@ -3274,6 +3274,11 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     background-color: transparent;
   }
 
+  .controls-list {
+    display: none;
+    flex-direction: column;
+  }
+  
   .controls-list.is-opened {
     position: absolute;
     top: 64px;
