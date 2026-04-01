@@ -446,7 +446,6 @@ nav span.level-item:not(:last-child)::after {
   display: inline-block;
   width: 150px;
   height: 50px;
-  margin: 0 40px 0 2px;
   & > img {
     width: 100%;
     height: 50px;
@@ -460,7 +459,9 @@ nav span.level-item:not(:last-child)::after {
 }
 .level-left {
   display: flex;
-  width: calc(100% - 50px);
+  width: calc(100% - 60px);
+  gap: 20px;
+
   font-family: var(--font-primary),sans-serif;
   font-weight: 700;
   font-size: 20px;
@@ -523,9 +524,6 @@ ul.submenu a:hover {
 }
 
 @media screen and (max-width: 768px) {
-  .logo-header {
-    margin-right: 10px !important;
-  }
   nav {
     display: flex;
     margin-top: 0;
@@ -538,12 +536,7 @@ ul.submenu a:hover {
   }
   .logo-header {
     min-width: 45px;
-    margin-left: 0;
-    margin-right: 10px;
-  }
-  .level-left {
-    display: flex;
-    width: calc(100% - 60px);
+    max-width: unset;
   }
   .level-left .level-item {
     width: 100%;
@@ -562,7 +555,7 @@ ul.submenu a:hover {
     display: inline-block;
     text-overflow: ellipsis;
     overflow: hidden;
-    max-width: calc(100% - 60px);
+    max-width: calc(100% - 80px);
     white-space: nowrap;
   }
   .level-right {
@@ -570,43 +563,16 @@ ul.submenu a:hover {
   }
 }
 @media screen and (max-width: 640px) {
-
-  /*nav::before {
-    content: '';
-    display: block;
-    position: absolute;
-    top:0;
-    left:0;
-    width: 100vw;
-    height: 71px;
-  }*/
-  nav {
-    padding: 0;
-  }
-  .logo-header {
-    position: absolute;
-    left: 6px;
-    top: 5px;
-    transform: scale(1);
-    z-index: 1;
-  }
   .level {
     display: flex;
     height: 100%;
-
-    /*display: block;
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    overflow: hidden;*/
   }
   .level .level-item {
     flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
     gap: 0;
-    padding: 20px var(--mobile-margin);
+    padding: 20px var(--mobile-margin) 20px 0;
 
     & > a.level-item-external {
       line-height: 1.2;

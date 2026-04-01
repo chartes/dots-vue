@@ -548,6 +548,7 @@ body {
 }
 .layout-main {
   grid-area: main;
+  min-height: calc(100vh - 250px);
 }
 .layout-footer {
   grid-area: footer;
@@ -575,6 +576,7 @@ body {
   margin: 0;
   align-items: center;
 }
+
 .tile.page-header p.title {
   margin-bottom: 0;
   font-family: var(--font-primary), sans-serif;
@@ -671,6 +673,7 @@ p.header-baseline span {
     gap: 20px;
   }
 
+  .footer .title-container > .title,
   .tile.page-header p.title {
     font-size: 30px;
     line-height: 36px;

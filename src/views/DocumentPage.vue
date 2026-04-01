@@ -509,7 +509,7 @@ import {
   watch,
   provide,
   ref,
-  inject, nextTick
+  inject, nextTick, onBeforeUnmount
 } from 'vue'
 
 import { useRoute } from 'vue-router'
@@ -671,6 +671,7 @@ export default {
     let mediaQuery
 
     const handleBreakpoint = (e) => {
+
       if (e.matches) {
         // ≥ 640px (desktop)
         isControlsOpened.value = true
@@ -681,9 +682,24 @@ export default {
     }
 
     const isControlsOpened = ref(false)
-    const toggleControls = () => {
+    const toggleControls = (e) => {
+      e.stopPropagation();
       isControlsOpened.value = !isControlsOpened.value
     }
+
+    const closeControls = () => {
+      isControlsOpened.value = false
+    }
+
+    // Lifecycle hooks
+    onMounted(() => {
+      document.body.addEventListener('click', closeControls)
+    })
+
+    onBeforeUnmount(() => {
+      document.body.removeEventListener('click', closeControls)
+    })
+
 
     const isNotesOpened = ref(true)
     const hasNotes = ref(false)
@@ -2028,7 +2044,7 @@ export default {
   pointer-events: auto;
 }
 .controls-list {
-  display: none;
+  display: flex;
   flex-direction: column;
 
   margin: 0;
