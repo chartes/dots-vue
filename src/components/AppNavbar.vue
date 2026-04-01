@@ -555,7 +555,7 @@ ul.submenu a:hover {
     display: inline-block;
     text-overflow: ellipsis;
     overflow: hidden;
-    max-width: calc(100% - 80px);
+    max-width: calc(100% - 100px);
     white-space: nowrap;
   }
   .level-right {

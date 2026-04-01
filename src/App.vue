@@ -681,18 +681,21 @@ p.header-baseline span {
   }
 }
 
+@media screen and (max-width: 768px) {
+  .toggle-btn {
+    width: 20px;
+    right: var(--mobile-margin);
+  }
+  .scroll-top {
+    right: var(--mobile-margin);
+  }
+}
+
 @media screen and (max-width: 640px) {
   p.header-baseline {
     margin: auto;
     width: 60%;
     text-align: center;
-  }
-  .toggle-btn {
-    width: 20px;
-    right: 15px;
-  }
-  .scroll-top {
-    right: 15px;
   }
 }
 

@@ -2142,8 +2142,9 @@ export default {
   display: none;
 }
 .toc-aside-is-opened #aside {
-  width: 300px;
   position: relative;
+  width: 300px;
+  background: #FFF;
   margin: 0;
   padding: 0;
 }
@@ -3130,7 +3131,23 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   .controls ul > li > a.access_link {
     margin-right: 20px;
   }
+
+  /* Document page numbers */
+  .pb {
+    float: right;
+    margin-right: 0;
+    padding: 0 0 20px 5px;
+
+    position: absolute;
+    left: unset;
+  }
+
+  .cb, .ed {
+    margin-right: 0;
+    padding: 20px 5px;
+  }
 }
+
 @media screen and (max-width: 768px) {
   .document-area.app-width-margin {
     padding-left: 0;
@@ -3195,15 +3212,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   small {
     font-size: 9px;
-  }
-
-  .pb {
-    float: right;
-    margin-right: 0;
-    padding: 0 0 20px 5px;
-
-    position: absolute;
-    left: unset;
   }
 
   .controls-list {
@@ -3278,7 +3286,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     display: none;
     flex-direction: column;
   }
-  
+
   .controls-list.is-opened {
     position: absolute;
     top: 64px;
