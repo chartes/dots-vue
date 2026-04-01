@@ -619,7 +619,7 @@ p.header-baseline span {
 
 .scroll-top {
   position: fixed;
-  right: calc((100vw - var(--default-content-width)) / 2);
+  right: calc((100% - var(--default-content-width)) / 2);
   bottom: 120px;
 
   width: 40px;

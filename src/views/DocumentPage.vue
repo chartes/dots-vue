@@ -2143,15 +2143,15 @@ export default {
 }
 .toc-aside-is-opened #aside {
   position: relative;
-  width: 300px;
-  background: #FFF;
   margin: 0;
   padding: 0;
 }
 .toc-aside-is-opened .toc-area-aside {
+  position: relative;
   display: flex;
   width: 230px;
-  position: relative;
+  background-color: #FFF;
+
     & > aside > nav {
       position: sticky;
       top: 80px;
@@ -2220,7 +2220,6 @@ div.remove-bottom-padding #article {
 }
 
 #article {
-
   .titlepage,
   h1, h2, h3, h4, h5, h6 {
     padding: 0;
@@ -3148,6 +3147,12 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 }
 
+@media screen and (max-width: 1024px) {
+  .toc-aside-is-opened .toc-area-aside {
+    box-shadow: 8px 8px 5px 0 rgba(0, 0, 0, 0.2);
+  }
+}
+
 @media screen and (max-width: 768px) {
   .document-area.app-width-margin {
     padding-left: 0;
@@ -3230,8 +3235,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     position: absolute;
     z-index: 12;
     width: 90vw;
-    background-color: #FFF;
-    box-shadow: 8px 8px 5px 0 rgba(0,0,0,0.2);
   }
 
   .toc-area .toc-area-content nav > ol.tree {
