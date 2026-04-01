@@ -653,7 +653,7 @@ ul.submenu a:hover {
       position: fixed;
       right: 0;
       top: 70px;
-      z-index: 20;
+      z-index: 23;
 
       display: block;
       padding: 20px 0 10px;
