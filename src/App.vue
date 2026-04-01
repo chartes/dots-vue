@@ -758,7 +758,7 @@ p.header-baseline span {
     height: 70px;
 
     width: 100vw;
-    z-index: 10;
+    z-index: 25;
   }
 }
 /* Notes */

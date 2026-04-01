@@ -2667,7 +2667,7 @@ div.remove-bottom-padding #article {
 .navigation-row {
   position: sticky;
   top: 0;
-  z-index: 12;
+  z-index: 22;
 
   display: flex;
   flex-direction: column;

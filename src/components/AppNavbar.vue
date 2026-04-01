@@ -405,7 +405,7 @@ nav {
   background-color: var(--fill-color);
   padding-top: 10px;
   padding-bottom: 10px;
-  z-index: 10;
+  z-index: 21;
 }
 a {
   color: inherit;
@@ -572,7 +572,11 @@ ul.submenu a:hover {
     justify-content: flex-start;
     align-items: flex-start;
     gap: 0;
-    padding: 20px var(--mobile-margin) 20px 0;
+    padding: 20px var(--mobile-margin);
+
+    &:not(.menu) {
+      padding-left: 0;
+    }
 
     & > a.level-item-external {
       line-height: 1.2;
