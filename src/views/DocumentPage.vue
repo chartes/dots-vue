@@ -2164,7 +2164,7 @@ export default {
   }
 }
 .toc-aside-is-opened .document-views {
-  width: calc(100% - 220px);
+  width: calc(100% - 240px);
 }
 .mirador-view {
   position: relative;
