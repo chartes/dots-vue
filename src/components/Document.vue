@@ -503,10 +503,10 @@ export default {
 
         const content = document.createElement('div')
         content.classList.add('aside-noteref-content')
-        content.innerHTML = note.noteElement.innerHTML
+        content.innerHTML = note.noteElement.innerHTML;
         wrapper.append(content)
 
-        const noteback = content.querySelector('.noteback')
+        const noteback = content.querySelector('.noteback');
         if (noteback) {
           noteback.classList.remove('noteback')
           noteback.classList.add('notebottom')
@@ -514,6 +514,9 @@ export default {
             'href',
             '#' + note.noteId.split('_').join('')
           )
+        } else {
+          const noteLink = content.querySelector('a');
+          noteLink.classList.add('notebottom')
         }
 
         asideNotesParent.append(aside)

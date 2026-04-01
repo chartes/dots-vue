@@ -2399,6 +2399,12 @@ div.remove-bottom-padding #article {
     color: var(--document-text-color);
   }
 
+  .noteref sup:empty::before {
+    content: "#";
+    font-size: 12px;
+    vertical-align: top;
+  }
+
   .footnotes {
     margin: 90px 0 0;
     position: relative;

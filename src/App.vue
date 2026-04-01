@@ -869,6 +869,22 @@ a.noteref sup {
   float: left;
 }
 
+.aside-noteref-content a.notebottom:empty::before {
+  content: "#";
+  font-size: 14px;
+  vertical-align: top;
+}
+
+.aside-noteref-content span.lem {
+  font-weight: 500;
+}
+
+.aside-noteref-content span.lem::after {
+  content: ":";
+  margin: 0 2px 0 5px;
+}
+
+
 .aside-noteref-content > i {
   font-style: inherit;
 }
