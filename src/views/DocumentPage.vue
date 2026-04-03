@@ -509,7 +509,7 @@ import {
   watch,
   provide,
   ref,
-  inject, nextTick
+  inject, nextTick, onBeforeUnmount
 } from 'vue'
 
 import { useRoute } from 'vue-router'
@@ -671,6 +671,7 @@ export default {
     let mediaQuery
 
     const handleBreakpoint = (e) => {
+
       if (e.matches) {
         // ≥ 640px (desktop)
         isControlsOpened.value = true
@@ -681,9 +682,24 @@ export default {
     }
 
     const isControlsOpened = ref(false)
-    const toggleControls = () => {
+    const toggleControls = (e) => {
+      e.stopPropagation();
       isControlsOpened.value = !isControlsOpened.value
     }
+
+    const closeControls = () => {
+      isControlsOpened.value = false
+    }
+
+    // Lifecycle hooks
+    onMounted(() => {
+      document.body.addEventListener('click', closeControls)
+    })
+
+    onBeforeUnmount(() => {
+      document.body.removeEventListener('click', closeControls)
+    })
+
 
     const isNotesOpened = ref(true)
     const hasNotes = ref(false)
@@ -2028,7 +2044,7 @@ export default {
   pointer-events: auto;
 }
 .controls-list {
-  display: none;
+  display: flex;
   flex-direction: column;
 
   margin: 0;
@@ -2126,15 +2142,16 @@ export default {
   display: none;
 }
 .toc-aside-is-opened #aside {
-  width: 300px;
   position: relative;
   margin: 0;
   padding: 0;
 }
 .toc-aside-is-opened .toc-area-aside {
+  position: relative;
   display: flex;
   width: 230px;
-  position: relative;
+  background-color: #FFF;
+
     & > aside > nav {
       position: sticky;
       top: 80px;
@@ -2147,7 +2164,7 @@ export default {
   }
 }
 .toc-aside-is-opened .document-views {
-  width: calc(100% - 220px);
+  width: calc(100% - 240px);
 }
 .mirador-view {
   position: relative;
@@ -2203,7 +2220,6 @@ div.remove-bottom-padding #article {
 }
 
 #article {
-
   .titlepage,
   h1, h2, h3, h4, h5, h6 {
     padding: 0;
@@ -2381,6 +2397,12 @@ div.remove-bottom-padding #article {
     font-variant: none;
     line-height: 1.4;
     color: var(--document-text-color);
+  }
+
+  .noteref sup:empty::before {
+    content: "#";
+    font-size: 12px;
+    vertical-align: top;
   }
 
   .footnotes {
@@ -2651,7 +2673,7 @@ div.remove-bottom-padding #article {
 .navigation-row {
   position: sticky;
   top: 0;
-  z-index: 12;
+  z-index: 22;
 
   display: flex;
   flex-direction: column;
@@ -3114,7 +3136,29 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   .controls ul > li > a.access_link {
     margin-right: 20px;
   }
+
+  /* Document page numbers */
+  .pb {
+    float: right;
+    margin-right: 0;
+    padding: 0 0 20px 5px;
+
+    position: absolute;
+    left: unset;
+  }
+
+  .cb, .ed {
+    margin-right: 0;
+    padding: 20px 5px;
+  }
 }
+
+@media screen and (max-width: 1024px) {
+  .toc-aside-is-opened .toc-area-aside {
+    box-shadow: 8px 8px 5px 0 rgba(0, 0, 0, 0.2);
+  }
+}
+
 @media screen and (max-width: 768px) {
   .document-area.app-width-margin {
     padding-left: 0;
@@ -3181,15 +3225,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     font-size: 9px;
   }
 
-  .pb {
-    float: right;
-    margin-right: 0;
-    padding: 0 0 20px 5px;
-
-    position: absolute;
-    left: unset;
-  }
-
   .controls-list {
     position: absolute;
   }
@@ -3206,8 +3241,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     position: absolute;
     z-index: 12;
     width: 90vw;
-    background-color: #FFF;
-    box-shadow: 8px 8px 5px 0 rgba(0,0,0,0.2);
   }
 
   .toc-area .toc-area-content nav > ol.tree {
@@ -3256,6 +3289,11 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     align-items: center;
     width: 100%;
     background-color: transparent;
+  }
+
+  .controls-list {
+    display: none;
+    flex-direction: column;
   }
 
   .controls-list.is-opened {

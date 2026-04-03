@@ -398,6 +398,10 @@ name: 'CollectionTOC',
   }
 }
 
+.list-mode .cell a:empty {
+  display: none;
+}
+
 .list-mode .cell:nth-child(2n) a {
   color: #989898;
 }
@@ -521,8 +525,8 @@ input[type=number] {
   .list-mode.tree,
   .list-mode .pagination {
     width: auto;
-    margin-left: -20px;
-    margin-right: -20px;
+    margin-left: -10px;
+    margin-right: -10px;
   }
 
   .list-mode.tree > .list-header,

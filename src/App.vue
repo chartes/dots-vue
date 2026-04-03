@@ -548,9 +548,11 @@ body {
 }
 .layout-main {
   grid-area: main;
+  min-height: calc(100vh - 250px);
 }
 .layout-footer {
   grid-area: footer;
+  overflow: hidden;
 }
 .layout-grid-container {
   display: grid;
@@ -575,6 +577,7 @@ body {
   margin: 0;
   align-items: center;
 }
+
 .tile.page-header p.title {
   margin-bottom: 0;
   font-family: var(--font-primary), sans-serif;
@@ -616,7 +619,7 @@ p.header-baseline span {
 
 .scroll-top {
   position: fixed;
-  right: calc((100vw - var(--default-content-width)) / 2);
+  right: calc((100% - var(--default-content-width)) / 2);
   bottom: 120px;
 
   width: 40px;
@@ -671,9 +674,20 @@ p.header-baseline span {
     gap: 20px;
   }
 
+  .footer .title-container > .title,
   .tile.page-header p.title {
     font-size: 30px;
     line-height: 36px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .toggle-btn {
+    width: 20px;
+    right: var(--mobile-margin);
+  }
+  .scroll-top {
+    right: var(--mobile-margin);
   }
 }
 
@@ -682,13 +696,6 @@ p.header-baseline span {
     margin: auto;
     width: 60%;
     text-align: center;
-  }
-  .toggle-btn {
-    width: 20px;
-    right: 15px;
-  }
-  .scroll-top {
-    right: 15px;
   }
 }
 
@@ -751,7 +758,7 @@ p.header-baseline span {
     height: 70px;
 
     width: 100vw;
-    z-index: 10;
+    z-index: 25;
   }
 }
 /* Notes */
@@ -861,6 +868,22 @@ a.noteref sup {
   color: var(--fill-color);
   float: left;
 }
+
+.aside-noteref-content a.notebottom:empty::before {
+  content: "#";
+  font-size: 14px;
+  vertical-align: top;
+}
+
+.aside-noteref-content span.lem {
+  font-weight: 500;
+}
+
+.aside-noteref-content span.lem::after {
+  content: ":";
+  margin: 0 2px 0 5px;
+}
+
 
 .aside-noteref-content > i {
   font-style: inherit;
