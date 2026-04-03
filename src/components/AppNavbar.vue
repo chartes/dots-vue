@@ -444,11 +444,18 @@ nav span.level-item:not(:last-child)::after {
 }
 .logo-header {
   display: inline-block;
-  width: 150px;
+  width: 55px;
   height: 50px;
+  margin-left: 2px;
+  margin-right: 70px;
   & > img {
     width: 100%;
     height: 50px;
+  }
+}
+@media screen and (max-width: 1024px) {
+  .logo-header {
+    margin-right: 15px;
   }
 }
 .logo-api {
