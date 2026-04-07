@@ -2172,6 +2172,10 @@ export default {
   max-height: 100vh;
   max-width: calc(100vw - 20px);
 }
+.document-views .text-view > * body { /* cf tei.css */
+  margin-left: 10px;
+  margin-right: 10px;
+}
 
 .text-mode .text-view,
 .images-mode .mirador-view {
@@ -3071,10 +3075,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   z-index: 11;
 }
 
-.breadcrumb-panel .collection-toc-area .tree li .li.container .icon-wrapper {
-  /* display: none; */
-}
-
 .tab-header {
   display: flex;
   align-items: center;
@@ -3204,6 +3204,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     }
   }
 }
+
 @media screen and (max-width: 640px) {
   .several-parent {
     flex-direction: column;
@@ -3257,10 +3258,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   #article h1 {
     font-size: 30px;
-  }
-
-  #article section.div h2.head,
-  #article section.div h3.head {
   }
 
   #article section.div {
