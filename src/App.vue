@@ -153,7 +153,8 @@ export default {
       await mergeSettings(appConfig)
       console.log('this is where it fails 2')
       let metadataResponse = {}
-      const matchedCollectionConf = appConfig.value.collectionsConf && appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value).length > 0 ? appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value) : {}
+      let defaultConf = appConfig.value.genericConf
+      const matchedCollectionConf = appConfig.value.collectionsConf && appConfig.value.collectionsConf.filter(coll => coll.collectionId === collectionId.value).length > 0 ? appConfig.value.collectionsConf.find(coll => coll.collectionId === collectionId.value) : defaultConf
       console.log('App.vue setCurrentCollectionContext setUpCollectionId matchedCollectionConf', collectionId.value, matchedCollectionConf)
       if (rootCollectionIdentifier.value === dtsRootCollectionId.value && rootCollectionIdentifier.value === collectionId.value) {
         metadataResponse = await fetchMetadata('app.vue setCurrentCollectionContext fetchMetadata (no id)', null, 'Collection', matchedCollectionConf, route)

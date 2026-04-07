@@ -76,6 +76,7 @@
       "displayOrder": [
         "identifier",
         "type",
+        "title",
         "dc:title",
         "dc:creator",
         "dc:contributor",
@@ -92,6 +93,7 @@
       "fields": {
         "@id": "identifier",
         "@type": "type",
+        "title": null,
         "download": {
           "XML": "downloadXML",
           "PDF": "downloadPDF"
