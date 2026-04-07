@@ -1359,7 +1359,6 @@ button.toc-toggle {
   border-radius: 25px 25px 0 25px;
 
   color: white;
-  background-color: var(--fill-color) !important;
 }
 
 .mixed-mode .collection-wrapper .collection-toc-area {
