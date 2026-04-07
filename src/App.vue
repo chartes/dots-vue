@@ -353,7 +353,9 @@ export default {
 
     watch(
       () => [route.name, route.params, route.query],
-      async ([newName, newParams, newQuery], [oldName, oldParams, oldQuery]) => {
+      async (newVal, oldVal) => {
+        const [newName, newParams, newQuery] = newVal
+        const [oldName, oldParams, oldQuery] = oldVal || []
         console.log('App.vue watch ROUTER oldRoute/newRoute : ', { name: oldName, params: oldParams, query: oldQuery }, { name: newName, params: newParams, query: newQuery })
 
         isInitializing.value = true
@@ -362,7 +364,10 @@ export default {
           if (!newName) {
             return
           }
-
+          if (!oldVal) {
+            console.log('First run / HMR: skip compare logic, reset store collectionId (force config setup)')
+            store.commit('setCollectionId', null)
+          }
           // Same collection
           if (
             newName === oldName &&
@@ -447,6 +452,12 @@ export default {
               store.commit('setCurrentItem', {})
               collectionId.value = rootCollectionIdentifier.value
             }
+            /*if (store.state.collectionId === collectionId.value) {
+              console.log('same collectionId on startup: force refresh')
+
+              // Force a logic reset
+              store.commit('setCollectionId', null)
+            }*/
             store.commit('setCollectionId', collectionId.value)
             // Collection is loaded
           }
