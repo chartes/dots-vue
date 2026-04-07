@@ -664,4 +664,8 @@ td {
 .is-24x24 {
   background-color: #e4e4e4;
 }
+.is-24x24 img {
+  height: 24px;
+  width: 24px;
+}
 </style>
