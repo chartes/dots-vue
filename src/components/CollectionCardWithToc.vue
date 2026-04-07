@@ -74,7 +74,6 @@
           <div
             class="collection-toc-area-header"
           >
-            Contenu
           </div>
           <div
             v-if="(expandedById[item.identifier] || item.expanded)
