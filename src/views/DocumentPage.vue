@@ -2172,6 +2172,10 @@ export default {
   max-height: 100vh;
   max-width: calc(100vw - 20px);
 }
+.document-views .text-view > * body { /* cf tei.css */
+  margin-left: 10px;
+  margin-right: 10px;
+}
 
 .text-mode .text-view,
 .images-mode .mirador-view {

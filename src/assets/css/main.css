@@ -1,4 +1,424 @@
 /*=============================================================
+ PART 0
+ - Bulma CSS rules
+ =============================================================*/
+
+html {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    min-width: 300px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    text-rendering: optimizeLegibility;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    box-sizing: border-box;
+}
+
+body, html {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+
+article, aside, figure, footer, header, hgroup, section {
+    display: block;
+}
+
+blockquote, body, dd, dl, dt, fieldset, figure, h1, h2, h3, h4, h5, h6, hr, html, iframe, legend, li, ol, p, pre, textarea, ul {
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+    font-weight: 400;
+}
+
+button, input, select, textarea {
+    margin: 0;
+}
+
+ul {
+    list-style: none;
+}
+
+a {
+    color: #485fc7;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+span {
+    font-style: inherit;
+    font-weight: inherit;
+}
+
+*, ::after, ::before {
+    box-sizing: inherit;
+}
+
+img {
+    height: auto;
+    max-width: 100%;
+}
+
+img, video {
+    height: auto;
+    max-width: 100%;
+}
+
+.container {
+    flex-grow: 1;
+    margin: 0 auto;
+    position: relative;
+    width: auto;
+}
+
+.columns {
+    margin-left: -.75rem;
+    margin-right: -.75rem;
+    margin-top: -.75rem;
+}
+
+.columns:last-child {
+    margin-bottom: -.75rem;
+}
+
+.column {
+    display: block;
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    padding: .75rem;
+}
+
+.is-flex {
+    display: flex !important;
+}
+
+.is-flex-direction-column {
+    flex-direction: column !important;
+}
+
+.is-flex-direction-row {
+    flex-direction: row !important;
+}
+
+.has-text-centered {
+    text-align: center !important;
+}
+
+.is-justify-content-center {
+    justify-content: center !important;
+}
+
+.button {
+    background-color: #fff;
+    border-color: #dbdbdb;
+    border-width: 1px;
+    color: #363636;
+    cursor: pointer;
+    justify-content: center;
+    padding-bottom: calc(.5em - 1px);
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: calc(.5em - 1px);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.breadcrumb, .button, .file, .is-unselectable, .pagination-ellipsis, .pagination-link, .pagination-next, .pagination-previous, .tabs {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.button, .file-cta, .file-name, .input, .pagination-ellipsis, .pagination-link, .pagination-next, .pagination-previous, .select select, .textarea {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: none;
+    display: inline-flex;
+    font-size: 1rem;
+    height: 2.5em;
+    justify-content: flex-start;
+    line-height: 1.5;
+    padding-bottom: calc(.5em - 1px);
+    padding-left: calc(.75em - 1px);
+    padding-right: calc(.75em - 1px);
+    padding-top: calc(.5em - 1px);
+    position: relative;
+    vertical-align: top;
+}
+
+.title {
+    color: #363636;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.125;
+}
+
+.title:not(.is-spaced)+.subtitle {
+    margin-top: -1.25rem;
+}
+
+.subtitle {
+    color: #4a4a4a;
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.25;
+}
+
+.subtitle, .title {
+    word-break: break-word;
+}
+
+.icon {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.footer {
+    background-color: #fafafa;
+    padding: 3rem 1.5rem 6rem;
+}
+
+.mt-auto {
+    margin-top: auto !important;
+}
+
+.level-left {
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.level-right {
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.level-left, .level-right {
+    flex-basis: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.level-item {
+    align-items: center;
+    display: flex;
+    flex-basis: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    justify-content: center;
+}
+
+.menu {
+     font-size: 1rem;
+}
+
+.menu-label {
+    color: #7a7a7a;
+    font-size: .75em;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.menu-label:not(:last-child) {
+    margin-bottom: 1em;
+}
+
+.level {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.level img {
+    display: inline-block;
+    vertical-align: top;
+}
+.navbar-burger {
+    color: #4a4a4a;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: 0 0;
+    border: none;
+    cursor: pointer;
+    display: block;
+    height: 3.25rem;
+    position: relative;
+    width: 3.25rem;
+    margin: 0;
+    margin-left: auto;
+    padding: 0;
+    font-family: inherit;
+    font-size: 1em;
+}
+
+.navbar-burger.is-active span:first-child {
+    transform: translateY(5px) rotate(45deg);
+}
+
+.navbar-burger span:first-child {
+    top: calc(50% - 6px);
+}
+
+.navbar-burger.is-active span:nth-child(2) {
+    opacity: 0;
+}
+
+.navbar-burger span:nth-child(2) {
+    top: calc(50% - 1px);
+}
+
+.navbar-burger.is-active span:nth-child(3) {
+    transform: translateY(-5px) rotate(-45deg);
+}
+
+.navbar-burger span:nth-child(3) {
+    top: calc(50% + 4px);
+}
+
+.navbar-burger span {
+    background-color: currentColor;
+    display: block;
+    height: 1px;
+    left: calc(50% - 8px);
+    position: absolute;
+    transform-origin: center;
+    transition-duration: 86ms;
+    transition-property: background-color, opacity, transform;
+    transition-timing-function: ease-out;
+    width: 16px;
+}
+
+.pagination, .pagination-list {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+.pagination {
+    font-size: 1rem;
+    margin: -.25rem;
+}
+
+.tile {
+    align-items: stretch;
+    display: block;
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: -webkit-min-content;
+    min-height: -moz-min-content;
+    min-height: min-content;
+}
+
+.tile.is-child {
+    margin: 0 !important;
+}
+
+.block:not(:last-child),
+.box:not(:last-child),
+.breadcrumb:not(:last-child),
+.content:not(:last-child),
+.level:not(:last-child), .message:not(:last-child),
+.notification:not(:last-child),
+.pagination:not(:last-child), .progress:not(:last-child),
+.subtitle:not(:last-child), .table-container:not(:last-child),
+.table:not(:last-child),
+.tabs:not(:last-child),
+.title:not(:last-child) {
+    margin-bottom: 1.5rem;
+}
+
+.card-content:last-child, .card-footer:last-child, .card-header:last-child {
+    border-bottom-left-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+}
+.card-content:first-child, .card-footer:first-child, .card-header:first-child {
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+}
+.card-header {
+    background-color: transparent;
+    align-items: stretch;
+    box-shadow: 0 .125em .25em rgba(10, 10, 10, .1);
+    display: flex;
+}
+.card-image {
+    display: block;
+    position: relative;
+}
+.card-image:first-child img {
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+}
+
+.table {
+    background-color: #fff;
+    color: #363636;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.table.is-fullwidth {
+    width: 100%;
+}
+
+.table tbody {
+    background-color: transparent;
+}
+
+td:not([align]), th:not([align]) {
+    text-align: inherit;
+}
+
+table td, table th {
+    vertical-align: top;
+}
+
+.table td, .table th {
+    border: 1px solid #dbdbdb;
+    border-width: 0 0 1px;
+    padding: .5em .75em;
+    vertical-align: top;
+}
+
+table td:not([align]), table th:not([align]) {
+    text-align: inherit;
+}
+
+@media screen and (min-width: 769px), print {
+    .tile:not(.is-child) {
+        display: flex;
+    }
+
+    .level-right {
+        display: flex;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .level-left+.level-right {
+        margin-top: 1.5rem;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+    }
+}
+
+/*=============================================================
  PART 1
  Updating the css color schema for:
   - default DoTS-vue app
