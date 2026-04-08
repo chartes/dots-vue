@@ -206,6 +206,8 @@ function onBlur() {
   display: flex;
   align-items: center;
 
+  font-size: 20px;
+
   & > * {
     display: inline-block;
     margin-right: 4px;
@@ -216,9 +218,9 @@ function onBlur() {
   & span.total-pages,
   & > span.label-sur-page {
     display: inline-block;
-    width: 59px;
-    height: 59px;
-    line-height: 59px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
   }
   & span.total-pages,
   & > button {
@@ -332,7 +334,7 @@ function onBlur() {
   margin-right: auto;
   font-family: var(--font-primary), sans-serif;
   font-weight: 700;
-  font-size: 48px;
+  font-size: 24px;
   color: #000000;
   border: none;
 }
