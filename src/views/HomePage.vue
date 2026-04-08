@@ -1,19 +1,38 @@
 <template>
-  <div class="collection-list" :class="{ 'root-collection-list' : collectionId === rootCollectionId }">
+  <div
+    class="collection-list"
+    :class="{
+      'root-collection-list': collectionId === rootCollectionId,
+      'has-banner': hasBanner,
+      [`banner-${bannerType}`]: true,
+      'has-image': hasImage,
+      [`image-${imageType}`]: true,
+    }"
+  >
     <div class="tiles">
-      <div class="tile page-header">
+      <div
+        class="tile page-header"
+        :style="collectionBanner"
+      >
         <div class="is-flex is-flex-direction-row wrapper collection-header app-width-margin">
           <div class="tile article">
             <div class="title-tile">
               <p class="title">
-                {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
+                {{ collectionAltTitle?.length > 0 ? collectionAltTitle : currCollection.title }}
               </p>
             </div>
             <div
               v-if="aboutBttnTxt"
               class="project-tile"
             >
-              <router-link
+              <div
+                class="about-button"
+                @click="toggleAbout"
+              >
+                <span class="about-button-text">{{ aboutBttnTxt }}</span>
+                <DirectionalChevron :direction="isAboutOpened ? 'up' : 'down'" />
+              </div>
+              <!--<router-link
                 v-if="collectionId !== rootCollectionId"
                 :to="{ name: 'About', params: { collId: collectionId } }"
                 active-class="active"
@@ -26,51 +45,84 @@
                 active-class="active"
               >
                 {{ aboutBttnTxt }}
-              </router-link>
+              </router-link>-->
             </div>
           </div>
-          <div class="collection-image"></div>
+          <div class="collection-image">
+            <div class="collection-image-wrapper" v-if="bannerType !== 'collection'">
+              <img
+                :src="imgUrl"
+                alt=""
+              />
+              <!--<img
+                v-else
+                src="@/assets/images/dots-logo-retro.drawio.svg"
+                alt=""
+              />-->
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <section class="main collection-header app-width-margin">
-      <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
-      <div
-        v-if="customDescription"
-        id="home-article"
-        class="article app-width-margin"
+    <transition name="fade-slide">
+      <section
+        v-if="isAboutOpened"
+        class="main collection-about app-width-margin"
       >
-        <component
-          :is="customDescription"
-          :dts-collection-description="currCollection.description"
-          :custom-collection-description="collectionDescription"
-          :application-root-url="appRootUrl"
-        />
-        <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
-      </div>
-      <!-- no homePageSettings.descriptionSection.customCollectionDescription : use DTS API collection description if available -->
-      <div
-        v-else-if="currCollection.description"
-        id="home-article"
-        class="article app-width-margin"
-      >
-        <h1>La collection</h1>
-        {{ currCollection.description }}
-      </div>
-      <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
-      <div
-        v-else-if="collectionDescription"
-        id="home-article"
-        class="article app-width-margin"
-      >
-        <h1>La collection</h1>
-        {{ collectionDescription }}
-        <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
-      </div>
-    </section>
+        <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
+        <div class="home-article-wrapper">
+          <div
+            v-if="customDescription"
+            id="home-article"
+            class="article app-width-margin"
+          >
+            <component
+              :is="customDescription"
+              :dts-collection-description="currCollection.description"
+              :custom-collection-description="collectionDescription"
+              :application-root-url="appRootUrl"
+            />
+            <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
+          </div>
+          <!-- no homePageSettings.descriptionSection.customCollectionDescription : use DTS API collection description if available -->
+          <div
+            v-else-if="currCollection.description"
+            id="home-article"
+            class="article app-width-margin"
+          >
+            <h1>La collection</h1>
+            {{ currCollection.description }}
+          </div>
+          <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
+          <div
+            v-else-if="collectionDescription"
+            id="home-article"
+            class="article app-width-margin"
+          >
+            <h1>La collection</h1>
+            {{ collectionDescription }}
+            <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
+          </div>
+          <router-link
+            v-if="hasAbout && collectionId !== rootCollectionId"
+            :to="{ name: 'About', params: { collId: collectionId } }"
+            active-class="active"
+          >
+            En savoir plus
+          </router-link>
+          <router-link
+            v-else-if="hasAbout"
+            :to="{ name: 'About'}"
+            active-class="active"
+          >
+            En savoir plus
+          </router-link>
+        </div>
+      </section>
+    </transition>
     <div
       class="document-list app-width-margin"
-      :class="displayOpt !== 'toc' ? `${displayOpt}-mode` : 'toc-mode'"
+      :class="isAboutOpened ? `is-about-opened ${displayOpt}-mode` : `${displayOpt}-mode`"
     >
 
       <CollectionTOC
@@ -123,7 +175,8 @@ import { getMetadataFromApi } from '@/api/document.js'
 import ResourcesList from '@/components/ResourcesList.vue'
 import CollectionTOC from '@/components/CollectionTOC.vue'
 import { getSimpleObject } from '@/composables/utils.js'
-import CollectionCardWithToc from '@/components/CollectionCardWithToc.vue';
+import CollectionCardWithToc from '@/components/CollectionCardWithToc.vue'
+import DirectionalChevron from '@/assets/images/DirectionalChevron.vue'
 
 const collator = new Intl.Collator('fr', {
   numeric: true,
@@ -132,7 +185,7 @@ const collator = new Intl.Collator('fr', {
 
 export default {
   name: 'HomePage',
-  components: {CollectionCardWithToc, ResourcesList, CollectionTOC },
+  components: { DirectionalChevron, CollectionCardWithToc, ResourcesList, CollectionTOC },
   props: {
     isDocProjectIdIncluded: {
       type: Boolean,
@@ -181,9 +234,13 @@ export default {
     const customCollectionDescription = ref(props.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription ? props.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription : {})
     console.log('HomePage setup customCollectionDescription', customCollectionDescription.value)
     const customDescription = shallowRef('')
-    const collectionAltTitle = ref(props.collectionConfig.homePageSettings.pageHeader.collectionAltTitle)
+    const collectionAltTitle = computed(() => props.collectionConfig.homePageSettings?.pageHeader?.collectionAltTitle)
     console.log('HomePage setup collectionAltTitle', collectionAltTitle.value)
     const aboutBttnTxt = ref(props.collectionConfig.homePageSettings.pageHeader.aboutButtonText)
+    const isAboutOpened = ref(false)
+
+    const hasNonEmptyObject = arr => arr.some(obj => obj && Object.keys(obj).length > 0)
+    const hasAbout = computed(() => hasNonEmptyObject(props.collectionConfig.aboutPageSettings))
     const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
     const collectionId = ref(props.collectionIdentifier)
     console.log('HomePage setup collectionId', collectionId.value)
@@ -253,25 +310,165 @@ export default {
       return state.isTreeOpened ? 'is-tree-opened' : ''
     })
 
-    const ImgUrl = (source) => {
-      // TODO: provide a logo object with url AND legend ?
-      const sourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
-      if (sourceConfig?.homePageSettings?.listSection?.logo?.length > 0) {
-        console.log('HomePage ImgUrl found : ', sourceConfig.homePageSettings.listSection.logo)
-        const images = Object.fromEntries(Object.entries(import.meta.glob('confs/*/assets/images/*.*', { eager: true })).map(([key, value]) => {
+
+    // IMAGES
+
+    /* COLLECTION BANNER */
+    const banner = computed(() => getBanner())
+    const bannerUrl = computed(() => banner.value.url)
+    const hasBanner = computed(() => !!banner.value.url)
+    const bannerType = computed(() => banner.value.type)
+
+    const collectionBanner = computed(() => {
+      if (!bannerUrl.value) return {}
+
+      return {
+        backgroundImage: `url(${bannerUrl.value})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }
+    })
+
+    const getBanner = () => {
+      // Load image candidates
+      const images = Object.fromEntries(
+        Object.entries(
+          import.meta.glob([
+            'confs/*/assets/images/*.*',
+            '/src/assets/images/*.*'
+          ], { eager: true })
+        ).map(([key, value]) => {
           const newKey = key.split('/').slice(-4).join('/')
           return [newKey, value]
-        }))
-        console.log('HomePage ImgUrl images: ', images)
-        const match = images[`${sourceConfig.collectionId}/assets/images/${sourceConfig.homePageSettings.listSection.logo}`]
-        console.log('HomePage ImgUrl match: ', match)
-        if (sourceConfig.homePageSettings.listSection.logo.includes('https')) {
-          return sourceConfig.homePageSettings.listSection.logo
-        } else {
-          return match.default // new URL(`/src/assets/images/${sourceConfig.homePageSettings.logo}`, import.meta.url).href
+        })
+      )
+      // Current collection banner name ?
+      const collectionBanner = collConfig.value.homePageSettings?.pageHeader?.collectionBannerImg
+      // Default banner name ?
+      const defaultBannerName = appConfig.value?.genericConf?.homePageSettings?.pageHeader?.collectionBannerImg
+
+      // If collection banner name is default name
+      if (collectionBanner === defaultBannerName) {
+
+        // Default images (Dots-vue app or custom folder)
+        const defaultCustMatch = images[`default/assets/images/${defaultBannerName}`]
+        const defaultAppMatch = images[`src/assets/images/${defaultBannerName}`]
+
+        // Generic banner (custom settings default folder)
+        if (defaultCustMatch) {
+          return {
+            url: defaultCustMatch.default,
+            type: 'default'
+          }
         }
-      } else {
-        return false
+
+        // Fallback src/assets
+        if (defaultAppMatch) {
+          return {
+            url: defaultAppMatch.default,
+            type: 'default'
+          }
+        }
+      }
+      // Not a default banner : find a matching banner
+      else if (collectionBanner && collectionBanner.length > 0) {
+        // External URL
+        if (collectionBanner.startsWith('http')) {
+          return {
+            url: collectionBanner,
+            type: 'collection'
+          }
+        }
+        // Local collection image
+        const match = images[`${collConfig.value.collectionId}/assets/images/${collectionBanner}`]
+        console.log('HomePage getBanner match: ', match)
+        if (match) {
+          return {
+            url: match.default,
+            type: 'collection'
+          }
+        }
+      }
+      // No banner found
+      return {
+        url: null,
+        type: 'none'
+      }
+    }
+
+    /* COLLECTION IMAGE */
+    const image = computed(() => getImg())
+    const imgUrl = computed(() => image.value.url)
+    const hasImage = computed(() => !!image.value.url)
+    const imageType = computed(() => image.value.type)
+
+    const getImg = () => {
+      // TODO: provide a logo object with url AND legend ?
+      // Load image candidates
+      const images = Object.fromEntries(
+        Object.entries(
+          import.meta.glob([
+            'confs/*/assets/images/*.*',
+            '/src/assets/images/*.*'
+          ], { eager: true })
+        ).map(([key, value]) => {
+          const newKey = key.split('/').slice(-4).join('/')
+          return [newKey, value]
+        })
+      )
+      // Current collection image name ?
+      const collectionImg = collConfig.value.homePageSettings?.listSection?.logo
+      // Default image name ?
+      const defaultImgName = appConfig.value?.genericConf?.homePageSettings?.listSection?.logo
+
+      // If collection image name is default name
+      if (collectionImg === defaultImgName) {
+
+        // Default images (Dots-vue app or custom folder)
+        const defaultCustMatch = images[`default/assets/images/${defaultImgName}`]
+        const defaultAppMatch = images[`src/assets/images/${defaultImgName}`]
+
+        // Generic image (custom settings default folder)
+        if (defaultCustMatch) {
+          return {
+            url: defaultCustMatch.default,
+            type: 'default'
+          }
+        }
+
+        // Fallback src/assets
+        if (defaultAppMatch) {
+          return {
+            url: defaultAppMatch.default,
+            type: 'default'
+          }
+        }
+      }
+      // Not a default image : find a matching image
+      else if (collectionImg && collectionImg.length > 0) {
+        console.log('HomePage getImg found : ', collectionImg)
+        console.log('HomePage getImg images: ', images)
+        // External URL
+        if (collectionImg.startsWith('http')) {
+          return {
+            url: collectionImg,
+            type: 'collection'
+          }
+        }
+        // Local collection image
+        const match = images[`${collConfig.value.collectionId}/assets/images/${collectionImg}`]
+        console.log('HomePage getImg match: ', match)
+        if (match) {
+          return {
+            url: match.default,
+            type: 'collection'
+          }
+        }
+      }
+      // No image found
+      return {
+        url: null,
+        type: 'none'
       }
     }
 
@@ -331,6 +528,10 @@ export default {
       return component
     }
 
+    const toggleAbout = () => {
+      isAboutOpened.value = !isAboutOpened.value
+    }
+
     watch(props, async (newProps) => {
       isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
       dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
@@ -340,7 +541,7 @@ export default {
       collConfig.value = newProps.collectionConfig
       console.log('HomePage watch collConfig.value : ', newProps.collectionConfig)
       browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
-      collectionAltTitle.value = newProps.collectionConfig.homePageSettings.pageHeader.collectionAltTitle
+      //collectionAltTitle.value = newProps.collectionConfig.homePageSettings.pageHeader.collectionAltTitle
       aboutBttnTxt.value = newProps.collectionConfig.homePageSettings.pageHeader.aboutButtonText
       collectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.collectionDescription
       customCollectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription
@@ -508,7 +709,14 @@ export default {
       collectionDescription,
       homeCssClass,
       tocCssClass: layout.tocCssClass,
-      ImgUrl,
+      hasBanner,
+      bannerType,
+      getBanner,
+      collectionBanner,
+      hasImage,
+      imageType,
+      imgUrl,
+      getImg,
       collectionId,
       currCollection,
       componentTOC,
@@ -519,6 +727,9 @@ export default {
       customCollectionDescription,
       getCustomHomeDescription,
       customDescription,
+      toggleAbout,
+      isAboutOpened,
+      hasAbout,
       columns,
       pageSize,
       dataSource,
@@ -536,16 +747,25 @@ a {
 .collection-list {
   --first-column-width: 70%;
 }
-#home-article {
+.home-article-wrapper {
   padding: 40px 10% 120px;
   border-bottom: 1px dotted #ffffff;
-  /* min-height: 100%; */
 }
+.home-article-wrapper {
+  width: calc(var(--first-column-width) );
+  margin: 0 0 30px !important;
+  padding: 45px !important;
+  background-color: var(--default-bg-color);
+}
+#home-article.article {
+  margin-bottom: 20px;
+}
+
 #home-article article {
   margin: 0;
 }
 #home-article h1 {
-  margin: 1em 0 1em 0;
+  margin: 0;
   padding-top: 20px;
   padding-bottom: 20px;
 
@@ -557,17 +777,11 @@ a {
   color: #000;
 }
 
-#home-article {
-  width: calc(var(--first-column-width) );
-  margin: 0 0 30px !important;
-  padding: 45px !important;
-  background-color: var(--default-bg-color);
-}
 .wrapper {
   width: 100%;
 }
 
-.collection-list:not(.root-collection-list) .page-header .wrapper {
+.collection-list.has-image:not(.has-banner) .page-header .wrapper {
   background: #FFFFFF;
   gap: 4px;
 }
@@ -576,33 +790,49 @@ a {
   padding: 25px 45px;
 }
 
-.collection-list.root-collection-list .page-header .wrapper > .tile {
+.collection-list.has-banner .page-header .wrapper > .tile {
   background: #0f0f0f85;
 }
 
-.collection-list:not(.root-collection-list) .page-header .wrapper > .tile {
+.collection-list:not(.has-banner) .page-header .wrapper > .tile {
   background: #0f0f0f;
 }
 
 .collection-image {
   width: calc(100% - var(--first-column-width));
   height: 330px;
+}
+
+.collection-image-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.banner-default.has-image .collection-image {
   border-bottom-right-radius: 52px;
   background-color: #FBF8F4;
 }
-
+/* still needed ? */
 .collection-list.root-collection-list .collection-image,
 .collection-list:not(.root-collection-list) .tile.page-header {
   background: transparent;
 }
 
-.collection-list:not(.root-collection-list) .collection-image,
-.collection-list.root-collection-list .tile.page-header {
-  background: url(../assets/images/Designer.png) center 80% / cover no-repeat;
-}
-
-.collection-list.root-collection-list .collection-image {
-  visibility: hidden;
+.collection-list.banner-none.has-image .collection-image,
+.collection-list.banner-default.has-image .collection-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  & > .collection-image-wrapper > img {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    object-position: center;
+    border-bottom-right-radius: 52px;
+    color: var(--fill-color);
+    background-color: var(--fill-color);
+  }
 }
 
 .tile.article,
@@ -632,20 +862,23 @@ a {
   width: fit-content;
   background-color: var(--fill-color);
   transform: translateY(50%);
+}
 
-  & > a {
-    display: inline-block;
-    padding: 6px 10px;
-    font-family: var(--font-secondary), sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: white;
+.about-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 
-    &:hover {
-      background-color: #000000;
-    }
+  padding: 6px 10px;
+  font-family: var(--font-secondary), sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  text-transform: uppercase;
+  color: white;
+
+  &:hover {
+    background-color: #000000;
   }
 }
 
@@ -654,8 +887,12 @@ a {
   justify-content: center;
   flex-direction: column;
   width: 100%;
+  margin-top: 60px;
   padding-top: 25px;
   padding-bottom: 25px;
+  &.is-about-opened {
+    margin-top: 0;
+  }
 }
 
 .no-dts-description {
@@ -672,6 +909,7 @@ input::-webkit-inner-spin-button {
 .collection-header {
   min-height: 30px;
 }
+
 .collection-header :deep(.home-content) {
   font-family: var(--font-primary), sans-serif;
   font-weight: normal;
@@ -694,8 +932,20 @@ input::-webkit-inner-spin-button {
   }
 }
 
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.4s ease;
+}
 
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
 
+.collection-about {
+  min-height: 30px;
+}
 
 /* Firefox */
 input[type=number] {
