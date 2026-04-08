@@ -398,8 +398,8 @@ export default {
 
 <style scoped>
 nav {
-  font-size: 18px;
-  line-height: 1;
+  font-size: 26px;
+  line-height: 1.2;
   color: #FFFFFF;
   /* background-color: #8f0e21; */
   background-color: var(--fill-color);
@@ -471,7 +471,7 @@ nav span.level-item:not(:last-child)::after {
 
   font-family: var(--font-primary),sans-serif;
   font-weight: 700;
-  font-size: 20px;
+
   & > span > a {
     text-transform: capitalize;
     /* &.level-item-external:not(:last-child)::after {
@@ -534,7 +534,6 @@ ul.submenu a:hover {
   nav {
     display: flex;
     margin-top: 0;
-    font-size: 16px;
     z-index: 10; /* cf documentation menu */
 
     /*position: fixed;
@@ -635,7 +634,6 @@ ul.submenu a:hover {
   }*/
   .level-item {
     padding: 5px 0;
-    font-size: 18px;
     line-height: 52px;
   }
   .level-right .level-item:last-of-type {
