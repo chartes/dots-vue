@@ -1760,6 +1760,11 @@ export default {
       nextTick().then(arianeDocToRight)
     })
 
+    watch(breadcrumbEl, (val) => {
+      console.log('DOM breadcrumbEl updated:', val)
+      nextTick().then(breadcrumbToRight)
+    })
+
     function scrollTo () {
       // If the selected item is an anchor, capture and scroll to that anchor
       console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
