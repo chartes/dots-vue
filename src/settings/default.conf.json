@@ -29,19 +29,6 @@
           {
             "key": "title",
             "label": "Titre"
-          },
-          {
-            "key": "dublincore.contributor",
-            "label": "Auteur"
-          },
-          {
-            "key": "dublincore.date",
-            "label": "Date",
-            "type": "range"
-          },
-          {
-            "key": "parent",
-            "label": "Collection parent"
           }
         ],
         "cardCollectionPerPage": 3,
