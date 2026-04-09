@@ -662,7 +662,7 @@ td {
   vertical-align: middle !important;
 }
 .is-24x24 {
-  background-color: #e4e4e4;
+  background-color: var(--meta-area-fill-color);
 }
 .is-24x24 img {
   height: 24px;
