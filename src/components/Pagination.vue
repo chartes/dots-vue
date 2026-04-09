@@ -266,7 +266,7 @@ function onBlur() {
     border-radius: var(--border-radius);
 
     font-family: inherit;
-    font-size: 18px;
+    font-size: 20px;
     /* color: #CB2158; */
     color: #6e6e6e;
     font-weight: 800;
