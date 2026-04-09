@@ -50,11 +50,25 @@
           </div>
           <div class="collection-image">
             <div class="collection-image-wrapper" v-if="bannerType !== 'collection'">
+              <!-- component -->
+              <component
+                v-if="imageType === 'component'"
+                :is="image.component"
+                class="collection-component"
+              />
+
+              <!-- image -->
               <img
+                v-else-if="hasImage"
                 :src="imgUrl"
                 alt=""
               />
+
               <!--<img
+                :src="imgUrl"
+                alt=""
+              />
+              <img
                 v-else
                 src="@/assets/images/dots-logo-retro.drawio.svg"
                 alt=""
@@ -401,6 +415,29 @@ export default {
     const imgUrl = computed(() => image.value.url)
     const hasImage = computed(() => !!image.value.url)
     const imageType = computed(() => image.value.type)
+    const imageComponent = computed(() => image.value.component)
+
+    const isVueComponent = (val) => typeof val === 'object' && (val.render || val.setup)
+
+    const resolveModule = (mod, type) => {
+      if (!mod) return null
+
+      const value = mod.default
+
+      // Vue component
+      if (isVueComponent(value)) {
+        return {
+          component: value,
+          type: 'component'
+        }
+      }
+
+      // Regular image
+      return {
+        url: value,
+        type
+      }
+    }
 
     const getImg = () => {
       // TODO: provide a logo object with url AND legend ?
@@ -429,20 +466,11 @@ export default {
         const defaultAppMatch = images[`src/assets/images/${defaultImgName}`]
 
         // Generic image (custom settings default folder)
-        if (defaultCustMatch) {
-          return {
-            url: defaultCustMatch.default,
-            type: 'default'
-          }
-        }
+        const resolved =
+          resolveModule(defaultCustMatch, 'default') ||
+          resolveModule(defaultAppMatch, 'default')
 
-        // Fallback src/assets
-        if (defaultAppMatch) {
-          return {
-            url: defaultAppMatch.default,
-            type: 'default'
-          }
-        }
+        if (resolved) return resolved
       }
       // Not a default image : find a matching image
       else if (collectionImg && collectionImg.length > 0) {
@@ -458,12 +486,9 @@ export default {
         // Local collection image
         const match = images[`${collConfig.value.collectionId}/assets/images/${collectionImg}`]
         console.log('HomePage getImg match: ', match)
-        if (match) {
-          return {
-            url: match.default,
-            type: 'collection'
-          }
-        }
+
+        const resolved = resolveModule(match, 'collection')
+        if (resolved) return resolved
       }
       // No image found
       return {
@@ -714,7 +739,9 @@ export default {
       getBanner,
       collectionBanner,
       hasImage,
+      image,
       imageType,
+      imageComponent,
       imgUrl,
       getImg,
       collectionId,
@@ -807,7 +834,7 @@ a {
   width: 100%;
   height: 100%;
 }
-
+.banner-default.has-image .collection-component,
 .banner-default.has-image .collection-image {
   border-bottom-right-radius: 52px;
   background-color: #FBF8F4;
@@ -823,7 +850,24 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  & > .collection-image-wrapper > img {
+  & > .collection-image-wrapper > img, .collection-component {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    object-position: center;
+    border-bottom-right-radius: 52px;
+    color: var(--fill-color);
+    background-color: var(--fill-color);
+  }
+}
+
+.collection-list.banner-none.image-component .collection-image,
+.collection-list.banner-default.image-component .collection-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  & > .collection-image-wrapper > img, .collection-component {
     display: block;
     width: 100% !important;
     height: 100% !important;

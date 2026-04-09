@@ -34,15 +34,17 @@
               @click="handleClick(item)"
             >
               <div class="card-image">
+                <!-- if image -->
                 <img
-                  v-if="ImgUrl(item.identifier)"
-                  :src="ImgUrl(item.identifier)"
+                  v-if="collectionImages[item.identifier]?.url"
+                  :src="collectionImages[item.identifier].url"
                   alt=""
                 />
-                <img
-                  v-else
-                  src="@/assets/images/dots-logo-retro.drawio.svg"
-                  alt=""
+                <!-- if component -->
+                <component
+                  :is="collectionImages[item.identifier].component"
+                  v-else-if="collectionImages[item.identifier]?.component"
+                  class="collection-component"
                 />
               </div>
               <div class="collection-metadata">
@@ -70,12 +72,12 @@
                 {{ item.description }}
               </span>
               <span
-                  v-if="item.description"
-                  class="read-more"
-                  @click="expandDescription(item.identifier)"
+                v-if="item.description"
+                class="read-more"
+                @click="expandDescription(item.identifier)"
               >
-                  {{ descExpandedItems[item.identifier] === true ? '[Lire moins]' : '[Lire la suite]' }}
-                </span>
+                {{ descExpandedItems[item.identifier] === true ? '[Lire moins]' : '[Lire la suite]' }}
+              </span>
             </div>
           </div>
         </div>
@@ -443,25 +445,109 @@ export default {
     const componentTOC = ref([...props.toc])
 
     // IMAGES
-    const ImgUrl = (source) => {
+    /* Helpers */
+    const isVueComponent = (val) => typeof val === 'object' && (val.render || val.setup)
+
+    const resolveModule = (mod, type) => {
+      if (!mod) return null
+
+      const value = mod.default
+
+      // Vue component
+      if (isVueComponent(value)) {
+        return {
+          component: value,
+          type: 'component'
+        }
+      }
+
+      // Regular image
+      return {
+        url: value,
+        type
+      }
+    }
+
+    const collectionImages = computed(() => {
+      const map = {}
+
+      appConfig.value.collectionsConf.forEach(coll => {
+        map[coll.collectionId] = getCollectionImage(coll.collectionId)
+      })
+
+      return map
+    })
+
+    /* COLLECTION IMAGE */
+    const getCollectionImage = (source) => {
       // TODO: provide a logo object with url AND legend ?
-      const imgSourceConfig = appConfig.value.collectionsConf.filter(coll => coll.collectionId === source)[0]
-      if (imgSourceConfig?.homePageSettings?.listSection?.logo?.length > 0) {
-        // console.log('HomePage ImgUrl found : ', imgSourceConfig.homePageSettings.listSection.logo)
-        const images = Object.fromEntries(Object.entries(import.meta.glob('confs/*/assets/images/*.*', {eager: true})).map(([key, value]) => {
+
+      // Load image candidates
+      const images = Object.fromEntries(
+        Object.entries(
+          import.meta.glob([
+            'confs/*/assets/images/*.*',
+            '/src/assets/images/*.*'
+          ], { eager: true })
+        ).map(([key, value]) => {
           const newKey = key.split('/').slice(-4).join('/')
           return [newKey, value]
-        }))
-        //console.log('HomePage ImgUrl images: ', images)
-        const match = images[`${imgSourceConfig.collectionId}/assets/images/${imgSourceConfig.homePageSettings.listSection.logo}`]
-        // console.log('HomePage ImgUrl match: ', match)
-        if (imgSourceConfig.homePageSettings.listSection.logo.includes('https')) {
-          return imgSourceConfig.homePageSettings.listSection.logo
-        } else {
-          return match.default // new URL(`/src/assets/images/${imgSourceConfig.homePageSettings.logo}`, import.meta.url).href
+        })
+      )
+
+      // Current collection config
+      const coll = appConfig.value.collectionsConf
+        .find(c => c.collectionId === source)
+
+      if (!coll) {
+        return {
+          url: null,
+          type: 'none'
         }
-      } else {
-        return false
+      }
+
+      // Current collection image name ?
+      const collectionImg = coll.homePageSettings?.listSection?.logo
+
+      // Default image name ?
+      const defaultImgName = appConfig.value?.genericConf?.homePageSettings?.listSection?.logo
+
+      // If collection image name is default name
+      if (collectionImg === defaultImgName) {
+
+        // Default images (Dots-vue app or custom folder)
+        const defaultCustMatch = images[`default/assets/images/${defaultImgName}`]
+        const defaultAppMatch = images[`src/assets/images/${defaultImgName}`]
+
+        // Generic image (custom settings default folder)
+        const resolved =
+          resolveModule(defaultCustMatch, 'default') ||
+          resolveModule(defaultAppMatch, 'default')
+
+        if (resolved) return resolved
+      }
+      // Not a default image : find a matching image
+      else if (collectionImg && collectionImg.length > 0) {
+
+        // External URL
+        if (collectionImg.startsWith('http')) {
+          return {
+            url: collectionImg,
+            type: 'collection'
+          }
+        }
+
+        // Local collection image
+        const match = images[`${coll.collectionId}/assets/images/${collectionImg}`]
+
+        const resolved = resolveModule(match, 'collection')
+        if (resolved) return resolved
+      }
+
+      // No image found
+      return {
+        url: null,
+        type: 'none'
       }
     }
 
@@ -882,7 +968,7 @@ export default {
       customSort,
       browseBttnTxt,
       toggleExpanded,
-      ImgUrl,
+      collectionImages,
       expandedById,
       selectedParent,
       componentTOC,
@@ -1221,6 +1307,17 @@ button.toc-toggle {
       height: 100%;
       object-fit: cover;
       object-position: center;
+    }
+
+    .collection-component {
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      color: var(--fill-color);
+      background-color: var(--fill-color);
     }
 }
 

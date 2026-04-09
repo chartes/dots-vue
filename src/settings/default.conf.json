@@ -32,7 +32,7 @@
           }
         ],
         "cardCollectionPerPage": 3,
-        "logo": "dots-logo-retro.drawio.svg",
+        "logo": "DotsLogo.vue",
         "browseButtonText": "Browse the collection",
         "openState": false
       }
