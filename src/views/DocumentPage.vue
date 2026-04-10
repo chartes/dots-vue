@@ -286,7 +286,7 @@
             <router-link
               class="to-previous-fragment"
               :class="previousRefId === '' ? 'disabled' : ''"
-              :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: previousRefId } }"
+              :to="{ name: 'Document', params: { collId: collConfig.collectionId, id: resourceId }, query: { refId: previousRefId } }"
               aria-label="Fragment précédent"
             >
               <DirectionArrows
@@ -298,7 +298,7 @@
             <router-link
               class="to-next-fragment has-tooltip"
               :class="{ disabled: !nextRefId }"
-              :to="{ name: 'Document', params: { collId: collConfig.identifier, id: resourceId }, query: { refId: nextRefId } }"
+              :to="{ name: 'Document', params: { collId: collConfig.collectionId, id: resourceId }, query: { refId: nextRefId } }"
               :aria-disabled="!nextRefId"
               :aria-label="'Vers ' + nextRefTitle"
               :tabindex="nextRefId ? 0 : -1"
