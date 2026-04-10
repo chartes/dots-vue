@@ -33,29 +33,67 @@
               />
 
               <!-- FILTER -->
-              <input
+              <div
                 v-if="!col.type || col.type !== 'range'"
-                v-model="filters[col.key]"
-                class="filter"
-                type="text"
-                @click.stop
-              />
+                class="input-wrapper"
+              >
+                <input
+                  v-model="filters[col.key]"
+                  class="filter"
+                  type="text"
+                  @click.stop
+                >
+                <svg
+                  v-if="filters[col.key]"
+                  class="clear-icon"
+                  viewBox="0 0 24 24"
+                  @click.stop="filters[col.key] = ''"
+                >
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="15" y1="9" x2="9" y2="15"/>
+                  <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+              </div>
 
               <div
                 v-else
                 class="range-filter"
                 @click.stop
               >
-                <input
-                  v-model="filters[col.key].from"
-                  type="number"
-                  placeholder="de"
-                />
-                <input
-                  v-model="filters[col.key].to"
-                  type="number"
-                  placeholder="à"
-                />
+                <div class="input-wrapper">
+                  <input
+                    v-model="filters[col.key].from"
+                    type="number"
+                    placeholder="de"
+                  >
+                  <svg
+                    v-if="filters[col.key].from"
+                    class="clear-icon"
+                    viewBox="0 0 24 24"
+                    @click.stop="filters[col.key].from = ''"
+                  >
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                  </svg>
+                </div>
+                <div class="input-wrapper">
+                  <input
+                    v-model="filters[col.key].to"
+                    type="number"
+                    placeholder="à"
+                  >
+                  <svg
+                    v-if="filters[col.key].to"
+                    class="clear-icon"
+                    viewBox="0 0 24 24"
+                    @click.stop="filters[col.key].to = ''"
+                  >
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
@@ -109,11 +147,12 @@
 <script>
 import { ref, computed, watch } from 'vue'
 import { router } from '@/router'
+import store from '@/store'
 import { useTable } from '@/composables/useTable.js'
 
 import SortIcon from '@/assets/images/SortIcon.vue'
 import Pagination from '@/components/Pagination.vue'
-import store from '@/store'
+
 
 export default {
 name: 'CollectionTOC',
@@ -415,10 +454,16 @@ name: 'CollectionTOC',
   width: 100%;
 }
 
+.list-mode .input-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
 .list-mode .filter,
 .list-mode .range-filter input {
   height: auto;
-  padding: 7px 6px;
+  padding: 7px 28px 7px 6px; /* space for icon */
   font-family: var(--font-primary), sans-serif;
   font-weight: 400;
   font-size: 18px;
@@ -426,10 +471,24 @@ name: 'CollectionTOC',
   border: 1px solid #cecece;
   border-radius: 4px;
   outline: none;
+  width: 100%;
 
   &:focus {
     border-color: var(--fill-color);
   }
+}
+
+.list-mode .clear-icon {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  stroke: white;
+  stroke-width: 2;
+  fill: var(--fill-color);
 }
 
 /* RANGE */
@@ -438,7 +497,7 @@ name: 'CollectionTOC',
   gap: 10px;
 }
 
-.list-mode .range-filter input {
+.list-mode .range-filter .input-wrapper {
   width: 50%;
 }
 
