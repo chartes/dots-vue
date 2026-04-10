@@ -150,7 +150,7 @@
                       </span>
                     </td><!-- {{ Array.isArray(v) ? v[0] : typeof(v) === 'object' ? Object.values(v)[0] : v }} -->
                     <td v-if="v.url">
-                      <figure class="image is-24x24 level-left">
+                      <figure class="image level-left">
                         <a target="_blank" :href="v.url">
                           <img :src="ImgUrl(v.source.name)" />
                         </a>
@@ -169,7 +169,7 @@
                     </span>
                     </td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
                     <td>
-                      <figure v-if="value.url && value.url.includes('http')" class="image is-24x24 level-left">
+                      <figure v-if="value.url && value.url.includes('http')" class="image level-left">
                         <a target="_blank" :href="value.url">
                           <img class="meta_logos" :src="ImgUrl(value.source.name)" />
                         </a>
@@ -583,6 +583,12 @@ figure {
   margin: 0 !important;
   padding: 0 !important;
   border: none;
+  background-color: var(--meta-area-fill-color);
+}
+
+figure.image img{
+  height: 32px;
+  width: 32px;
 }
 
 @media screen and (max-width: 1320px) {
@@ -652,6 +658,11 @@ figure {
     color: #929292;
     text-align: right;
   }
+
+  figure.image img{
+    height: 24px;
+    width: 24px;
+  }
 }
 table {
   background-color: #f1f1f1;
@@ -660,12 +671,5 @@ table {
 }
 td {
   vertical-align: middle !important;
-}
-.is-24x24 {
-  background-color: var(--meta-area-fill-color);
-}
-.is-24x24 img {
-  height: 24px;
-  width: 24px;
 }
 </style>
