@@ -668,38 +668,12 @@ export default {
     const isModalOpened = ref(false)
 
     // reading options bar
-    let mediaQuery
 
-    const handleBreakpoint = (e) => {
-
-      if (e.matches) {
-        // ≥ 640px (desktop)
-        isControlsOpened.value = true
-      } else {
-        // < 640px (mobile)
-        isControlsOpened.value = false
-      }
-    }
-
-    const isControlsOpened = ref(false)
+    const isControlsOpened = ref(true)
     const toggleControls = (e) => {
       e.stopPropagation();
       isControlsOpened.value = !isControlsOpened.value
     }
-
-    const closeControls = () => {
-      isControlsOpened.value = false
-    }
-
-    // Lifecycle hooks
-    onMounted(() => {
-      document.body.addEventListener('click', closeControls)
-    })
-
-    onBeforeUnmount(() => {
-      document.body.removeEventListener('click', closeControls)
-    })
-
 
     const isNotesOpened = ref(true)
     const hasNotes = ref(false)
@@ -1819,9 +1793,6 @@ export default {
       window.addEventListener('resize', updateMeasurements)
       window.addEventListener('resize', updateMeasurementsAriane)
 
-      mediaQuery = window.matchMedia('(min-width: 640px)')
-      handleBreakpoint(mediaQuery)
-      mediaQuery.addEventListener('change', handleBreakpoint)
     })
 
     onUnmounted(() => {
@@ -1838,7 +1809,6 @@ export default {
       window.removeEventListener('resize', updateMeasurements)
       window.removeEventListener('resize', updateMeasurementsAriane)
 
-      mediaQuery.removeEventListener('change', handleBreakpoint)
     })
 
     return {
@@ -2049,8 +2019,12 @@ export default {
   pointer-events: auto;
 }
 .controls-list {
+  position: absolute;
+  top: 64px;
+
   display: flex;
   flex-direction: column;
+  gap: 5px;
 
   margin: 0;
   padding: 0;
@@ -2058,8 +2032,8 @@ export default {
 
   pointer-events: auto;
 
-  &.is-opened {
-    display: flex;
+  &:not(.is-opened) {
+    display: none;
   }
 }
 
@@ -2099,9 +2073,6 @@ export default {
   overflow: hidden;
   /* même couleur que stroke pour que le contour disparaisse visuellement */
   border: 1px solid var(--fill-color);
-}
-.controls .controls-toggle {
-  display: none;
 }
 
 .controls .notes-btn {
