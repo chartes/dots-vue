@@ -372,7 +372,8 @@ export default {
           // Same collection
           if (
             newName === oldName &&
-            JSON.stringify(newParams) === JSON.stringify(oldParams)
+            newParams?.collId === oldParams?.collId &&
+            newParams?.id === oldParams?.id
           ) {
             console.log('App.vue watch ROUTER same collection or same document do nothing')
             return
