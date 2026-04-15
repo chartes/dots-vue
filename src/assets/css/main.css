@@ -115,6 +115,15 @@ img, video {
     justify-content: center !important;
 }
 
+.is-24x24 {
+    background-color: var(--meta-area-fill-color);
+}
+
+.is-24x24 img {
+    height: 24px;
+    width: 24px;
+}
+
 .button {
     background-color: #fff;
     border-color: #dbdbdb;

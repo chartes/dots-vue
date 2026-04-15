@@ -453,11 +453,6 @@ nav span.level-item:not(:last-child)::after {
     height: 50px;
   }
 }
-@media screen and (max-width: 1024px) {
-  .logo-header {
-    margin-right: 15px;
-  }
-}
 .logo-api {
   display: inline-block;
   width: 40px;
@@ -470,21 +465,40 @@ nav span.level-item:not(:last-child)::after {
   gap: 20px;
 
   font-family: var(--font-primary),sans-serif;
-  font-weight: 700;
+
+  & > span.level-item {
+    align-items: flex-end;
+  }
 
   & > span > a {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
     text-transform: capitalize;
+
     /* &.level-item-external:not(:last-child)::after {
       content: " > ";
       white-space: pre;
     }*/
+
     &.level-item-external:nth-child(2) {
-      border-left: 1px solid white;
+      position: relative;
       margin-left: 30px;
       padding-left: 30px;
-      font-weight: 400;
-      font-size: 18px;
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 1;
 
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top:50%;
+        transform: translateY(-50%);
+        display: inline-block;
+        height: 20px;
+        border-left: 1px solid white;
+      }
     }
   }
 }
@@ -529,7 +543,11 @@ ul.submenu a:hover {
     padding-right: 20px;
   }
 }
-
+@media screen and (max-width: 1024px) {
+  .logo-header {
+    margin-right: 15px;
+  }
+}
 @media screen and (max-width: 768px) {
   nav {
     display: flex;

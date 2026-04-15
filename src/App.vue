@@ -94,8 +94,20 @@ export default {
     const theme = ref('')
     const customCss = ref({})
     const scrollTopIsVisible = ref(false)
+    const scrollTopOpacity = ref(0)
+
     const onScroll = () => {
-      scrollTopIsVisible.value = window.scrollY > 100
+      const scrollTopVisibleWhenScroll = window.screen.height * 0.75;
+      scrollTopIsVisible.value = window.scrollY > scrollTopVisibleWhenScroll;
+
+      if (window.scrollY < scrollTopVisibleWhenScroll) {
+        scrollTopOpacity.value = 0.0;
+      }
+      else if (window.scrollY > scrollTopVisibleWhenScroll && window.scrollY < scrollTopVisibleWhenScroll + 100) {
+        scrollTopOpacity.value = Math.abs (window.scrollY - scrollTopVisibleWhenScroll) / 100;
+      } else {
+        scrollTopOpacity.value = 1.0;
+      }
     }
 
     const scrollToTop = () => {
@@ -473,18 +485,19 @@ export default {
       { immediate: true }
     )
 
-    watch(() => scrollTopIsVisible.value,(visible) => {
-        if (!visible) return
+    watch(() => scrollTopOpacity.value,(opacity) => {
+        if (! scrollTopIsVisible.value) return;
+
         const footer = document.querySelector('.layout-footer')
         const btn = document.querySelector('.scroll-top')
-
         if (!footer || !btn) return
 
         const BASE_BOTTOM = 120;
         const observer = new IntersectionObserver(([entry]) => {
             // footer height really visible in viewport
             const visibleFooter = entry.intersectionRect?.height || 0
-            btn.style.bottom = `${BASE_BOTTOM + visibleFooter}px`
+            btn.style.bottom = `${ BASE_BOTTOM * opacity }px`
+            btn.style.opacity = opacity;
           },{
             // progressive thresholds for smooth animation
             threshold: Array.from({ length: 30 }, (_, i) => i / 30)
@@ -527,6 +540,7 @@ export default {
       getCustomCss,
       removeCustomCss,
       scrollTopIsVisible,
+      scrollTopOpacity,
       scrollToTop
     }
   }
