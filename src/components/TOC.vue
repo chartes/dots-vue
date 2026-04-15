@@ -7,7 +7,7 @@
       <li
         v-if="item.show"
         :style="`margin-left: ${ (item.level -1) * 15 }px;`"
-        :class="item.level < maxcitedepth && item.children && item.children.length > 0 ? 'more' : ''"
+        :class="{ 'is-current-parent': isCurrentItem(item), 'more': item.level < maxcitedepth && item.children && item.children.length > 0 }"
       >
         <div class="li container">
           <button
@@ -28,7 +28,7 @@
             class="toc-title"
             :title="item.url"
             :data-href="item.url"
-            :class="route.hash === item.hash ? 'is-current' : !route.hash && item.identifier === currentRefId ? 'is-current' : ''"
+            :class="{ 'is-current': isCurrentItem(item) }"
             @click.prevent="goTo(item)"
           >
             {{ item.dublincore && item.dublincore.title.length ? item.dublincore.title : item.extensions ? item.extensions['tei:role'] ? item.extensions['tei:role'] : item.citeType && item.extensions['tei:num'] ? item.citeType + ' ' + item.extensions['tei:num'] : item.citeType : item.citeType }} {{ item.descendant > 0 ? `(${item.descendant})` : '' }}
@@ -42,7 +42,7 @@
 
 <script>
 
-import { ref, watch } from 'vue'
+import {computed, ref, watch} from 'vue'
 import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import store from '@/store'
@@ -252,6 +252,9 @@ export default {
         }
       }
     }
+
+    const isCurrentItem =(item) => route.hash === item.hash ? 'is-current' : !route.hash && item.identifier === currentRefId.value;
+
     watch(expandedById, () => {
       console.log('TOC watch expandedById', expandedById.value)
       function hideDescendants (id) {
@@ -285,6 +288,7 @@ export default {
       toggleBurger,
       currentRefId,
       goTo,
+      isCurrentItem,
       expandedById,
       toggleExpanded,
       componentTOC
@@ -332,6 +336,7 @@ div.toc-area-content.toc-content {
     font-size: 15px;
     font-weight: 400;
     line-height: 20px;
+
     &:not(.more)::before {
       margin-left: -7px;
       margin-right: 11px;
@@ -371,9 +376,26 @@ div.toc-area-aside.toc-content {
     width: 100%;
   }
   .tree li {
+    padding: 1px 0 1px 18px ;
     font-size: 15px;
     font-weight: 400;
     line-height: 20px;
+
+    &:not(.more) {
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    &.is-current-parent {
+      padding-left: 10px;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    &.is-current-parent::before {
+      content: '';
+    }
+
     &:not(.more)::before {
       margin-left: -7px;
       margin-right: 11px;
@@ -386,6 +408,11 @@ div.toc-area-aside.toc-content {
       & > a {
         color: #4a4a4a;
         width: 218px;
+
+        &.toc-title.is-current {
+          margin-top: 3px;
+          margin-bottom: 3px;
+        }
       }
     }
 

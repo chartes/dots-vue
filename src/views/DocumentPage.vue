@@ -2680,7 +2680,7 @@ div.remove-bottom-padding #article {
 .document-area {
   position: relative;
   z-index: 10;
-  top: -70px;
+  top: -60px;
 
   width: 100%;
 }

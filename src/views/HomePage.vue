@@ -901,6 +901,7 @@ a {
   position: absolute;
   bottom: 0;
   left: 45px;
+  z-index: 2;
 
   display: flex;
   width: fit-content;
@@ -984,7 +985,7 @@ input::-webkit-inner-spin-button {
 .fade-slide-enter-from,
 .fade-slide-leave-to {
   opacity: 0;
-  transform: translateY(-10px);
+  /* transform: translateY(-10px); */
 }
 
 .collection-about {
