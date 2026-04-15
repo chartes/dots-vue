@@ -312,15 +312,23 @@ div.toc-area-content.toc-content {
     font-size: 15px;
     font-weight: 500;
     line-height: 22px;
-    columns: 4;
+    columns: 3;
     gap: 40px;
     min-height: 100px;
     width: 100%;
+
+    li {
+      break-inside: avoid;
+
+      &::before {
+        content: '';
+      }
+    }
   }
 
   @media screen and (max-width: 1320px) {
     .tree {
-      columns: 3;
+      columns: 2;
     }
   }
 
@@ -392,7 +400,7 @@ div.toc-area-aside.toc-content {
       padding-bottom: 0;
     }
 
-    &.is-current-parent::before {
+    &::before {
       content: '';
     }
 
@@ -409,7 +417,7 @@ div.toc-area-aside.toc-content {
         color: #4a4a4a;
         width: 218px;
 
-        &.toc-title.is-current {
+        &.is-current {
           margin-top: 3px;
           margin-bottom: 3px;
         }
@@ -467,21 +475,49 @@ div.bottom-toc {
   }
 }
 
-.toc-area-aside .is-current {
+.toc-area-content.toc-content li:not(.more) > .li.container > a.toc-title:hover,
+.toc-area-aside li:not(.more) > .li.container > a.toc-title:hover,
+.toc-area-content.toc-content li:not(.more) > .li.container > .is-current,
+.toc-area-aside li:not(.more) > .li.container > is-current {
   background-color: #F9F9F9;
-  border-left: 1px solid var(--fill-color);
-  padding: 10px 20px;
-  margin: 10px 0;
+}
+
+.toc-area-content.toc-content li:not(.more) > .li.container > a.toc-title,
+.toc-area-aside li:not(.more) > .li.container > a.toc-title {
+  padding: 6px 20px;
+}
+
+.toc-area-content.toc-content li.more.is-current-parent > .li.container > a.toc-title.is-current,
+.toc-area-aside li.more.is-current-parent > .li.container > a.toc-title.is-current {
+  font-weight: 500;
+  color: var(--fill-color) !important;
 
   &:hover {
-    background-color: #F9F9F9 !important;
+    text-decoration: underline;
   }
 }
 
-div.toc-area-content.toc-content .tree li .li.container a.is-current {
+.toc-area-content.toc-content li.more:not(.is-current-parent) > .li.container > a.toc-title:hover,
+.toc-area-aside li.more:not(.is-current-parent) > .li.container > a.toc-title:hover {
   font-weight: 500;
-  color: var(--fill-color);
+  color: var(--fill-color) !important;
 }
+
+.toc-area-content.toc-content li:not(.more) > .li.container > a.toc-title.is-current,
+.toc-area-aside li:not(.more) > .li.container > a.toc-title.is-current {
+  display: inline-block;
+  border-left: 1px solid var(--fill-color);
+  padding: 6px 20px;
+  margin: 0 0 0 -16px;
+  background-color: #F9F9F9 !important;
+}
+
+.toc-area-content.toc-content li:not(.more) > .li.container > a.toc-title.is-current,
+.toc-area-content.toc-content li:not(.more) > .li.container > a.toc-title:not(.is-current),
+.toc-area-aside li:not(.more) > .li.container > a.toc-title:not(.is-current) {
+  margin-left: -22px;
+}
+
 
 button.toc-toggle {
   /* remove default button behavior */
