@@ -656,6 +656,10 @@ a.noteref sup {
     visibility: visible;
 }
 
+.toc-aside-is-opened .notes-opened .aside-noteref-parent {
+    visibility: hidden;
+}
+
 .aside-noteref-parent {
     visibility: hidden;
     position: fixed;
@@ -809,7 +813,8 @@ a.noteref sup {
 
     .aside-noteref-parent {
         max-width: 100vw;
-        width: 100vw;
+        width: calc(100vw - 40px);
+        margin: 0 auto;
         left: 0;
         right: 0;
     }
@@ -844,6 +849,7 @@ a.noteref sup {
         padding: 0 var(--mobile-margin);
     }
     .aside-noteref-parent {
+        width: 100%;
         left: 10px !important;
         right: 10px !important;
     }
