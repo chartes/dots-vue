@@ -9,6 +9,7 @@
       :total-pages="totalPages"
       :is-loading="false"
       :documents-count-text="documentsCountText"
+      @update:modelValue="onPaginationUpdate"
     />
   </div>
   <!-- RESOURCE LIST AS CARDS (applicable conf (cascade): homePageSettings.listSection.displayMode = 'card') -->
@@ -63,9 +64,10 @@
             </div>
             <div
               class="collection-description"
-              :class=" descExpandedItems[item.identifier] ? 'expanded' : '' "
+              :class="expandDescriptionClass(item.identifier)"
             >
               <span
+                :key="item.identifier"
                 :ref="el => textEls.push(el)"
                 class="collection-description-text"
               >
@@ -663,7 +665,7 @@ export default {
     const textEls = ref([])
     let resizeObserver = null
     const isTextTruncated = (el) => {
-      if (!el) return
+      if (!el || ! el.scrollHeight) return
       const truncated = el.scrollHeight > el.clientHeight
       el.parentElement.classList.toggle('truncated', truncated)
     }
@@ -672,9 +674,15 @@ export default {
 
     const expandDescription = (id) => {
       descExpandedItems.value[id] = !descExpandedItems.value[id]
-      console.log('expanded', descExpandedItems.value)
     }
 
+    const expandDescriptionClass = (id) => {
+      if (descExpandedItems.value[id] === undefined) {
+        return '';
+      } else {
+        return descExpandedItems.value[id] ? 'expanded' : 'truncated';
+      }
+    };
 
     // PAGINATION
     const pageSize = computed(() =>
@@ -694,6 +702,16 @@ export default {
     const paginated = computed(() => {
       return pagination.paginated.value
     })
+
+    const onPaginationUpdate = function() {
+      nextTick(function () {
+        textEls.value.forEach(el => {
+          isTextTruncated(el)
+        })
+      });
+    }
+
+
 
     const documentsCountText = computed(() => {
       const ds = componentTOC.value || []
@@ -978,6 +996,7 @@ export default {
       resizeObserver,
       descExpandedItems,
       expandDescription,
+      expandDescriptionClass,
       canNavigate,
       handleClick,
       displayMode,
@@ -987,6 +1006,7 @@ export default {
       totalPages,
       paginated,
       totalResults,
+      onPaginationUpdate,
       documentsCountText,
       getHref,
       getRoute,
@@ -1194,7 +1214,7 @@ button.toc-toggle {
   padding: 18px;
   color: #333333;
   background: var(--meta-area-fill-color);
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 .toc-mode .collection-description-text {
   --line-clamp: 11;
@@ -1379,7 +1399,7 @@ button.toc-toggle {
   padding-top: 20px;
   border-bottom-right-radius: 18px;
   color: #333333;
-  overflow: hidden;
+  /*overflow: hidden*/;
   text-transform: none;
 }
 
