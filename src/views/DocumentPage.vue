@@ -1784,9 +1784,11 @@ export default {
     }
 
     const closeTOC = function(event) {
-      const target = event.target;
-      if (target.closest('.document-views')) {
-        layout.isTOCMenuOpened.value = false
+      if (window.innerWidth < 768) {
+        const target = event.target;
+        if (target.closest('.document-views')) {
+          layout.isTOCMenuOpened.value = false
+        }
       }
     }
 
