@@ -208,7 +208,7 @@
       </div>
     </div>
     <nav
-      class="navigation-row app-width-margin"
+      class="navigation-row app-width-padding"
       aria-label="Navigation du document"
     >
       <div class="navigation-document">
@@ -2153,9 +2153,22 @@ export default {
   max-height: 100vh;
   max-width: calc(100vw - 20px);
 }
-.document-views .text-view > * body { /* cf tei.css */
-  margin-left: 10px;
-  margin-right: 10px;
+
+/* cf tei.css */
+.document-views .text-view > * teiheader,
+.document-views .text-view > * body {
+  margin-top: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+
+.toc-aside-is-opened {
+  .document-views .text-view > * teiheader,
+  .document-views .text-view > * body {
+    width: 100%;
+    margin-right: 0 !important;
+  }
 }
 
 .text-mode .text-view,
@@ -2674,7 +2687,7 @@ div.remove-bottom-padding #article {
 .controls {
   position: sticky;
   top: 85px;
-  z-index: 11;
+  z-index: 12;
   pointer-events: none;
 }
 
@@ -3135,8 +3148,20 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 }
 
 @media screen and (max-width: 1024px) {
+
+  .document-views .text-view > * teiheader,
+  .document-views .text-view > * body {
+    width: auto;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
   .toc-aside-is-opened .toc-area-aside {
     box-shadow: 8px 8px 5px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .toc-aside-is-opened .document-views {
+    width: calc(100% - 280px);
   }
 }
 

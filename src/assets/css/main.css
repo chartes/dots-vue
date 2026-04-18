@@ -425,8 +425,8 @@ table td:not([align]), table th:not([align]) {
 }
 .app-width-padding {
     margin: 0;
-    padding-left: calc( 50% - 600px );
-    padding-right: calc( 50% - 600px );
+    padding-left: calc( 50% - 640px );
+    padding-right: calc( 50% - 640px );
 }
 
 .layout-navbar {
