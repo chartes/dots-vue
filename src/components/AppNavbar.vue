@@ -680,7 +680,8 @@ ul.submenu a:hover {
 
       display: block;
       padding: 20px 0 10px;
-      background: #FFF;
+      background: var(--fill-color);
+      border-top: rgba(255, 255, 255, 0.5) 1px solid;
       width: 100%;
       height: auto !important;
       box-shadow: 0 8px 5px 0 rgba(0,0,0,0.2);
