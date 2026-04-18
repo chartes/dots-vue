@@ -7,7 +7,7 @@
             <p class="title">
               {{ collectionAltTitle ? collectionAltTitle : currentCollection.title }}
             </p>
-            <h1 class="about-title">à propos</h1>
+            <!-- h1 class="about-title">à propos</h1 -->
           </div>
         </div>
       </div>

@@ -788,9 +788,19 @@ a {
   margin-bottom: 20px;
 }
 
+#home-article.article + a {
+  padding: 0 20px;
+  color: var(--fill-color);
+}
+
+#home-article.article + a:hover {
+  text-decoration: underline;
+}
+
 #home-article article {
   margin: 0;
 }
+
 #home-article h1 {
   margin: 0;
   padding-top: 20px;
