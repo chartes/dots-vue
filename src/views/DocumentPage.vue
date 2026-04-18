@@ -1783,6 +1783,13 @@ export default {
       })
     }
 
+    const closeTOC = function(event) {
+      const target = event.target;
+      if (target.closest('.document-views')) {
+        layout.isTOCMenuOpened.value = false
+      }
+    }
+
     onMounted(() => {
       const appView = document.getElementById('app')
       appView.addEventListener('scroll', updateMiradorTopPosition)
@@ -1792,7 +1799,7 @@ export default {
 
       window.addEventListener('resize', updateMeasurements)
       window.addEventListener('resize', updateMeasurementsAriane)
-
+      document.body.addEventListener('click', closeTOC);
     })
 
     onUnmounted(() => {
@@ -1808,6 +1815,7 @@ export default {
 
       window.removeEventListener('resize', updateMeasurements)
       window.removeEventListener('resize', updateMeasurementsAriane)
+      document.body.removeEventListener('click', closeTOC);
 
     })
 
@@ -3233,10 +3241,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
 @media screen and (max-width: 640px) {
 
-  .toc-aside-is-opened .document-views {
-    margin-left: -80vw;
-  }
-
   .several-parent {
     flex-direction: column;
     align-items: center;
@@ -3270,7 +3274,11 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   .toc-aside-is-opened .toc-area-aside {
-    width: 80vw;
+    width: 70vw;
+  }
+
+  .toc-aside-is-opened .document-views {
+    margin-left: -70vw;
   }
 
   .toc-area .toc-area-content nav > ol.tree {
