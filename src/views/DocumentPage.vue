@@ -347,6 +347,7 @@
             <IconLetterT
               :size="40"
               :radius="4"
+              :class="{ active: getViewMode() === 'text-mode' || getViewMode() === 'text-and-images-mode'}"
             />
           </button>
         </li>
@@ -361,6 +362,7 @@
             <IconImage
               :size="40"
               :radius="4"
+              :class="{ active: getViewMode() === 'images-mode' || getViewMode() === 'text-and-images-mode'}"
             />
           </button>
         </li>
@@ -1833,6 +1835,7 @@ export default {
       hasValidTOC,
       TOCMenuBtnCssClass: layout.TOCMenuBtnCssClass,
       changeViewMode: layout.changeViewMode,
+      getViewMode: layout.getViewMode,
       viewModeCssClass: layout.viewModeCssClass,
       miradorViewCssStyle,
       miradorContainer,
@@ -2028,6 +2031,7 @@ export default {
   width: 40px;
   pointer-events: auto;
 }
+
 .controls-list {
   position: absolute;
   top: 64px;

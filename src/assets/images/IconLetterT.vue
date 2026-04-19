@@ -58,8 +58,14 @@ const cssVars = {
   border-color: #e5e5e5;
 }
 
+.icon-wrapper.active,
 .icon-wrapper:hover {
   color: #FFF;
   background-color: var(--fill-color);
+}
+
+.icon-wrapper.active:hover {
+  background-color: var(--bg);
+  color: var(--fill-color, var(--icon-text-color));
 }
 </style>

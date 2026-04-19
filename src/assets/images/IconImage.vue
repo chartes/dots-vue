@@ -56,9 +56,15 @@ const cssVars = {
   border-color: #e5e5e5;
 }
 
+.icon-wrapper.active,
 .icon-wrapper:hover {
   color: #FFF;
   background-color: var(--fill-color);
+}
+
+.icon-wrapper.active:hover {
+  background-color: var(--bg);
+  color: var(--fill-color, var(--icon-text-color));
 }
 
 /* Prevents Hover state, replaced by active state */
@@ -76,18 +82,6 @@ const cssVars = {
 .icon {
   width: 100%;
   height: 100%;
-}
-
-.text-and-images-mode .controls button.images-btn .icon-wrapper,
-.images-mode .controls button.images-btn .icon-wrapper {
-  color: var(--fg, var(--text-color));
-  background-color: var(--bg);
-}
-
-.text-and-images-mode .controls button.images-btn .icon-wrapper:hover,
-.images-mode .controls button.images-btn .icon-wrapper:hover {
-  color: #FFF;
-  background-color: var(--fill-color);
 }
 
 </style>
