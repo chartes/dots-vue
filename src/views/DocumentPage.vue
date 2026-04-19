@@ -2863,6 +2863,15 @@ ul.breadcrumb-top {
     }
   }
 
+  > li:not(:last-child) > a:not(.active) {
+    .breadcrumb-label {
+      max-width: 320px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap
+    }
+  }
+
   /* creux gauche pour tous sauf premier */
   > li:not(:first-child) > a {
     margin-left: var(--crumb-gap);
