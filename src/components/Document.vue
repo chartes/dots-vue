@@ -392,7 +392,7 @@ export default {
         // target element and scroll
         const el = document.getElementById(hash)
         if (el) {
-          const yOffset = -70
+          const yOffset = -90
           const y = el.getBoundingClientRect().top + window.scrollY + yOffset
           console.log('Document.vue scrollTo y : ', y)
           window.scrollTo({ top: y, behavior: 'instant' })

@@ -1739,7 +1739,7 @@ export default {
       nextTick().then(breadcrumbToRight)
     })
 
-    function scrollTo () {
+    function scrollTo() {
       // If the selected item is an anchor, capture and scroll to that anchor
       console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
       if (hash.value.length > 0) {
@@ -1751,7 +1751,7 @@ export default {
         const el = document.getElementById(hash.value)
         console.log('DocumentPage.vue scrollTo el : ', el)
         if (el) {
-          const yOffset = -70
+          const yOffset = -90
           const y = el.getBoundingClientRect().top + window.scrollY + yOffset
           console.log('DocumentPage.vue scrollTo y : ', y)
           window.scrollTo({ top: y, behavior: 'smooth' })
@@ -2343,6 +2343,7 @@ div.remove-bottom-padding #article {
 
 #article p b.label {
   text-indent: 0;
+  margin-right: 3px;
 }
 
 
