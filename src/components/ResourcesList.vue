@@ -370,7 +370,7 @@ name: 'CollectionTOC',
   gap: var(--row-gap) var(--column-gap);
 
   font-family: var(--font-primary), sans-serif;
-  font-size: 16px;
+  font-size: var(--font-default-size);
   font-weight: 500;
   line-height: 1.5;
   color: #000000;
@@ -428,7 +428,7 @@ name: 'CollectionTOC',
 }
 
 .list-mode .cell a {
-  font-size: 18px;
+  font-size: var(--font-default-size);
   font-weight: 400;
   color: #000000;
 

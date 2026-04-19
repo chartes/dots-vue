@@ -697,8 +697,9 @@ export default {
     })
 
     const breadcrumbEl = ref(null)
+
     const updateMeasurements = function () {
-      console.log('DOM updateMeasurements', breadcrumbEl.value)
+      // console.log('DOM updateMeasurements')
       if (!breadcrumbEl.value) return
 
       const el = breadcrumbEl.value
@@ -707,9 +708,17 @@ export default {
       colBreadcrumbScrollWidth.value = el.scrollWidth
     }
 
+    // Maintains Ariane horizontal scroll on right when resizing window
+    const updateHorizontalScrollAndMeasurements = function() {
+      if (!breadcrumbEl.value) return
+      const el = breadcrumbEl.value;
+      el.scrollLeft = el.scrollLeftMax;
+      updateMeasurements();
+    }
+
     const onColBreadcrumbScroll = (event) => {
       const target = event.target
-      console.log('onColBreadcrumbScroll')
+      console.log('onColBreadcrumbScroll', target)
       updateMeasurements()
       colBreadcrumbScrollLeft.value = target.scrollLeft
       colBreadcrumbClientWidth.value = target.clientWidth
@@ -1801,7 +1810,7 @@ export default {
       layout.isTOCMenuOpened.value = false
       layout.changeViewMode('init')
 
-      window.addEventListener('resize', updateMeasurements)
+      window.addEventListener('resize', updateHorizontalScrollAndMeasurements)
       window.addEventListener('resize', updateMeasurementsAriane)
       document.body.addEventListener('click', closeTOC);
     })
@@ -1817,7 +1826,7 @@ export default {
       appView.removeEventListener('scroll', updateMiradorTopPosition)
       window.removeEventListener('scroll', updateMiradorTopPosition)
 
-      window.removeEventListener('resize', updateMeasurements)
+      window.removeEventListener('resize', updateHorizontalScrollAndMeasurements)
       window.removeEventListener('resize', updateMeasurementsAriane)
       document.body.removeEventListener('click', closeTOC);
 
