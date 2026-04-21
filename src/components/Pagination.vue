@@ -363,16 +363,14 @@ input[type=number] {
 
 @media screen and (max-width: 768px) {
   .pagination-documents-count {
-    margin-right: 0;
     font-size: 24px;
-    align-self: center;
   }
 }
 
 @media screen and (max-width: 640px) {
-
   .pagination-documents-count {
-    font-size: 24px;
+    margin-right: 0;
+    align-self: center;
   }
 
   .pagination-controls {

@@ -609,6 +609,17 @@ input[type=number] {
 
     & > .header {
       border-bottom: none;
+
+      /* If on search field in header */
+      & > .header-cell:only-child {
+        & > span {
+          flex: auto 0 0;
+          max-width: unset;
+        }
+        & > .header-cell-fields {
+          flex: 1;
+        }
+      }
     }
   }
 
@@ -619,13 +630,17 @@ input[type=number] {
     margin-bottom: 15px;
 
     & > span {
-      flex: 130px 0 0;
+      flex: 60px 0 0;
       border-bottom: none;
       margin-bottom: 0;
+
+      max-width: 60px;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
 
     & > .header-cell-fields {
-      flex: calc(100% - 140px) 0 0;
+      flex: calc(100% - 70px) 0 0;
     }
   }
 
