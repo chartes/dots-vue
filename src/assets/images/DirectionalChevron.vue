@@ -26,7 +26,7 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  size: { type: Number, default: 25 },
+  size: { type: Number, default: 16 },
   direction: {
     type: String,
     default: 'down',

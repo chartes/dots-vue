@@ -25,13 +25,13 @@
               v-if="aboutBttnTxt"
               class="project-tile"
             >
-              <div
+              <button
                 class="about-button"
                 @click="toggleAbout"
               >
                 <span class="about-button-text">{{ aboutBttnTxt }}</span>
                 <DirectionalChevron :direction="isAboutOpened ? 'up' : 'down'" />
-              </div>
+              </button>
               <!--<router-link
                 v-if="collectionId !== rootCollectionId"
                 :to="{ name: 'About', params: { collId: collectionId } }"
@@ -924,6 +924,11 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
 
   padding: 6px 10px;
   font-family: var(--font-secondary), sans-serif;
