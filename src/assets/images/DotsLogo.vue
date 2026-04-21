@@ -94,11 +94,11 @@ l190 -97 324 649 c179 356 322 650 320 653 -3 2 -69 43 -146 89 -553 333
   }
 
   &.has-banner {
-    --dots-bg-color: color-mix(in srgb, currentColor, white 90%);
+    --dots-bg-color: color-mix(in srgb, currentColor, white 99%);
     --dots-circle-color: currentColor;
     --dots-circle-center-color: color-mix(in srgb, currentColor 80%, white);
 
-    background-color: color-mix(in srgb, currentColor 55%, white 0%) !important;
+    background-color: color-mix(in srgb, currentColor 85%, white 0%) !important;
   }
 }
 
