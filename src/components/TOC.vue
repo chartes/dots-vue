@@ -326,7 +326,7 @@ div.toc-area-content.toc-content {
     }
   }
 
-  @media screen and (max-width: 1320px) {
+  @media screen and (max-width: 1024px) {
     .tree {
       columns: 2;
     }
@@ -497,9 +497,10 @@ div.bottom-toc {
   }
 }
 
+.toc-area-content.toc-content li:not(.more) > .li.container > a.toc-title:not(.is-current):hover,
+.toc-area-content.toc-content li.more > .li.container > a.toc-title:hover,
 .toc-area-content.toc-content li.more:not(.is-current-parent) > .li.container > a.toc-title:hover,
 .toc-area-aside li.more:not(.is-current-parent) > .li.container > a.toc-title:hover {
-  font-weight: 500;
   color: var(--fill-color) !important;
 }
 
@@ -520,6 +521,8 @@ div.bottom-toc {
 
 
 button.toc-toggle {
+  --icon-bg: transparent;
+
   /* remove default button behavior */
   appearance: none;
   -webkit-appearance: none;
@@ -533,9 +536,11 @@ button.toc-toggle {
   padding: 0;
   margin: 0;
 
-  color: var(--fill-color);
-
   cursor: pointer;
+}
+
+:deep(button.toc-toggle svg) {
+  color: var(--fill-color);
 }
 
 </style>

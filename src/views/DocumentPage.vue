@@ -769,11 +769,19 @@ export default {
 
     const onDocBreadcrumbScroll = (event) => {
       const target = event.target
-      console.log('onDocBreadcrumbScroll')
+      // console.log('onDocBreadcrumbScroll')
       updateMeasurementsAriane()
       docBreadcrumbScrollLeft.value = target.scrollLeft
       docBreadcrumbClientWidth.value = target.clientWidth
       docBreadcrumbScrollWidth.value = target.scrollWidth
+    }
+
+    // Maintains Document Ariane horizontal scroll on right when resizing window
+    const updateDocBreadcrumbHorizontalScrollAndMeasurements = function() {
+      if (!arianeDocContainer.value) return
+      const el = arianeDocContainer.value;
+      el.scrollLeft = el.scrollLeftMax;
+      updateMeasurementsAriane();
     }
 
     const updateMeasurementsAriane = function () {
@@ -784,7 +792,6 @@ export default {
       docBreadcrumbScrollLeft.value = el.scrollLeft
       docBreadcrumbClientWidth.value = el.clientWidth
       docBreadcrumbScrollWidth.value = el.scrollWidth
-
     }
 
     const arianeDocToRight = function() {
@@ -1811,7 +1818,7 @@ export default {
       layout.changeViewMode('init')
 
       window.addEventListener('resize', updateHorizontalScrollAndMeasurements)
-      window.addEventListener('resize', updateMeasurementsAriane)
+      window.addEventListener('resize', updateDocBreadcrumbHorizontalScrollAndMeasurements)
       document.body.addEventListener('click', closeTOC);
     })
 
@@ -1827,7 +1834,7 @@ export default {
       window.removeEventListener('scroll', updateMiradorTopPosition)
 
       window.removeEventListener('resize', updateHorizontalScrollAndMeasurements)
-      window.removeEventListener('resize', updateMeasurementsAriane)
+      window.removeEventListener('resize', updateDocBreadcrumbHorizontalScrollAndMeasurements)
       document.body.removeEventListener('click', closeTOC);
 
     })
@@ -3199,6 +3206,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 }
 
 @media screen and (max-width: 768px) {
+
   .document-area.app-width-margin {
     padding-left: 0;
     padding-right: 0;
@@ -3208,6 +3216,11 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     width: 100% !important;
     padding-left: 10px;
     padding-right: 10px;
+  }
+
+  .breadcrumb-panel {
+    margin-left: calc(-1 * var(--mobile-margin));
+    margin-right: calc(-1 * var(--mobile-margin));
   }
 
   .toc-aside-is-opened .document-views {
