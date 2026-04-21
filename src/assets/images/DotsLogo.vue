@@ -77,16 +77,32 @@ l190 -97 324 649 c179 356 322 650 320 653 -3 2 -69 43 -146 89 -553 333
 </template>
 
 <style scoped>
+
 .dots-logo-png {
   width: 200px;
   height: auto;
 
   color: var(--dots-color, #000);
 
-  --dots-bg-color: color-mix(in srgb, currentColor 95%, white);
-  --dots-circle-color: currentColor;
-  --dots-circle-center-color: color-mix(in srgb, currentColor 70%, white);
+
+  &:not(.has-banner) {
+    --dots-bg-color: color-mix(in srgb, currentColor, white 99%);
+    --dots-circle-color: white;
+    --dots-circle-center-color: color-mix(in srgb, currentColor 80%, white);
+
+    background-color: color-mix(in srgb, currentColor 95%, white 0%) !important;
+  }
+
+  &.has-banner {
+    --dots-bg-color: color-mix(in srgb, currentColor, white 90%);
+    --dots-circle-color: currentColor;
+    --dots-circle-center-color: color-mix(in srgb, currentColor 80%, white);
+
+    background-color: color-mix(in srgb, currentColor 55%, white 0%) !important;
+  }
 }
+
+
 
 .dots-bg path {
   fill: var(--dots-bg-color);
