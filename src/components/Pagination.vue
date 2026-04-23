@@ -132,7 +132,7 @@ function goToPage(page) {
 
   emitPage(target)
 
-  inputRef.value?.focus()
+  //inputRef.value?.focus()
 }
 
 // Input logic
