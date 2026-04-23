@@ -33,11 +33,11 @@ export function getSimpleObject(obj, parentId, projId) {
     identifier,
     citeType: obj['@type'] ? obj['@type'] : obj.citeType,
 
-    dublincore: {
-      ...obj?.dublincore,
-      title: Array.isArray(obj?.dublincore?.title)
-        ? obj?.dublincore?.title?.[0]
-        : obj?.dublincore?.title
+    dublinCore: {
+      ...obj?.dublinCore,
+      title: Array.isArray(obj?.dublinCore?.title)
+        ? obj?.dublinCore?.title?.[0]
+        : obj?.dublinCore?.title
     },
 
     parent: parent || null,

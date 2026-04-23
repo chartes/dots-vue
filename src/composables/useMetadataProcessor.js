@@ -82,7 +82,7 @@ function processValue(obj, isRoot = false) {
 
       if (k === 'member') {
         result[k] = value
-      } else if ((k === 'dublincore' || k === 'extensions') && value !== null && typeof value === 'object') {
+      } else if ((k === 'dublinCore' || k === 'extensions') && value !== null && typeof value === 'object') {
         const nested = processValue(value)
         for (const nk in nested) {
           result[nk] = nested[nk]
@@ -157,6 +157,7 @@ export function useMetadataProcessor() {
 
     if (hasKeepMetadata) {
       const keepConfig = structuredClone(toRaw(collConfig.keepCollectionMetadata))
+      keepConfig.fields['title'] = 'title'
       keepConfig.fields['citeType'] = 'type'
       keepConfig.fields['member'] = 'member'
       keepConfig.fields['children'] = 'children'
@@ -166,6 +167,7 @@ export function useMetadataProcessor() {
       keepConfig.fields['extensions']['dct:source'] = 'dct:source'
       keepConfig.fields['iiifManifestUrl'] = 'iiifManifestUrl'
       keepConfig.fields['displayMode'] = 'displayMode'
+      keepConfig.displayOrder.push('title')
       keepConfig.displayOrder.push('type')
       keepConfig.displayOrder.push('member')
       keepConfig.displayOrder.push('children')

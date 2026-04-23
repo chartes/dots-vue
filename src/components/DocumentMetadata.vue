@@ -83,7 +83,7 @@
                 <td></td>
               </tr>-->
               <template 
-                v-for="(value, name, index) in metadata.dublincore"
+                v-for="(value, name, index) in metadata.dublinCore"
                 :key="index"
               >
                 <template v-if="Array.isArray(value) && value.length > 1">
@@ -210,7 +210,7 @@
                   </td>
                 </tr>
               </template>
-              <template v-for="(value, name, index) in metadata.dublincore" :key="index">
+              <template v-for="(value, name, index) in metadata.dublinCore" :key="index">
                 <tr v-if="Array.isArray(value) && value.length > 1" v-for="v in value" :key="index" class="row">
                   <td v-if="v === value[0]" :rowspan="value.length"><span class="title" style="font-variant: all-small-caps"><b>dc:{{ name }}</b></span></td>
                   <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ v }}</span></td>

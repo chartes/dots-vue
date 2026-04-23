@@ -45,11 +45,11 @@
               <div class="collection-metadata">
                 <div class="collection-metadata-author-date">
                   <span>
-                    {{ Array.isArray(item.dublincore.creator)
-                      ? item.dublincore.creator.join(', ')
-                      : item.dublincore.creator }}
+                    {{ Array.isArray(item.dublinCore.creator)
+                      ? item.dublinCore.creator.join(', ')
+                      : item.dublinCore.creator }}
                   </span>
-                  <span>{{ item.dublincore.date }}</span>
+                  <span>{{ item.dublinCore.date }}</span>
                 </div>
                 <div class="collection-metadata-title">
                   {{ item.title }}
@@ -110,12 +110,12 @@
                 </span>
                 <div class="is-flex is-flex-direction-column">
                   <span>
-                    {{ Array.isArray(item.dublincore.creator)
-                      ? item.dublincore.creator.join(', ')
-                      : item.dublincore.creator }}
+                    {{ Array.isArray(item.dublinCore.creator)
+                      ? item.dublinCore.creator.join(', ')
+                      : item.dublinCore.creator }}
                   </span>
                   <span>
-                    {{ item.dublincore.date }}
+                    {{ item.dublinCore.date }}
                   </span><!-- v-if="c.date" -->
                 </div>
                 <div class="collection-description">

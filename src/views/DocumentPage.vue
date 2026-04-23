@@ -248,7 +248,7 @@
                     : ancestor.identifier === resourceId ? 'is-current' : ''"
                 >
                   <router-link :to="ancestor.router">
-                    {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
+                    {{ ancestor.title || ancestor.dublinCore?.title || 'fragment courant sans titre' }}
                   </router-link>
                   <!--<span class="keep-previous-centered" />-->
                 </li>
@@ -267,7 +267,7 @@
                     : ancestor.identifier === resourceId ? 'is-current' : ''"
                 >
                   <router-link :to="ancestor.router">
-                    {{ ancestor.title || ancestor.dublincore?.title || 'fragment courant sans titre' }}
+                    {{ ancestor.title || ancestor.dublinCore?.title || 'fragment courant sans titre' }}
                   </router-link>
                   <span class="keep-previous-centered" />
                 </li>
@@ -883,7 +883,7 @@ export default {
         response.member = []
       }
       response.member.filter(item => !item.title).forEach(m => {
-        m.title = m.dublincore && m.dublincore.title && m.dublincore.title.length ? m.dublincore.title : ''
+        m.title = m.dublinCore && m.dublinCore.title && m.dublinCore.title.length ? m.dublinCore.title : ''
         m.title = m.title.length ? m.title : m.extensions && m.extensions['tei:role'] ? m.extensions['tei:num'] ? m.extensions['tei:role'] + ' ' + m.extensions['tei:num'] : m.extensions['tei:role'] + ' ' + m.identifier : ''
         m.title = m.title.length ? m.title : m.extensions && m.citeType && m.extensions['tei:num'] ? m.citeType + ' ' + m.extensions['tei:num'] : ''
         m.title = m.title.length ? m.title : m.citeType + ' ' + m.identifier
@@ -963,7 +963,7 @@ export default {
                   children: obj.children ? obj.children : [],
                   member: obj.member ? obj.member : [],
                   parent: obj.parent,
-                  dublincore: obj.dublincore,
+                  dublinCore: obj.dublinCore,
                   extensions: obj.extensions
                 }
                 return updatedMember
@@ -1030,7 +1030,7 @@ export default {
                 children: obj.children ? obj.children : [],
                 member: obj.member ? obj.member : [],
                 parent: obj.parent,
-                dublincore: obj.dublincore,
+                dublinCore: obj.dublinCore,
                 extensions: obj.extensions
               }
               return updatedMember
@@ -1082,7 +1082,7 @@ export default {
       const titleMissing = (node) => {
         if (node.title) {
           return true
-        } else if (node.dublincore && node.dublincore.title && node.dublincore.title.length > 0) {
+        } else if (node.dublinCore && node.dublinCore.title && node.dublinCore.title.length > 0) {
           return true
         } else if (node.extensions && node.extensions['tei:role']) {
           return true
@@ -1426,13 +1426,13 @@ export default {
     }
 
     const ancestorLabel = (ancestor) => {
-      if ( ancestor.citeType === 'Resource' && ancestor?.dublincore?.creator) {
-        if (Array.isArray(ancestor.dublincore.creator)) {
-          return `${ancestor.dublincore.creator
+      if ( ancestor.citeType === 'Resource' && ancestor?.dublinCore?.creator) {
+        if (Array.isArray(ancestor.dublinCore.creator)) {
+          return `${ancestor.dublinCore.creator
             .map(c => typeof c === 'string' ? c : Object.values(c)[0])
             .join(', ')}, ${ancestor.title}`
         } else {
-          return `${ancestor.dublincore.creator}, ${ancestor.title}`
+          return `${ancestor.dublinCore.creator}, ${ancestor.title}`
         }
       }
       return ancestor.title
