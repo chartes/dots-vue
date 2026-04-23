@@ -82,7 +82,7 @@ function processValue(obj, isRoot = false) {
 
       if (k === 'member') {
         result[k] = value
-      } else if ((k === 'dublincore' || k === 'extensions') && value !== null && typeof value === 'object') {
+      } else if ((k === 'dublinCore' || k === 'extensions') && value !== null && typeof value === 'object') {
         const nested = processValue(value)
         for (const nk in nested) {
           result[nk] = nested[nk]
