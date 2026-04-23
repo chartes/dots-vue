@@ -95,7 +95,7 @@
               :is="customDescription"
               :dts-collection-description="currCollection.description"
               :custom-collection-description="collectionDescription"
-              :application-root-url="appRootUrl"
+              :application-root-url="normalisedBaseUrl(appRootUrl)"
             />
             <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
           </div>
@@ -239,6 +239,9 @@ export default {
 
     const appRootUrl = ref(`${import.meta.env.VITE_APP_APP_ROOT_URL}`)
     console.log('HomePage setup appRootUrl', appRootUrl.value)
+    const normalisedBaseUrl = (baseURL) => {
+      return baseURL.replace(/\/+$/, '') + '/'
+    }
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
@@ -724,6 +727,7 @@ export default {
 
     return {
       appRootUrl,
+      normalisedBaseUrl,
       appConfig,
       collConfig,
       customSort,
