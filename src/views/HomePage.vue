@@ -250,8 +250,7 @@ export default {
     const collectionDescription = computed(() => props.collectionConfig?.homePageSettings?.descriptionSection?.collectionDescription || '')
 
     const customCollectionDescription = computed(() =>
-      props.collectionConfig?.homePageSettings?.descriptionSection?.customCollectionDescription || {}
-    )
+      props.collectionConfig?.homePageSettings?.descriptionSection?.customCollectionDescription)
     console.log('HomePage setup customCollectionDescription', customCollectionDescription.value)
     const customDescription = shallowRef('')
     const collectionAltTitle = computed(() => props.collectionConfig.homePageSettings?.pageHeader?.collectionAltTitle)
