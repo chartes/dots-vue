@@ -242,25 +242,27 @@ export default {
     const normalisedBaseUrl = (baseURL) => {
       return baseURL.replace(/\/+$/, '') + '/'
     }
-    const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
-    const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
-    const rootCollectionId = ref(props.rootCollectionIdentifier)
-    const appConfig = ref(props.applicationConfig)
-    const collConfig = ref(props.collectionConfig)
-    const collectionDescription = ref('')
+    const isDocProjectIdInc = computed(() => props.isDocProjectIdIncluded)
+    const dtsRootCollectionId = computed(() => props.dtsRootCollectionIdentifier)
+    const rootCollectionId = computed(() => props.rootCollectionIdentifier)
+    const appConfig = computed(() => props.applicationConfig)
+    const collConfig = computed(() => props.collectionConfig)
+    const collectionDescription = computed(() => props.collectionConfig?.homePageSettings?.descriptionSection?.collectionDescription || '')
 
-    const customCollectionDescription = ref(props.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription ? props.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription : {})
+    const customCollectionDescription = computed(() =>
+      props.collectionConfig?.homePageSettings?.descriptionSection?.customCollectionDescription || {}
+    )
     console.log('HomePage setup customCollectionDescription', customCollectionDescription.value)
     const customDescription = shallowRef('')
     const collectionAltTitle = computed(() => props.collectionConfig.homePageSettings?.pageHeader?.collectionAltTitle)
     console.log('HomePage setup collectionAltTitle', collectionAltTitle.value)
-    const aboutBttnTxt = ref(props.collectionConfig.homePageSettings.pageHeader.aboutButtonText)
+    const aboutBttnTxt = computed(() => props.collectionConfig.homePageSettings.pageHeader.aboutButtonText)
     const isAboutOpened = ref(false)
 
     const hasNonEmptyObject = arr => arr.some(obj => obj && Object.keys(obj).length > 0)
     const hasAbout = computed(() => hasNonEmptyObject(props.collectionConfig.aboutPageSettings))
-    const browseBttnTxt = ref(props.collectionConfig.homePageSettings.listSection.browseButtonText)
-    const collectionId = ref(props.collectionIdentifier)
+    const browseBttnTxt = computed(() => props.collectionConfig.homePageSettings.listSection.browseButtonText)
+    const collectionId = computed(() => props.collectionIdentifier)
     console.log('HomePage setup collectionId', collectionId.value)
 
     const componentTOC = ref([])
@@ -561,27 +563,16 @@ export default {
       isAboutOpened.value = !isAboutOpened.value
     }
 
-    watch(props, async (newProps) => {
-      isDocProjectIdInc.value = newProps.isDocProjectIdIncluded
-      dtsRootCollectionId.value = newProps.dtsRootCollectionIdentifier
-      rootCollectionId.value = newProps.rootCollectionIdentifier
-      collectionId.value = newProps.collectionIdentifier
-      appConfig.value = newProps.applicationConfig
-      collConfig.value = newProps.collectionConfig
-      console.log('HomePage watch collConfig.value : ', newProps.collectionConfig)
-      browseBttnTxt.value = newProps.collectionConfig.homePageSettings.listSection.browseButtonText
-      //collectionAltTitle.value = newProps.collectionConfig.homePageSettings.pageHeader.collectionAltTitle
-      aboutBttnTxt.value = newProps.collectionConfig.homePageSettings.pageHeader.aboutButtonText
-      collectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.collectionDescription
-      customCollectionDescription.value = newProps.collectionConfig.homePageSettings.descriptionSection.customCollectionDescription
-      console.log('HomePage watch collectionConfig collectionDescription : ', collConfig.value, collectionDescription.value)
-
-      if (newProps.collectionConfig.homePageSettings.listSection.openState && !state.isTreeOpened) {
-        console.log('HomePage reopening ???')
-        await toggleExpanded(currCollection.value.identifier)
-      }
-
-    }, { deep: true, immediate: true })
+    watch(
+      () => collConfig.value?.homePageSettings?.listSection?.openState,
+      async (openState) => {
+        if (openState && !state.isTreeOpened) {
+          console.log('HomePage collConfig reopening ???')
+          await toggleExpanded(currCollection.value.identifier)
+        }
+      },
+      { immediate: true }
+    )
 
     watch(
   () => customCollectionDescription.value,
