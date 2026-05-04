@@ -235,10 +235,10 @@ export default {
         console.log('App.vue getCustomCss appCssConfs ', appCssConfs)
         console.log('App.vue getCustomCss collConfig.value.collectionCustomCss', collConfig.value.collectionCustomCss)
         console.log('App.vue getCustomCss get in if')
-        console.log('App.vue getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionId}/assets/css/${collConfig.value.collectionId}.customCss.css`)
+        console.log('App.vue getCustomCss path', `${import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH}/${collConfig.value.collectionCustomCss}/assets/css/${collConfig.value.collectionCustomCss}.customCss.css`)
 
         if (collConfig.value.collectionCustomCss && appCssConfs[collConfig.value.collectionCustomCss]) {
-          console.log('App.vue getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[collConfig.value.collectionId])
+          console.log('App.vue getCustomCss from collection and customCss exists : ', collConfig.value.collectionCustomCss, appCssConfs[collConfig.value.collectionCustomCss])
           customCss.value = (await appCssConfs[collConfig.value.collectionCustomCss]()).default
 
           // check if a customCss style tag exists, if not create it
