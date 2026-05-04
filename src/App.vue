@@ -86,6 +86,7 @@ export default {
     const route = useRoute()
     const store = useStore()
     const isInitializing = ref(true)
+    const pendingCollectionId = ref(null)
     const collConfigReady = ref(false)
 
     const currCollection = ref({})
@@ -271,13 +272,18 @@ export default {
     watch(
       () => store.state.collectionId,
       async (collectionIdFromStore) => {
+        console.log('watch store.state.collectionId 1 :', collectionIdFromStore, isInitializing.value, !collectionIdFromStore, !dtsRootCollectionId.value || !rootCollectionIdentifier.value)
 
         // Safeguards
-        if (isInitializing.value) return
         if (!collectionIdFromStore) return
         if (!dtsRootCollectionId.value || !rootCollectionIdentifier.value) return
 
-        console.log('watchEffect collectionId:', collectionIdFromStore)
+        if (isInitializing.value) {
+          pendingCollectionId.value = collectionIdFromStore
+          return
+        }
+
+        console.log('watch store.state.collectionId 2 :', collectionIdFromStore)
 
         collConfigReady.value = false
 
@@ -291,6 +297,28 @@ export default {
           await setCurrentCollectionContext(route)
 
           // Setting root, project and collection configs
+
+          await applyCollectionConfig(collectionIdFromStore)
+
+        } finally {
+          collConfigReady.value = true
+        }
+      },
+      { immediate: true }
+    )
+    async function applyCollectionConfig(collectionIdFromStore) {
+      collConfigReady.value = false
+
+      try {
+        collConfig.value = {}
+
+        collectionId.value = collectionIdFromStore?.length
+          ? collectionIdFromStore
+          : undefined
+
+        await setCurrentCollectionContext(route)
+
+        // Setting root, project and collection configs
 
           let rootCollectionOverrides =
             appConfig.value.collectionsConf.find(
@@ -357,12 +385,10 @@ export default {
               || rootCollConfig.value?.homePageSettings?.appNavBar.collectionShortTitle
           }
 
-        } finally {
-          collConfigReady.value = true
-        }
-      },
-      { immediate: true }
-    )
+      } finally {
+        collConfigReady.value = true
+      }
+    }
 
     watch(
       () => [route.name, route.params, route.query],
@@ -479,6 +505,12 @@ export default {
           collConfigReady.value = true
         } finally {
           isInitializing.value = false
+        }
+        if (pendingCollectionId.value) {
+          const pendingCollIdValue = pendingCollectionId.value
+          pendingCollectionId.value = null
+
+          await applyCollectionConfig(pendingCollIdValue)
         }
 
       },
