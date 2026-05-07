@@ -69,7 +69,7 @@
                   :to="{ name: 'Terms'}"
                   active-class="active"
                 >
-                  Terms of service
+                  Mentions légales
                 </router-link>
               </li>
               <li>
