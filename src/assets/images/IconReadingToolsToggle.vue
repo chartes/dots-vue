@@ -39,13 +39,10 @@ const cssVars = computed(() => ({
 
 <style scoped>
 .icon-wrapper {
-  width: var(--size);
-  height: var(--size);
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: var(--bg);
-  border-radius: 4px;
   overflow: hidden;
   color: var(--fg);
   transition: background-color 0.2s, color 0.2s;

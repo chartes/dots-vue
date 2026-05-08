@@ -327,11 +327,6 @@ name: 'CollectionTOC',
   margin-bottom: 18px;
 }
 
-.pagination :deep(.pagination-documents-count) {
-  font-size: 24px;
-  line-height: 1;
-}
-
 /* GLOBAL */
 .list-mode {
   width: 100%;
@@ -691,10 +686,6 @@ input[type=number] {
   .list-mode .pagination {
     padding-left: var(--mobile-margin);
     padding-right: var(--mobile-margin);
-  }
-
-  .pagination :deep(.pagination-documents-count) {
-    font-size: 24px;
   }
 }
 

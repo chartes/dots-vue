@@ -29,19 +29,13 @@ const cssVars = {
   '--bg': props.bgColor,
   '--fg': props.fgColor,
   '--size': `${props.size}px`,
-  '--radius': `${props.radius}px`
 }
 </script>
 
 <style scoped>
 .icon-wrapper {
-  --size: 42px;
-  --radius: 4px;
   --bg: #ffffff;
 
-  width: var(--size, 42px);
-  height: var(--size, 42px);
-  border-radius: var(--radius, 4px);
   background-color: var(--bg);
   color: var(--fill-color, var(--icon-text-color));
   border: var(--fill-color) solid 1px;

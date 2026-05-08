@@ -38,7 +38,7 @@
         :class="scrollTopIsVisible ? 'is-available' : ''"
         @click.prevent="scrollToTop"
       >
-        <button type="button" aria-label="Retour en haut">
+        <button type="button" class="dots-button" aria-label="Retour en haut">
           <DirectionArrows
             :size="40"
             :radius="4"

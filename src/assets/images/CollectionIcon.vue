@@ -49,10 +49,6 @@ const iconTransform = computed(() => 'scale('+ props.iconScale + ')' );
   align-items: center;
   justify-content: center;
 
-  width: var(--size, 40px);
-  height: var(--size, 40px);
-  border-radius: var(--radius, 6px);
-
   color: var(--fg, #ffffff);
   background-color: var(--bg);
 

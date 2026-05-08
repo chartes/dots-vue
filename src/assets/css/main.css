@@ -318,8 +318,6 @@ img, video {
     text-align: center;
 }
 .pagination {
-    font-size: 1rem;
-    margin: -.25rem;
 }
 
 .tile {
@@ -621,7 +619,7 @@ p.header-baseline span {
     background: url(@/assets/images/croix.svg) center / cover no-repeat;
 }
 
-.breadcrumb-panel.is-opened .breadcrumb-top-toggle-bttn {
+.breadcrumb-panel.is-opened .breadcrumb-top-toggle-btn {
     color: var(--fill-color);
 
     position: absolute;
@@ -918,9 +916,16 @@ a.noteref sup {
     --font-secondary: "Roboto Condensed";
     --font-serif: Georgia, "Time New Roman";
 
+    --button-size: 40px;
+    --button-border-radius: 4px;
+    --button-font-size: 14px;
+
     @media screen and (max-width: 768px) {
         --font-default-size : 16px;
         --font-default-line-heigth : 1.6;
+        --button-size: 30px;
+        --button-border-radius: 4px;
+        --button-font-size: 12px;
     }
 
     /* Site width on large destop - cf media queries : @media screen and (max-width: 1320px) */
@@ -942,6 +947,24 @@ a.noteref sup {
 
     --text-decoration-hover: underline dotted;
 }
+
+.dots-button {
+    width: var(--button-size);
+    height: var(--button-size);
+    min-width: var(--button-size);
+    max-height: var(--button-size);
+    border-radius: var(--button-border-radius);
+    font-size: var(--button-font-size);
+    font-weight: 700;
+    cursor: pointer;
+
+    & > .icon-wrapper {
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+    }
+}
+
 
 /*=============================================================
  PART 2

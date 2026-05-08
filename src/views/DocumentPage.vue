@@ -121,6 +121,7 @@
           >
             <div class="tab-header">
               <button
+                class="dots-button"
                 :class="{ active: activePanel === 'meta' }"
                 @click="activePanel = 'meta'"
               >
@@ -128,6 +129,7 @@
               </button>
 
               <button
+                class="dots-button"
                 :class="{ active: activePanel === 'summary' }"
                 @click="activePanel = 'summary'"
               >
@@ -135,7 +137,7 @@
               </button>
               <CloseCross
                 href="#"
-                class="breadcrumb-top-toggle-bttn"
+                class="dots-button breadcrumb-top-toggle-btn"
                 fg="blue"
                 size="40"
                 @click.prevent="openObject(activeObject, activeBreadcrumb)"
@@ -219,7 +221,7 @@
             <!-- LeftTOC button -->
             <button
               type="button"
-              class="toc-menu-toggle"
+              class="dots-button toc-menu-toggle"
               aria-label="Afficher le sommaire"
               :class="hasValidTOC ? TOCMenuBtnCssClass : 'disabled'"
               @click="toggleTOCMenu"
@@ -284,7 +286,7 @@
             aria-label="Navigation dans le document"
           >
             <router-link
-              class="to-previous-fragment"
+              class="dots-button to-previous-fragment"
               :class="previousRefId === '' ? 'disabled' : ''"
               :to="{ name: 'Document', params: { collId: collConfig.collectionId, id: resourceId }, query: { refId: previousRefId } }"
               aria-label="Fragment précédent"
@@ -296,7 +298,7 @@
               />
             </router-link>
             <router-link
-              class="to-next-fragment has-tooltip"
+              class="dots-button to-next-fragment has-tooltip"
               :class="{ disabled: !nextRefId }"
               :to="{ name: 'Document', params: { collId: collConfig.collectionId, id: resourceId }, query: { refId: nextRefId } }"
               :aria-disabled="!nextRefId"
@@ -322,7 +324,7 @@
       aria-label="Options d’affichage du document"
     >
       <button
-        class="controls-toggle"
+        class="dots-button controls-toggle"
         aria-label="Afficher les outils de lecture"
         :aria-expanded="isControlsOpened"
         @click="toggleControls"
@@ -340,7 +342,7 @@
         <li v-if="manifestIsAvailable">
           <button
             type="button"
-            class="text-btn"
+            class="dots-button text-btn"
             aria-label="Texte seul"
             @click="changeViewMode('text-mode')"
           >
@@ -355,7 +357,7 @@
         <li v-if="manifestIsAvailable">
           <button
             type="button"
-            class="images-btn"
+            class="dots-button images-btn"
             aria-label="Images seules"
             @click="changeViewMode('images-mode')"
           >
@@ -370,7 +372,7 @@
         <li v-if="hasNotes">
           <button
             type="button"
-            class="notes-btn"
+            class="dots-button notes-btn"
             :class="{ 'is-opened': isNotesOpened }"
             aria-pressed="isNotesOpened"
             aria-label="Afficher les notes"
@@ -384,7 +386,7 @@
             v-if="refId && refId.length > 0"
             target="_blank"
             :href="`${dtsUrl}/document?resource=${resourceId}&ref=${refId}`"
-            class="xml-btn"
+            class="dots-button xml-btn"
             aria-label="Télécharger le XML"
           >
             <XMLIcon :size="40" />
@@ -394,7 +396,7 @@
             v-else
             target="_blank"
             :href="`${dtsUrl}/document?resource=${resourceId}`"
-            class="xml-btn"
+            class="dots-button xml-btn"
             aria-label="Télécharger le XML"
           >
             <XMLIcon :size="40" />
@@ -2043,8 +2045,6 @@ export default {
 }
 .controls button {
   display: flex;
-  height: 40px;
-  width: 40px;
   pointer-events: auto;
 }
 
@@ -2093,13 +2093,10 @@ export default {
 
 .controls-toggle .icon-wrapper {
   color: var(--fill-color);
-  height: 40px;
-  width: 40px;
 }
 .controls-toggle[aria-expanded="true"] .icon-wrapper {
   color: #ffffff;
   background-color: var(--fill-color);
-  border-radius: 4px;
   overflow: hidden;
   /* même couleur que stroke pour que le contour disparaisse visuellement */
   border: 1px solid var(--fill-color);
@@ -2125,8 +2122,7 @@ export default {
   background: url(../assets/images/b_PDF.svg) center / cover no-repeat;
 }*/
 .controls .xml-btn {
-  height: 40px;
-  width: 40px;
+  display: inline-block;
   color: var(--fill-color);
 }
 
@@ -2578,14 +2574,10 @@ div.remove-bottom-padding #article {
         outline-offset: 2px;
       }
       /* custom style */
-      width: 40px;
-      min-width: 40px;
-      height: 40px;
       margin-right: 20px;
       text-align: center;
       align-content: center;
       color: var(--text-color);
-      border-radius: 4px;
 
       &.is-opened {
         color: white;
@@ -2860,6 +2852,8 @@ ul.breadcrumb-top {
     margin-right: var(--crumb-gap);
 
     & .breadcrumb-top-icon {
+      width: 30px;
+      height: 30px;
       color: var(--fill-color);
     }
 
@@ -3119,13 +3113,9 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 }
 
 .tab-header button {
-  height: 40px;
+  width: auto;
   background: #FFF;
-  border-radius: 4px;
   font-family: var(--font-primary), sans-serif;
-  font-weight: 700;
-  font-size: 16px;
-  cursor: pointer;
   padding: 6px 30px;
   color: var(--fill-color);
   border: 1px solid var(--fill-color);
@@ -3272,7 +3262,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     padding: 10px;
   }
 
-  .breadcrumb-panel.is-opened .breadcrumb-top-toggle-bttn {
+  .breadcrumb-panel.is-opened .breadcrumb-top-toggle-btn {
     right: 10px;
   }
 }
@@ -3379,7 +3369,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     display: flex;
     margin-left: 0; /* annule margin-left: auto */
     order: 2;       /* met le bouton à droite */
-    max-height: 40px;
     margin-top: 0.5ex;
     margin-bottom: 0.5ex;
   }
