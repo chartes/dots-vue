@@ -68,8 +68,6 @@
                   <ResourceIcon
                     v-else
                     class="breadcrumb-top-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   <span class="breadcrumb-label">
                     {{ ancestorLabel(selectStoreCollection(item)) }}
@@ -93,8 +91,6 @@
                   <ResourceIcon
                     v-else
                     class="breadcrumb-top-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   <span class="breadcrumb-label">
                     {{ ancestorLabel(item[0]) }}
@@ -2075,17 +2071,12 @@ export default {
   background: white;
   border: none;
 
-  /*width: 100%;*/
-  height: 100%;
   padding: 0;
   margin: 0;
 
   cursor: pointer;
 }
 .controls-list button {
-  width: 40px;
-  height: 40px;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3281,7 +3272,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
       }
     }
   }
-  
+
   #article {
     padding: 40px var(--mobile-margin) 120px;
   }

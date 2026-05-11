@@ -57,6 +57,11 @@ const iconTransform = computed(() => 'scale('+ props.iconScale + ')' );
   flex-shrink: 0;
 }
 
+.icon {
+  width: 100%;
+  height: 100%;
+}
+
 .disabled .icon-wrapper {
   background-color: #C3C3C3;
 }

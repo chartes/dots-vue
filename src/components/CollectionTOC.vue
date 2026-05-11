@@ -230,8 +230,6 @@
                 >
                   <ResourceIcon
                     class="resource-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   {{ item.title }}
                 </a>
@@ -243,8 +241,6 @@
                 >
                   <ResourceIcon
                     class="resource-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   {{ item.title }}
                 </a>
@@ -256,8 +252,6 @@
                 >
                   <ResourceIcon
                     class="resource-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   {{ item.title }}
                 </a>
@@ -269,8 +263,6 @@
                 >
                   <ResourceIcon
                     class="resource-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   {{ item.title }}
                 </a>
@@ -282,8 +274,6 @@
                 >
                   <ResourceIcon
                     class="resource-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   {{ item.title }}
                 </a>
@@ -1442,11 +1432,12 @@ button.toc-toggle {
   display: flex;
   flex-direction: column;
 }
+
+.resource-icon,
 .collection-icon {
   color: var(--text-color);
-}
-.resource-icon {
-  color: var(--text-color);
+  width: 30px;
+  height: 30px;
 }
 
 /* Card */
