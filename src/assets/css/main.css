@@ -629,6 +629,12 @@ p.header-baseline span {
 
 /* Notes */
 
+.document-views figure img {
+    width: 100%;
+}
+
+/* Notes */
+
 a.noteref {
     scroll-margin-top: 100px;
 }
