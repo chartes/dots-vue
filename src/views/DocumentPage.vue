@@ -3177,6 +3177,19 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     padding-right: 10px;
   }
 
+  .controls {
+    top: 42px;
+  }
+
+  .controls-list.is-opened {
+    position: absolute;
+    top: 50px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
   .navigation-row-top-container {
     padding: 8px 0;
   }
@@ -3380,14 +3393,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     flex-direction: column;
   }
 
-  .controls-list.is-opened {
-    position: absolute;
-    top: 64px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
   .controls button.controls-toggle {
     display: flex;
     margin-left: 0; /* annule margin-left: auto */
