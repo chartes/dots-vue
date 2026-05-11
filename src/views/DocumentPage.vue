@@ -669,7 +669,7 @@ export default {
 
     // reading options bar
 
-    const isControlsOpened = ref(true)
+    const isControlsOpened = ref(false)
     const toggleControls = (e) => {
       e.stopPropagation();
       isControlsOpened.value = !isControlsOpened.value
