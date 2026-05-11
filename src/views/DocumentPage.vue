@@ -3301,6 +3301,20 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   .tab-content {
     padding: 10px;
   }
+
+  .toc-aside-is-opened #aside {
+    width: 100%;
+  }
+
+  /* Negative margin is necessary to maintain the sticky behavior */
+  .toc-aside-is-opened .toc-area-aside {
+    width: calc(100vw - 60px);
+  }
+
+  .toc-aside-is-opened .document-views {
+    margin-left: calc(60px - 100vw);
+  }
+
 }
 
 @media screen and (max-width: 640px) {
@@ -3337,13 +3351,15 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     width: 100%;
   }
 
+  /* Negative margin is necessary to maintain the sticky behavior */
   .toc-aside-is-opened .toc-area-aside {
-    width: 70vw;
+    width: calc(100vw - 60px);
   }
 
   .toc-aside-is-opened .document-views {
-    margin-left: -70vw;
+    margin-left: calc(60px - 100vw);
   }
+
 
   .toc-area .toc-area-content nav > ol.tree {
     columns: 1;

@@ -164,7 +164,7 @@ export default {
   width: 100%;
   padding: 0;
   transform: rotateZ(0);
-  margin-top: 100px !important;
+  margin-top: 0 !important;
 }
 
 .footer .columns {
