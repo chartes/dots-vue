@@ -675,7 +675,7 @@ export default {
       isControlsOpened.value = !isControlsOpened.value
     }
 
-    const isNotesOpened = ref(true)
+    const isNotesOpened = ref(false)
     const hasNotes = ref(false)
 
     // collection breadcrumb scrolls reactive

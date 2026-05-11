@@ -660,8 +660,9 @@ a.noteref sup {
     visibility: visible;
 }
 
+/* Hides Notes if TOC is opened */
 .toc-aside-is-opened .notes-opened .aside-noteref-parent {
-    visibility: hidden;
+    /* visibility: hidden; */
 }
 
 .aside-noteref-parent {
