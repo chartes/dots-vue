@@ -524,7 +524,7 @@ export default {
         const btn = document.querySelector('.scroll-top')
         if (!footer || !btn) return
 
-        const BASE_BOTTOM = 120;
+        const BASE_BOTTOM = 20;
         const observer = new IntersectionObserver(([entry]) => {
             // footer height really visible in viewport
             const visibleFooter = entry.intersectionRect?.height || 0
