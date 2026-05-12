@@ -667,17 +667,21 @@ a.noteref sup {
 
 .aside-noteref-parent {
     visibility: hidden;
+
     position: fixed;
-    left: calc((100vw - var(--default-content-width)) / 2);
-    right: calc((100vw - var(--default-content-width)) / 2);
+    left: 0;
+    right: 0;
     bottom: 0;
     z-index: 8;
 
+    margin: 0 auto;
     max-width: var(--default-content-width);
+}
+
+.aside-noteref-list {
+    margin: 0 10%;
     padding-bottom: 10px;
-    /*padding-right: 20px;*/
     background-color: rgba(255, 255, 255, 0.95);
-    border-top: #CCCCCC 1px solid;
 
     max-height: 30vh;
     overflow-y: auto;
@@ -686,7 +690,15 @@ a.noteref sup {
     line-height: inherit;
 }
 
-.aside-noteref-parent:empty {
+.aside-noteref-list::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    border-top: #CCCCCC 1px solid;
+}
+
+.aside-noteref-list:empty {
     border: none;
     padding-bottom: 0;
 }
@@ -817,12 +829,13 @@ a.noteref sup {
     }
 
     .aside-noteref-parent {
-        max-width: 100vw;
-        width: calc(100vw - 40px);
-        margin: 0 auto;
-        left: 0;
-        right: 0;
+        margin: 0 20px;
     }
+
+    .aside-noteref-list {
+        padding: 0;
+    }
+
     .aside-noteref {
         padding: 20px 30px 0 var(--mobile-margin);
     }
@@ -853,11 +866,7 @@ a.noteref sup {
         max-width: 100%;
         padding: 0 var(--mobile-margin);
     }
-    .aside-noteref-parent {
-        width: 100%;
-        left: 10px !important;
-        right: 10px !important;
-    }
+
     .toggle-btn {
         width: 20px;
         right: var(--mobile-margin);
@@ -875,8 +884,11 @@ a.noteref sup {
     }
 
     .aside-noteref-parent {
-        margin-left:  calc(-1 * var(--mobile-margin));
-        margin-right:  calc(-1 * var(--mobile-margin));
+        margin: 0 10px;
+    }
+
+    .aside-noteref-list {
+        margin: 0;
     }
 }
 
