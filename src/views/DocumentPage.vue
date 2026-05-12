@@ -3158,10 +3158,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   .toc-aside-is-opened .toc-area-aside {
     box-shadow: 8px 8px 5px 0 rgba(0, 0, 0, 0.2);
   }
-
-  .toc-aside-is-opened .document-views {
-    width: calc(100% - 280px);
-  }
 }
 
 @media screen and (max-width: 768px) {

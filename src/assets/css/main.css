@@ -660,11 +660,6 @@ a.noteref sup {
     visibility: visible;
 }
 
-/* Hides Notes if TOC is opened */
-.toc-aside-is-opened .notes-opened .aside-noteref-parent {
-    /* visibility: hidden; */
-}
-
 .aside-noteref-parent {
     visibility: hidden;
 
@@ -676,6 +671,10 @@ a.noteref sup {
 
     margin: 0 auto;
     max-width: var(--default-content-width);
+}
+
+.toc-aside-is-opened .notes-opened .aside-noteref-parent {
+    padding-left: 220px;
 }
 
 .aside-noteref-list {
@@ -887,8 +886,13 @@ a.noteref sup {
         margin: 0 10px;
     }
 
+    .toc-aside-is-opened .notes-opened .aside-noteref-parent {
+        padding-left: 0;
+    }
+
     .aside-noteref-list {
         margin: 0;
+        padding: 0 0 10px 0;
     }
 }
 
