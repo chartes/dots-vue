@@ -51,7 +51,10 @@ if (isDocProjectIdIncluded) {
         component: () => import('@/views/DocumentPage.vue'),
         props: true
       }
-    ]
+    ],
+    scrollBehavior (to, from, savedPosition) {
+      return { top: 0 }
+    }
   })
 } else {
   router = createRouter({
@@ -84,7 +87,10 @@ if (isDocProjectIdIncluded) {
         component: () => import('@/views/DocumentPage.vue'),
         props: true
       }
-    ]
+    ],
+    scrollBehavior (to, from, savedPosition) {
+      return { top: 0 }
+    }
   })
 }
 
