@@ -3162,7 +3162,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   .navigation-document::after {
     width: 100vw;
-    left: calc(-1 * var(--mobile-margin));
+    left: -20px;
   }
 
   .document-views .text-view > * teiheader,
@@ -3201,6 +3201,10 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 }
 
 @media screen and (max-width: 768px) {
+
+  .navigation-document::after {
+    left: calc(-1 * var(--mobile-margin));
+  }
 
   .document-area.app-width-margin {
     padding-left: 0;
