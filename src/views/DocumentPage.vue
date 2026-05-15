@@ -2716,7 +2716,7 @@ div.remove-bottom-padding #article {
 .document-area {
   position: relative;
   z-index: 10;
-  top: -60px;
+  margin-top: -60px;
   width: 100%;
 }
 
@@ -3160,7 +3160,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 @media screen and (max-width: 1024px) {
 
   .document-area {
-    top: -60px;
+    margin-top: -60px;
   }
 
   .navigation-document::after {
@@ -3211,7 +3211,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   .document-area {
-    top: -50px;
+    margin-top: -50px;
   }
 
   .document-views {
@@ -3385,7 +3385,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   .document-area {
-    top: -56px;
+    margin-top: -56px;
   }
 
   .toc-area-aside {
