@@ -313,7 +313,7 @@ div.toc-area-content.toc-content {
     font-weight: 500;
     line-height: 22px;
     columns: 3;
-    gap: 40px;
+    gap: 20px;
     min-height: 100px;
     width: 100%;
 
@@ -535,6 +535,9 @@ button.toc-toggle {
   border: none;
 
   flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
   width: 30px;
   height: 30px;
   padding: 0;

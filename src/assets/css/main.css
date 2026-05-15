@@ -549,7 +549,7 @@ p.header-baseline span {
     border-radius: 6px;
 }
 .ariane-collection-top .collection-toc-area {
-    padding-left: 15px;
+    padding-left: 0;
 }
 .document-card .collection-toc-area {
     margin-bottom: 0;

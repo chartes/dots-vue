@@ -159,10 +159,10 @@
               >
                 <div
                   v-if="selectedCollection.type === 'Collection' || selectedCollection.citeType === 'Collection'"
-                  class="collection-toc-area app-width-margin"
+                  class="collection-toc-area"
                   :class="tocCssClass"
                 >
-                  <div class="menu app-width-margin">
+                  <div class="menu">
                     <CollectionTOC
                       :is-doc-projectId-included="isDocProjectIdInc"
                       :display-option="'toc'"

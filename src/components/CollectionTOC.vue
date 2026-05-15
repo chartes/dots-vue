@@ -124,7 +124,7 @@
 
   <div
     v-if="(displayMode === 'toc')"
-    :class="`collection-toc-area app-width-margin ${expandedById[currCollection.identifier] ? 'expanded': ''} toc-mode`"
+    :class="`collection-toc-area ${expandedById[currCollection.identifier] ? 'expanded': ''} toc-mode`"
   >
     <div
       v-if="(displayMode === 'toc' && lvl < 2)"
@@ -153,7 +153,7 @@
     </div>
     <div
       v-if="displayMode === 'toc'"
-      class="menu app-with-margin"
+      class="menu"
       :class="expandedById[currCollection.identifier] ? 'expanded': ''"
     >
       <div v-if="expandedById[currCollection.identifier]">
@@ -282,7 +282,7 @@
                 v-if="(expandedById[item.identifier] || item.expanded)
                   && item.totalChildren > 0
                   && item.children?.length > 0"
-                class="is-tree-opened menu app-width-margin expanded"
+                class="is-tree-opened menu expanded"
               >
                 <CollectionTOC
                   :is-doc-projectId-included="isDocProjectIdInc"
@@ -1018,8 +1018,8 @@ export default {
 
 .collection-toc-area, .modal-wrapper {
   .tree {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   .tree li {
@@ -1066,7 +1066,6 @@ export default {
       padding-left: 0 !important;
 
       & > .li.container > a, span {
-        margin-top: 4px;
         &.is-current {
           font-weight: bold !important;
           color: var(--text-color) !important;
@@ -1236,7 +1235,7 @@ button.toc-toggle {
   cursor: pointer;
 }
 .toc-mode > .menu.expanded ul.tree li.more a {
-  padding: 13px 5px 11px 5px;
+  padding: 15px 5px 13px 5px;
 }
 .toc-mode > .menu.expanded {
   padding: 0;
@@ -1622,7 +1621,7 @@ button.toc-toggle {
 .collection-toc-area .menu.expanded ul.tree li a {
   font-family: var(--font-primary), sans-serif;
   font-weight: 400;
-  font-size: 18px;
+  font-size: var(--font-toc-metadata-size);
   color: #080808;
 }
 
