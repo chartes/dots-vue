@@ -1971,7 +1971,7 @@ export default {
 }
 .toc-area .toc-area-content aside {
   width: 100% !important;
-  padding: 20px 50px !important;
+  padding: 20px 10px !important;
 }
 .toc-area .toc-area-content nav > ol.tree {
   columns: 4;
@@ -2606,6 +2606,10 @@ div.remove-bottom-padding #article {
   scroll-behavior: smooth;
   scrollbar-width: thin;
 
+  font-family: var(--font-secondary), sans-serif;
+  font-size: var(--font-default-size);
+  font-weight: 500;
+  color: #000000;
 }
 .crumbs li + li:before {
   width: 100% !important;
@@ -2644,7 +2648,7 @@ div.remove-bottom-padding #article {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 200px;
+      max-width: 320px;
     }
   }
 
@@ -3357,11 +3361,11 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   /* Negative margin is necessary to maintain the sticky behavior */
   .toc-aside-is-opened .toc-area-aside {
-    width: calc(100vw - 60px);
+    width: calc(100vw - 55px);
   }
 
   .toc-aside-is-opened .document-views {
-    margin-left: calc(60px - 100vw);
+    margin-left: calc(55px - 100vw);
 
     &::before {
       width: 100%;

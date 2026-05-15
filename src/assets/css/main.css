@@ -935,7 +935,7 @@ a.noteref sup {
     --font-default-size : 16px;
     --font-default-line-heigth : 1.4;
     --font-small-size : 14px; /* document source, notes, ... */
-    --font-toc-metadata-size: 17px;
+    --font-toc-metadata-size: 15px;
 
     --font-secondary: "Roboto Condensed";
     --font-serif: Georgia, "Time New Roman";
