@@ -2018,13 +2018,11 @@ export default {
   border: none;
   box-shadow: none;
 }
+
+.toc-area-aside a,
 .toc-area-content a {
-  font-size: 17px;
-  line-height: 20px;
-}
-.toc-area-aside a {
-  font-size: 16px;
-  line-height: 19px;
+  font-size: var(--font-toc-metadata-size);
+  line-height: 1.4;
 }
 
 .controls {
@@ -3190,6 +3188,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     padding: 8px 0;
   }
   .breadcrumb-panel {
+    padding: 10px 0 20px;
     margin-left: calc(-1 * var(--mobile-margin));
     margin-right: calc(-1 * var(--mobile-margin));
   }
@@ -3205,7 +3204,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   ul.breadcrumb-top {
-    margin-bottom: 0;
+    margin-bottom: 10px;
     font-size: 15px;
   }
 
@@ -3286,7 +3285,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     padding: 40px var(--mobile-margin) 120px;
   }
   .toc-area .toc-area-content aside {
-    padding: 20px 20px !important;
+    padding: 15px 10px !important;
   }
 
   .l-n {
@@ -3295,6 +3294,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   .tab-header,
   .tab-content {
+    height: auto;
     padding: 10px;
   }
 
