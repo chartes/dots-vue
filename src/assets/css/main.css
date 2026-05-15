@@ -853,6 +853,10 @@ a.noteref sup {
         font-size: 30px;
         line-height: 36px;
     }
+    .scroll-top button {
+        position: fixed;
+        right: var(--mobile-margin);
+    }
 }
 
 @media screen and (max-width: 768px) {
