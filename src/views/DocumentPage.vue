@@ -2093,9 +2093,6 @@ export default {
 
 .controls .notes-btn {
   color: #C3C3C3;
-  border: 1px solid #C3C3C3;
-  border-radius: 4px;
-  font-size: 20px;
 
   &.is-opened {
     color: var(--fill-color);
