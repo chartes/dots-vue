@@ -708,6 +708,10 @@ a.noteref sup {
     width: 100%;
     padding: 20px 5px 0;
     margin-bottom: 20px;
+
+    &.clamped a.see-all-link {
+        display: none;
+    }
 }
 
 .aside-noteref:not(:first-child) {
