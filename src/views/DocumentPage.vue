@@ -409,7 +409,7 @@
         <aside id="aside">
           <nav>
             <nav>
-              <span v-if="arianeDocument.length && arianeDocument[0].descendant">{{ arianeDocument[0].descendant }}{{ countEditorialTypes.length > 0 ? ' item de type ' + countEditorialTypes[0] : '' }}</span>
+              <span style="display: none" v-if="arianeDocument.length && arianeDocument[0].descendant">{{ arianeDocument[0].descendant }}{{ countEditorialTypes.length > 0 ? ' item de type ' + countEditorialTypes[0] : '' }}</span>
               <TOC
                 :key="arianeDocument"
                 :is-doc-project-id-included="isDocProjectIdInc"
@@ -2142,14 +2142,18 @@ export default {
   z-index: 2;
 
   display: flex;
-  width: 230px;
+  width: 320px;
   background-color: #FFF;
 
-    & > aside > nav {
-      position: sticky;
-      top: 80px;
-      height: calc(100vh - 250px);
-      padding-bottom: 20px;
+  & > aside#aside {
+    width: 100%;
+  }
+
+  & > aside > nav {
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 81px); /* 81px = sticky header height */
+    padding-bottom: 20px;
       & > nav {
         height: 100%;
         overflow-y: auto;
@@ -2159,7 +2163,7 @@ export default {
 .toc-aside-is-opened .document-views {
   position: relative;
   z-index: 1;
-  width: calc(100% - 240px);
+  width: calc(100% - 300px - 10px);
 }
 
 .mirador-view {
@@ -2713,7 +2717,6 @@ div.remove-bottom-padding #article {
   position: relative;
   z-index: 10;
   top: -60px;
-
   width: 100%;
 }
 
@@ -2721,8 +2724,8 @@ div.remove-bottom-padding #article {
   z-index: 11;
 }
 
-
 .navigation-document {
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: left;
@@ -2730,8 +2733,18 @@ div.remove-bottom-padding #article {
   width: 100%;
   padding-top: 20px;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--fill-color) !important;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    display: block;
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px solid var(--fill-color) !important;
+  }
 }
+
 .navigation-document-top {
   display: flex;
   flex-direction: row;
@@ -3146,6 +3159,15 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
 @media screen and (max-width: 1024px) {
 
+  .document-area {
+    top: -60px;
+  }
+
+  .navigation-document::after {
+    width: 100vw;
+    left: calc(-1 * var(--mobile-margin));
+  }
+
   .document-views .text-view > * teiheader,
   .document-views .text-view > * body {
     width: auto;
@@ -3153,9 +3175,32 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     margin-right: 0;
   }
 
-  .toc-aside-is-opened .toc-area-aside {
-    box-shadow: 8px 8px 5px 0 rgba(0, 0, 0, 0.2);
+  .toc-aside-is-opened #aside {
+    width: 100%;
+    padding-right: 20px;
   }
+
+  /* Negative margin is necessary to maintain the sticky behavior */
+  .toc-aside-is-opened .toc-area-aside {
+    width: calc(100vw - 105px);
+  }
+
+  .toc-aside-is-opened .document-views {
+    width: 100% !important;
+    margin-left: calc(105px - 100vw);
+
+    &::before {
+      content: "";
+      display: block;
+      width: calc(100% + 20px);
+      height: 100%;
+      background-color: rgba(0,0,0,0.65);
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+
 }
 
 @media screen and (max-width: 768px) {
@@ -3163,6 +3208,10 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   .document-area.app-width-margin {
     padding-left: 0;
     padding-right: 0;
+  }
+
+  .document-area {
+    top: -50px;
   }
 
   .document-views {
@@ -3230,11 +3279,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     }
   }
 
-  .toc-aside-is-opened .document-views {
-    width: 100% !important;
-    margin-left: -230px;
-  }
-
   .fade-left,
   .fade-right {
     height: 33px;
@@ -3242,7 +3286,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   /* Ariane Document */
   .navigation-document {
-    padding: 4px 0 0;
+    padding: 3px 0;
   }
 
   .doc-fade-left,
@@ -3284,9 +3328,11 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   #article {
     padding: 40px var(--mobile-margin) 120px;
   }
+
   .toc-area .toc-area-content aside {
     padding: 15px 10px !important;
   }
+
 
   .l-n {
     margin-left: -2.2rem;
@@ -3302,6 +3348,12 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     width: 100%;
   }
 
+  .toc-aside-is-opened .toc-area-aside {
+    & > aside > nav {
+      height: calc(100vh - 45px); /* 45px = mobile sticky header height */
+    }
+  }
+
   /* Negative margin is necessary to maintain the sticky behavior */
   .toc-aside-is-opened .toc-area-aside {
     width: calc(100vw - 60px);
@@ -3309,6 +3361,10 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   .toc-aside-is-opened .document-views {
     margin-left: calc(60px - 100vw);
+
+    &::before {
+      width: 100%;
+    }
   }
 
 }
@@ -3328,16 +3384,9 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     font-size: 9px;
   }
 
-  /*
-  .toc-aside-is-opened .document-views {
-    width: 100%;
+  .document-area {
+    top: -56px;
   }
-  .document-views {
-    max-width: 100%;
-    position: relative;
-  }
-
-  */
 
   .toc-area-aside {
     display: none;
@@ -3346,16 +3395,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   .toc-aside-is-opened #aside {
     width: 100%;
   }
-
-  /* Negative margin is necessary to maintain the sticky behavior */
-  .toc-aside-is-opened .toc-area-aside {
-    width: calc(100vw - 60px);
-  }
-
-  .toc-aside-is-opened .document-views {
-    margin-left: calc(60px - 100vw);
-  }
-
 
   .toc-area .toc-area-content nav > ol.tree {
     columns: 1;
