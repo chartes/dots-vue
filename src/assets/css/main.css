@@ -848,7 +848,6 @@ a.noteref sup {
         gap: 20px;
     }
 
-    .footer .title-container > .title,
     .tile.page-header p.title {
         font-size: 30px;
         line-height: 36px;
@@ -954,7 +953,7 @@ a.noteref sup {
     --button-font-size: 14px;
 
     @media screen and (max-width: 768px) {
-        --font-default-size : 16px;
+        --font-default-size : 14px;
         --font-default-line-heigth : 1.6;
         --font-toc-metadata-size: 14px;
         --button-size: 30px;
