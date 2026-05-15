@@ -340,6 +340,8 @@ export default {
         notesPresent = hasNotesInHTML(data)
       }
 
+      console.log("notesPresent", notesPresent, mediaType.value)
+
       // Emit presence of notes to parent
       emit('has-notes', notesPresent)
       hasNotes.value = notesPresent

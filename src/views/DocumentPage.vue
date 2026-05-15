@@ -3258,7 +3258,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   ul.breadcrumb-top {
-    margin-bottom: 10px;
+    margin-bottom: 0;
     font-size: 15px;
   }
 
@@ -3331,7 +3331,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   #article {
-    padding: 40px var(--mobile-margin) 120px;
+    padding: 40px 0 120px;
   }
 
   .toc-area .toc-area-content aside {

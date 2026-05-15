@@ -680,7 +680,7 @@ a.noteref sup {
 .aside-noteref-list {
     margin: 0 10%;
     padding-bottom: 10px;
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: #fafafaee; /* rgba(255, 255, 255, 0.95); */
 
     max-height: 30vh;
     overflow-y: auto;
@@ -706,7 +706,7 @@ a.noteref sup {
     /*position: relative;*/
     display: block;
     width: 100%;
-    padding: 20px 50px 0;
+    padding: 20px 5px 0;
     margin-bottom: 20px;
 }
 
@@ -834,10 +834,6 @@ a.noteref sup {
     .aside-noteref-list {
         padding: 0;
     }
-
-    .aside-noteref {
-        padding: 20px 30px 0 var(--mobile-margin);
-    }
 }
 
 @media screen and (max-width: 1024px) {
@@ -882,18 +878,23 @@ a.noteref sup {
         right: var(--mobile-margin);
     }
 
-    .aside-noteref-parent {
-        margin: 0 10px;
-    }
-
     .toc-aside-is-opened .notes-opened .aside-noteref-parent {
         padding-left: 0;
+    }
+
+    .aside-noteref-parent {
+        margin: 0;
     }
 
     .aside-noteref-list {
         margin: 0;
         padding: 0 0 10px 0;
     }
+
+    .aside-noteref {
+        padding: 20px var(--mobile-margin) 0;
+    }
+
 }
 
 @media screen and (max-width: 640px) {
