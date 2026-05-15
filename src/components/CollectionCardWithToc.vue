@@ -765,6 +765,9 @@ button.toc-toggle {
   border: none;
 
   flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
   width: 30px;
   height: 30px;
   padding: 0;
