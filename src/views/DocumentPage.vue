@@ -2649,6 +2649,12 @@ div.remove-bottom-padding #article {
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 320px;
+      
+      &:hover {
+        text-overflow: unset;
+        max-width: unset;
+      }
+
     }
   }
 
