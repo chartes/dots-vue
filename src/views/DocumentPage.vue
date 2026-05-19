@@ -3267,7 +3267,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     padding: 8px 0;
   }
   .breadcrumb-panel {
-    padding: 10px 0 20px;
+    padding: 10px 0;
     margin-left: calc(-1 * var(--mobile-margin));
     margin-right: calc(-1 * var(--mobile-margin));
   }
@@ -3360,7 +3360,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   .toc-area .toc-area-content aside {
-    padding: 15px 10px !important;
+    padding: 0 !important;
   }
 
 

@@ -337,6 +337,7 @@ div.toc-area-content.toc-content {
       columns: 1;
       gap: 15px;
       overflow: auto;
+      max-height: 30vh; /* Could provoke an horizontal scroll */
     }
   }
 
