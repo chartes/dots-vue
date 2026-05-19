@@ -236,6 +236,7 @@
                 v-if="!leftTOCFragmentIsDocument"
                 ref="arianeDocContainer"
                 class="crumbs"
+                :class="crumbsWithEllipsis ? 'with-ellipsis' : ''"
                 @scroll="onDocBreadcrumbScroll($event)"
               >
                 <li
@@ -583,6 +584,7 @@ export default {
     const topTOCDisplayIndicator = ref(false)
     const leftTOCDisplayIndicator = ref(false)
     const leftTOCFragmentIsDocument = ref(false)
+    const crumbsWithEllipsis = ref(false)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
@@ -778,6 +780,14 @@ export default {
     const updateDocBreadcrumbHorizontalScrollAndMeasurements = function() {
       if (!arianeDocContainer.value) return
       const el = arianeDocContainer.value;
+
+      // By default, no ellipsis on crumb parts
+      // If doc breadcrumb is too large, we add ellipsis css class
+      crumbsWithEllipsis.value = false;
+      if (el.scrollWidth > el.clientWidth) {
+        crumbsWithEllipsis.value = true;
+      }
+      // Horizontal scroll
       el.scrollLeft = el.scrollLeftMax;
       updateMeasurementsAriane();
     }
@@ -801,6 +811,11 @@ export default {
         left: el.scrollWidth,
         behavior: 'smooth'
       })
+    }
+
+    const initArianeDoc = function() {
+      updateDocBreadcrumbHorizontalScrollAndMeasurements();
+      arianeDocToRight();
     }
 
 
@@ -1747,7 +1762,7 @@ export default {
     })
     watch(arianeDocument, (val) => {
       console.log('DOM arianeDocContainer updated:', val)
-      nextTick().then(arianeDocToRight)
+      nextTick().then(initArianeDoc)
     })
 
     watch(breadcrumbEl, (val) => {
@@ -1854,6 +1869,7 @@ export default {
       miradorViewCssStyle,
       miradorContainer,
       breadcrumbEl,
+      crumbsWithEllipsis,
       onColBreadcrumbScroll,
       onDocBreadcrumbScroll,
       breadcrumbToLeft,
@@ -1864,6 +1880,7 @@ export default {
       docFadeRightVisible,
       arianeDocContainer,
       arianeDocToRight,
+      initArianeDoc,
       activeBreadcrumb,
       activeObject,
       activePanel,
@@ -2642,6 +2659,8 @@ div.remove-bottom-padding #article {
     color: var(--fill-color);
     padding-left: .75rem;
   }
+}
+.crumbs.with-ellipsis li {
   &:not(:last-child) {
     & a {
       text-align: left;
@@ -2649,7 +2668,7 @@ div.remove-bottom-padding #article {
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 320px;
-      
+
       &:hover {
         text-overflow: unset;
         max-width: unset;
