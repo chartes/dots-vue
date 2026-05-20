@@ -3169,12 +3169,11 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   /* Document page numbers */
   .pb {
-    float: right;
-    margin-right: 0;
-    padding: 0 0 20px 5px;
-
-    position: absolute;
-    left: unset;
+    float: none;
+    display: block;
+    width: 100%;
+    position: relative;
+    padding: 20px 0;
   }
 
   .cb, .ed {
