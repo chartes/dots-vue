@@ -309,11 +309,11 @@ export default {
 <style scoped>
 div.toc-area-content.toc-content {
   .tree {
-    font-size: 15px;
+    font-size: var(--font-toc-metadata-size);
     font-weight: 500;
     line-height: 22px;
     columns: 3;
-    gap: 40px;
+    gap: 20px;
     min-height: 100px;
     width: 100%;
 
@@ -337,6 +337,7 @@ div.toc-area-content.toc-content {
       columns: 1;
       gap: 15px;
       overflow: auto;
+      max-height: 30vh; /* Could provoke an horizontal scroll */
     }
   }
 
@@ -357,7 +358,6 @@ div.toc-area-content.toc-content {
       & > a {
         display:inline-block;
         color: #4a4a4a;
-        width: 218px;
       }
     }
 
@@ -415,7 +415,6 @@ div.toc-area-aside.toc-content {
 
       & > a {
         color: #4a4a4a;
-        width: 218px;
 
         &.is-current {
           margin-top: 3px;
@@ -507,8 +506,7 @@ div.bottom-toc {
 .toc-area-content.toc-content li:not(.more) > .li.container > a.toc-title.is-current,
 .toc-area-aside li:not(.more) > .li.container > a.toc-title.is-current {
   display: inline-block;
-  border-left: 1px solid var(--fill-color);
-  padding: 6px 20px;
+  border-left: 2px solid var(--fill-color);
   margin: 0 0 0 -16px;
   background-color: #F9F9F9 !important;
 }
@@ -519,6 +517,13 @@ div.bottom-toc {
   margin-left: -22px;
 }
 
+@media screen and (max-width: 768px) {
+  .toc-area-content.toc-content li:not(.more) > .li.container > a.toc-title,
+  .toc-area-aside li:not(.more) > .li.container > a.toc-title {
+    padding: 2px 20px;
+  }
+
+}
 
 button.toc-toggle {
   --icon-bg: transparent;
@@ -531,6 +536,9 @@ button.toc-toggle {
   border: none;
 
   flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
   width: 30px;
   height: 30px;
   padding: 0;

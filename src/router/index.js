@@ -18,6 +18,8 @@ const isDocProjectIdIncluded = `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUD
 console.log('router const isDocProjectIdIncluded :', isDocProjectIdIncluded)
 // const appBasePath = isDocProjectIdIncluded ? '' : ':collId'
 
+// NB : scrollBehavior cf https://router.vuejs.org/guide/advanced/scroll-behavior
+
 let previousRoute = null
 let router = () => {}
 if (isDocProjectIdIncluded) {
@@ -51,7 +53,10 @@ if (isDocProjectIdIncluded) {
         component: () => import('@/views/DocumentPage.vue'),
         props: true
       }
-    ]
+    ],
+    scrollBehavior (to, from, savedPosition) {
+      return { top: 0 }
+    }
   })
 } else {
   router = createRouter({
@@ -84,7 +89,10 @@ if (isDocProjectIdIncluded) {
         component: () => import('@/views/DocumentPage.vue'),
         props: true
       }
-    ]
+    ],
+    scrollBehavior (to, from, savedPosition) {
+      return { top: 0 }
+    }
   })
 }
 

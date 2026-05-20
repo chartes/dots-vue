@@ -49,12 +49,11 @@ const cssVars = computed(() => ({
 
 <style scoped>
 .icon-wrapper {
-  width: var(--size);
-  height: var(--size);
-
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 16px;
+  height: 16px;
 
   /* 👇 hérite de la couleur du parent */
   color: inherit;

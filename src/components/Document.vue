@@ -342,6 +342,8 @@ export default {
         notesPresent = hasNotesInHTML(data)
       }
 
+      console.log("notesPresent", notesPresent, mediaType.value)
+
       // Emit presence of notes to parent
       emit('has-notes', notesPresent)
       hasNotes.value = notesPresent
@@ -424,6 +426,7 @@ export default {
     }
     const hasNotes = ref(false)
     let asideNotesParent = null
+    let asideNotes = null
     let docRoot = null
     let docContentElement = null
 
@@ -440,11 +443,16 @@ export default {
       if (!main) return
 
       asideNotesParent = main.querySelector('.aside-noteref-parent')
+      asideNotes = main.querySelector('.aside-noteref-list')
 
       if (!asideNotesParent) {
         asideNotesParent = document.createElement('aside')
         asideNotesParent.classList.add('aside-noteref-parent')
         main.prepend(asideNotesParent)
+
+        asideNotes = document.createElement('div')
+        asideNotes.classList.add('aside-noteref-list')
+        asideNotesParent.prepend(asideNotes)
       }
 
       asideNotesParent.addEventListener('click', e => {
@@ -460,7 +468,7 @@ export default {
       if (!docRoot || !docContentElement || !asideNotesParent) return
 
       // reset
-      asideNotesParent.querySelectorAll('.aside-noteref').forEach(e => e.remove())
+      asideNotes.querySelectorAll('.aside-noteref').forEach(e => e.remove())
 
       let noteParentHeight = Math.max(
         100,
@@ -495,13 +503,13 @@ export default {
       notesInView.forEach(note => {
         const asideTop = Math.max(note.top, minTop)
 
-        const aside = document.createElement('div')
-        aside.classList.add('aside-noteref')
-        aside.style.top = asideTop + 'px'
+        const asideNoteRef = document.createElement('div')
+        asideNoteRef.classList.add('aside-noteref')
+        asideNoteRef.style.top = asideTop + 'px'
 
         const wrapper = document.createElement('div')
         wrapper.classList.add('aside-noteref-wrapper')
-        aside.append(wrapper)
+        asideNoteRef.append(wrapper)
 
         const content = document.createElement('div')
         content.classList.add('aside-noteref-content')
@@ -521,10 +529,10 @@ export default {
           noteLink.classList.add('notebottom')
         }
 
-        asideNotesParent.append(aside)
+        asideNotes.append(asideNoteRef)
 
-        if (aside.offsetHeight > 95) {
-          aside.classList.add('clamped')
+        if (asideNoteRef.offsetHeight > 95) {
+          asideNoteRef.classList.add('clamped')
 
           const seeAll = document.createElement('a')
           seeAll.classList.add('see-all-link', 'fa', 'fa-angle-right')
@@ -533,7 +541,7 @@ export default {
           wrapper.append(seeAll)
         }
 
-        minTop = asideTop + aside.offsetHeight + 10
+        minTop = asideTop + asideNoteRef.offsetHeight + 10
       })
     }
 

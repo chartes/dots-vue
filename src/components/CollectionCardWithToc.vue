@@ -688,8 +688,8 @@ export default {
 }
 .collection-toc-area, .modal-wrapper {
   .tree {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   .tree li {
@@ -731,7 +731,6 @@ export default {
       padding-left: 0 !important;
 
       & > .li.container > a, span {
-        margin-top: 4px;
         &.is-current {
           font-weight: bold !important;
           color: var(--text-color) !important;
@@ -766,6 +765,9 @@ button.toc-toggle {
   border: none;
 
   flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
   width: 30px;
   height: 30px;
   padding: 0;

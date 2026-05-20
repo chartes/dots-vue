@@ -72,9 +72,6 @@ const cssVars = {
 
 <style scoped>
 .icon-wrapper {
-  width: var(--size);
-  height: var(--size);
-  border-radius: var(--radius);
   background-color: var(--bg);
   color: var(--fg);
   display: flex;

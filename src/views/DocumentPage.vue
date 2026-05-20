@@ -68,8 +68,6 @@
                   <ResourceIcon
                     v-else
                     class="breadcrumb-top-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   <span class="breadcrumb-label">
                     {{ ancestorLabel(selectStoreCollection(item)) }}
@@ -93,8 +91,6 @@
                   <ResourceIcon
                     v-else
                     class="breadcrumb-top-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   <span class="breadcrumb-label">
                     {{ ancestorLabel(item[0]) }}
@@ -121,6 +117,7 @@
           >
             <div class="tab-header">
               <button
+                class="dots-button"
                 :class="{ active: activePanel === 'meta' }"
                 @click="activePanel = 'meta'"
               >
@@ -128,6 +125,7 @@
               </button>
 
               <button
+                class="dots-button"
                 :class="{ active: activePanel === 'summary' }"
                 @click="activePanel = 'summary'"
               >
@@ -135,7 +133,7 @@
               </button>
               <CloseCross
                 href="#"
-                class="breadcrumb-top-toggle-bttn"
+                class="dots-button breadcrumb-top-toggle-btn"
                 fg="blue"
                 size="40"
                 @click.prevent="openObject(activeObject, activeBreadcrumb)"
@@ -161,10 +159,10 @@
               >
                 <div
                   v-if="selectedCollection.type === 'Collection' || selectedCollection.citeType === 'Collection'"
-                  class="collection-toc-area app-width-margin"
+                  class="collection-toc-area"
                   :class="tocCssClass"
                 >
-                  <div class="menu app-width-margin">
+                  <div class="menu">
                     <CollectionTOC
                       :is-doc-projectId-included="isDocProjectIdInc"
                       :display-option="'toc'"
@@ -219,7 +217,7 @@
             <!-- LeftTOC button -->
             <button
               type="button"
-              class="toc-menu-toggle"
+              class="dots-button toc-menu-toggle"
               aria-label="Afficher le sommaire"
               :class="hasValidTOC ? TOCMenuBtnCssClass : 'disabled'"
               @click="toggleTOCMenu"
@@ -238,6 +236,7 @@
                 v-if="!leftTOCFragmentIsDocument"
                 ref="arianeDocContainer"
                 class="crumbs"
+                :class="crumbsWithEllipsis ? 'with-ellipsis' : ''"
                 @scroll="onDocBreadcrumbScroll($event)"
               >
                 <li
@@ -284,7 +283,7 @@
             aria-label="Navigation dans le document"
           >
             <router-link
-              class="to-previous-fragment"
+              class="dots-button to-previous-fragment"
               :class="previousRefId === '' ? 'disabled' : ''"
               :to="{ name: 'Document', params: { collId: collConfig.collectionId, id: resourceId }, query: { refId: previousRefId } }"
               aria-label="Fragment précédent"
@@ -296,7 +295,7 @@
               />
             </router-link>
             <router-link
-              class="to-next-fragment has-tooltip"
+              class="dots-button to-next-fragment has-tooltip"
               :class="{ disabled: !nextRefId }"
               :to="{ name: 'Document', params: { collId: collConfig.collectionId, id: resourceId }, query: { refId: nextRefId } }"
               :aria-disabled="!nextRefId"
@@ -322,7 +321,7 @@
       aria-label="Options d’affichage du document"
     >
       <button
-        class="controls-toggle"
+        class="dots-button controls-toggle"
         aria-label="Afficher les outils de lecture"
         :aria-expanded="isControlsOpened"
         @click="toggleControls"
@@ -340,7 +339,7 @@
         <li v-if="manifestIsAvailable">
           <button
             type="button"
-            class="text-btn"
+            class="dots-button text-btn"
             aria-label="Texte seul"
             @click="changeViewMode('text-mode')"
           >
@@ -355,7 +354,7 @@
         <li v-if="manifestIsAvailable">
           <button
             type="button"
-            class="images-btn"
+            class="dots-button images-btn"
             aria-label="Images seules"
             @click="changeViewMode('images-mode')"
           >
@@ -370,7 +369,7 @@
         <li v-if="hasNotes">
           <button
             type="button"
-            class="notes-btn"
+            class="dots-button notes-btn"
             :class="{ 'is-opened': isNotesOpened }"
             aria-pressed="isNotesOpened"
             aria-label="Afficher les notes"
@@ -384,7 +383,7 @@
             v-if="refId && refId.length > 0"
             target="_blank"
             :href="`${dtsUrl}/document?resource=${resourceId}&ref=${refId}`"
-            class="xml-btn"
+            class="dots-button xml-btn"
             aria-label="Télécharger le XML"
           >
             <XMLIcon :size="40" />
@@ -394,7 +393,7 @@
             v-else
             target="_blank"
             :href="`${dtsUrl}/document?resource=${resourceId}`"
-            class="xml-btn"
+            class="dots-button xml-btn"
             aria-label="Télécharger le XML"
           >
             <XMLIcon :size="40" />
@@ -411,7 +410,7 @@
         <aside id="aside">
           <nav>
             <nav>
-              <span v-if="arianeDocument.length && arianeDocument[0].descendant">{{ arianeDocument[0].descendant }}{{ countEditorialTypes.length > 0 ? ' item de type ' + countEditorialTypes[0] : '' }}</span>
+              <span style="display: none" v-if="arianeDocument.length && arianeDocument[0].descendant">{{ arianeDocument[0].descendant }}{{ countEditorialTypes.length > 0 ? ' item de type ' + countEditorialTypes[0] : '' }}</span>
               <TOC
                 :key="arianeDocument"
                 :is-doc-project-id-included="isDocProjectIdInc"
@@ -585,6 +584,7 @@ export default {
     const topTOCDisplayIndicator = ref(false)
     const leftTOCDisplayIndicator = ref(false)
     const leftTOCFragmentIsDocument = ref(false)
+    const crumbsWithEllipsis = ref(false)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
     const rootCollectionId = ref(props.rootCollectionIdentifier)
@@ -686,13 +686,13 @@ export default {
 
     // reading options bar
 
-    const isControlsOpened = ref(true)
+    const isControlsOpened = ref(false)
     const toggleControls = (e) => {
       e.stopPropagation();
       isControlsOpened.value = !isControlsOpened.value
     }
 
-    const isNotesOpened = ref(true)
+    const isNotesOpened = ref(false)
     const hasNotes = ref(false)
 
     // collection breadcrumb scrolls reactive
@@ -795,6 +795,14 @@ export default {
     const updateDocBreadcrumbHorizontalScrollAndMeasurements = function() {
       if (!arianeDocContainer.value) return
       const el = arianeDocContainer.value;
+
+      // By default, no ellipsis on crumb parts
+      // If doc breadcrumb is too large, we add ellipsis css class
+      crumbsWithEllipsis.value = false;
+      if (el.scrollWidth > el.clientWidth) {
+        crumbsWithEllipsis.value = true;
+      }
+      // Horizontal scroll
       el.scrollLeft = el.scrollLeftMax;
       updateMeasurementsAriane();
     }
@@ -818,6 +826,11 @@ export default {
         left: el.scrollWidth,
         behavior: 'smooth'
       })
+    }
+
+    const initArianeDoc = function() {
+      updateDocBreadcrumbHorizontalScrollAndMeasurements();
+      arianeDocToRight();
     }
 
 
@@ -1778,7 +1791,7 @@ export default {
     })
     watch(arianeDocument, (val) => {
       console.log('DOM arianeDocContainer updated:', val)
-      nextTick().then(arianeDocToRight)
+      nextTick().then(initArianeDoc)
     })
 
     watch(breadcrumbEl, (val) => {
@@ -1801,7 +1814,9 @@ export default {
           const yOffset = -90
           const y = el.getBoundingClientRect().top + window.scrollY + yOffset
           console.log('DocumentPage.vue scrollTo y : ', y)
-          window.scrollTo({ top: y, behavior: 'smooth' })
+          setTimeout(function() {
+            window.scrollTo({ top: y, behavior: 'smooth' })
+          })
           // el.scrollIntoView({ behavior: 'smooth' })
         }
       } else {
@@ -1885,6 +1900,7 @@ export default {
       miradorViewCssStyle,
       miradorContainer,
       breadcrumbEl,
+      crumbsWithEllipsis,
       onColBreadcrumbScroll,
       onDocBreadcrumbScroll,
       breadcrumbToLeft,
@@ -1895,6 +1911,7 @@ export default {
       docFadeRightVisible,
       arianeDocContainer,
       arianeDocToRight,
+      initArianeDoc,
       activeBreadcrumb,
       activeObject,
       activePanel,
@@ -2002,7 +2019,7 @@ export default {
 }
 .toc-area .toc-area-content aside {
   width: 100% !important;
-  padding: 20px 50px !important;
+  padding: 20px 10px !important;
 }
 .toc-area .toc-area-content nav > ol.tree {
   columns: 4;
@@ -2049,13 +2066,11 @@ export default {
   border: none;
   box-shadow: none;
 }
+
+.toc-area-aside a,
 .toc-area-content a {
-  font-size: 17px;
-  line-height: 20px;
-}
-.toc-area-aside a {
-  font-size: 16px;
-  line-height: 19px;
+  font-size: var(--font-toc-metadata-size);
+  line-height: 1.4;
 }
 
 .controls {
@@ -2072,8 +2087,6 @@ export default {
 }
 .controls button {
   display: flex;
-  height: 40px;
-  width: 40px;
   pointer-events: auto;
 }
 
@@ -2104,17 +2117,12 @@ export default {
   background: white;
   border: none;
 
-  /*width: 100%;*/
-  height: 100%;
   padding: 0;
   margin: 0;
 
   cursor: pointer;
 }
 .controls-list button {
-  width: 40px;
-  height: 40px;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2122,13 +2130,10 @@ export default {
 
 .controls-toggle .icon-wrapper {
   color: var(--fill-color);
-  height: 40px;
-  width: 40px;
 }
 .controls-toggle[aria-expanded="true"] .icon-wrapper {
   color: #ffffff;
   background-color: var(--fill-color);
-  border-radius: 4px;
   overflow: hidden;
   /* même couleur que stroke pour que le contour disparaisse visuellement */
   border: 1px solid var(--fill-color);
@@ -2136,9 +2141,6 @@ export default {
 
 .controls .notes-btn {
   color: #C3C3C3;
-  border: 1px solid #C3C3C3;
-  border-radius: 4px;
-  font-size: 20px;
 
   &.is-opened {
     color: var(--fill-color);
@@ -2154,8 +2156,7 @@ export default {
   background: url(../assets/images/b_PDF.svg) center / cover no-repeat;
 }*/
 .controls .xml-btn {
-  height: 40px;
-  width: 40px;
+  display: inline-block;
   color: var(--fill-color);
 }
 
@@ -2186,14 +2187,18 @@ export default {
   z-index: 2;
 
   display: flex;
-  width: 230px;
+  width: 320px;
   background-color: #FFF;
 
-    & > aside > nav {
-      position: sticky;
-      top: 80px;
-      height: calc(100vh - 250px);
-      padding-bottom: 20px;
+  & > aside#aside {
+    width: 100%;
+  }
+
+  & > aside > nav {
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 81px); /* 81px = sticky header height */
+    padding-bottom: 20px;
       & > nav {
         height: 100%;
         overflow-y: auto;
@@ -2203,7 +2208,7 @@ export default {
 .toc-aside-is-opened .document-views {
   position: relative;
   z-index: 1;
-  width: calc(100% - 240px);
+  width: calc(100% - 300px - 10px);
 }
 
 .mirador-view {
@@ -2584,6 +2589,8 @@ div.remove-bottom-padding #article {
     display: flex;
     flex-direction: row;
     justify-items: left;
+    align-items: center;
+
     width: 100%;
     max-width: calc(100% - 90px - 20px);
     margin-right: 20px;
@@ -2607,14 +2614,10 @@ div.remove-bottom-padding #article {
         outline-offset: 2px;
       }
       /* custom style */
-      width: 40px;
-      min-width: 40px;
-      height: 40px;
       margin-right: 20px;
       text-align: center;
       align-content: center;
       color: var(--text-color);
-      border-radius: 4px;
 
       &.is-opened {
         color: white;
@@ -2651,6 +2654,10 @@ div.remove-bottom-padding #article {
   scroll-behavior: smooth;
   scrollbar-width: thin;
 
+  font-family: var(--font-secondary), sans-serif;
+  font-size: var(--font-default-size);
+  font-weight: 500;
+  color: #000000;
 }
 .crumbs li + li:before {
   width: 100% !important;
@@ -2683,13 +2690,21 @@ div.remove-bottom-padding #article {
     color: var(--fill-color);
     padding-left: .75rem;
   }
+}
+.crumbs.with-ellipsis li {
   &:not(:last-child) {
     & a {
       text-align: left;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 200px;
+      max-width: 320px;
+
+      &:hover {
+        text-overflow: unset;
+        max-width: unset;
+      }
+
     }
   }
 
@@ -2758,8 +2773,7 @@ div.remove-bottom-padding #article {
 .document-area {
   position: relative;
   z-index: 10;
-  top: -60px;
-
+  margin-top: -60px;
   width: 100%;
 }
 
@@ -2767,8 +2781,8 @@ div.remove-bottom-padding #article {
   z-index: 11;
 }
 
-
 .navigation-document {
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: left;
@@ -2776,8 +2790,18 @@ div.remove-bottom-padding #article {
   width: 100%;
   padding-top: 20px;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--fill-color) !important;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    display: block;
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px solid var(--fill-color) !important;
+  }
 }
+
 .navigation-document-top {
   display: flex;
   flex-direction: row;
@@ -2848,7 +2872,7 @@ ul.breadcrumb-top {
 
   margin-bottom: 20px;
   padding: 0;
-  font-family: var(--font-primary), sans-serif;
+  font-family: var(--font-secondary), sans-serif;
   font-size: var(--font-default-size);
   font-weight: 500;
   flex-flow: row nowrap;
@@ -2889,6 +2913,8 @@ ul.breadcrumb-top {
     margin-right: var(--crumb-gap);
 
     & .breadcrumb-top-icon {
+      width: 30px;
+      height: 30px;
       color: var(--fill-color);
     }
 
@@ -2945,127 +2971,103 @@ ul.breadcrumb-top > li:nth-child(8) { z-index: 3; }
 ul.breadcrumb-top > li:nth-child(9) { z-index: 2; }
 ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
+.fade-left,
 .fade-right {
   display: flex;
-  justify-content: right;
   align-items: center;
 
   position: absolute;
   top: 2px;
-  right: 0;
+  z-index: 0;
+
   width: 10%; /* largeur du gradient */
   height: 43px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  &.visible {
+    opacity: 1;
+    z-index: 15;
+  }
+}
+
+.fade-right {
+  right: 0;
+  justify-content: right;
   background: linear-gradient(
     to left,
     #e5e5e5 50%,      /* opaque côté droit */
     transparent 100%  /* transparent côté gauche */
   );
 
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-
   & > .icon-circle-arrow-right {
     margin-right: 5px;
     cursor: pointer;
   }
 }
-.fade-right.visible {
-  opacity: 1;
-  z-index: 15;
-}
 
 .fade-left {
-  display: flex;
-  justify-content: left;
-  align-items: center;
-
-  position: absolute;
-  top: 2px;
   left: 0;
-  width: 10%;
-  height: 43px;
-
+  justify-content: left;
   background: linear-gradient(
     to right,
     #e5e5e5 50%,
     rgba(204, 204, 204, 0) 100%
   );
 
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 0;
-
   & > .icon-circle-arrow-left {
     margin-left: 5px;
     cursor: pointer;
   }
 }
 
-.fade-left.visible {
-  opacity: 1;
-  z-index: 15;
-}
-
+.doc-fade-left,
 .doc-fade-right {
   display: flex;
-  justify-content: right;
   align-items: center;
 
   position: absolute;
   top: 2px;
-  right: 0;
   width: 10%; /* largeur du gradient */
   height: 43px;
+  z-index: 0;
+
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  &.visible {
+    opacity: 1;
+    z-index: 15;
+    pointer-events: none;
+  }
+}
+
+.doc-fade-right {
+  justify-content: right;
+  right: 0;
   background: linear-gradient(
     to left,
     white 50%,      /* opaque côté droit */
     transparent 100%  /* transparent côté gauche */
   );
 
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-
   & > .icon-circle-arrow-right {
     margin-right: 5px;
   }
 }
-.doc-fade-right.visible {
-  opacity: 1;
-  z-index: 15;
-  pointer-events: none;
-}
+
 .doc-fade-left {
-  display: flex;
   justify-content: left;
-  align-items: center;
-
-  position: absolute;
-  top: 2px;
   left: 0;
-  width: 10%;
-  height: 43px;
-
   background: linear-gradient(
     to right,
     white 50%,
     rgba(204, 204, 204, 0) 100%
   );
 
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 0;
-
   & > .icon-circle-arrow-left {
     margin-left: 5px;
   }
-}
-
-.doc-fade-left.visible {
-  opacity: 1;
-  z-index: 15;
-  pointer-events: none;
 }
 
 .to-next-fragment {
@@ -3148,13 +3150,9 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 }
 
 .tab-header button {
-  height: 40px;
+  width: auto;
   background: #FFF;
-  border-radius: 4px;
   font-family: var(--font-primary), sans-serif;
-  font-weight: 700;
-  font-size: 16px;
-  cursor: pointer;
   padding: 6px 30px;
   color: var(--fill-color);
   border: 1px solid var(--fill-color);
@@ -3202,12 +3200,11 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   /* Document page numbers */
   .pb {
-    float: right;
-    margin-right: 0;
-    padding: 0 0 20px 5px;
-
-    position: absolute;
-    left: unset;
+    float: none;
+    display: block;
+    width: 100%;
+    position: relative;
+    padding: 20px 0;
   }
 
   .cb, .ed {
@@ -3218,6 +3215,15 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
 @media screen and (max-width: 1024px) {
 
+  .document-area {
+    margin-top: -60px;
+  }
+
+  .navigation-document::after {
+    width: 100vw;
+    left: -20px;
+  }
+
   .document-views .text-view > * teiheader,
   .document-views .text-view > * body {
     width: auto;
@@ -3225,20 +3231,47 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     margin-right: 0;
   }
 
+  .toc-aside-is-opened #aside {
+    width: 100%;
+    padding-right: 20px;
+  }
+
+  /* Negative margin is necessary to maintain the sticky behavior */
   .toc-aside-is-opened .toc-area-aside {
-    box-shadow: 8px 8px 5px 0 rgba(0, 0, 0, 0.2);
+    width: calc(100vw - 105px);
   }
 
   .toc-aside-is-opened .document-views {
-    width: calc(100% - 280px);
+    width: 100% !important;
+    margin-left: calc(105px - 100vw);
+
+    &::before {
+      content: "";
+      display: block;
+      width: calc(100% + 20px);
+      height: 100%;
+      background-color: rgba(0,0,0,0.65);
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
   }
+
 }
 
 @media screen and (max-width: 768px) {
 
+  .navigation-document::after {
+    left: calc(-1 * var(--mobile-margin));
+  }
+
   .document-area.app-width-margin {
     padding-left: 0;
     padding-right: 0;
+  }
+
+  .document-area {
+    margin-top: -50px;
   }
 
   .document-views {
@@ -3247,44 +3280,99 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     padding-right: 10px;
   }
 
+  .controls {
+    top: 42px;
+  }
+
+  .controls-list.is-opened {
+    position: absolute;
+    top: 50px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .navigation-row-top-container {
+    padding: 8px 0;
+  }
   .breadcrumb-panel {
+    padding: 10px 0;
     margin-left: calc(-1 * var(--mobile-margin));
     margin-right: calc(-1 * var(--mobile-margin));
   }
 
-  .toc-aside-is-opened .document-views {
-    width: 100% !important;
-    margin-left: -230px;
+  .breadcrumb-panel.is-opened .breadcrumb-top-toggle-btn {
+    right: 10px;
   }
 
-  #article {
-    padding: 40px var(--mobile-margin) 120px;
-  }
-  .toc-area .toc-area-content aside {
-    padding: 20px 20px !important;
+  /* Ariane Collection */
+
+  .ariane {
+    font-size: 16px;
   }
 
-  .l-n {
-    margin-left: -2.2rem;
+  ul.breadcrumb-top {
+    margin-bottom: 0;
+    font-size: 15px;
+  }
+
+  ul.breadcrumb-top > li {
+    & > a {
+      padding: 6px 10px;
+
+      .breadcrumb-top-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--fill-color);
+      }
+    }
+
+    .separator {
+      width: 20px;
+      margin: 0;
+
+      svg {
+        transform: scale(0.6);
+        transform-origin: center;
+      }
+    }
+  }
+
+  .fade-left,
+  .fade-right {
+    height: 33px;
+  }
+
+  /* Ariane Document */
+  .navigation-document {
+    padding: 3px 0;
+  }
+
+  .doc-fade-left,
+  .doc-fade-right {
+    height: 35px;
   }
   .ariane {
     & > .ariane-wrapper {
-      max-width: calc(100% - 90px - 10px);
-      margin-right: 10px;
+      max-width: calc(100% - 80px - 6px);
+      margin-right: 2px;
 
       & > button.toc-menu-toggle {
-        margin-right: 10px;
+        margin-right: 6px;
       }
     }
   }
   .ariane-scroll-wrapper {
-    max-width: calc(100% - 50px);
+    max-width: calc(100% - 32px);
     margin-right: 10px;
   }
   .crumbs {
     display: flex;
   }
   .crumbs li {
+    padding-right: 7px;
+
     &.is-current {
       & a {
         text-wrap: nowrap;
@@ -3296,14 +3384,49 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
       }
     }
   }
+
+  #article {
+    padding: 40px 0 120px;
+  }
+
+  .toc-area .toc-area-content aside {
+    padding: 0 !important;
+  }
+
+
+  .l-n {
+    margin-left: -2.2rem;
+  }
+
   .tab-header,
   .tab-content {
+    height: auto;
     padding: 10px;
   }
 
-  .breadcrumb-panel.is-opened .breadcrumb-top-toggle-bttn {
-    right: 10px;
+  .toc-aside-is-opened #aside {
+    width: 100%;
   }
+
+  .toc-aside-is-opened .toc-area-aside {
+    & > aside > nav {
+      height: calc(100vh - 45px); /* 45px = mobile sticky header height */
+    }
+  }
+
+  /* Negative margin is necessary to maintain the sticky behavior */
+  .toc-aside-is-opened .toc-area-aside {
+    width: calc(100vw - 55px);
+  }
+
+  .toc-aside-is-opened .document-views {
+    margin-left: calc(55px - 100vw);
+
+    &::before {
+      width: 100%;
+    }
+  }
+
 }
 
 @media screen and (max-width: 640px) {
@@ -3321,16 +3444,9 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     font-size: 9px;
   }
 
-  /*
-  .toc-aside-is-opened .document-views {
-    width: 100%;
+  .document-area {
+    margin-top: -56px;
   }
-  .document-views {
-    max-width: 100%;
-    position: relative;
-  }
-
-  */
 
   .toc-area-aside {
     display: none;
@@ -3338,14 +3454,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   .toc-aside-is-opened #aside {
     width: 100%;
-  }
-
-  .toc-aside-is-opened .toc-area-aside {
-    width: 70vw;
-  }
-
-  .toc-aside-is-opened .document-views {
-    margin-left: -70vw;
   }
 
   .toc-area .toc-area-content nav > ol.tree {
@@ -3396,19 +3504,10 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     flex-direction: column;
   }
 
-  .controls-list.is-opened {
-    position: absolute;
-    top: 64px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
   .controls button.controls-toggle {
     display: flex;
     margin-left: 0; /* annule margin-left: auto */
     order: 2;       /* met le bouton à droite */
-    max-height: 40px;
     margin-top: 0.5ex;
     margin-bottom: 0.5ex;
   }

@@ -17,7 +17,7 @@
       </div>
       <div class="column right-columns">
         <div class="columns">
-          <div class="column description">
+          <div v-if="footDescription && footDescription.length" class="column description">
             <div class="row description">
               {{ footDescription }}
             </div>
@@ -164,7 +164,7 @@ export default {
   width: 100%;
   padding: 0;
   transform: rotateZ(0);
-  margin-top: 100px !important;
+  margin-top: 0 !important;
 }
 
 .footer .columns {
@@ -189,6 +189,7 @@ export default {
 
 .footer > .columns > .column.right-columns > .columns > .row.links {
   flex: 100% 0 0;
+  width: 100%;
 }
 
 .footer .title-container {
@@ -199,10 +200,12 @@ export default {
   color: white;
   width: 400px;
 
-  & >.title {
-    text-align: left;
+  & > .title {
+    margin-bottom: 0;
     font-style: normal;
+    font-size: 30px;
     color: white;
+    text-align: left;
   }
   & >.subtitle {
     margin-top: 12px;
@@ -222,9 +225,16 @@ export default {
   justify-content: left;
   flex-direction: column;
   padding: 0;
+
   &.row.description {
+    max-width: 80%;
+    margin-bottom: 0;
     text-align: left;
     color: white;
+
+    &:empty {
+      display: none;
+    }
   }
 }
 
@@ -283,9 +293,10 @@ export default {
 
   & > .logo-institutions {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
 
     & > a {
       display: flex;
@@ -315,6 +326,10 @@ export default {
       border-bottom: none;
       color: #FFFFFF;
     }
+  }
+
+  img {
+    max-width: 250px;
   }
 }
 .enc-logo {
@@ -369,10 +384,6 @@ export default {
   .footer .logos {
     align-items: flex-start;
   }
-  .footer .logos > .logo-institutions {
-    align-items: flex-start;
-    margin-bottom: 20px;
-  }
   .footer .logos > .logo {
     justify-content: flex-start;
   }
@@ -387,16 +398,37 @@ export default {
   }
   .footer > .columns > .column.left-column {
     flex: auto;
-    padding-bottom: 50px;
+  }
+  .footer .title-container {
+    & > .title {
+      font-size: 24px;
+    }
+  }
+  .footer .logos {
+    img {
+      max-width: 200px;
+    }
+  }
+  .footer > .columns > .column.right-columns > .columns > .column.logos > .logo,
+  .footer > .columns > .column.right-columns > .columns .row.links {
+    display: flex;
+    justify-content: center;
+
+    .footer-links {
+      margin-top: 30px;
+    }
   }
 }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 768px) {
   .enc-logo {
     height: 40px;
   }
   .dots-logo {
     height: 40px;
+  }
+  .footer .row.description:not(:empty) {
+    margin-bottom: 15px;
   }
   .footer-links li:not(:last-child) {
     padding-right: 0;

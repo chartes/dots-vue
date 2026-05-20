@@ -471,7 +471,7 @@ aside.menu > .columns > .column:nth-child(3) {
 .column .title, span.title,
 .column {
   font-family: var(--font-primary), sans-serif;
-  font-size: 16px;
+  font-size: var(--font-toc-metadata-size);
   font-weight: normal;
   font-style: normal;
 
@@ -510,7 +510,8 @@ figure {
 
 figure.image img{
   height: 32px;
-  width: 32px;
+  width: auto;
+  vertical-align: middle;
 }
 
 @media screen and (max-width: 1320px) {
@@ -543,6 +544,22 @@ figure.image img{
   .document-metadata-header span.metadata-header-title,
   .document-metadata-header span.metadata-header-author {
     display: block;
+  }
+
+  .tab-content {
+    & .table td {
+      padding: 5px 5px;
+    }
+  }
+
+  .menu {
+    line-height: 1;
+  }
+
+  .column .title, span.title,
+  .column {
+    & {
+    }
   }
 }
 @media screen and (max-width: 640px) {
@@ -583,7 +600,7 @@ figure.image img{
 
   figure.image img{
     height: 24px;
-    width: 24px;
+    width: auto;
   }
 }
 table {

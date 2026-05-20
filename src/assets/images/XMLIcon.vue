@@ -51,13 +51,8 @@ const cssVars = {
 
 <style scoped>
 .icon-wrapper {
-  --size: 40px;
-  --radius: 4px;
   --fg: #ffffff;
 
-  width: var(--size, 40px);
-  height: var(--size, 40px);
-  border-radius: var(--radius, 4px);
   background-color: var(--bg);
   color: var(--fill-color, var(--icon-text-color));
   border: var(--fill-color) solid 1px;

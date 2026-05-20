@@ -125,7 +125,7 @@
 
   <div
     v-if="(displayMode === 'toc')"
-    :class="`collection-toc-area app-width-margin ${expandedById[currCollection.identifier] ? 'expanded': ''} toc-mode`"
+    :class="`collection-toc-area ${expandedById[currCollection.identifier] ? 'expanded': ''} toc-mode`"
   >
     <div
       v-if="(displayMode === 'toc' && lvl < 2)"
@@ -154,7 +154,7 @@
     </div>
     <div
       v-if="displayMode === 'toc'"
-      class="menu app-with-margin"
+      class="menu"
       :class="expandedById[currCollection.identifier] ? 'expanded': ''"
     >
       <div v-if="expandedById[currCollection.identifier]">
@@ -231,8 +231,6 @@
                 >
                   <ResourceIcon
                     class="resource-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   {{ item.title }}
                 </a>
@@ -244,8 +242,6 @@
                 >
                   <ResourceIcon
                     class="resource-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   {{ item.title }}
                 </a>
@@ -257,8 +253,6 @@
                 >
                   <ResourceIcon
                     class="resource-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   {{ item.title }}
                 </a>
@@ -270,8 +264,6 @@
                 >
                   <ResourceIcon
                     class="resource-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   {{ item.title }}
                 </a>
@@ -283,8 +275,6 @@
                 >
                   <ResourceIcon
                     class="resource-icon"
-                    :size="30"
-                    :radius="0"
                   />
                   {{ item.title }}
                 </a>
@@ -293,7 +283,7 @@
                 v-if="(expandedById[item.identifier] || item.expanded)
                   && item.totalChildren > 0
                   && item.children?.length > 0"
-                class="is-tree-opened menu app-width-margin expanded"
+                class="is-tree-opened menu expanded"
               >
                 <CollectionTOC
                   :is-doc-projectId-included="isDocProjectIdInc"
@@ -1029,8 +1019,8 @@ export default {
 
 .collection-toc-area, .modal-wrapper {
   .tree {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   .tree li {
@@ -1077,7 +1067,6 @@ export default {
       padding-left: 0 !important;
 
       & > .li.container > a, span {
-        margin-top: 4px;
         &.is-current {
           font-weight: bold !important;
           color: var(--text-color) !important;
@@ -1121,6 +1110,9 @@ button.toc-toggle {
   border: none;
 
   flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
   width: 30px;
   height: 30px;
   padding: 0;
@@ -1247,7 +1239,7 @@ button.toc-toggle {
   cursor: pointer;
 }
 .toc-mode > .menu.expanded ul.tree li.more a {
-  padding: 13px 5px 11px 5px;
+  padding: 15px 5px 13px 8px;
 }
 .toc-mode > .menu.expanded {
   padding: 0;
@@ -1453,11 +1445,12 @@ button.toc-toggle {
   display: flex;
   flex-direction: column;
 }
+
+.resource-icon,
 .collection-icon {
   color: var(--text-color);
-}
-.resource-icon {
-  color: var(--text-color);
+  width: 30px;
+  height: 30px;
 }
 
 /* Card */
@@ -1642,7 +1635,7 @@ button.toc-toggle {
 .collection-toc-area .menu.expanded ul.tree li a {
   font-family: var(--font-primary), sans-serif;
   font-weight: 400;
-  font-size: 18px;
+  font-size: var(--font-toc-metadata-size);
   color: #080808;
 }
 

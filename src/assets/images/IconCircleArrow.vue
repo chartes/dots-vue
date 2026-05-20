@@ -51,9 +51,7 @@ const cssVars = {
 
   width: var(--size);
   height: var(--size);
-
   background-color: var(--bg);
-  border-radius: var(--radius);
 
   color: var(--fg);
 }

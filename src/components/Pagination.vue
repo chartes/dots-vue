@@ -15,7 +15,7 @@
     >
       <!-- First -->
       <button
-        :class="isDisabledPrev ? 'button first-page disabled' : 'button first-page'"
+        :class="isDisabledPrev ? 'dots-button first-page disabled' : 'dots-button first-page'"
         :aria-disabled="isDisabledPrev"
         :tabindex="isDisabledPrev ? -1 : 0"
         @click="!isDisabledPrev && goToPage(1)"
@@ -23,7 +23,7 @@
 
       <!-- Previous -->
       <button
-        :class="isDisabledPrev ? 'button previous-page disabled' : 'button previous-page'"
+        :class="isDisabledPrev ? 'dots-button previous-page disabled' : 'dots-button previous-page'"
         :aria-disabled="isDisabledPrev"
         :tabindex="isDisabledPrev ? -1 : 0"
         @click="!isDisabledPrev && goToPage(currentPage - 1)"
@@ -61,7 +61,7 @@
 
       <!-- Next -->
       <button
-        :class="isDisabledNext ? 'button next-page disabled' : 'button next-page'"
+        :class="isDisabledNext ? 'dots-button next-page disabled' : 'dots-button next-page'"
         :aria-disabled="isDisabledNext"
         :tabindex="isDisabledNext ? -1 : 0"
         @click="!isDisabledNext && goToPage(currentPage + 1)"
@@ -69,7 +69,7 @@
 
       <!-- Last -->
       <button
-        :class="isDisabledNext ? 'button last-page disabled' : 'button last-page'"
+        :class="isDisabledNext ? 'dots-button last-page disabled' : 'dots-button last-page'"
         :aria-disabled="isDisabledNext"
         :tabindex="isDisabledNext ? -1 : 0"
         @click="!isDisabledNext && goToPage(totalPages)"
@@ -200,17 +200,37 @@ function onBlur() {
 </script>
 <style scoped>
 
-.pagination-controls {
-  --border-radius: 4.8px;
+.pagination {
+  gap: 20px;
+  width: 100%;
+  margin: 0;
+}
 
+.pagination-documents-count {
+  align-self: flex-end;
+  margin-right: auto;
+  font-family: var(--font-primary), sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #000000;
+  border: none;
+}
+
+.pagination-controls {
   display: flex;
   align-items: center;
-
-  font-size: 20px;
 
   & > * {
     display: inline-block;
     margin-right: 4px;
+  }
+  & > input.current-page,
+  & span.total-pages,
+  & > span.label-sur-page {
+    display: inline-block;
+    width: var(--button-size);
+    height: var(--button-size);
+    line-height: 100%;
   }
 
   & > button,
@@ -218,14 +238,11 @@ function onBlur() {
   & span.total-pages,
   & > span.label-sur-page {
     display: inline-block;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
+    line-height: var(--button-size);
   }
-  & span.total-pages,
-  & > button {
+  & span.total-pages {
     background-color: var(--default-bg-color);
-    border-radius: var(--border-radius);
+    border-radius: var(--button-border-radius);
   }
   & > button {
     border: solid 1px transparent;
@@ -236,24 +253,23 @@ function onBlur() {
     }
 
     &.first-page {
-      background: var(--default-bg-color) url(../assets/images/page_debut.svg) center / 17px auto no-repeat;
+      background: var(--default-bg-color) url(../assets/images/page_debut.svg) center / 48% auto no-repeat;
     }
 
     &.previous-page {
-      background: var(--default-bg-color) url(../assets/images/page_avant.svg) center / 23px auto no-repeat;
+      background: var(--default-bg-color) url(../assets/images/page_avant.svg) center / 64% auto no-repeat;
     }
 
     &.next-page {
-      background: var(--default-bg-color) url(../assets/images/page_suivant.svg) center / 24px auto no-repeat;
+      background: var(--default-bg-color) url(../assets/images/page_suivant.svg) center / 64% auto no-repeat;
     }
 
     &.last-page {
-      background: var(--default-bg-color) url(../assets/images/page_fin.svg) center / 17px auto no-repeat;
+      background: var(--default-bg-color) url(../assets/images/page_fin.svg) center / 48% auto no-repeat;
       margin-right: 0;
     }
 
     /* Accessibility focus (important for WCAG) */
-
     &:focus-visible {
       outline: 2px solid #C00055;
       outline-offset: 2px;
@@ -263,11 +279,9 @@ function onBlur() {
   & > input.current-page {
     padding: 0 !important;
     border: 1px solid #dbdbdb;
-    border-radius: var(--border-radius);
+    border-radius: var(--button-border-radius);
 
     font-family: inherit;
-    font-size: 20px;
-    /* color: #CB2158; */
     color: #6e6e6e;
     font-weight: 800;
     text-align: center;
@@ -283,11 +297,22 @@ function onBlur() {
     }
   }
 
+  /* Font sizes */
+
+  & > input.current-page,
+  & span.total-pages {
+    font-size: 20px;
+  }
+
+  & > span.label-sur-page {
+    font-size: 31px;
+  }
+
+
   & > span.label-sur-page {
     width: auto;
     padding: 0 3px;
     font-family: inherit;
-    font-size: 31px;
     color: #979797;
     font-weight: 400;
     text-align: center;
@@ -301,7 +326,7 @@ function onBlur() {
 
     & > span.total-pages {
       background-color: var(--default-bg-color);
-      border-radius: var(--border-radius);
+      border-radius: var(--button-border-radius);
       font-family: inherit;
       color: #818181;
       text-align: center;
@@ -313,30 +338,16 @@ function onBlur() {
         height: 38px;
 
         background: linear-gradient(
-          90deg,
-          #eee 25%,
-          #ddd 50%,
-          #eee 75%
+            90deg,
+            #eee 25%,
+            #ddd 50%,
+            #eee 75%
         );
         background-size: 200% 100%; /* width doubled for animation */
         animation: shimmer 1.4s ease infinite;
       }
     }
   }
-}
-.pagination {
-  gap: 20px;
-  width: 100%;
-  margin: 0;
-}
-.pagination-documents-count {
-  align-self: flex-end;
-  margin-right: auto;
-  font-family: var(--font-primary), sans-serif;
-  font-weight: 700;
-  font-size: 24px;
-  color: #000000;
-  border: none;
 }
 
 .toc-mode .pagination {
@@ -362,8 +373,22 @@ input[type=number] {
 
 
 @media screen and (max-width: 768px) {
+
+  /* Font sizes */
   .pagination-documents-count {
-    font-size: 24px;
+    font-size: 16px;
+  }
+
+  .pagination-controls  {
+    & > input.current-page,
+    & span.total-pages {
+      font-size: 14px;
+    }
+
+    & > span.label-sur-page {
+      font-size: 20px;
+    }
+
   }
 }
 
@@ -375,20 +400,10 @@ input[type=number] {
 
   .pagination-controls {
     & > * {
-      width: 38px;
-      height: 38px;
       margin-right: 4px;
     }
-    & > button,
-    & > input.current-page,
-    & span.total-pages,
-    & > span.label-sur-page {
-      display: inline-block;
-      width: 39px;
-      height: 39px;
-      line-height: 39px;
-    }
   }
+
 }
 
 </style>

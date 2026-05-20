@@ -42,8 +42,6 @@ const cssVars = computed(() => ({
 
 <style scoped>
 .icon-wrapper {
-  width: var(--size);
-  height: var(--size);
   color: var(--fg);
   background-color: var(--bg);
 
