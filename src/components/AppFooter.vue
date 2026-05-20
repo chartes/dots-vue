@@ -294,6 +294,7 @@ export default {
   & > .logo-institutions {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     gap: 20px;
 
@@ -382,8 +383,6 @@ export default {
   }
   .footer .logos {
     align-items: flex-start;
-  }
-  .footer .logos > .logo-institutions {
   }
   .footer .logos > .logo {
     justify-content: flex-start;
