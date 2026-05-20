@@ -55,7 +55,6 @@
                 v-if="imageType === 'component'"
                 :is="image.component"
                 class="collection-component"
-                :class="{ 'has-banner': hasBanner }"
               />
 
               <!-- image -->
