@@ -39,13 +39,14 @@
                 <img
                   v-if="collectionImages[item.identifier]?.url"
                   :src="collectionImages[item.identifier].url"
+                  :class="collectionImages[item.identifier].url.endsWith('.svg') ? 'has-banner collection-svg' : 'has-banner'"
                   alt=""
                 />
                 <!-- if component -->
                 <component
                   :is="collectionImages[item.identifier].component"
                   v-else-if="collectionImages[item.identifier]?.component"
-                  class="collection-component"
+                  class="collection-component has-banner"
                 />
               </div>
               <div class="collection-metadata">
@@ -1328,13 +1329,23 @@ button.toc-toggle {
       object-fit: cover;
       object-position: center;
     }
+    .collection-svg {
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      color: var(--fill-color);
+      background-color: var(--fill-color);
+    }
 
     .collection-component {
       position: absolute;
       display: block;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       object-position: center;
       color: var(--fill-color);
       background-color: var(--fill-color);
