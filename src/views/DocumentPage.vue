@@ -527,7 +527,7 @@ import IconReadingToolsToggle from '@/assets/images/IconReadingToolsToggle.vue'
 import XMLIcon from '@/assets/images/XMLIcon.vue'
 import IconNotes from '@/assets/images/IconNotes.vue'
 import TocIcon from '@/assets/images/TocIcon.vue'
-import ArianeArrowSeparatorIcon from "@/assets/images/ArianeArrowSeparatorIcon.vue";
+import ArianeArrowSeparatorIcon from '@/assets/images/ArianeArrowSeparatorIcon.vue'
 
 function findById (array, id) {
   for (const item of array) {
