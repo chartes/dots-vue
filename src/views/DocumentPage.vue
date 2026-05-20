@@ -590,8 +590,8 @@ export default {
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const docProjectId = ref('')
     console.log('topTOCDisplayIndicator test : ', topTOCDisplayIndicator)
-    const appConfig = ref(props.applicationConfig)
-    const collConfig = ref(props.collectionConfig)
+    const appConfig = computed(() => props.applicationConfig)
+    const collConfig = computed(() => props.collectionConfig)
     console.log('DocumentPage props.collectionConfig', props.collectionConfig)
     const manifestIsAvailable = ref(false)
     const manifest = ref(null)
@@ -645,13 +645,28 @@ export default {
     const collection = ref()
 
     const isLoading = ref(false)
-    const TOC_DEPTH = ref(props.collectionConfig?.tableOfContentsSettings?.tableOfContentDepth)
+    // check if there is a TOC depth set up by the user (default 5 usually set in default conf)
+    const TOC_DEPTH = ref(
+      Number.isFinite(
+        props.collectionConfig?.tableOfContentsSettings?.tableOfContentDepth
+      )
+        ? props.collectionConfig.tableOfContentsSettings.tableOfContentDepth
+        : 5
+    )
     console.log('DocumentPage setup TOC_DEPTH : ', TOC_DEPTH.value)
     const editorialTypesIsValid = ref(false)
     const countEditorialTypes = ref([])
     const currentLevelIndicator = ref(false)
     const currentLevel = ref(1)
-    const editorialLevel = ref(props.collectionConfig?.tableOfContentsSettings?.editByLevel)
+
+    // check if there is an editorial level set up by the user in the collection configuration
+    const editorialLevel = ref(
+      Number.isFinite(
+        props.collectionConfig?.tableOfContentsSettings?.editByLevel
+      )
+        ? props.collectionConfig.tableOfContentsSettings.editByLevel
+        : 0
+    )
     const flatTOC = ref([])
     const topTOC = ref([])
     const bottomTOC = ref([])
@@ -836,8 +851,8 @@ export default {
 
         // Fetch editorial level document parts if any (based on citeType)
         let editorialTypes = []
-        if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByCiteType.length > 0) {
-          editorialTypes = collConfig.value[0].tableOfContentsSettings.editByCiteType
+        if (!!collConfig.value?.tableOfContentsSettings?.editByCiteType?.filter(Boolean).length) {
+          editorialTypes = collConfig.value.tableOfContentsSettings.editByCiteType
         }
         currentItem.value.editorialLevelIndicator = editorialTypes.includes(currentItem.value.citeType) ? 'toEdit' : 'renderToc'
         store.commit('setCurrentItem', currentItem.value)
@@ -896,7 +911,9 @@ export default {
       // Fetch editorial level document parts if any (based on citeType)
       let editorialTypes = []
       console.log('TOC collConfig.value for editorialTypes : ', collConfig.value)
-      editorialTypes = collConfig.value.tableOfContentsSettings.editByCiteType
+      if (!!collConfig.value?.tableOfContentsSettings?.editByCiteType?.filter(Boolean).length) {
+        editorialTypes = collConfig.value.tableOfContentsSettings.editByCiteType
+      }
 
       // Validate that there are actually in the data
       editorialTypesIsValid.value = processFlatTOC.some(item => editorialTypes.some(l => l === item.citeType))
@@ -1100,7 +1117,7 @@ export default {
       console.log('document DoTS maxTocDepth : ', maxTocDepth)
 
       // check if there is an editorial level set up by the user in the collection configuration
-      editorialLevel.value = collConfig.value.tableOfContentsSettings.editByLevel
+      //editorialLevel.value = collConfig.value?.tableOfContentsSettings?.editByLevel ?? 0
       /* if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByLevel !== '' && collConfig.value[0].tableOfContentsSettings.editByLevel >= 0) {
         editorialLevel.value = collConfig.value[0].tableOfContentsSettings.editByLevel
       } */
@@ -1627,11 +1644,19 @@ export default {
     )
 
     watch(props, async (newProps) => {
-      appConfig.value = newProps.applicationConfig
-      collConfig.value = newProps.collectionConfig
-      TOC_DEPTH.value = newProps.collectionConfig.tableOfContentsSettings.tableOfContentDepth
-      editorialLevel.value = newProps.collectionConfig.tableOfContentsSettings.editByLevel
-      console.log('DocumentPage watch newProps.collectionConfig / collConfig.value : ', collConfig.value)
+
+      TOC_DEPTH.value = Number.isFinite(
+        newProps.collectionConfig?.tableOfContentsSettings?.tableOfContentDepth
+      )
+        ? newProps.collectionConfig.tableOfContentsSettings.tableOfContentDepth
+        : 0
+
+      editorialLevel.value = Number.isFinite(
+        newProps.collectionConfig?.tableOfContentsSettings?.editByLevel
+      )
+        ? newProps.collectionConfig.tableOfContentsSettings.editByLevel
+        : 0
+
     }, { deep: true, immediate: true })
 
     watch(
