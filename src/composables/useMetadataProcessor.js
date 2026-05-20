@@ -1,3 +1,4 @@
+import jsonld from 'jsonld'
 import { toRaw } from 'vue'
 import store from '@/store/index.js'
 
@@ -16,8 +17,13 @@ const sources = [
   { name: 'biblissima', ext: 'biblissima', type: 'document_link' },
   { name: 'creativecommons', ext: 'creativecommons.org', type: 'document_link' },
   { name: 'iiif', ext: 'manifest', type: 'other_link' },
-  { name: 'tei', ext: 'api/dts', type: 'other_link' },
-  { name: 'dots', ext: window.location.origin, type: 'other_link' }
+  { name: 'tei', ext: 'api/dts/document', type: 'other_link' },
+  { name: 'json', ext: 'api/dts/collection', type: 'other_link' },
+  { name: 'json', ext: 'api/dts/navigation', type: 'other_link' },
+  { name: 'dots', ext: window.location.origin, type: 'other_link' },
+  { name: 'tei', ext: 'application/tei+xml', type: 'other_link' },
+  { name: 'pdf', ext: 'application/pdf', type: 'other_link' },
+  { name: null, ext: 'text/html', type: 'other_link' }
 ]
 
 function findSource(id) {
@@ -26,197 +32,534 @@ function findSource(id) {
   return source ? { name: source.name, type: source.type } : null
 }
 
-function processValue(obj, isRoot = false) {
-  const isUrl = v => typeof v === 'string' && v.startsWith('http')
-  let manifestUrlFound = ''
-  if (obj === null || obj === undefined) {
-    return obj
+// Version namespace
+// ─────────────────────────────────────────────────────────────────────────────
+// Contexte DTS inliné
+// ─────────────────────────────────────────────────────────────────────────────
+const DTS_CONTEXT_INLINE = {
+  '@context': {
+    'dts': 'https://dtsapi.org/v1.0#',
+    'dct': 'http://purl.org/dc/terms/',
+    'CitationTree':  'dts:CitationTree',
+    'CiteStructure': 'dts:CiteStructure',
+    'Collection':    'dts:Collection',
+    'Resource':      'dts:Resource',
+    'citationTrees': 'dts:citationTrees',
+    'citeStructure': 'dts:citeStructure',
+    'description':   'dts:description',
+    'dublinCore': {
+      '@id': '@nest',
+      '@context': { '@vocab': null }
+    },
+    'extensions': {
+      '@id': '@nest',
+      '@context': { '@vocab': null }
+    },
+    'member':        'dts:member',
+    'title':         'dts:title',
+    'citeType':      'dts:citeType',
+    'collection':    'dts:collection',
+    'document':      'dts:document',
+    'download':      'dts:download',
+    'dtsVersion':    'dts:dtsVersion',
+    'mediaTypes':    'dts:mediaTypes',
+    'navigation':    'dts:navigation',
+    'parent':        'dts:parent',
+    'totalChildren': 'dts:totalChildren',
+    'totalParents':  'dts:totalParents',
+    'level':         'dts:level',
   }
-
-  if (typeof obj === 'string') {
-    if (isUrl(obj)) {
-      return findSource(obj) ? { url: obj, source: findSource(obj) } : obj
-    } else {
-      return obj
-    }
-  }
-
-  if (Array.isArray(obj)) {
-    const result = []
-    for (let i = 0; i < obj.length; i++) {
-      result.push(processValue(obj[i]))
-    }
-    return result
-  }
-
-  if (typeof obj === 'object') {
-    if (!isRoot && Object.keys(obj).length === 1) {
-      if ('@id' in obj) {
-        const idVal = obj['@id']
-        if (isUrl(idVal)) {
-          if (findSource(idVal)) {
-            if (findSource(idVal).name === 'iiif') {
-              console.log('manifestUrlFound findSource(idVal)', idVal, findSource(idVal))
-              manifestUrlFound = idVal
-            }
-            return { url: idVal, source: findSource(idVal) }
-          } else {
-            return idVal
-          }
-        } else {
-          return idVal
-        }
-      } else if ('url' in obj) {
-        const urlVal = obj.url
-        if (isUrl(urlVal)) {
-          return findSource(urlVal) ? { url: urlVal, source: findSource(urlVal) } : urlVal
-        } else {
-          return urlVal
-        }
-      }
-    }
-
-    const result = {}
-    for (const k in obj) {
-      const value = obj[k]
-
-      if (k === 'member') {
-        result[k] = value
-      } else if ((k === 'dublinCore' || k === 'extensions') && value !== null && typeof value === 'object') {
-        const nested = processValue(value)
-        for (const nk in nested) {
-          result[nk] = nested[nk]
-        }
-      } else {
-        result[k] = processValue(value)
-      }
-    }
-    console.log('manifestUrlFound', manifestUrlFound)
-    if (manifestUrlFound.length > 0) {
-      result.iiifManifestUrl = manifestUrlFound
-    }
-    return result
-  }
-
-  return obj
 }
 
-function applyKeepConfig(listmetadata, keepConfig) {
-  const result = {}
-  const fields = keepConfig.fields
+const defaultLoader = jsonld.documentLoaders.xhr?.()
+  ?? jsonld.documentLoaders.node?.()
 
-  function extractValue(obj, path) {
-    return path.split('.').reduce((acc, key) => acc?.[key], obj)
+jsonld.documentLoader = async (url) => {
+  if (url === 'https://dtsapi.org/context/v1.0.json') {
+    return { contextUrl: null, document: DTS_CONTEXT_INLINE, documentUrl: url }
+  }
+  if (defaultLoader) return defaultLoader(url)
+  throw new Error(`Cannot load context: ${url}`)
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Résolution préfixe → URI (non utilisée ?)
+// ─────────────────────────────────────────────────────────────────────────────
+function resolvePrefix(term, namespaces) {
+  if (!term || !namespaces) return term
+  const colon = term.indexOf(':')
+  if (colon === -1) return term
+  const prefix = term.slice(0, colon)
+  const local  = term.slice(colon + 1)
+  const base   = namespaces[prefix]
+  return base ? base + local : term
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Aplatissement du résultat jsonld.expand
+// ─────────────────────────────────────────────────────────────────────────────
+function flattenExpanded(expanded, namespaces = {}) {
+
+  const node = Array.isArray(expanded) ? expanded[0] : expanded
+  console.log('nested expanded 0', expanded, node)
+  if (!node) return {}
+
+  // Compresse une URI absolue en préfixe:local si possible
+  function compressUri(uri) {
+    for (const [prefix, base] of Object.entries(namespaces)) {
+      if (uri.startsWith(base)) return `${prefix}:${uri.slice(base.length)}`
+    }
+    return uri
   }
 
-  for (const key in fields) {
-    const field = fields[key]
+  const result = {}
 
-    if (key === 'member') {
-      result[key] = listmetadata[key]
+  for (const uri in node) {
+    if (uri === '@context') continue
+
+    const key = uri.startsWith('@') ? uri : compressUri(uri)
+    const values = node[uri]
+    console.log('nested uri', uri, node[uri])
+
+    if (uri === '@type') {
+      const types = values.map(t => compressUri(t))
+      result[key] = types.length === 1 ? types[0] : types
       continue
     }
 
-    if (typeof field === 'string' || field === null) {
-      const value = extractValue(listmetadata, key)
-      const target = field ?? key
-      if (value !== null) {
-        result[target] = processValue(value)
-      }
-    } else if (typeof field === 'object') {
-      const source = listmetadata[key]
-      if (!source) continue
-      for (const subKey in field) {
-        const value = source[subKey]
-        const target = field[subKey] ?? subKey
-        if (value !== null) {
-          result[target] = processValue(value)
-        }
-      }
+    if (uri === '@id') {
+      result[key] = values
+      continue
     }
+
+    if (!Array.isArray(values)) continue
+
+    const flattened = values.map(v => {
+      if ('@value' in v) return v['@value']
+      if ('@id' in v && Object.keys(v).length === 1) return v['@id']
+      if (typeof v === 'object' && Object.keys(v).length > 0) {
+        console.log('nested 0 v', uri, v)
+        // Si c'est un objet JSON-LD structuré, récursion
+        if ('@value' in v || '@id' in v || '@type' in v) {
+          console.log('nested 1 v', uri, v)
+          return flattenExpanded([v], namespaces)
+        }
+        // Sinon objet littéral (ex: dts:download { "application/tei+xml": "url" })
+        console.log('nested 2 v', v)
+        return v
+      }console.log('nested 3 v', uri, v)
+      return v
+    })
+
+    result[key] = flattened.length === 1 ? flattened[0] : flattened
   }
 
   return result
 }
 
-function orderMetadata(metadata, order) {
-  const ordered = {}
-  for (const key of order) {
-    if (metadata[key] !== undefined) {
-      ordered[key] = metadata[key]
+// ─────────────────────────────────────────────────────────────────────────────
+// Expansion JSON-LD
+// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * Pré-traitement : résout les @nest que jsonld.js ne gère pas.
+ * - dublinCore → ses propriétés sont inlinées avec @vocab dct:
+ * - extensions → ses propriétés sont inlinées avec leur @context local
+ */
+
+function resolveNested(apiResponse) {
+  const result = { ...apiResponse }
+  console.log('resolved result', result)
+  const dctVocab = 'http://purl.org/dc/terms/'
+  const existingContext = Array.isArray(result['@context'])
+    ? result['@context'] : [result['@context']].filter(Boolean)
+
+  if (result.dublinCore && typeof result.dublinCore === 'object') {
+    // Injecter directement avec URIs absolues, sans passer par @context
+    for (const [k, v] of Object.entries(result.dublinCore)) {
+      if (k === '@context') continue
+      result[`${dctVocab}${k}`] = v  // clé = URI absolue → sera compressée par flattenExpanded
+    }
+    delete result.dublinCore
+  }
+
+  if (result.extensions && typeof result.extensions === 'object') {
+    console.log('resolved result.extensions', result.extensions)
+    const extContext = result.extensions['@context']
+    if (extContext) {
+      result['@context'] = [...existingContext, extContext]
+    }
+    for (const [k, v] of Object.entries(result.extensions)) {
+      console.log('resolved nested key, value', k, v)
+      if (k === '@context') continue
+      // Ne pas écraser une clé existante (dts:title > schema:name)
+      if (!(k in result)) {
+        result[k] = v
+      }
+    }
+    delete result.extensions
+  }
+
+  return result
+}
+
+async function expandMetadata(apiResponse, namespaces = {}) {
+  try {
+    console.log('expandMetadata apiResponse', apiResponse, namespaces)
+    const preprocessed = resolveNested(apiResponse)
+    console.log('expandMetadata preprocessed', preprocessed)
+    const expanded = await jsonld.expand(preprocessed)
+    console.log('expandMetadata expanded', expanded)
+    const flat = flattenExpanded(expanded, namespaces)
+
+    // Déduplication
+    for (const key in flat) {
+      if (Array.isArray(flat[key])) {
+        const unique = [...new Set(flat[key].map(v =>
+          typeof v === 'object' ? JSON.stringify(v) : v
+        ))].map(v => {
+          try { return JSON.parse(v) } catch { return v }
+        })
+        flat[key] = unique.length === 1 ? unique[0] : unique
+      }
+    }
+
+    return flat
+  } catch (e) {
+    console.warn('⚠️ jsonld expand error', e)
+    return apiResponse
+  }
+}
+// URI de sameAs après expand (schema.org)
+// Après compression, sameAs est accessible via le préfixe
+const SCHEMA_SAMEAS_COMPRESSED = 'schema:sameAs'
+const SCHEMA_SAMEAS_URI        = 'https://schema.org/sameAs'
+// ─────────────────────────────────────────────────────────────────────────────
+// enrichValue — inchangé
+// ─────────────────────────────────────────────────────────────────────────────
+function enrichValue(value, path) {
+  try {
+
+    if (typeof value === 'string') {
+      const cleanUrl = value.replace(/\{[^}]*\}/g, '').replace(/\?$/, '')
+      const src = findSource(cleanUrl)
+      if (!src) return value
+      const isHttp = cleanUrl.startsWith('http')
+      return {
+        value: cleanUrl,
+        ...(isHttp ? { url: cleanUrl } : {}),
+        source: src
+      }
+    }
+
+    if (Array.isArray(value)) {
+      return value.map(v => enrichValue(v, path))
+    }
+
+    if (value && typeof value === 'object') {
+      // Ajouter contentUrl comme source d'URL possible
+      const url = value.url ?? value['@id'] ?? value.id ?? value['schema:contentUrl']
+
+      // Pour les MediaObject, chercher la source sur encodingFormat plutôt que l'URL
+      const formatSrc = value['schema:encodingFormat'] ? findSource(value['schema:encodingFormat']) : null
+      const urlSrc = url ? findSource(url) : null
+      const src = formatSrc ?? urlSrc
+
+      // sameAs...
+      const sameAsSources = []
+      const sameAsValue = value[SCHEMA_SAMEAS_COMPRESSED] ?? value[SCHEMA_SAMEAS_URI]
+      if (sameAsValue) {
+        const arr = Array.isArray(sameAsValue) ? sameAsValue : [sameAsValue]
+        for (const sa of arr) {
+          const saUrl = typeof sa === 'string' ? sa : sa['@id']
+          const saSrc = findSource(saUrl)
+          if (saSrc) sameAsSources.push({ value: saUrl, source: saSrc })
+        }
+      }
+
+      if (!src && sameAsSources.length === 0) return value
+
+      return {
+        ...value,
+        ...(url ? { url } : {}),
+        ...(src ? { source: src } : {}),
+        ...(sameAsSources.length > 0 ? { sameAsSources } : {})
+      }
+    }
+
+    return value
+
+  } catch (e) {
+    console.warn('⚠️ enrichValue error', { path, value, e })
+    return value
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// buildDisplayModel
+// ─────────────────────────────────────────────────────────────────────────────
+export async function buildDisplayModel(rawMetadata, config) {
+  const namespaces         = config?.namespaces         ?? {}
+  const displayOrder       = config?.metadataDisplayOrder ?? []
+  const renameMap          = config?.metadataRename       ?? {}
+  const excludeConfig      = config?.excludeMetadata      ?? {}
+  const excludeFields = [
+    ...(excludeConfig.fields ?? []),
+    ...APP_KEYS
+  ]
+  const onlyDeclared       = excludeConfig.onlyDeclared   ?? false
+
+  const { metadata: rawJsonLd, appData } = splitMetadata(rawMetadata)
+  console.log('buildDisplayModel rawJsonLd', rawJsonLd)
+
+  const metadata = await expandMetadata(rawJsonLd, namespaces)
+
+  function buildRenameGraph(metadataRename) {
+    const graph = new Map()
+
+    for (const [from, to] of Object.entries(metadataRename)) {
+      graph.set(from, to)
+    }
+
+    return graph
+  }
+
+  function resolveRename(key, graph) {
+    let current = key
+    const visited = new Set()
+
+    while (graph.has(current)) {
+      if (visited.has(current)) break // protection boucle
+      visited.add(current)
+      current = graph.get(current)
+    }
+
+    return current
+  }
+  function buildDisplayKeyMap(namespaces, metadataRename) {
+    const DTS = Object.keys(namespaces).find(
+      k => namespaces[k].includes('dtsapi.org/v1.0#')
+    )
+
+    const graph = buildRenameGraph(metadataRename)
+
+    const idKey = resolveRename('@id', graph)
+    const typeKey = resolveRename('@type', graph)
+
+    return {
+      [idKey]: ['@id', 'identifier'],
+      [typeKey]: ['@type', 'type'],
+      [`${DTS}title`]: ['@value', 'title'],
     }
   }
-  return ordered
+
+  const DISPLAY_KEY_MAP = buildDisplayKeyMap(namespaces, renameMap)
+
+  // Construire un Set des champs exclus (support wildcard "dots:*")
+  function isExcluded(key) {
+    const explicitAllowedKeys = new Set([
+      ...displayOrder.filter(k => !isWildcard(k)),
+      ...Object.values(renameMap)
+    ])
+
+    return excludeFields.some(pattern => {
+      if (pattern.endsWith(':*')) {
+        const prefix = pattern.slice(0, -1) // "dots:"
+        return key.startsWith(prefix)
+      }
+      return key === pattern
+    })
+  }
+
+  const result = {}
+  const handledKeys = new Set()
+
+  function isWildcard(pattern) {
+    return pattern.endsWith(':*')
+  }
+
+  function wildcardPrefix(pattern) {
+    return pattern.slice(0, -1)
+  }
+
+  // Phase 1 : ordered pass
+  for (const term of displayOrder) {
+    console.log('buildDisplayModel Phase 1', term)
+
+    if (isWildcard(term)) {
+      const prefix = wildcardPrefix(term)
+
+      const matchingKeys = Object.keys(metadata)
+        .filter(key =>
+          key.startsWith(prefix) &&
+          !handledKeys.has(key) &&
+          !isExcluded(key)
+        )
+        .sort()
+
+      for (const key of matchingKeys) {
+        const val = metadata[key]
+
+        if (
+          val === undefined ||
+          val === null ||
+          val === '' ||
+          (typeof val === 'object' &&
+            !Array.isArray(val) &&
+            Object.keys(val).length === 0)
+        ) {
+          continue
+        }
+
+        result[key] = enrichValue(val, key)
+        handledKeys.add(key)
+      }
+
+      continue
+    }
+
+    if (isExcluded(term)) continue
+
+    // Gestion dts:download.application/tei+xml → sous-clé de dts:download
+    if (term.includes('.')) {
+      const [parent, subkey] = term.split(/\.(.+)/) // split sur le premier point
+      if (metadata[parent] && typeof metadata[parent] === 'object') {
+        const val = metadata[parent][subkey]
+        if (val !== undefined && val !== null && val !== '') {
+          const label = renameMap[term] ?? term
+          result[label] = enrichValue(val, term)
+          handledKeys.add(parent) // on marque le parent comme traité
+        }
+      }
+      continue
+    }
+
+    // Résoudre la clé réelle dans metadata
+    const candidateKeys = DISPLAY_KEY_MAP[term] ?? [term]
+    const metaKey = candidateKeys.find(k => k in metadata && metadata[k] != null)
+
+    if (!metaKey) continue
+
+    if (!(metaKey in metadata)) {
+      console.log('buildDisplayModel not found', metaKey)
+      continue
+    }
+    const val = metadata[metaKey]
+    if (val === undefined || val === null || val === '' ||
+        (typeof val === 'object' && !Array.isArray(val) && Object.keys(val).length === 0)) {
+      console.log('buildDisplayModel deemed invalid', metaKey, metadata[metaKey])
+      continue
+    }
+
+
+    result[term] = enrichValue(val, term)
+
+    // Marquer TOUTES les clés candidates comme traitées
+    for (const k of candidateKeys) handledKeys.add(k)
+
+  }
+  console.log('buildDisplayModel result 0', result)
+
+  // Phase 2 : remaining (si onlyDeclared === false)
+  if (!onlyDeclared) {
+    for (const key of Object.keys(metadata)) {
+      console.log('buildDisplayModel Phase 2', key)
+      if (handledKeys.has(key)) {
+        console.log('buildDisplayModel Phase 2 already processed', key)
+        continue
+      }
+      if (isExcluded(key)) {
+        console.log('buildDisplayModel Phase 2 excluded', key)
+        continue
+      }
+      const val = metadata[key]
+      if (val === undefined || val === null || val === '' ||
+          (typeof val === 'object' && !Array.isArray(val) && Object.keys(val).length === 0)) {
+        console.log('buildDisplayModel deemed invalid 2', key, val)
+        continue
+      }
+      result[key] = enrichValue(val, key)
+      console.log('buildDisplayModel Phase 2 enriched', key, result[key])
+    }
+    console.log('buildDisplayModel Phase 2 end', metadata, result)
+  }
+  console.log('buildDisplayModel result 1', result)
+  return result
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// useMetadataProcessor
+// processMetadata est maintenant async
+// Sa seule responsabilité propre : enrichir avec les données TOC
+// Le reste est délégué à buildDisplayModel
+// ─────────────────────────────────────────────────────────────────────────────
+const APP_KEYS = new Set([
+  'editorialLevelIndicator',
+  'totalDescendants',
+  'descendant',
+  'router',
+  'router_params',
+  'router_refid',
+  'router_hash',
+  'url',
+  'hash',
+  'show',
+  'expanded',
+  'ancestor_editorialLevel',
+  'member',
+  'children',
+  'parent',
+  'projectIdentifier',
+  'totalParents',
+  'totalChildren',
+  'totalItems',
+  'citeType',
+    'level'
+])
+
+function splitMetadata(raw = {}) {
+
+  const metadata = {}
+  const appData  = {}
+
+  for (const [key, value] of Object.entries(raw)) {
+
+    if (APP_KEYS.has(key)) {
+      appData[key] = value
+    } else {
+      metadata[key] = value
+    }
+  }
+
+  return { metadata, appData }
 }
 
 export function useMetadataProcessor() {
-  function processMetadata(listmetadata, collConfig, resourceId, route) {
-    let metadata
-    const hasKeepMetadata = Object.keys(collConfig?.keepCollectionMetadata?.fields ?? {}).length > 0
-      console.log('hasKeepMetadata ', collConfig, resourceId, hasKeepMetadata)
 
-    if (hasKeepMetadata) {
-      const keepConfig = structuredClone(toRaw(collConfig.keepCollectionMetadata))
-      keepConfig.fields['title'] = 'title'
-      keepConfig.fields['citeType'] = 'type'
-      keepConfig.fields['member'] = 'member'
-      keepConfig.fields['children'] = 'children'
-      keepConfig.fields['projectIdentifier'] = 'projectIdentifier'
-      keepConfig.fields['extensions']['dots:dotsProjectId'] = 'dots:dotsProjectId'
-      keepConfig.fields['parent'] = 'parent'
-      keepConfig.fields['extensions']['dct:source'] = 'dct:source'
-      keepConfig.fields['iiifManifestUrl'] = 'iiifManifestUrl'
-      keepConfig.fields['displayMode'] = 'displayMode'
-      keepConfig.displayOrder.push('title')
-      keepConfig.displayOrder.push('type')
-      keepConfig.displayOrder.push('member')
-      keepConfig.displayOrder.push('children')
-      keepConfig.displayOrder.push('projectIdentifier')
-      keepConfig.displayOrder.push('dots:dotsProjectId')
-      keepConfig.displayOrder.push('parent')
-      keepConfig.displayOrder.push('dct:source')
-      keepConfig.displayOrder.push('iiifManifestUrl')
-      keepConfig.displayOrder.push('displayMode')
-      metadata = applyKeepConfig(listmetadata, keepConfig)
+  async function processMetadata(rawMetadata, collConfig, resourceId) {
 
-      if (keepConfig.displayOrder) {
-        metadata = orderMetadata(metadata, keepConfig.displayOrder)
-      }
-    } else {
-      metadata = processValue(listmetadata, true)
-    }
+    const config = collConfig ? toRaw(collConfig) : {}
+    const raw = JSON.parse(JSON.stringify(toRaw(rawMetadata)))
 
-    // citation
-    if (metadata.identifier && metadata.type === 'Resource') {
-      metadata.citation = {
-        source: findSource(window.location.origin),
-        url: window.location.origin +
-             (import.meta.env.VITE_APP_APP_ROOT_URL.length > 1
-               ? import.meta.env.VITE_APP_APP_ROOT_URL + '/'
-               : import.meta.env.VITE_APP_APP_ROOT_URL) +
-             route.path.slice(1)
-      }
-    }
+    // Juste les alias système
+    const result = { ...raw }
+    if ('@id' in result)   { result.identifier = result['@id'];   /*delete result['@id']*/ }
+    if ('@type' in result) { result.type = result['@type'];       /*delete result['@type']*/ }
 
-    // parent depuis TOC
+    // TOC
     if (store.state.TOC.length > 0) {
       const tocItem = store.state.TOC.find(i => i.identifier === resourceId)
-      if (tocItem?.parent) {
-        if (Array.isArray(tocItem.parent)) {
-          metadata.parent = tocItem.parent.map(p => {
-            const parent = store.state.TOC.find(i => i.identifier === p)
-            return parent ? `${p} (${parent.citeType})` : p
-          })
-        } else {
-          metadata.parent = tocItem.parent
-        }
-      } else {
-        metadata.parent = []
-      }
+      result.parent = tocItem?.parent
+        ? Array.isArray(tocItem.parent)
+          ? tocItem.parent.map(p => {
+              const parent = store.state.TOC.find(i => i.identifier === p)
+              return parent ? `${p} (${parent.citeType})` : p
+            })
+          : tocItem.parent
+        : []
     }
 
-    return metadata
+    return result  // cache : données brutes + alias + TOC
   }
 
-  return { processMetadata, findSource, processValue }
+  return { processMetadata }
 }

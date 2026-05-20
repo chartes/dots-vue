@@ -60,47 +60,49 @@
       { "tabName": "tabName3", "compName": "about3" }
     ],
     "excludeCollectionIds": [],
-    "keepCollectionMetadata": {
-      "displayOrder": [
-        "identifier",
-        "type",
-        "title",
-        "dc:title",
-        "dc:creator",
-        "dc:contributor",
-        "dc:date",
-        "dc:relation",
-        "downloadXML",
-        "downloadPDF",
-        "dct:publisher",
-        "dct:rights",
-        "dct:isVersionOf",
-        "dct:creator",
-        "url"
-      ],
-      "fields": {
-        "@id": "identifier",
-        "@type": "type",
-        "title": null,
-        "download": {
-          "XML": "downloadXML",
-          "PDF": "downloadPDF"
-        },
-        "url": "url",
-        "dublinCore": {
-          "title": "dc:title",
-          "creator": "dc:creator",
-          "contributor": "dc:contributor",
-          "date": "dc:date",
-          "relation": "dc:relation"
-        },
-        "extensions": {
-          "dct:publisher": null,
-          "dct:rights": null,
-          "dct:isVersionOf": null,
-          "dct:creator": null
-        }
-      }
+    "namespaces": {
+      "dts":    "https://dtsapi.org/v1.0#",
+      "dct":    "http://purl.org/dc/terms/",
+      "schema": "https://schema.org/",
+      "dots":   "https://github.com/chartes/dots/"
+    },
+    "metadataDisplayOrder": [
+      "dts:title",
+      "dts:identifier",
+      "dts:type",
+      "dct:identifier",
+      "dct:title",
+      "dct:creator",
+      "dct:contributor",
+      "dct:created",
+      "dct:issued",
+      "dct:coverage",
+      "dct:relation",
+      "dct:source",
+      "dts:download",
+      "dct:citation",
+      "dct:publisher",
+      "schema:publisher",
+      "dct:license",
+      "dct:rights",
+      "dct:isVersionOf",
+      "schema:isVersionOf",
+      "schema:creator",
+      "schema:contributor",
+      "schema:source",
+      "schema:isBasedOn"
+    ],
+    "metadataRename": {
+      "@id": "dts:id",
+      "@type": "dts:type"
+    },
+    "excludeMetadata": {
+      "onlyDeclared": false,
+      "fields": [
+        "schema:inLanguage",
+        "dts:citationTrees",
+        "schema:dots:*"
+      ]
     }
   }
 }

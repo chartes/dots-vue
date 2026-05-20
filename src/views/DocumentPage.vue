@@ -1504,8 +1504,8 @@ export default {
       if (tocItem.citeType === 'Collection') {
         // Collection pure
         console.log('tocItem collConfig.value ', tocItem, collConfig.value)
-        const { processMetadata } = useMetadataProcessor()
-        selectedCollection.value = processMetadata(tocItem, collConfig.value, selectedCollectionId.value, route)
+        // const { processMetadata } = useMetadataProcessor()
+        selectedCollection.value = tocItem//processMetadata(tocItem, collConfig.value, selectedCollectionId.value, route)
         //selectedCollection.value = tocItem
       } else {
         // Resource = merge metadata + toc
@@ -1607,34 +1607,38 @@ export default {
       )
     })
     const getIiifManifestUrl = () => {
-      const dctSource = metadata.value['dct:source']
-
-      if (!dctSource) {
+      const resourceIIIFManifest = metadata.value?.extensions?.['dots:resourceIIIFManifest']
+      console.log('getIiifManifestUrl metadata.value.extensions["dots:resourceIIIFManifest"] : ', resourceIIIFManifest)
+      if (!resourceIIIFManifest) {
         return null
       }
 
       // cas tableau
-      if (Array.isArray(dctSource)) {
-        const iiifItem = dctSource.find(s => s?.source?.name === 'iiif')
+      if (Array.isArray(resourceIIIFManifest)) {
+        const iiifItem = resourceIIIFManifest.find(s => s?.source?.name === 'iiif')
         if (iiifItem) {
           return iiifItem.url
         }
+      } else {
+        return resourceIIIFManifest
       }
 
       // cas objet simple
-      if (dctSource?.source?.name === 'iiif') {
-        return source.url
-      }
+      // if (resourceIIIFManifest?.source?.name === 'iiif') {
+      //   console.log('getIiifManifestUrl debug resourceIIIFManifest', resourceIIIFManifest)
+      //   return resourceIIIFManifest.url
+      // }
 
       return null
     }
 
     watch(
-      () => metadata.value['dct:source'],
-      () => {
-        if (metadata.value['dct:source']) {
+      () => metadata.value?.extensions?.['dots:resourceIIIFManifest'],
+      (newVal) => {
+        console.log('watch metadata.value', metadata.value?.extensions)
+        if (newVal?.length > 0) {
           //getIiifManifestUrl()
-          console.log('metadata.iiifManifestUrl is now available !!! : ', getIiifManifestUrl(), manifestIsAvailable.value)
+          console.log('metadata.iiifManifestUrl is now available !!! : ', manifestIsAvailable.value)
           layout.imageIsAvailable.value = true
           setMirador()
         } else {
