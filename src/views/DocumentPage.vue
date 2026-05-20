@@ -1785,7 +1785,9 @@ export default {
           const yOffset = -90
           const y = el.getBoundingClientRect().top + window.scrollY + yOffset
           console.log('DocumentPage.vue scrollTo y : ', y)
-          window.scrollTo({ top: y, behavior: 'smooth' })
+          setTimeout(function() {
+            window.scrollTo({ top: y, behavior: 'smooth' })
+          })
           // el.scrollIntoView({ behavior: 'smooth' })
         }
       } else {

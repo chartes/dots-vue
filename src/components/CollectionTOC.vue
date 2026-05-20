@@ -1238,7 +1238,7 @@ button.toc-toggle {
   cursor: pointer;
 }
 .toc-mode > .menu.expanded ul.tree li.more a {
-  padding: 15px 5px 13px 5px;
+  padding: 15px 5px 13px 8px;
 }
 .toc-mode > .menu.expanded {
   padding: 0;

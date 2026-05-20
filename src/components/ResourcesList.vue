@@ -520,6 +520,11 @@ name: 'CollectionTOC',
 .list-mode li {
   margin-left: 0 !important;
   list-style: none;
+  padding: 1px 0 !important;
+}
+
+.list-mode li .container .cell:first-child {
+  padding-left: 5px;
 }
 
 .list-mode .menu {
