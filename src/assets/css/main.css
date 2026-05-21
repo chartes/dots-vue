@@ -364,9 +364,10 @@ img, video {
     display: block;
     position: relative;
 }
+.card-image,
 .card-image:first-child img {
-    border-top-left-radius: .25rem;
-    border-top-right-radius: .25rem;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .table {
