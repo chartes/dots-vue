@@ -690,7 +690,7 @@ a.noteref sup {
     line-height: inherit;
 }
 
-.aside-noteref-list::before {
+.aside-noteref-list:not(:empty)::before {
     content: "";
     display: block;
     width: 100%;

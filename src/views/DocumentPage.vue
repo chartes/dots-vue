@@ -784,9 +784,12 @@ export default {
       // By default, no ellipsis on crumb parts
       // If doc breadcrumb is too large, we add ellipsis css class
       crumbsWithEllipsis.value = false;
-      if (el.scrollWidth > el.clientWidth) {
-        crumbsWithEllipsis.value = true;
-      }
+      nextTick(function () {
+        if (el.scrollWidth > el.clientWidth) {
+          crumbsWithEllipsis.value = true;
+        }
+      });
+
       // Horizontal scroll
       el.scrollLeft = el.scrollLeftMax;
       updateMeasurementsAriane();
@@ -2702,7 +2705,7 @@ div.remove-bottom-padding #article {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 320px;
+      max-width: 220px;
 
       &:hover {
         text-overflow: unset;
