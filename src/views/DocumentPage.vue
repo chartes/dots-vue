@@ -2245,6 +2245,10 @@ export default {
   width: 80%;
 }
 
+.document-views .text-view > * body {
+  padding-bottom: 80px;
+}
+
 .toc-aside-is-opened {
   .document-views .text-view > * teiheader,
   .document-views .text-view > * body {
