@@ -909,7 +909,9 @@ export default {
       // Fetch editorial level document parts if any (based on citeType)
       let editorialTypes = []
       console.log('TOC collConfig.value for editorialTypes : ', collConfig.value)
-      editorialTypes = collConfig.value.tableOfContentsSettings.editByCiteType
+      if (collConfig.value.tableOfContentsSettings && collConfig.value.tableOfContentsSettings.editByCiteType) {
+        editorialTypes = collConfig.value.tableOfContentsSettings.editByCiteType
+      }
 
       // Validate that there are actually in the data
       editorialTypesIsValid.value = processFlatTOC.some(item => editorialTypes.some(l => l === item.citeType))
@@ -1771,6 +1773,8 @@ export default {
     })
 
     function scrollTo() {
+      // Cf router/indes.js => scrollBehavior
+
       // If the selected item is an anchor, capture and scroll to that anchor
       console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
       if (hash.value.length > 0) {
@@ -1785,14 +1789,13 @@ export default {
           const yOffset = -90
           const y = el.getBoundingClientRect().top + window.scrollY + yOffset
           console.log('DocumentPage.vue scrollTo y : ', y)
-          setTimeout(function() {
-            window.scrollTo({ top: y, behavior: 'smooth' })
-          })
+          // window.scrollTo({ top: y, behavior: 'smooth' })
           // el.scrollIntoView({ behavior: 'smooth' })
         }
       } else {
         // Scroll to top if no anchor
-        window.scrollTo({ top: 0, behavior: 'instant' })
+        console.log('DocumentPage.vue scrollTo 0, no anchor')
+        // window.scrollTo({ top: 0, behavior: 'instant' })
       }
     }
 
