@@ -55,7 +55,6 @@
                 v-if="imageType === 'component'"
                 :is="image.component"
                 class="collection-component"
-                :class="{ 'has-banner': hasBanner }"
               />
 
               <!-- image -->
@@ -832,7 +831,7 @@ a {
 
 .collection-image {
   width: calc(100% - var(--first-column-width));
-  height: 330px;
+  height: 300px;
 }
 
 .collection-image-wrapper {

@@ -11,25 +11,10 @@
         class="resource"
         @click="toggleContent"
       >
-        <span class="metadata-header-title resource">{{ metadata.title }}</span>
-        <template v-if="Array.isArray(metadata.author) && metadata.author.length > 0">
-          <span
-            v-for="(aut, index) in metadata.author"
-            :key="index"
-            class="metadata-header-author resource"
-          >
-            {{ aut }}
-          </span>
-        </template>
-        <span
-          v-else-if="metadata.author"
-          class="metadata-header-author resource"
-        >
-          {{ metadata.author }}
+        <span class="metadata-header-title resource">
+          {{ metadata['dts:title'] }}
         </span>
-        <span class="metadata-header-label resource">
-          Métadonnées
-        </span>
+        <span class="metadata-header-label resource">Métadonnées</span>
       </div>
       <a
         href="#"
@@ -41,223 +26,170 @@
       v-else-if="hasHeader"
       class="document-metadata-header"
     >
-      <div
-        class="collection"
-        @click="toggleContent"
-      >
-        <span class="metadata-header-label collection">
-          Métadonnées
-        </span>
-        <span class="metadata-header-title collection">{{ metadata.title }}</span>
-        <span
-          v-if="metadata.author"
-          class="metadata-header-author collection"
-        >
-          {{ metadata.author }}
-        </span>
+      <div class="collection" @click="toggleContent">
+        <span class="metadata-header-label collection">Métadonnées</span>
+        <span class="metadata-header-title collection">{{ metadata['dts:title'] }}</span>
       </div>
-      <a
-        href="#"
-        class="toggle-btn"
-        @click="toggleContent"
-      />
+      <a href="#" class="toggle-btn" @click="toggleContent" />
     </div>
+
     <aside class="menu">
-      <Suspense>
-        <div class="is-flex is-justify-content-center">
-          <table class="table is-fullwidth">
-            <!-- style="background-color: #e4e4e4;" -->
-            <tbody>
-              <!--<tr class="row">
-                <td><span class="title" style="font-variant: all-small-caps"><b>Identifiant</b></span></td>
-                <td>
-                  <span class="title" style="text-transform: uppercase; font-size: 12px">
-                    <a target="_blank" :href="metadata.id">{{ metadata.id }}</a>
-                </span>
-                </td>
-                <td></td>
-              </tr>
-              <tr class="row">
-                <td><span class="title" style="font-variant: all-small-caps"><b>Titre</b></span></td>
-                <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ metadata.title }}</span></td>
-                <td></td>
-              </tr>-->
-              <template 
-                v-for="(value, name, index) in metadata.dublinCore"
-                :key="index"
-              >
-                <template v-if="Array.isArray(value) && value.length > 1">
-                  <tr
-                    v-for="(v, i) in value"
-                    :key="i"
-                    class="row is-align-items-center"
-                  >
-                    <td
-                      v-if="v === value[0]"
-                      :rowspan="value.length"
-                    >
-                      <span class="title">
-                        <b>dc:{{ name }}</b>
-                      </span>
-                    </td>
-                    <td>
-                      <span
-                        class="title"
-                      >
-                        {{ v }}
-                      </span>
-                    </td>
-                    <td>
-                      <figure
-                        v-if="getValue(v).includes('http')"
-                        class="image is-48x48 level-left"
-                      >
-                        <a
-                          target="_blank"
-                          :href="getValue(v)"
-                        >
-                          <img :src="ImgUrl(name)" />
+      <div class="is-flex is-justify-content-center">
+        <table class="table is-fullwidth">
+          <tbody>
+            <template v-for="(value, key) in metadata" :key="key">
+
+              <!-- Case 1 : array -->
+              <template v-if="Array.isArray(value) && value.length > 0">
+                <tr
+                  v-for="(item, i) in value"
+                  :key="i"
+                  class="row is-align-items-center"
+                >
+                  <!-- Label with rowspan on first line only -->
+                  <td v-if="i === 0" :rowspan="value.length">
+                    <span class="title"><b>{{ key }}</b></span>
+                  </td>
+
+                  <!-- Value Case -->
+                  <td>
+                    <span class="title">
+                      <!-- enriched item { value, url?, source } -->
+                      <template v-if="item && typeof item === 'object' && 'value' in item">
+                        <a v-if="item.url" :href="item.url" target="_blank">{{ item.value }}</a>
+                        <span v-else>{{ item.value }}</span>
+                      </template>
+                      <!-- item objet structuré { name, @id, ... } -->
+                      <template v-else-if="item && typeof item === 'object'">
+                        <a v-if="item.url" :href="item.url" target="_blank">
+                          {{ item['schema:name'] ?? item.url }}
                         </a>
-                      </figure>
-                    </td>
-                  </tr>
-                </template>
-                <template v-else>
-                  <tr class="row">
-                    <td><span class="title"><b>dc:{{ name }}</b></span></td>
-                    <td><span class="title">{{ value }}</span></td>
-                    <td></td>
-                  </tr>
-                </template>
-              </template>
-              <template v-for="(value, key, index) in metadata" :key="index">
-                <template v-if="Array.isArray(value) && value.length >= 1">
-                  <tr v-for="(v, i) in value" :key="i" class="row is-align-items-center">
-                    <td v-if="v === value[0]" :rowspan="value.length"><span class="title is-align-items-center"><b>{{ key }}</b></span></td>
-                    <td v-if="v.url">
-                      <span class="title">
-                        <a v-if="v.url.includes('localhost')" :href="v.url">
-                          {{ v.url }}
-                        </a>
-                        <a v-else target="_blank" :href="v.url">
-                          {{ v.url }}
-                        </a>
-                      </span>
-                    </td><!-- {{ Array.isArray(v) ? v[0] : typeof(v) === 'object' ? Object.values(v)[0] : v }} -->
-                    <td v-else>
-                      <span class="title">
-                        {{ v }}
-                      </span>
-                    </td><!-- {{ Array.isArray(v) ? v[0] : typeof(v) === 'object' ? Object.values(v)[0] : v }} -->
-                    <td v-if="v.url">
-                      <figure class="image level-left">
-                        <a target="_blank" :href="v.url">
-                          <img :src="ImgUrl(v.source.name)" />
-                        </a>
-                      </figure>
-                    </td>
-                    <td v-else></td>
-                  </tr>
-                </template>
-                <template v-else-if="value && typeof(value) === 'object'">
-                  <tr>
-                    <td><span class="title"><b>{{ key }}</b></span></td>
-                    <td><span class="title">
-                      <a target="_blank" :href="value.url">
-                        {{ value.url }}
-                      </a>
+                        <span v-else>{{ item.name ?? JSON.stringify(item) }}</span>
+                      </template>
+                      <!-- scalar item -->
+                      <template v-else>
+                        <a v-if="typeof item === 'string' && item.startsWith('http')" :href="item" target="_blank">{{ item }}</a>
+                        <span v-else>{{ item }}</span>
+                      </template>
                     </span>
-                    </td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
-                    <td>
-                      <figure v-if="value.url && value.url.includes('http')" class="image level-left">
-                        <a target="_blank" :href="value.url">
-                          <img class="meta_logos" :src="ImgUrl(value.source.name)" />
+                  </td>
+
+                  <!-- Logo cell -->
+                  <!-- Array of logos cell -->
+                  <td>
+                    <div class="is-flex is-align-items-center" style="gap: 4px">
+                      <!-- Main source (@id) -->
+                      <figure v-if="item?.source?.name" class="image level-left">
+                        <a :href="item.url" target="_blank">
+                          <img :src="ImgUrl(item.source.name)" />
                         </a>
                       </figure>
-                    </td>
-                  </tr>
-                </template>
-                <template v-else-if="value">
-                  <tr class="row">
-                    <td><span class="title"><b>{{ key }}</b></span></td>
-                    <td v-if="value.toString().includes('http')">
-                      <span class="title">
-                        <a target="_blank" :href="value">
-                          {{ value }}
+                      <!-- Secondary sources (sameAs) -->
+                      <figure
+                        v-for="(sa, si) in (item?.sameAsSources ?? [])"
+                        :key="si"
+                        class="image level-left"
+                      >
+                        <a :href="sa.value" target="_blank">
+                          <img :src="ImgUrl(sa.source.name)" />
                         </a>
-                      </span>
-                    </td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
-                    <td v-else>
-                      <span class="title">
-                        {{ value }}
-                      </span>
-                    </td><!-- {{ Array.isArray(value) ? typeof(value[0]) === 'object' ? Object.values(value[0])[0] : value : typeof(value) === 'object' ? Object.values(value)[0] : value }}-->
-                    <td></td>
-                  </tr>
-                </template>
+                      </figure>
+                    </div>
+                  </td>
+                </tr>
               </template>
-  
-              <!--<template v-for="(value, index) in metadata['dct:isVersionOf']" :key="index">
+
+              <!-- Case 2 : enriched object { value, url?, source } -->
+              <template v-else-if="value && typeof value === 'object' && 'value' in value">
                 <tr class="row">
-                  <td><span class="title" style="font-variant: all-small-caps"><b>dct:isVersionOf</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value.url }}</span></td>
+                  <td><span class="title"><b>{{ key }}</b></span></td>
                   <td>
-                    <figure class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="value.url">
-                          <img :src="ImgUrl(value.source)"/>
-                        </a>
-                      </figure>
+                    <span class="title">
+                      <a v-if="value.url" :href="value.url" target="_blank">{{ value.value }}</a>
+                      <span v-else>{{ value.value }}</span>
+                    </span>
+                  </td>
+                  <td>
+                    <figure v-if="value.source?.name" class="image level-left">
+                      <a :href="value.url" target="_blank">
+                        <img :src="ImgUrl(value.source.name)" />
+                      </a>
+                    </figure>
                   </td>
                 </tr>
               </template>
-              <template v-for="(value, name, index) in metadata.dublinCore" :key="index">
-                <tr v-if="Array.isArray(value) && value.length > 1" v-for="v in value" :key="index" class="row">
-                  <td v-if="v === value[0]" :rowspan="value.length"><span class="title" style="font-variant: all-small-caps"><b>dc:{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ v }}</span></td>
+
+              <!-- Case 3 : structured object { name, @id, ... } without source -->
+              <!-- Case 3 : structured object { name, @id, ... } without source or with sameAs -->
+              <template v-else-if="value && typeof value === 'object'">
+                <tr class="row">
+                  <td><span class="title"><b>{{ key }}</b></span></td>
                   <td>
-                    <figure v-if="getValue(v).includes('http')" class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="getValue(v)">
-                          <img :src="ImgUrl(name)"/>
+                    <span class="title">
+                      <a
+                        v-if="value['@id'] || value.url"
+                        :href="value['@id'] || value.url"
+                        target="_blank"
+                      >
+                        {{ value['schema:name'] || value['@id'] || value.url }}
+                      </a>
+                      <span v-else>{{ value.name || JSON.stringify(value) }}</span>
+                    </span>
+                  </td>
+                  <td>
+                    <div class="is-flex is-align-items-center" style="gap: 4px">
+                      <!-- Main source (@id) -->
+                      <figure v-if="value.source?.name" class="image level-left">
+                        <a :href="value.url || value['@id']" target="_blank">
+                          <img :src="ImgUrl(value.source.name)" />
                         </a>
                       </figure>
+                      <!-- Secondary sources (sameAs) -->
+                      <figure
+                        v-for="(sa, si) in (value.sameAsSources ?? [])"
+                        :key="si"
+                        class="image level-left"
+                      >
+                        <a :href="sa.value" target="_blank">
+                          <img :src="ImgUrl(sa.source.name)" />
+                        </a>
+                      </figure>
+                    </div>
                   </td>
                 </tr>
-                <tr class="row" v-else>
-                  <td><span class="title" style="font-variant: all-small-caps"><b>dc:{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td>
+              </template>
+
+              <!-- Case 4 : scalar (string, number, boolean) -->
+              <template v-else-if="value != null">
+                <tr class="row">
+                  <td><span class="title"><b>{{ key }}</b></span></td>
+                  <td>
+                    <span class="title">
+                      <a
+                        v-if="typeof value === 'string' && value.startsWith('http')"
+                        :href="value"
+                        target="_blank"
+                      >{{ value }}</a>
+                      <span v-else>{{ value }}</span>
+                    </span>
+                  </td>
                   <td></td>
                 </tr>
               </template>
-              <template v-for="(value, name, index) in metadata.extensions" :key="index">
-                <tr v-if="Array.isArray(value) && value.length > 1" v-for="v in value" :key="index" class="row">
-                  <td v-if="v === value[0]" :rowspan="value.length"><span class="title" style="font-variant: all-small-caps"><b>{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px" v-html="getValue(v)"/></td>
-                  <td>
-                    <figure v-if="getValue(v).includes('http')" class="image is-48x48 level-left">
-                        <a target="_blank" v-bind:href="getValue(v)">
-                          <img :src="ImgUrl(name)"/>
-                        </a>
-                      </figure>
-                  </td>
-                </tr>
-                <tr class="row" v-else>
-                  <td><span class="title" style="font-variant: all-small-caps"><b>{{ name }}</b></span></td>
-                  <td><span class="title" style="text-transform: uppercase; font-size: 12px">{{ value }}</span></td>
-                  <td></td>
-                </tr>
-              </template>-->
-            </tbody>
-          </table>
-        </div>
-      </Suspense>
+            </template>
+          </tbody>
+        </table>
+      </div>
     </aside>
   </div>
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, toRaw, watch } from 'vue'
 import md5 from 'md5'
 import * as $rdf from 'rdflib'
+
+import { buildDisplayModel } from '@/composables/useMetadataProcessor'
 
 export default {
   name: 'DocumentMetadata',
@@ -281,26 +213,9 @@ export default {
     })
     const isPopUp = ref(props.ispopup)
     const isNew = ref(true)
-    const metadata = ref(props.metadataprop)
+    const metadata = ref({})
     const authorThumbnailUrl = ref(null)
 
-    const filteredMetadata = computed(() => {
-      const source = props.metadataprop
-      const config = props.collectionConfig?.keepCollectionMetadata
-
-      if (!source) return {}
-      if (!config) return source
-
-      const result = {}
-
-      config.displayOrder.forEach((key) => {
-        if (source[key] !== undefined) {
-          result[key] = source[key]
-        }
-      })
-
-      return result
-    })
 
     const getValue = (data) => {
       function getLink (string) {
@@ -416,14 +331,21 @@ export default {
     }
 
     watch(
-      filteredMetadata,
-      (newValue) => {
-        metadata.value = newValue
-        fetchAuthorThumbnailUrl()
-        fetchBiblioData()
-        fetchRDF()
+      () => [props.metadataprop, props.collectionConfig],
+      async ([source, config]) => {
+        if (!source) { metadata.value = {}; return }
+        console.log('watch metadata source', source)
+
+        if (!source) { metadata.value = {}; return }
+        const rawSource = JSON.parse(JSON.stringify(toRaw(source)))
+        const rawConfig = config ? JSON.parse(JSON.stringify(toRaw(config))) : {}
+        metadata.value = await buildDisplayModel(rawSource, rawConfig)
+
+        await fetchAuthorThumbnailUrl()
+        await fetchBiblioData()
+        await fetchRDF()
       },
-      { immediate: true }
+      { immediate: true, deep: true }
     )
 
     return {

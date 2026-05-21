@@ -527,7 +527,7 @@ import IconReadingToolsToggle from '@/assets/images/IconReadingToolsToggle.vue'
 import XMLIcon from '@/assets/images/XMLIcon.vue'
 import IconNotes from '@/assets/images/IconNotes.vue'
 import TocIcon from '@/assets/images/TocIcon.vue'
-import ArianeArrowSeparatorIcon from "@/assets/images/ArianeArrowSeparatorIcon.vue";
+import ArianeArrowSeparatorIcon from '@/assets/images/ArianeArrowSeparatorIcon.vue'
 
 function findById (array, id) {
   for (const item of array) {
@@ -592,8 +592,8 @@ export default {
     const rootCollectionId = ref(props.rootCollectionIdentifier)
     const docProjectId = ref('')
     console.log('topTOCDisplayIndicator test : ', topTOCDisplayIndicator)
-    const appConfig = ref(props.applicationConfig)
-    const collConfig = ref(props.collectionConfig)
+    const appConfig = computed(() => props.applicationConfig)
+    const collConfig = computed(() => props.collectionConfig)
     console.log('DocumentPage props.collectionConfig', props.collectionConfig)
     const manifestIsAvailable = ref(false)
     const manifest = ref(null)
@@ -647,13 +647,28 @@ export default {
     const collection = ref()
 
     const isLoading = ref(false)
-    const TOC_DEPTH = ref(props.collectionConfig?.tableOfContentsSettings?.tableOfContentDepth)
+    // check if there is a TOC depth set up by the user (default 5 usually set in default conf)
+    const TOC_DEPTH = ref(
+      Number.isFinite(
+        props.collectionConfig?.tableOfContentsSettings?.tableOfContentDepth
+      )
+        ? props.collectionConfig.tableOfContentsSettings.tableOfContentDepth
+        : 5
+    )
     console.log('DocumentPage setup TOC_DEPTH : ', TOC_DEPTH.value)
     const editorialTypesIsValid = ref(false)
     const countEditorialTypes = ref([])
     const currentLevelIndicator = ref(false)
     const currentLevel = ref(1)
-    const editorialLevel = ref(props.collectionConfig?.tableOfContentsSettings?.editByLevel)
+
+    // check if there is an editorial level set up by the user in the collection configuration
+    const editorialLevel = ref(
+      Number.isFinite(
+        props.collectionConfig?.tableOfContentsSettings?.editByLevel
+      )
+        ? props.collectionConfig.tableOfContentsSettings.editByLevel
+        : 0
+    )
     const flatTOC = ref([])
     const topTOC = ref([])
     const bottomTOC = ref([])
@@ -865,8 +880,8 @@ export default {
 
         // Fetch editorial level document parts if any (based on citeType)
         let editorialTypes = []
-        if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByCiteType.length > 0) {
-          editorialTypes = collConfig.value[0].tableOfContentsSettings.editByCiteType
+        if (!!collConfig.value?.tableOfContentsSettings?.editByCiteType?.filter(Boolean).length) {
+          editorialTypes = collConfig.value.tableOfContentsSettings.editByCiteType
         }
         currentItem.value.editorialLevelIndicator = editorialTypes.includes(currentItem.value.citeType) ? 'toEdit' : 'renderToc'
         store.commit('setCurrentItem', currentItem.value)
@@ -925,7 +940,7 @@ export default {
       // Fetch editorial level document parts if any (based on citeType)
       let editorialTypes = []
       console.log('TOC collConfig.value for editorialTypes : ', collConfig.value)
-      if (collConfig.value.tableOfContentsSettings && collConfig.value.tableOfContentsSettings.editByCiteType) {
+      if (!!collConfig.value?.tableOfContentsSettings?.editByCiteType?.filter(Boolean).length) {
         editorialTypes = collConfig.value.tableOfContentsSettings.editByCiteType
       }
 
@@ -1131,7 +1146,7 @@ export default {
       console.log('document DoTS maxTocDepth : ', maxTocDepth)
 
       // check if there is an editorial level set up by the user in the collection configuration
-      editorialLevel.value = collConfig.value.tableOfContentsSettings.editByLevel
+      //editorialLevel.value = collConfig.value?.tableOfContentsSettings?.editByLevel ?? 0
       /* if (collConfig.value.length > 0 && collConfig.value[0].tableOfContentsSettings.editByLevel !== '' && collConfig.value[0].tableOfContentsSettings.editByLevel >= 0) {
         editorialLevel.value = collConfig.value[0].tableOfContentsSettings.editByLevel
       } */
@@ -1518,8 +1533,8 @@ export default {
       if (tocItem.citeType === 'Collection') {
         // Collection pure
         console.log('tocItem collConfig.value ', tocItem, collConfig.value)
-        const { processMetadata } = useMetadataProcessor()
-        selectedCollection.value = processMetadata(tocItem, collConfig.value, selectedCollectionId.value, route)
+        // const { processMetadata } = useMetadataProcessor()
+        selectedCollection.value = tocItem//processMetadata(tocItem, collConfig.value, selectedCollectionId.value, route)
         //selectedCollection.value = tocItem
       } else {
         // Resource = merge metadata + toc
@@ -1621,34 +1636,38 @@ export default {
       )
     })
     const getIiifManifestUrl = () => {
-      const dctSource = metadata.value['dct:source']
-
-      if (!dctSource) {
+      const resourceIIIFManifest = metadata.value?.extensions?.['dots:resourceIIIFManifest']
+      console.log('getIiifManifestUrl metadata.value.extensions["dots:resourceIIIFManifest"] : ', resourceIIIFManifest)
+      if (!resourceIIIFManifest) {
         return null
       }
 
       // cas tableau
-      if (Array.isArray(dctSource)) {
-        const iiifItem = dctSource.find(s => s?.source?.name === 'iiif')
+      if (Array.isArray(resourceIIIFManifest)) {
+        const iiifItem = resourceIIIFManifest.find(s => s?.source?.name === 'iiif')
         if (iiifItem) {
           return iiifItem.url
         }
+      } else {
+        return resourceIIIFManifest
       }
 
       // cas objet simple
-      if (dctSource?.source?.name === 'iiif') {
-        return source.url
-      }
+      // if (resourceIIIFManifest?.source?.name === 'iiif') {
+      //   console.log('getIiifManifestUrl debug resourceIIIFManifest', resourceIIIFManifest)
+      //   return resourceIIIFManifest.url
+      // }
 
       return null
     }
 
     watch(
-      () => metadata.value['dct:source'],
-      () => {
-        if (metadata.value['dct:source']) {
+      () => metadata.value?.extensions?.['dots:resourceIIIFManifest'],
+      (newVal) => {
+        console.log('watch metadata.value', metadata.value?.extensions)
+        if (newVal?.length > 0) {
           //getIiifManifestUrl()
-          console.log('metadata.iiifManifestUrl is now available !!! : ', getIiifManifestUrl(), manifestIsAvailable.value)
+          console.log('metadata.iiifManifestUrl is now available !!! : ', manifestIsAvailable.value)
           layout.imageIsAvailable.value = true
           setMirador()
         } else {
@@ -1658,11 +1677,19 @@ export default {
     )
 
     watch(props, async (newProps) => {
-      appConfig.value = newProps.applicationConfig
-      collConfig.value = newProps.collectionConfig
-      TOC_DEPTH.value = newProps.collectionConfig.tableOfContentsSettings.tableOfContentDepth
-      editorialLevel.value = newProps.collectionConfig.tableOfContentsSettings.editByLevel
-      console.log('DocumentPage watch newProps.collectionConfig / collConfig.value : ', collConfig.value)
+
+      TOC_DEPTH.value = Number.isFinite(
+        newProps.collectionConfig?.tableOfContentsSettings?.tableOfContentDepth
+      )
+        ? newProps.collectionConfig.tableOfContentsSettings.tableOfContentDepth
+        : 0
+
+      editorialLevel.value = Number.isFinite(
+        newProps.collectionConfig?.tableOfContentsSettings?.editByLevel
+      )
+        ? newProps.collectionConfig.tableOfContentsSettings.editByLevel
+        : 0
+
     }, { deep: true, immediate: true })
 
     watch(

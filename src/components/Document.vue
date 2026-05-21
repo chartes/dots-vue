@@ -84,6 +84,7 @@ export default {
     const mediaType = ref(props.mediaTypeEndpoint)
     const docProjectId = ref(props.projectIdentifier)
     const manifest = ref(props.iiifManifest)
+    console.log('Document.vue manifest', manifest.value)
     const collCss = ref(props.collectionCss)
     console.log('Document.vue mediaType', mediaType.value)
     console.log('Document.vue collCss', collCss.value)
@@ -180,6 +181,7 @@ export default {
             const container = document.createElement('div')
             // console.log('Document.vue html manifest : ', manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === current.href)[0].id)
             const canvasId = manifest.value.items.filter(cvs => cvs.items[0].items[0].body.id === current.href)[0].id
+            console.log('Document.vue canvasId ', canvasId)
             const frameNum = manifest.value.items.findIndex(cvs => cvs.items[0].items[0].body.id === current.href)
             container.innerHTML = `<page-break canvas-id="${canvasId}" canvas-num="${frameNum}" image="${current.href}"/>`
             // Replace the link with a PageBreak component
