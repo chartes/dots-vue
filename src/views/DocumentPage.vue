@@ -2664,27 +2664,6 @@ div.remove-bottom-padding #article {
     color: var(--fill-color);
     padding-left: .75rem;
   }
-}
-.crumbs.with-ellipsis li {
-  &:not(:last-child) {
-    & a {
-      text-align: left;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 320px;
-
-      &:hover {
-        text-overflow: unset;
-        max-width: unset;
-      }
-
-    }
-  }
-
-  &.hide-resource {
-    display: none;
-  }
 
   &.is-current {
     display: flex;
@@ -2714,6 +2693,27 @@ div.remove-bottom-padding #article {
         color: var(--fill-color) !important;
       }
     }
+  }
+}
+.crumbs.with-ellipsis li {
+  &:not(:last-child) {
+    & a {
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 320px;
+
+      &:hover {
+        text-overflow: unset;
+        max-width: unset;
+      }
+
+    }
+  }
+
+  &.hide-resource {
+    display: none;
   }
 }
 
