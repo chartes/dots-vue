@@ -34,6 +34,7 @@
           <ul
             v-if="arianeCollection.length > 0"
             class="breadcrumb-top"
+            :class="collCrumbsWithEllipsis ? 'with-ellipsis' : ''"
             ref="breadcrumbEl"
             @scroll="onColBreadcrumbScroll($event)"
           >
@@ -584,6 +585,7 @@ export default {
     const topTOCDisplayIndicator = ref(false)
     const leftTOCDisplayIndicator = ref(false)
     const leftTOCFragmentIsDocument = ref(false)
+    const collCrumbsWithEllipsis = ref(false)
     const crumbsWithEllipsis = ref(false)
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const dtsRootCollectionId = ref(props.dtsRootCollectionIdentifier)
@@ -723,11 +725,21 @@ export default {
       colBreadcrumbScrollWidth.value = el.scrollWidth
     }
 
-    // Maintains Ariane horizontal scroll on right when resizing window
+    // Maintains Collection Ariane horizontal scroll on right when resizing window
     const updateHorizontalScrollAndMeasurements = function() {
       if (!breadcrumbEl.value) return
       const el = breadcrumbEl.value;
       el.scrollLeft = el.scrollLeftMax;
+
+      // By default, no ellipsis on crumb parts
+      // If doc breadcrumb is too large, we add ellipsis css class
+      collCrumbsWithEllipsis.value = false;
+      nextTick(function () {
+        if (el.scrollWidth > el.clientWidth) {
+          collCrumbsWithEllipsis.value = true;
+        }
+      });
+
       updateMeasurements();
     }
 
@@ -799,9 +811,12 @@ export default {
       // By default, no ellipsis on crumb parts
       // If doc breadcrumb is too large, we add ellipsis css class
       crumbsWithEllipsis.value = false;
-      if (el.scrollWidth > el.clientWidth) {
-        crumbsWithEllipsis.value = true;
-      }
+      nextTick(function () {
+        if (el.scrollWidth > el.clientWidth) {
+          crumbsWithEllipsis.value = true;
+        }
+      });
+
       // Horizontal scroll
       el.scrollLeft = el.scrollLeftMax;
       updateMeasurementsAriane();
@@ -830,6 +845,7 @@ export default {
 
     const initArianeDoc = function() {
       updateDocBreadcrumbHorizontalScrollAndMeasurements();
+      updateHorizontalScrollAndMeasurements();
       arianeDocToRight();
     }
 
@@ -1800,6 +1816,8 @@ export default {
     })
 
     function scrollTo() {
+      // Cf router/indes.js => scrollBehavior
+
       // If the selected item is an anchor, capture and scroll to that anchor
       console.log('DocumentPage.vue scrollTo on resolve hash : ', hash.value)
       if (hash.value.length > 0) {
@@ -1814,14 +1832,13 @@ export default {
           const yOffset = -90
           const y = el.getBoundingClientRect().top + window.scrollY + yOffset
           console.log('DocumentPage.vue scrollTo y : ', y)
-          setTimeout(function() {
-            window.scrollTo({ top: y, behavior: 'smooth' })
-          })
+          // window.scrollTo({ top: y, behavior: 'smooth' })
           // el.scrollIntoView({ behavior: 'smooth' })
         }
       } else {
         // Scroll to top if no anchor
-        window.scrollTo({ top: 0, behavior: 'instant' })
+        console.log('DocumentPage.vue scrollTo 0, no anchor')
+        // window.scrollTo({ top: 0, behavior: 'instant' })
       }
     }
 
@@ -1846,7 +1863,7 @@ export default {
     }
 
     const closeTOC = function(event) {
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 1024) {
         const target = event.target;
         if (target.closest('.document-views')) {
           layout.isTOCMenuOpened.value = false
@@ -1901,6 +1918,7 @@ export default {
       miradorContainer,
       breadcrumbEl,
       crumbsWithEllipsis,
+      collCrumbsWithEllipsis,
       onColBreadcrumbScroll,
       onDocBreadcrumbScroll,
       breadcrumbToLeft,
@@ -2690,27 +2708,6 @@ div.remove-bottom-padding #article {
     color: var(--fill-color);
     padding-left: .75rem;
   }
-}
-.crumbs.with-ellipsis li {
-  &:not(:last-child) {
-    & a {
-      text-align: left;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 320px;
-
-      &:hover {
-        text-overflow: unset;
-        max-width: unset;
-      }
-
-    }
-  }
-
-  &.hide-resource {
-    display: none;
-  }
 
   &.is-current {
     display: flex;
@@ -2740,6 +2737,28 @@ div.remove-bottom-padding #article {
         color: var(--fill-color) !important;
       }
     }
+  }
+
+  &.with-ellipsis li {
+    &:not(:last-child) {
+      & a {
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 220px;
+
+        &:hover {
+          text-overflow: unset;
+          max-width: unset;
+        }
+
+      }
+    }
+  }
+
+  &.hide-resource {
+    display: none;
   }
 }
 
@@ -2934,15 +2953,6 @@ ul.breadcrumb-top {
     }
   }
 
-  > li:not(:last-child) > a:not(.active) {
-    .breadcrumb-label {
-      max-width: 320px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap
-    }
-  }
-
   /* creux gauche pour tous sauf premier */
   > li:not(:first-child) > a {
     margin-left: var(--crumb-gap);
@@ -2959,7 +2969,29 @@ ul.breadcrumb-top {
     border-top-right-radius: var(--crumb-radius);
     border-bottom-right-radius: var(--crumb-radius);
   }
+
+  &.with-ellipsis li {
+    &:not(:last-child) {
+      & > a:not(.active) {
+        .breadcrumb-label {
+          max-width: 320px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap
+        }
+
+        &:hover {
+          .breadcrumb-label {
+            text-overflow: unset;
+            max-width: unset;
+          }
+        }
+
+      }
+    }
+  }
 }
+
 ul.breadcrumb-top > li:nth-child(1) { z-index: 10; }
 ul.breadcrumb-top > li:nth-child(2) { z-index: 9; }
 ul.breadcrumb-top > li:nth-child(3) { z-index: 8; }
@@ -3296,14 +3328,18 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   .navigation-row-top-container {
     padding: 8px 0;
   }
+
   .breadcrumb-panel {
     padding: 10px 0;
     margin-left: calc(-1 * var(--mobile-margin));
     margin-right: calc(-1 * var(--mobile-margin));
-  }
 
-  .breadcrumb-panel.is-opened .breadcrumb-top-toggle-btn {
-    right: 10px;
+    &.is-opened {
+      margin-top: 8px;
+      .breadcrumb-top-toggle-btn {
+        right: 10px;
+      }
+    }
   }
 
   /* Ariane Collection */

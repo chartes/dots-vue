@@ -55,7 +55,25 @@ if (isDocProjectIdIncluded) {
       }
     ],
     scrollBehavior (to, from, savedPosition) {
-      return { top: 0 }
+      // console.log('scrollBehavior to', to);
+      // console.log('scrollBehavior from', from);
+      if (to.path === from.path && to.hash.length) {
+        return {
+          el: to.hash,
+          behavior: 'smooth',
+          top: 90
+        }
+      }
+
+      const mainElement = document.querySelector('.document-area')
+      if (mainElement) {
+        return {
+          el: mainElement,
+          top: 90,
+        }
+      } else {
+        return { top: 0 }
+      }
     }
   })
 } else {
