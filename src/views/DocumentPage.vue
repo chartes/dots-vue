@@ -1820,7 +1820,7 @@ export default {
     }
 
     const closeTOC = function(event) {
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 1024) {
         const target = event.target;
         if (target.closest('.document-views')) {
           layout.isTOCMenuOpened.value = false

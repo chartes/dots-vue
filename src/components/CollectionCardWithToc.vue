@@ -769,7 +769,7 @@ button.toc-toggle {
   display: inline-flex;
   align-items: center;
   width: 30px;
-  height: 30px;
+  height: 28px;
   padding: 0;
   margin: 0;
 
@@ -777,6 +777,14 @@ button.toc-toggle {
 
   cursor: pointer;
 }
+
+@media screen and (max-width: 768px) {
+  button.toc-toggle {
+    width: 25px;
+    height: 22px;
+  }
+}
+
 .is-current {
   color: var(--text-color) !important;
 }
