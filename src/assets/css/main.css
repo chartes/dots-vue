@@ -680,7 +680,7 @@ a.noteref sup {
 .aside-noteref-list {
     margin: 0 10%;
     padding-bottom: 10px;
-    background-color: #fafafaee; /* rgba(255, 255, 255, 0.95); */
+    background-color: #fafafa; /* rgba(255, 255, 255, 0.95); */
 
     max-height: 30vh;
     overflow-y: auto;
