@@ -57,11 +57,13 @@ if (isDocProjectIdIncluded) {
     scrollBehavior (to, from, savedPosition) {
       // console.log('scrollBehavior to', to);
       // console.log('scrollBehavior from', from);
+      const defaultTop = window.innerWidth < 1024 ? 45 : 90;
+
       if (to.path === from.path && to.hash.length) {
         return {
           el: to.hash,
           behavior: 'smooth',
-          top: 90
+          top: defaultTop
         }
       }
 
@@ -69,7 +71,7 @@ if (isDocProjectIdIncluded) {
       if (mainElement) {
         return {
           el: mainElement,
-          top: 90,
+          top: defaultTop,
         }
       } else {
         return { top: 0 }
