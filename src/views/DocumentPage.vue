@@ -618,7 +618,8 @@ export default {
       console.log('Document.vue no anchor update mirador position')
       if (textView) {
         const top = textView.getBoundingClientRect().top
-        miradorViewBoundingTop.value = top < 0 ? -Math.floor(top) : 0
+        const miradorTop = top < 78 ? -Math.floor(top) + 78 : 0
+        miradorViewBoundingTop.value = miradorTop
       }
     }
 
