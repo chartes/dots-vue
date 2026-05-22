@@ -2257,6 +2257,11 @@ export default {
   }
 }
 
+.images-mode .document-views,
+.text-and-images-mode .document-views {
+  margin-right: 50px;
+}
+
 .text-mode .text-view,
 .images-mode .mirador-view {
   flex: 100% 0 0;
@@ -3314,6 +3319,11 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     width: 100% !important;
     padding-left: 10px;
     padding-right: 10px;
+  }
+
+  .images-mode .document-views,
+  .text-and-images-mode .document-views {
+    margin-right: 45px;
   }
 
   .controls {
