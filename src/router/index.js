@@ -55,11 +55,14 @@ if (isDocProjectIdIncluded) {
       }
     ],
     scrollBehavior (to, from, savedPosition) {
+
       // console.log('scrollBehavior to', to);
       // console.log('scrollBehavior from', from);
-      const defaultTop = window.innerWidth < 1024 ? 45 : 90;
+
+      const defaultTop = window.innerWidth < 1024 ? 45 : 82;
 
       if (to.path === from.path && to.hash.length) {
+        // Local anchors
         return {
           el: to.hash,
           behavior: 'smooth',
@@ -67,15 +70,23 @@ if (isDocProjectIdIncluded) {
         }
       }
 
-      const mainElement = document.querySelector('.document-area')
-      if (mainElement) {
-        return {
-          el: mainElement,
-          top: defaultTop,
+      const documentArea = document.querySelector('.navigation-document');
+      const documentAreaTop = documentArea.getBoundingClientRect().top + window.scrollY;
+
+      if (window.scrollY >= documentAreaTop) {
+        // If window scroll is beyond sticky navigation bar
+        const documentAreaElement = document.querySelector('.document-area')
+        if (documentAreaElement) {
+          return {
+            el: documentAreaElement,
+            top: defaultTop,
+          }
+        } else {
+          return { top: 0 }
         }
-      } else {
-        return { top: 0 }
       }
+      
+      // else scroll is unchanged...
     }
   })
 } else {
