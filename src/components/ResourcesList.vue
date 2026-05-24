@@ -652,7 +652,7 @@ input[type=number] {
     display: block !important;
 
     &.header {
-      padding: 5px 20px 10px;
+      padding: 5px 12px 10px;
     }
   }
 

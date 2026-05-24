@@ -430,12 +430,5 @@ export default {
   .footer .row.description:not(:empty) {
     margin-bottom: 15px;
   }
-  .footer-links li:not(:last-child) {
-    padding-right: 0;
-    margin-right: 0;
-  }
-  .footer-links li:not(:last-child)::after {
-    display: none;
-  }
 }
 </style>
