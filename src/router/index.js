@@ -85,7 +85,7 @@ if (isDocProjectIdIncluded) {
           return { top: 0 }
         }
       }
-      
+
       // else scroll is unchanged...
     }
   })

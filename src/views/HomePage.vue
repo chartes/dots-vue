@@ -88,7 +88,7 @@
           <div
             v-if="customDescription"
             id="home-article"
-            class="article app-width-margin"
+            class="article"
           >
             <component
               :is="customDescription"
@@ -102,7 +102,7 @@
           <div
             v-else-if="currCollection.description"
             id="home-article"
-            class="article app-width-margin"
+            class="article"
           >
             <h1>La collection</h1>
             {{ currCollection.description }}
@@ -111,7 +111,7 @@
           <div
             v-else-if="collectionDescription"
             id="home-article"
-            class="article app-width-margin"
+            class="article"
           >
             <h1>La collection</h1>
             {{ collectionDescription }}
@@ -783,7 +783,6 @@ a {
 }
 
 #home-article.article + a {
-  padding: 0 20px;
   color: var(--fill-color);
 }
 
@@ -1027,6 +1026,11 @@ input[type=number] {
     flex-direction: column !important;
     justify-content: center;
   }
+
+  .home-article-wrapper {
+    padding: 34px !important;
+  }
+
 }
 
 
@@ -1037,17 +1041,26 @@ input[type=number] {
   }
 
   .project-tile {
-    left: var(--mobile-margin);
+    left: calc( 2 * var(--mobile-margin));
   }
 
   #home-article {
-    padding: 40px var(--mobile-margin) !important;
+    padding: 40px var(--mobile-margin) 0 !important;
+  }
+
+  .home-article-wrapper {
+    padding: 15px 0 !important;
   }
 
   #home-article h1 {
-    padding: 0;
+    padding: 0 0 10px;
     font-size: 36px;
   }
+
+  #home-article.article + a {
+    padding: 0 var(--mobile-margin);
+  }
+
 }
 
 </style>
