@@ -1011,7 +1011,7 @@ input[type=number] {
   }
 
   .collection-list:not(.root-collection-list) .page-header .wrapper {
-    gap: 0;
+    gap: 0 !important;
   }
 
   .collection-header.app-width-margin {
