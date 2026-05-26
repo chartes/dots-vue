@@ -791,7 +791,7 @@ export default {
     })
 
     const docFadeRightVisible = computed(() => {
-      console.log('DOM ariane docFadeRightVisible', docBreadcrumbScrollWidth.value > docBreadcrumbClientWidth.value && docBreadcrumbScrollLeft.value + docBreadcrumbClientWidth.value < docBreadcrumbScrollWidth.value - 1)
+      // console.log('DOM ariane docFadeRightVisible', docBreadcrumbScrollWidth.value > docBreadcrumbClientWidth.value && docBreadcrumbScrollLeft.value + docBreadcrumbClientWidth.value < docBreadcrumbScrollWidth.value - 1)
       return docBreadcrumbScrollWidth.value > docBreadcrumbClientWidth.value && docBreadcrumbScrollLeft.value + docBreadcrumbClientWidth.value < docBreadcrumbScrollWidth.value - 1
     })
 
@@ -2704,55 +2704,57 @@ div.remove-bottom-padding #article {
   text-decoration: var(--text-decoration-hover);
 }
 
-.crumbs li {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-right: 0;
-  padding-right: 20px;
-  text-wrap: nowrap;
-
-  &:last-child:after {
-    display: none;
-  }
-
-  &:not(:last-child):after {
-    display: inline-block;
-    content: ' > ';
-    font-weight: bold;
-    color: var(--fill-color);
-    padding-left: .75rem;
-  }
-
-  &.is-current {
+.crumbs {
+  li {
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 0;
+    padding-right: 20px;
+    text-wrap: nowrap;
 
-    & a {
-      width: 100%;
-      color: var(--fill-color);
-      font-weight: bold;
-      border: none;
+    &:last-child:after {
+      display: none;
     }
-  }
-  &:not(.is-current) {
-    & a {
-      width: 100% !important;
 
-      color: #4a4a4a;
-      border: none;
+    &:not(:last-child):after {
+      display: inline-block;
+      content: ' > ';
+      font-weight: bold;
+      color: var(--fill-color);
+      padding-left: .75rem;
+    }
 
-      &:before {
-        margin-left: 10px !important;
-        margin-right: 10px !important;
+    &.is-current {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      & a {
+        width: 100%;
+        color: var(--fill-color);
+        font-weight: bold;
+        border: none;
       }
+    }
+    &:not(.is-current) {
+      & a {
+        width: 100% !important;
 
-      &:hover {
-        color: var(--fill-color) !important;
+        color: #4a4a4a;
+        border: none;
+
+        &:before {
+          margin-left: 10px !important;
+          margin-right: 10px !important;
+        }
+
+        &:hover {
+          color: var(--fill-color) !important;
+        }
       }
     }
   }
@@ -2764,7 +2766,7 @@ div.remove-bottom-padding #article {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 220px;
+        max-width: 200px;
 
         &:hover {
           text-overflow: unset;
