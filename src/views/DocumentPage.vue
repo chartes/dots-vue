@@ -352,7 +352,7 @@
           </button>
         </li>
 
-        <li v-if="manifestIsAvailable">
+        <li v-if="manifestIsAvailable" class="images-parent-btn">
           <button
             type="button"
             class="dots-button images-btn"
@@ -2237,6 +2237,14 @@ export default {
   max-width: calc(100vw - 20px);
 }
 
+.toc-aside-is-opened .mirador-view {
+  display: none;
+}
+
+.text-and-images-mode .toc-aside-is-opened .text-view {
+  flex: 100% 0 0;
+}
+
 /* cf tei.css */
 .document-views .text-view > * teiheader,
 .document-views .text-view > * body {
@@ -3275,12 +3283,14 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   .toc-aside-is-opened #aside {
     width: 100%;
-    padding-right: 20px;
+    padding: 0 15px;
   }
 
   /* Negative margin is necessary to maintain the sticky behavior */
   .toc-aside-is-opened .toc-area-aside {
     width: calc(100vw - 105px);
+    margin-left: -20px;
+    padding-left: 15px;
   }
 
   .toc-aside-is-opened .document-views {
@@ -3290,7 +3300,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     &::before {
       content: "";
       display: block;
-      width: calc(100% + 20px);
+      width: 100vw;
       height: 100%;
       background-color: rgba(0,0,0,0.65);
       position: absolute;
@@ -3325,6 +3335,27 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   .images-mode .document-views,
   .text-and-images-mode .document-views {
     margin-right: 45px;
+  }
+
+  .text-mode .document-views,
+  .text-and-images-mode .document-views {
+    margin-right: 0;
+  }
+
+  .text-and-images-mode .document-views .mirador-view {
+    display: none;
+  }
+
+  .text-and-images-mode .document-views .text-view {
+    flex: 100% 0 0;
+  }
+
+  .controls li:empty {
+    display: none;
+  }
+
+  .controls .images-parent-btn {
+    display: none;
   }
 
   .controls {
@@ -3444,7 +3475,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     padding: 0 !important;
   }
 
-
   .l-n {
     margin-left: -2.2rem;
   }
@@ -3467,14 +3497,14 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   /* Negative margin is necessary to maintain the sticky behavior */
   .toc-aside-is-opened .toc-area-aside {
-    width: calc(100vw - 55px);
+    width: calc(100vw - 20px);
   }
 
   .toc-aside-is-opened .document-views {
-    margin-left: calc(55px - 100vw);
+    margin-left: calc(75px - 100vw);
 
     &::before {
-      width: 100%;
+      left: -20px;
     }
   }
 
