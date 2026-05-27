@@ -47,7 +47,7 @@
                   class="row is-align-items-center"
                 >
                   <!-- Label with rowspan on first line only -->
-                  <td v-if="i === 0" :rowspan="value.length">
+                  <td v-if="i === 0" :rowspan="value.length" class="metadata-key">
                     <span class="title"><b>{{ key }}</b></span>
                   </td>
 
@@ -77,7 +77,7 @@
                   <!-- Logo cell -->
                   <!-- Array of logos cell -->
                   <td>
-                    <div class="is-flex is-align-items-center" style="gap: 4px">
+                    <div class="is-flex is-align-items-center is-justify-content-flex-end" style="gap: 4px">
                       <!-- Main source (@id) -->
                       <figure v-if="item?.source?.name" class="image level-left">
                         <a :href="item.url" target="_blank">
@@ -102,7 +102,7 @@
               <!-- Case 2 : enriched object { value, url?, source } -->
               <template v-else-if="value && typeof value === 'object' && 'value' in value">
                 <tr class="row">
-                  <td><span class="title"><b>{{ key }}</b></span></td>
+                  <td class="metadata-key"><span class="title"><b>{{ key }}</b></span></td>
                   <td>
                     <span class="title">
                       <a v-if="value.url" :href="value.url" target="_blank">{{ value.value }}</a>
@@ -110,11 +110,13 @@
                     </span>
                   </td>
                   <td>
-                    <figure v-if="value.source?.name" class="image level-left">
-                      <a :href="value.url" target="_blank">
-                        <img :src="ImgUrl(value.source.name)" />
-                      </a>
-                    </figure>
+                    <div class="is-flex is-align-items-center is-justify-content-flex-end" style="gap: 4px">
+                      <figure v-if="value.source?.name" class="image level-left">
+                        <a :href="value.url" target="_blank">
+                          <img :src="ImgUrl(value.source.name)" />
+                        </a>
+                      </figure>
+                    </div>
                   </td>
                 </tr>
               </template>
@@ -123,7 +125,7 @@
               <!-- Case 3 : structured object { name, @id, ... } without source or with sameAs -->
               <template v-else-if="value && typeof value === 'object'">
                 <tr class="row">
-                  <td><span class="title"><b>{{ key }}</b></span></td>
+                  <td class="metadata-key"><span class="title"><b>{{ key }}</b></span></td>
                   <td>
                     <span class="title">
                       <a
@@ -137,7 +139,7 @@
                     </span>
                   </td>
                   <td>
-                    <div class="is-flex is-align-items-center" style="gap: 4px">
+                    <div class="is-flex is-align-items-center is-justify-content-flex-end" style="gap: 4px">
                       <!-- Main source (@id) -->
                       <figure v-if="value.source?.name" class="image level-left">
                         <a :href="value.url || value['@id']" target="_blank">
@@ -162,7 +164,7 @@
               <!-- Case 4 : scalar (string, number, boolean) -->
               <template v-else-if="value != null">
                 <tr class="row">
-                  <td><span class="title"><b>{{ key }}</b></span></td>
+                  <td class="metadata-key"><span class="title"><b>{{ key }}</b></span></td>
                   <td>
                     <span class="title">
                       <a
@@ -602,6 +604,34 @@ figure.image img{
     height: 24px;
     width: auto;
   }
+
+  table tr.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 8px 0;
+    gap: 0 !important;
+
+    & > td {
+      flex: 70% 0 0;
+      width: 70%;
+      border: none;
+      padding: 2px !important;
+    }
+
+    & > td.metadata-key {
+      flex: 100% 0 0;
+      width: 100%;
+      border: none;
+    }
+
+    & > td:last-child {
+      flex: 30% 0 0;
+      width: 30%;
+    }
+  }
+
 }
 table {
   background-color: #f1f1f1;
