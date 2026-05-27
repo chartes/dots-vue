@@ -416,10 +416,24 @@ export default {
       font-size: 24px;
     }
   }
+  .footer .column .description {
+    &.row.description {
+      max-width: 100%;
+    }
+  }
   .footer .logos {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
     img {
       max-width: 200px;
     }
+  }
+
+  .footer > .columns > .column.right-columns > .columns .row.links {
+    margin-top: 30px;
   }
   .footer > .columns > .column.right-columns > .columns > .column.logos > .logo,
   .footer > .columns > .column.right-columns > .columns .row.links {
@@ -427,7 +441,7 @@ export default {
     justify-content: center;
 
     .footer-links {
-      margin-top: 30px;
+      margin: 0;
     }
   }
 }
@@ -441,6 +455,16 @@ export default {
   }
   .footer .row.description:not(:empty) {
     margin-bottom: 15px;
+  }
+  .footer .logos {
+    width: 100%;
+    margin: 20px 0;
+
+    .logo-institutions {
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
   }
 }
 </style>
