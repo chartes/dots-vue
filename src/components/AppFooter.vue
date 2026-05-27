@@ -45,22 +45,6 @@
                 />
               </a>
             </div>
-            <div class="logo">
-              <span>
-                Powered by
-              </span>
-              <a
-                class="dots-logo"
-                target="_blank"
-                href="https://chartes.github.io/dots_documentation/"
-              >
-                <!--<img
-                  class="dots-logo"
-                  alt="Logo de DoTS"
-                  src="@/assets/images/logo_dots.png"
-                />-->
-              </a>
-            </div>
           </div>
           <div class="row links">
             <ul class="footer-links">
@@ -89,6 +73,22 @@
                 </a>
               </li>
             </ul>
+            <div class="logo">
+              <span>
+                Powered by
+              </span>
+              <a
+                  class="dots-logo"
+                  target="_blank"
+                  href="https://chartes.github.io/dots_documentation/"
+              >
+                <!--<img
+                  class="dots-logo"
+                  alt="Logo de DoTS"
+                  src="@/assets/images/logo_dots.png"
+                />-->
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -185,11 +185,6 @@ export default {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 20px;
-}
-
-.footer > .columns > .column.right-columns > .columns > .row.links {
-  flex: 100% 0 0;
-  width: 100%;
 }
 
 .footer .title-container {
@@ -307,31 +302,56 @@ export default {
       color: #FFFFFF;
     }
   }
-  & > .logo {
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1;
-    justify-content: center;
-    align-items: center;
-    vertical-align: center;
-    & > span {
-      color: white;
-    }
-    & > a {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      vertical-align: center;
-      margin: 10px;
-      border-bottom: none;
-      color: #FFFFFF;
-    }
-  }
-
   img {
     max-width: 250px;
   }
 }
+.footer {
+  .row.links {
+    flex: 100% 0 0;
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px 50px;
+
+    & > .logo {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+
+      & > span {
+        color: white;
+      }
+
+      & > a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        vertical-align: center;
+        margin: 10px;
+        border-bottom: none;
+        color: #FFFFFF;
+      }
+
+      .dots-logo {
+        display: inline-block;
+        width: 70px;
+        height: 70px;
+        background: url(../assets/images/logo_dots.png) center / contain no-repeat;
+        &:hover {
+          background: url(../assets/images/dots-logo-retro.drawio.svg) center / contain no-repeat;
+        }
+      }
+    }
+  }
+}
+
 .enc-logo {
   width: auto;
   height: 50px;
@@ -339,15 +359,6 @@ export default {
 .biblissima-logo {
   width: 320px;
   height: auto;
-}
-.dots-logo {
-  display: inline-block;
-  width: 70px;
-  height: 70px;
-  background: url(../assets/images/logo_dots.png) center / contain no-repeat;
-  &:hover {
-    background: url(../assets/images/dots-logo-retro.drawio.svg) center / contain no-repeat;
-  }
 }
 
 @media screen and (min-width: 1300px) {
@@ -383,6 +394,7 @@ export default {
   }
   .footer .logos {
     align-items: flex-start;
+    margin-bottom: 20px;
   }
   .footer .logos > .logo {
     justify-content: flex-start;
@@ -404,10 +416,24 @@ export default {
       font-size: 24px;
     }
   }
+  .footer .column .description {
+    &.row.description {
+      max-width: 100%;
+    }
+  }
   .footer .logos {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
     img {
       max-width: 200px;
     }
+  }
+
+  .footer > .columns > .column.right-columns > .columns .row.links {
+    margin-top: 30px;
   }
   .footer > .columns > .column.right-columns > .columns > .column.logos > .logo,
   .footer > .columns > .column.right-columns > .columns .row.links {
@@ -415,7 +441,7 @@ export default {
     justify-content: center;
 
     .footer-links {
-      margin-top: 30px;
+      margin: 0;
     }
   }
 }
@@ -430,12 +456,15 @@ export default {
   .footer .row.description:not(:empty) {
     margin-bottom: 15px;
   }
-  .footer-links li:not(:last-child) {
-    padding-right: 0;
-    margin-right: 0;
-  }
-  .footer-links li:not(:last-child)::after {
-    display: none;
+  .footer .logos {
+    width: 100%;
+    margin: 20px 0;
+
+    .logo-institutions {
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
   }
 }
 </style>

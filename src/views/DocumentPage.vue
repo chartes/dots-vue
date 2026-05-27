@@ -352,7 +352,7 @@
           </button>
         </li>
 
-        <li v-if="manifestIsAvailable">
+        <li v-if="manifestIsAvailable" class="images-parent-btn">
           <button
             type="button"
             class="dots-button images-btn"
@@ -618,7 +618,8 @@ export default {
       console.log('Document.vue no anchor update mirador position')
       if (textView) {
         const top = textView.getBoundingClientRect().top
-        miradorViewBoundingTop.value = top < 0 ? -Math.floor(top) : 0
+        const miradorTop = top < 78 ? -Math.floor(top) + 78 : 0
+        miradorViewBoundingTop.value = miradorTop
       }
     }
 
@@ -790,7 +791,7 @@ export default {
     })
 
     const docFadeRightVisible = computed(() => {
-      console.log('DOM ariane docFadeRightVisible', docBreadcrumbScrollWidth.value > docBreadcrumbClientWidth.value && docBreadcrumbScrollLeft.value + docBreadcrumbClientWidth.value < docBreadcrumbScrollWidth.value - 1)
+      // console.log('DOM ariane docFadeRightVisible', docBreadcrumbScrollWidth.value > docBreadcrumbClientWidth.value && docBreadcrumbScrollLeft.value + docBreadcrumbClientWidth.value < docBreadcrumbScrollWidth.value - 1)
       return docBreadcrumbScrollWidth.value > docBreadcrumbClientWidth.value && docBreadcrumbScrollLeft.value + docBreadcrumbClientWidth.value < docBreadcrumbScrollWidth.value - 1
     })
 
@@ -2236,6 +2237,14 @@ export default {
   max-width: calc(100vw - 20px);
 }
 
+.toc-aside-is-opened .mirador-view {
+  display: none;
+}
+
+.text-and-images-mode .toc-aside-is-opened .text-view {
+  flex: 100% 0 0;
+}
+
 /* cf tei.css */
 .document-views .text-view > * teiheader,
 .document-views .text-view > * body {
@@ -2245,12 +2254,21 @@ export default {
   width: 80%;
 }
 
+.document-views .text-view > * body {
+  padding-bottom: 80px;
+}
+
 .toc-aside-is-opened {
   .document-views .text-view > * teiheader,
   .document-views .text-view > * body {
     width: 100%;
     margin-right: 0 !important;
   }
+}
+
+.images-mode .document-views,
+.text-and-images-mode .document-views {
+  margin-right: 50px;
 }
 
 .text-mode .text-view,
@@ -2686,55 +2704,57 @@ div.remove-bottom-padding #article {
   text-decoration: var(--text-decoration-hover);
 }
 
-.crumbs li {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-right: 0;
-  padding-right: 20px;
-  text-wrap: nowrap;
-
-  &:last-child:after {
-    display: none;
-  }
-
-  &:not(:last-child):after {
-    display: inline-block;
-    content: ' > ';
-    font-weight: bold;
-    color: var(--fill-color);
-    padding-left: .75rem;
-  }
-
-  &.is-current {
+.crumbs {
+  li {
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 0;
+    padding-right: 20px;
+    text-wrap: nowrap;
 
-    & a {
-      width: 100%;
-      color: var(--fill-color);
-      font-weight: bold;
-      border: none;
+    &:last-child:after {
+      display: none;
     }
-  }
-  &:not(.is-current) {
-    & a {
-      width: 100% !important;
 
-      color: #4a4a4a;
-      border: none;
+    &:not(:last-child):after {
+      display: inline-block;
+      content: ' > ';
+      font-weight: bold;
+      color: var(--fill-color);
+      padding-left: .75rem;
+    }
 
-      &:before {
-        margin-left: 10px !important;
-        margin-right: 10px !important;
+    &.is-current {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      & a {
+        width: 100%;
+        color: var(--fill-color);
+        font-weight: bold;
+        border: none;
       }
+    }
+    &:not(.is-current) {
+      & a {
+        width: 100% !important;
 
-      &:hover {
-        color: var(--fill-color) !important;
+        color: #4a4a4a;
+        border: none;
+
+        &:before {
+          margin-left: 10px !important;
+          margin-right: 10px !important;
+        }
+
+        &:hover {
+          color: var(--fill-color) !important;
+        }
       }
     }
   }
@@ -2746,7 +2766,7 @@ div.remove-bottom-padding #article {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 220px;
+        max-width: 200px;
 
         &:hover {
           text-overflow: unset;
@@ -3265,12 +3285,14 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   .toc-aside-is-opened #aside {
     width: 100%;
-    padding-right: 20px;
+    padding: 0 15px;
   }
 
   /* Negative margin is necessary to maintain the sticky behavior */
   .toc-aside-is-opened .toc-area-aside {
     width: calc(100vw - 105px);
+    margin-left: -20px;
+    padding-left: 15px;
   }
 
   .toc-aside-is-opened .document-views {
@@ -3280,7 +3302,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     &::before {
       content: "";
       display: block;
-      width: calc(100% + 20px);
+      width: 100vw;
       height: 100%;
       background-color: rgba(0,0,0,0.65);
       position: absolute;
@@ -3310,6 +3332,32 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     width: 100% !important;
     padding-left: 10px;
     padding-right: 10px;
+  }
+
+  .images-mode .document-views,
+  .text-and-images-mode .document-views {
+    margin-right: 45px;
+  }
+
+  .text-mode .document-views,
+  .text-and-images-mode .document-views {
+    margin-right: 0;
+  }
+
+  .text-and-images-mode .document-views .mirador-view {
+    display: none;
+  }
+
+  .text-and-images-mode .document-views .text-view {
+    flex: 100% 0 0;
+  }
+
+  .controls li:empty {
+    display: none;
+  }
+
+  .controls .images-parent-btn {
+    display: none;
   }
 
   .controls {
@@ -3429,7 +3477,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     padding: 0 !important;
   }
 
-
   .l-n {
     margin-left: -2.2rem;
   }
@@ -3452,14 +3499,14 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   /* Negative margin is necessary to maintain the sticky behavior */
   .toc-aside-is-opened .toc-area-aside {
-    width: calc(100vw - 55px);
+    width: calc(100vw - 20px);
   }
 
   .toc-aside-is-opened .document-views {
-    margin-left: calc(55px - 100vw);
+    margin-left: calc(75px - 100vw);
 
     &::before {
-      width: 100%;
+      left: -20px;
     }
   }
 

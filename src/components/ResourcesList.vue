@@ -524,7 +524,7 @@ name: 'CollectionTOC',
 }
 
 .list-mode li .container .cell:first-child {
-  padding-left: 5px;
+  /* padding-left: 5px; */
 }
 
 .list-mode .menu {
@@ -652,7 +652,7 @@ input[type=number] {
     display: block !important;
 
     &.header {
-      padding: 5px 0 10px 0;
+      padding: 5px 12px 10px;
     }
   }
 

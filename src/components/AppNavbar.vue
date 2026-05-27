@@ -467,7 +467,8 @@ nav span.level-item:not(:last-child)::after {
   font-family: var(--font-primary),sans-serif;
 
   & > span.level-item {
-    align-items: flex-end;
+    align-items: center;
+    white-space: nowrap;
   }
 
   & > span > a {
@@ -562,9 +563,6 @@ ul.submenu a:hover {
     min-width: 45px;
     max-width: unset;
   }
-  .level-left .level-item {
-    width: 100%;
-  }
   .level-left .level-item:not(:last-child),
   .level-right .level-item:not(:last-child) {
     margin-right: .5rem;
@@ -576,10 +574,6 @@ ul.submenu a:hover {
     margin-bottom: 0;
   }
   .level-left .level-item {
-    display: inline-block;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    max-width: calc(100% - 100px);
     white-space: nowrap;
   }
   .level-right {

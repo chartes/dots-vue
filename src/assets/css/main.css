@@ -115,6 +115,18 @@ img, video {
     justify-content: center !important;
 }
 
+.is-justify-content-flex-end {
+    justify-content: flex-end !important;
+}
+
+.is-align-items-center {
+    align-items: center;
+}
+
+.is-align-items-flex-end {
+    align-items: flex-end;
+}
+
 .is-24x24 {
     background-color: var(--meta-area-fill-color);
 }
@@ -198,6 +210,8 @@ img, video {
 }
 
 .footer {
+    position: relative;
+    z-index: 10;
     background-color: #fafafa;
     padding: 3rem 1.5rem 6rem;
 }

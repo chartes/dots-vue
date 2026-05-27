@@ -1122,7 +1122,18 @@ button.toc-toggle {
 }
 
 @media screen and (max-width: 768px) {
-  button.toc-toggle {
+
+  .collection-toc-area, .modal-wrapper {
+    & .tree li {
+      &.more {
+        &[data-v-4782eec1] {
+          padding-left: 5px !important;
+        }
+      }
+    }
+  }
+
+    button.toc-toggle {
     width: 25px;
     height: 22px;
   }
