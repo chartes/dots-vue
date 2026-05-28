@@ -317,7 +317,7 @@
     </nav>
     <div
       class="controls app-width-margin"
-      :class="isControlsOpened ? 'is-opened' : ''"
+      :class=" { 'is-opened' : isControlsOpened, 'toc-aside-is-opened' : layout.isTOCMenuOpened.value }"
       role="toolbar"
       aria-label="Options d’affichage du document"
     >
@@ -2241,12 +2241,16 @@ export default {
   max-width: calc(100vw - 20px);
 }
 
-.toc-aside-is-opened .mirador-view {
-  display: none;
+.toc-aside-is-opened .pb {
+  pointer-events: none;
+  opacity: 0.2;
 }
 
-.text-and-images-mode .toc-aside-is-opened .text-view {
-  flex: 100% 0 0;
+.toc-aside-is-opened {
+  button.text-btn,
+  button.dots-button.images-btn {
+    pointer-events: none;
+  }
 }
 
 /* cf tei.css */
