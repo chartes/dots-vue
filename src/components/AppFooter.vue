@@ -159,7 +159,7 @@ export default {
 .footer {
   background-color: #4C4949;
   /* border-top: #BA0F29 solid 4px; */
-  border-top: solid 4px var(--text-color);
+  border-top: solid 4px var(--fill-color);
   /* max-height: 400px; */
   width: 100%;
   padding: 0;
