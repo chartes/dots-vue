@@ -197,6 +197,7 @@ export default {
 
   & > .title {
     margin-bottom: 0;
+    font-family: var(--font-primary), sans-serif;
     font-style: normal;
     font-size: 30px;
     color: white;
@@ -206,6 +207,7 @@ export default {
     margin-top: 12px;
     margin-bottom: 0;
     text-align: left;
+    font-family: var(--font-primary), sans-serif;
     font-size: 110%;
     font-style: normal;
     color: white;
