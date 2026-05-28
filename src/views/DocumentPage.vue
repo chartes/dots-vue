@@ -614,12 +614,15 @@ export default {
     })
 
     const updateMiradorTopPosition = function () {
+      const miradorView = document.getElementById('mirador-view')
       const textView = document.getElementById('text-view')
       console.log('Document.vue no anchor update mirador position')
-      if (textView) {
-        const top = textView.getBoundingClientRect().top
+      if (miradorView && textView) {
+        const textViewRect = textView.getBoundingClientRect();
+        const maxMarginTop = Math.max(0, textViewRect.height - miradorView.getBoundingClientRect().height);
+        const top = textViewRect.top
         const miradorTop = top < 78 ? -Math.floor(top) + 78 : 0
-        miradorViewBoundingTop.value = miradorTop
+        miradorViewBoundingTop.value = Math.min(miradorTop, maxMarginTop);
       }
     }
 
@@ -2232,6 +2235,7 @@ export default {
 
 .mirador-view {
   position: relative;
+  height: calc(100vh - 80px);
   min-height: 80vh;
   max-height: 100vh;
   max-width: calc(100vw - 20px);
