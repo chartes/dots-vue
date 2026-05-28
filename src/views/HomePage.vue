@@ -803,6 +803,7 @@ a {
   font-size: 48px;
   font-weight: 700;
   line-height: 1.2;
+  text-align: left;
   text-transform: none;
   color: #000;
 }
@@ -1006,6 +1007,10 @@ input[type=number] {
 }
 
 @media screen and (max-width: 768px) {
+  .collection-about {
+    background-color: var(--default-bg-color);
+  }
+
   .collection-list {
     --first-column-width: 100%;
   }
@@ -1045,7 +1050,7 @@ input[type=number] {
   }
 
   #home-article {
-    padding: 40px var(--mobile-margin) 0 !important;
+    padding: 20px var(--mobile-margin) 0 !important;
   }
 
   .home-article-wrapper {
