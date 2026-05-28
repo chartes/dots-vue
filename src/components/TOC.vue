@@ -1,5 +1,5 @@
 <template>
-  <ul class="tree">
+  <ul class="tree" id="toc-tree">
     <template
       v-for="(item, index) in componentTOC"
       :key="index"
@@ -38,11 +38,24 @@
       </li>
     </template>
   </ul>
+  <nav id="toc-tree-navigation" class="is-hidden">
+    <a
+        href="#"
+        @click.prevent="scrollToPreviousColumn(event)"
+    >
+      Prev
+    </a>
+    <a
+        href="#"
+        @click.prevent="scrollToNextColumn(event)"
+    >Next
+    </a>
+  </nav>
 </template>
 
 <script>
 
-import {computed, ref, watch} from 'vue'
+import {computed, onMounted, onUnmounted, ref, watch} from 'vue'
 import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import store from '@/store'
@@ -255,6 +268,53 @@ export default {
 
     const isCurrentItem =(item) => route.hash === item.hash ? 'is-current' : !route.hash && item.identifier === currentRefId.value;
 
+    /**/
+
+
+    const scrollToPreviousColumn = function(event) {
+      const tocTree = document.getElementById('toc-tree');
+      const tocTreeScrollableColumns = Math.floor(tocTree.scrollWidth / tocTree.clientWidth)
+      const tocTreeScrollableColumnWidth = (tocTree.scrollWidth - 15 * tocTreeScrollableColumns) / tocTreeScrollableColumns
+      const currentColumn = Math.round(tocTree.scrollLeft / tocTreeScrollableColumnWidth);
+      if (currentColumn > 0) {
+        tocTree.scrollLeft = tocTreeScrollableColumnWidth * (currentColumn - 1)
+      }
+    }
+
+    const scrollToNextColumn = function(event) {
+      const tocTree = document.getElementById('toc-tree');
+      const tocTreeScrollableColumns = Math.floor(tocTree.scrollWidth / tocTree.clientWidth)
+      const tocTreeScrollableColumnWidth = (tocTree.scrollWidth - 15 * tocTreeScrollableColumns) / tocTreeScrollableColumns
+      const currentColumn = Math.round(tocTree.scrollLeft / tocTreeScrollableColumnWidth);
+      if (currentColumn < tocTreeScrollableColumns - 1) {
+        tocTree.scrollLeft = tocTreeScrollableColumnWidth * (currentColumn + 1)
+      }
+    }
+
+    const onResize = function(){
+      const tocTree = document.getElementById('toc-tree');
+      const tocTreeNavigation = document.getElementById('toc-tree-navigation');
+      if (tocTree.clientWidth) {
+        const tocTreeScrollableColumns = Math.floor(tocTree.scrollWidth / tocTree.clientWidth)
+        if (tocTreeScrollableColumns > 1) {
+          tocTreeNavigation.classList.remove('is-hidden')
+        } else {
+          tocTreeNavigation.classList.add('is-hidden')
+        }
+        const tocTreeScrollableColumnWidth = (tocTree.scrollWidth - 15 * tocTreeScrollableColumns) / tocTreeScrollableColumns
+        console.log('tocTree nbColomns', tocTreeScrollableColumns, tocTree.scrollWidth, tocTree.clientWidth, tocTree.scrollLeft, tocTreeScrollableColumnWidth);
+      }
+    }
+
+    onMounted(() => {
+      window.addEventListener('resize', onResize)
+      onResize();
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', onResize)
+    })
+
     watch(expandedById, () => {
       console.log('TOC watch expandedById', expandedById.value)
       function hideDescendants (id) {
@@ -281,6 +341,7 @@ export default {
         })
       })
     })
+
     return {
       route,
       isDocProjectIdInc,
@@ -291,9 +352,12 @@ export default {
       isCurrentItem,
       expandedById,
       toggleExpanded,
-      componentTOC
+      componentTOC,
+      scrollToPreviousColumn,
+      scrollToNextColumn
     }
   },
+
   methods: {
     getNewRefId () {
       if (Object.keys(this.route.query).length > 0 && Object.keys(this.route.query).includes('refId')) {
@@ -517,6 +581,18 @@ div.bottom-toc {
 .toc-area-aside li:not(.more) > .li.container > a.toc-title:not(.is-current) {
   margin-left: -22px;
 }
+
+#toc-tree-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+
 
 @media screen and (max-width: 768px) {
   .toc-area-content.toc-content li:not(.more) > .li.container > a.toc-title,
