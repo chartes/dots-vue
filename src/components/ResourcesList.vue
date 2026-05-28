@@ -416,6 +416,7 @@ name: 'CollectionTOC',
 
 /* CELLS */
 .list-mode .cell {
+  /*
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

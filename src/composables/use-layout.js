@@ -24,6 +24,7 @@ export default function useLayout () {
   const toggleTOCMenu = function (event) {
     event.preventDefault()
     isTOCMenuOpened.value = !isTOCMenuOpened.value
+    if (isTOCMenuOpened.value) changeViewMode('init');
   }
 
   const TOCMenuBtnCssClass = computed(() => {

@@ -317,7 +317,7 @@
     </nav>
     <div
       class="controls app-width-margin"
-      :class="isControlsOpened ? 'is-opened' : ''"
+      :class=" { 'is-opened' : isControlsOpened, 'toc-aside-is-opened' : layout.isTOCMenuOpened.value }"
       role="toolbar"
       aria-label="Options d’affichage du document"
     >
@@ -614,12 +614,15 @@ export default {
     })
 
     const updateMiradorTopPosition = function () {
+      const miradorView = document.getElementById('mirador-view')
       const textView = document.getElementById('text-view')
       console.log('Document.vue no anchor update mirador position')
-      if (textView) {
-        const top = textView.getBoundingClientRect().top
+      if (miradorView && textView) {
+        const textViewRect = textView.getBoundingClientRect();
+        const maxMarginTop = Math.max(0, textViewRect.height - miradorView.getBoundingClientRect().height);
+        const top = textViewRect.top
         const miradorTop = top < 78 ? -Math.floor(top) + 78 : 0
-        miradorViewBoundingTop.value = miradorTop
+        miradorViewBoundingTop.value = Math.min(miradorTop, maxMarginTop);
       }
     }
 
@@ -2232,17 +2235,22 @@ export default {
 
 .mirador-view {
   position: relative;
+  height: calc(100vh - 80px);
   min-height: 80vh;
   max-height: 100vh;
   max-width: calc(100vw - 20px);
 }
 
-.toc-aside-is-opened .mirador-view {
-  display: none;
+.toc-aside-is-opened .pb {
+  pointer-events: none;
+  opacity: 0.2;
 }
 
-.text-and-images-mode .toc-aside-is-opened .text-view {
-  flex: 100% 0 0;
+.toc-aside-is-opened {
+  button.text-btn,
+  button.dots-button.images-btn {
+    pointer-events: none;
+  }
 }
 
 /* cf tei.css */
