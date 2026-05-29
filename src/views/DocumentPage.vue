@@ -732,22 +732,23 @@ export default {
     // Maintains Collection Ariane horizontal scroll on right when resizing window
     const updateHorizontalScrollAndMeasurements = function() {
       if (!breadcrumbEl.value) return
-      const el = breadcrumbEl.value;
-      el.scrollLeft = el.scrollLeftMax;
+      const el = breadcrumbEl.value
 
       // By default, no ellipsis on crumb parts
       // If doc breadcrumb is too large, we add ellipsis css class
-      collCrumbsWithEllipsis.value = false;
+      collCrumbsWithEllipsis.value = false
       nextTick(function () {
         if (el.scrollWidth > el.clientWidth) {
-          collCrumbsWithEllipsis.value = true;
+          collCrumbsWithEllipsis.value = true
         }
-      });
-
-      updateMeasurements();
+      })
+      el.scrollLeft = el.scrollWidth - el.clientWidth
+      updateMeasurements()
     }
+    let isResizing = false
 
     const onColBreadcrumbScroll = (event) => {
+      if (isResizing) return  // ignoring parasite scroll from browser
       const target = event.target
       console.log('onColBreadcrumbScroll', target)
       updateMeasurements()
@@ -810,20 +811,20 @@ export default {
     // Maintains Document Ariane horizontal scroll on right when resizing window
     const updateDocBreadcrumbHorizontalScrollAndMeasurements = function() {
       if (!arianeDocContainer.value) return
-      const el = arianeDocContainer.value;
+      const el = arianeDocContainer.value
 
       // By default, no ellipsis on crumb parts
       // If doc breadcrumb is too large, we add ellipsis css class
-      crumbsWithEllipsis.value = false;
+      crumbsWithEllipsis.value = false
       nextTick(function () {
         if (el.scrollWidth > el.clientWidth) {
-          crumbsWithEllipsis.value = true;
+          crumbsWithEllipsis.value = true
         }
-      });
+      })
 
       // Horizontal scroll
-      el.scrollLeft = el.scrollLeftMax;
-      updateMeasurementsAriane();
+      el.scrollLeft = el.scrollWidth - el.clientWidth
+      updateMeasurementsAriane()
     }
 
     const updateMeasurementsAriane = function () {
@@ -1875,6 +1876,14 @@ export default {
       }
     }
 
+    const onResize = () => {
+      // prevent resize calculations when triggered by browsers
+      isResizing = true
+      updateHorizontalScrollAndMeasurements()
+      updateDocBreadcrumbHorizontalScrollAndMeasurements()
+      requestAnimationFrame(() => { isResizing = false })
+    }
+
     onMounted(() => {
       const appView = document.getElementById('app')
       appView.addEventListener('scroll', updateMiradorTopPosition)
@@ -1882,8 +1891,7 @@ export default {
       layout.isTOCMenuOpened.value = false
       layout.changeViewMode('init')
 
-      window.addEventListener('resize', updateHorizontalScrollAndMeasurements)
-      window.addEventListener('resize', updateDocBreadcrumbHorizontalScrollAndMeasurements)
+      window.addEventListener('resize', onResize)
       document.body.addEventListener('click', closeTOC);
     })
 
@@ -1898,8 +1906,7 @@ export default {
       appView.removeEventListener('scroll', updateMiradorTopPosition)
       window.removeEventListener('scroll', updateMiradorTopPosition)
 
-      window.removeEventListener('resize', updateHorizontalScrollAndMeasurements)
-      window.removeEventListener('resize', updateDocBreadcrumbHorizontalScrollAndMeasurements)
+      window.removeEventListener('resize', onResize)
       document.body.removeEventListener('click', closeTOC);
 
     })
