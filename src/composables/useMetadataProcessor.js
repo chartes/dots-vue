@@ -2,6 +2,10 @@ import jsonld from 'jsonld'
 import { toRaw } from 'vue'
 import store from '@/store/index.js'
 
+const _baseApiURL = `${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`.replace(/^https?:\/\//, '')
+const _apiURL = new URL(`${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`)  // URL complète parsée
+const _appURL = new URL(window.location.origin)  // URL de l'app frontend
+
 const sources = [
   { name: 'wikidata', ext: 'wikidata', type: 'author_link' },
   { name: 'wikipedia', ext: 'wikipedia', type: 'author_link' },
@@ -16,19 +20,68 @@ const sources = [
   { name: 'sudoc', ext: 'sudoc.fr', type: 'document_link' },
   { name: 'biblissima', ext: 'biblissima', type: 'document_link' },
   { name: 'creativecommons', ext: 'creativecommons.org', type: 'document_link' },
+  { name: 'enc_red_small', ext: 'chartes.psl.eu', type: 'other_link' },
   { name: 'iiif', ext: 'manifest', type: 'other_link' },
-  { name: 'tei', ext: 'api/dts/document', type: 'other_link' },
+  { name: 'dots', ext: _baseApiURL, type: 'other_link' },
+  { name: 'dots_circle', ext: window.location.pathname.split('/').slice(1, 3).join('/'), type: 'other_link' },
+  { name: 'tei', ext: 'tei+xml', type: 'other_link' },
+  { name: 'html', ext: 'text/html', type: 'other_link' },
+  { name: 'pdf', ext: 'application/pdf', type: 'other_link' }
+]
+/*
+ { name: 'tei', ext: 'api/dts/document', type: 'other_link' },
   { name: 'json', ext: 'api/dts/collection', type: 'other_link' },
   { name: 'json', ext: 'api/dts/navigation', type: 'other_link' },
-  { name: 'dots', ext: window.location.origin, type: 'other_link' },
-  { name: 'tei', ext: 'application/tei+xml', type: 'other_link' },
+   { name: 'tei', ext: 'application/tei+xml', type: 'other_link' },
   { name: 'pdf', ext: 'application/pdf', type: 'other_link' },
-  { name: null, ext: 'text/html', type: 'other_link' }
-]
+*/
+
+const MEDIA_OBJECT_MIME_REGEX =
+  /^(application|audio|font|image|model|text|video)\/[a-z0-9.+-]+$/i
+
+function isMediaObjectMimeType(value) {
+  return MEDIA_OBJECT_MIME_REGEX.test(value)
+}
 
 function findSource(id) {
   if (!id) return null
-  const source = sources.find(s => id.toLowerCase().includes(s.ext))
+
+  let url
+  try {
+    url = new URL(id)
+  } catch {
+    // id n'est pas une URL → on tente un MIME type
+    if (isMediaObjectMimeType(id)) {
+      const normalized = id.toLowerCase()
+
+      const source = sources.find(s =>
+        normalized.includes(s.ext.toLowerCase())
+      )
+
+      return source
+        ? { name: source.name, type: source.type }
+        : null
+    }
+    return null
+  }
+
+  const normalized = id.toLowerCase()
+
+  // Même hostname ET port que l'API DTS ?
+  if (url.hostname === _apiURL.hostname && url.port === _apiURL.port) {
+    if (normalized.includes(_baseApiURL.toLowerCase())) {
+      return sources.find(s => s.name === 'dots') ?? null
+    }
+    // Même serveur mais hors API (page ENC/app)
+    return sources.find(s => s.name === 'dots_circle') ?? null
+  }
+
+  // Même hostname ET port que le frontend ?
+  if (url.hostname === _appURL.hostname && url.port === _appURL.port) {
+    return sources.find(s => s.name === 'dots_circle') ?? null
+  }
+
+  const source = sources.find(s => normalized.includes(s.ext.toLowerCase()))
   return source ? { name: source.name, type: source.type } : null
 }
 
@@ -100,6 +153,7 @@ function resolvePrefix(term, namespaces) {
 // ─────────────────────────────────────────────────────────────────────────────
 function flattenExpanded(expanded, namespaces = {}) {
 
+  console.log('nested expanded start', expanded, namespaces)
   const node = Array.isArray(expanded) ? expanded[0] : expanded
   console.log('nested expanded 0', expanded, node)
   if (!node) return {}
@@ -119,7 +173,7 @@ function flattenExpanded(expanded, namespaces = {}) {
 
     const key = uri.startsWith('@') ? uri : compressUri(uri)
     const values = node[uri]
-    console.log('nested uri', uri, node[uri])
+    console.log('nested uri', uri, node, node[uri])
 
     if (uri === '@type') {
       const types = values.map(t => compressUri(t))
@@ -207,6 +261,11 @@ async function expandMetadata(apiResponse, namespaces = {}) {
     console.log('expandMetadata apiResponse', apiResponse, namespaces)
     const preprocessed = resolveNested(apiResponse)
     console.log('expandMetadata preprocessed', preprocessed)
+    /* Add download (using DTS specification results in an invalid json-ld) custom namespace ?
+    preprocessed['@context'][1].download = {
+      '@id': 'https://dtsapi.org/v1.0#download',
+      '@type': '@json'
+    }*/
     const expanded = await jsonld.expand(preprocessed)
     console.log('expandMetadata expanded', expanded)
     const flat = flattenExpanded(expanded, namespaces)
@@ -242,6 +301,7 @@ function enrichValue(value, path) {
     if (typeof value === 'string') {
       const cleanUrl = value.replace(/\{[^}]*\}/g, '').replace(/\?$/, '')
       const src = findSource(cleanUrl)
+      console.log('imgURL enrichValue value, path', value, path, cleanUrl, src, `/${window.location.pathname.split('/').slice(2, 4).join('/')}`)
       if (!src) return value
       const isHttp = cleanUrl.startsWith('http')
       return {
@@ -258,11 +318,13 @@ function enrichValue(value, path) {
     if (value && typeof value === 'object') {
       // Ajouter contentUrl comme source d'URL possible
       const url = value.url ?? value['@id'] ?? value.id ?? value['schema:contentUrl']
-
+      console.log('testing value', value, url, value['schema:encodingFormat'])
       // Pour les MediaObject, chercher la source sur encodingFormat plutôt que l'URL
       const formatSrc = value['schema:encodingFormat'] ? findSource(value['schema:encodingFormat']) : null
+      console.log('testing formatSrc', url, formatSrc)
       const urlSrc = url ? findSource(url) : null
       const src = formatSrc ?? urlSrc
+      console.log('testing src', src)
 
       // sameAs...
       const sameAsSources = []
@@ -360,6 +422,12 @@ export async function buildDisplayModel(rawMetadata, config) {
       ...displayOrder.filter(k => !isWildcard(k)),
       ...Object.values(renameMap)
     ])
+    /* CHECK : do we need :
+    displayOrder.filter(k => !isWildcard(k) && !k.includes('.')) ?
+    and
+    ...Object.values(renameMap)
+    */
+    if (explicitAllowedKeys.has(key)) return false
 
     return excludeFields.some(pattern => {
       if (pattern.endsWith(':*')) {
