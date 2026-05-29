@@ -59,6 +59,10 @@ export default function useLayout () {
     } else if (viewMode.value === 'text-and-images-mode' && v === 'images-mode') {
       viewMode.value = 'text-mode'
     }
+    if (isTOCMenuOpened.value && String(viewMode.value).includes('images')) {
+      isTOCMenuOpened.value = false
+    }
+
     console.log('changeViewMode after : ', viewMode.value)
   }
 

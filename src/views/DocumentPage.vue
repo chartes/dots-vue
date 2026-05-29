@@ -317,7 +317,7 @@
     </nav>
     <div
       class="controls app-width-margin"
-      :class=" { 'is-opened' : isControlsOpened, 'toc-aside-is-opened' : layout.isTOCMenuOpened.value }"
+      :class="isControlsOpened ? 'is-opened' : ''"
       role="toolbar"
       aria-label="Options d’affichage du document"
     >
@@ -2239,18 +2239,6 @@ export default {
   min-height: 80vh;
   max-height: 100vh;
   max-width: calc(100vw - 20px);
-}
-
-.toc-aside-is-opened .pb {
-  pointer-events: none;
-  opacity: 0.2;
-}
-
-.toc-aside-is-opened {
-  button.text-btn,
-  button.dots-button.images-btn {
-    pointer-events: none;
-  }
 }
 
 /* cf tei.css */
