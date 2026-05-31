@@ -39,17 +39,19 @@
     </template>
   </ul>
   <nav id="toc-tree-navigation" class="is-hidden">
-    <a
-        href="#"
-        @click.prevent="scrollToPreviousColumn(event)"
+    <button
+        id="toc-tree-navigation-previous"
+        class="previous-btn"
+        @click="scrollToPreviousColumn(event)"
     >
       Prev
-    </a>
-    <a
-        href="#"
-        @click.prevent="scrollToNextColumn(event)"
+    </button>
+    <button
+        id="toc-tree-navigation-next"
+        class="next-btn"
+        @click="scrollToNextColumn(event)"
     >Next
-    </a>
+    </button>
   </nav>
 </template>
 
@@ -270,28 +272,32 @@ export default {
 
     /**/
 
-
-    const scrollToPreviousColumn = function(event) {
+    const getColumnsDetails = function() {
       const tocTree = document.getElementById('toc-tree');
       const tocTreeScrollableColumns = Math.floor(tocTree.scrollWidth / tocTree.clientWidth)
-      const tocTreeScrollableColumnWidth = (tocTree.scrollWidth - 15 * tocTreeScrollableColumns) / tocTreeScrollableColumns
-      const currentColumn = Math.round(tocTree.scrollLeft / tocTreeScrollableColumnWidth);
-      if (currentColumn > 0) {
-        tocTree.scrollLeft = tocTreeScrollableColumnWidth * (currentColumn - 1)
+      const tocTreeScrollableColumnWidth = tocTree.scrollWidth / tocTreeScrollableColumns
+      const currentColumnFloat = tocTree.scrollLeft / tocTreeScrollableColumnWidth
+      const currentColumn = Math.round(currentColumnFloat);
+      return { columnsCount: tocTreeScrollableColumns, columnWidth: tocTreeScrollableColumnWidth, currentColumnFloat, currentColumn }
+    }
+
+    const scrollToPreviousColumn = function(event) {
+      const tocDetails = getColumnsDetails();
+      if (tocDetails.currentColumnFloat > 0) {
+        const tocTree = document.getElementById('toc-tree');
+        tocTree.scrollTo({ left: tocDetails.columnWidth * (tocDetails.currentColumn - 1), behavior: 'smooth'})
       }
     }
 
     const scrollToNextColumn = function(event) {
-      const tocTree = document.getElementById('toc-tree');
-      const tocTreeScrollableColumns = Math.floor(tocTree.scrollWidth / tocTree.clientWidth)
-      const tocTreeScrollableColumnWidth = (tocTree.scrollWidth - 15 * tocTreeScrollableColumns) / tocTreeScrollableColumns
-      const currentColumn = Math.round(tocTree.scrollLeft / tocTreeScrollableColumnWidth);
-      if (currentColumn < tocTreeScrollableColumns - 1) {
-        tocTree.scrollLeft = tocTreeScrollableColumnWidth * (currentColumn + 1)
+      const tocDetails = getColumnsDetails();
+      if (tocDetails.currentColumnFloat < tocDetails.columnsCount - 1) {
+        const tocTree = document.getElementById('toc-tree');
+        tocTree.scrollTo({ left: tocDetails.columnWidth * (tocDetails.currentColumn + 1), behavior: 'smooth'})
       }
     }
 
-    const onResize = function(){
+    const updateColumnNavigation = function(){
       const tocTree = document.getElementById('toc-tree');
       const tocTreeNavigation = document.getElementById('toc-tree-navigation');
       if (tocTree.clientWidth) {
@@ -302,17 +308,44 @@ export default {
           tocTreeNavigation.classList.add('is-hidden')
         }
         const tocTreeScrollableColumnWidth = (tocTree.scrollWidth - 15 * tocTreeScrollableColumns) / tocTreeScrollableColumns
-        console.log('tocTree nbColomns', tocTreeScrollableColumns, tocTree.scrollWidth, tocTree.clientWidth, tocTree.scrollLeft, tocTreeScrollableColumnWidth);
+        // console.log('tocTree nbColomns', tocTreeScrollableColumns, tocTree.scrollWidth, tocTree.clientWidth, tocTree.scrollLeft, tocTreeScrollableColumnWidth);
+      }
+      updateColumnNavigationButtons();
+    }
+
+    const updateColumnNavigationButtons = function(){
+      const tocTreeNavigationPrevious = document.getElementById('toc-tree-navigation-previous');
+      const tocTreeNavigationNext = document.getElementById('toc-tree-navigation-next');
+      const tocDetails = getColumnsDetails();
+      if (Math.abs(tocDetails.currentColumnFloat) < 0.1) {
+        tocTreeNavigationPrevious.classList.add('is-disabled')
+      } else {
+        tocTreeNavigationPrevious.classList.remove('is-disabled')
+      }
+      if (Math.abs(tocDetails.currentColumnFloat - (tocDetails.columnsCount - 1)) < 0.1) {
+        tocTreeNavigationNext.classList.add('is-disabled')
+      } else {
+        tocTreeNavigationNext.classList.remove('is-disabled')
       }
     }
 
     onMounted(() => {
-      window.addEventListener('resize', onResize)
-      onResize();
+      window.addEventListener('resize', updateColumnNavigation)
+      const tocTree = document.getElementById('toc-tree');
+      if (tocTree) {
+        tocTree.addEventListener('click', updateColumnNavigation)
+        tocTree.addEventListener('scroll', updateColumnNavigationButtons)
+      }
+      updateColumnNavigation();
     })
 
     onUnmounted(() => {
-      window.removeEventListener('resize', onResize)
+      window.removeEventListener('resize', updateColumnNavigation)
+      const tocTree = document.getElementById('toc-tree');
+      if (tocTree) {
+        tocTree.removeEventListener('click', updateColumnNavigation)
+        tocTree.removeEventListener('scroll', updateColumnNavigationButtons)
+      }
     })
 
     watch(expandedById, () => {
@@ -586,9 +619,36 @@ div.bottom-toc {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 10px;
 
   &.is-hidden {
     display: none;
+  }
+
+  button {
+    width: 30px;
+    height: 25px;
+    border: none;
+    background-color: transparent;
+    background-position: center;
+    background-size: 25px auto;
+    background-repeat: no-repeat;
+    text-indent: -9999px;
+    cursor: pointer;
+
+    &.previous-btn {
+      background-image: url(@/assets/images/page_suivant.svg);
+      transform: scaleX(-1);
+    }
+
+    &.next-btn {
+      background-image: url(@/assets/images/page_suivant.svg);
+    }
+  }
+
+  button.is-disabled {
+    pointer-events: none;
+    opacity: 0.5;
   }
 }
 
