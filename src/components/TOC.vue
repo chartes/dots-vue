@@ -434,7 +434,7 @@ div.toc-area-content.toc-content {
       columns: 1;
       gap: 15px;
       overflow: auto;
-      max-height: 60vh; /* Could provoke an horizontal scroll */
+      max-height: calc(100vh - 280px); /* Horizontal scroll */
       padding: 20px 0;
     }
   }
