@@ -1,5 +1,5 @@
 <template>
-  <ul class="tree">
+  <ul class="tree" id="toc-tree">
     <template
       v-for="(item, index) in componentTOC"
       :key="index"
@@ -38,11 +38,26 @@
       </li>
     </template>
   </ul>
+  <nav id="toc-tree-navigation" class="is-hidden">
+    <button
+        id="toc-tree-navigation-previous"
+        class="previous-btn"
+        @click="scrollToPreviousColumn(event)"
+    >
+      Prev
+    </button>
+    <button
+        id="toc-tree-navigation-next"
+        class="next-btn"
+        @click="scrollToNextColumn(event)"
+    >Next
+    </button>
+  </nav>
 </template>
 
 <script>
 
-import {computed, ref, watch} from 'vue'
+import {computed, onMounted, onUnmounted, ref, watch} from 'vue'
 import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import store from '@/store'
@@ -255,6 +270,84 @@ export default {
 
     const isCurrentItem =(item) => route.hash === item.hash ? 'is-current' : !route.hash && item.identifier === currentRefId.value;
 
+    /**/
+
+    const getColumnsDetails = function() {
+      const tocTree = document.getElementById('toc-tree');
+      const tocTreeScrollableColumns = Math.floor(tocTree.scrollWidth / tocTree.clientWidth)
+      const tocTreeScrollableColumnWidth = tocTree.scrollWidth / tocTreeScrollableColumns
+      const currentColumnFloat = tocTree.scrollLeft / tocTreeScrollableColumnWidth
+      const currentColumn = Math.round(currentColumnFloat);
+      return { columnsCount: tocTreeScrollableColumns, columnWidth: tocTreeScrollableColumnWidth, currentColumnFloat, currentColumn }
+    }
+
+    const scrollToPreviousColumn = function(event) {
+      const tocDetails = getColumnsDetails();
+      if (tocDetails.currentColumnFloat > 0) {
+        const tocTree = document.getElementById('toc-tree');
+        tocTree.scrollTo({ left: tocDetails.columnWidth * (tocDetails.currentColumn - 1), behavior: 'smooth'})
+      }
+    }
+
+    const scrollToNextColumn = function(event) {
+      const tocDetails = getColumnsDetails();
+      if (tocDetails.currentColumnFloat < tocDetails.columnsCount - 1) {
+        const tocTree = document.getElementById('toc-tree');
+        tocTree.scrollTo({ left: tocDetails.columnWidth * (tocDetails.currentColumn + 1), behavior: 'smooth'})
+      }
+    }
+
+    const updateColumnNavigation = function(){
+      const tocTree = document.getElementById('toc-tree');
+      const tocTreeNavigation = document.getElementById('toc-tree-navigation');
+      if (tocTree.clientWidth) {
+        const tocTreeScrollableColumns = Math.floor(tocTree.scrollWidth / tocTree.clientWidth)
+        if (tocTreeScrollableColumns > 1) {
+          tocTreeNavigation.classList.remove('is-hidden')
+        } else {
+          tocTreeNavigation.classList.add('is-hidden')
+        }
+        const tocTreeScrollableColumnWidth = (tocTree.scrollWidth - 15 * tocTreeScrollableColumns) / tocTreeScrollableColumns
+        // console.log('tocTree nbColomns', tocTreeScrollableColumns, tocTree.scrollWidth, tocTree.clientWidth, tocTree.scrollLeft, tocTreeScrollableColumnWidth);
+      }
+      updateColumnNavigationButtons();
+    }
+
+    const updateColumnNavigationButtons = function(){
+      const tocTreeNavigationPrevious = document.getElementById('toc-tree-navigation-previous');
+      const tocTreeNavigationNext = document.getElementById('toc-tree-navigation-next');
+      const tocDetails = getColumnsDetails();
+      if (Math.abs(tocDetails.currentColumnFloat) < 0.1) {
+        tocTreeNavigationPrevious.classList.add('is-disabled')
+      } else {
+        tocTreeNavigationPrevious.classList.remove('is-disabled')
+      }
+      if (Math.abs(tocDetails.currentColumnFloat - (tocDetails.columnsCount - 1)) < 0.1) {
+        tocTreeNavigationNext.classList.add('is-disabled')
+      } else {
+        tocTreeNavigationNext.classList.remove('is-disabled')
+      }
+    }
+
+    onMounted(() => {
+      window.addEventListener('resize', updateColumnNavigation)
+      const tocTree = document.getElementById('toc-tree');
+      if (tocTree) {
+        tocTree.addEventListener('click', updateColumnNavigation)
+        tocTree.addEventListener('scroll', updateColumnNavigationButtons)
+      }
+      updateColumnNavigation();
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', updateColumnNavigation)
+      const tocTree = document.getElementById('toc-tree');
+      if (tocTree) {
+        tocTree.removeEventListener('click', updateColumnNavigation)
+        tocTree.removeEventListener('scroll', updateColumnNavigationButtons)
+      }
+    })
+
     watch(expandedById, () => {
       console.log('TOC watch expandedById', expandedById.value)
       function hideDescendants (id) {
@@ -281,6 +374,7 @@ export default {
         })
       })
     })
+
     return {
       route,
       isDocProjectIdInc,
@@ -291,9 +385,12 @@ export default {
       isCurrentItem,
       expandedById,
       toggleExpanded,
-      componentTOC
+      componentTOC,
+      scrollToPreviousColumn,
+      scrollToNextColumn
     }
   },
+
   methods: {
     getNewRefId () {
       if (Object.keys(this.route.query).length > 0 && Object.keys(this.route.query).includes('refId')) {
@@ -337,7 +434,7 @@ div.toc-area-content.toc-content {
       columns: 1;
       gap: 15px;
       overflow: auto;
-      max-height: 60vh; /* Could provoke an horizontal scroll */
+      max-height: calc(100vh - 280px); /* Horizontal scroll */
       padding: 20px 0;
     }
   }
@@ -517,6 +614,45 @@ div.bottom-toc {
 .toc-area-aside li:not(.more) > .li.container > a.toc-title:not(.is-current) {
   margin-left: -22px;
 }
+
+#toc-tree-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+
+  &.is-hidden {
+    display: none;
+  }
+
+  button {
+    width: 30px;
+    height: 25px;
+    border: none;
+    background-color: transparent;
+    background-position: center;
+    background-size: 25px auto;
+    background-repeat: no-repeat;
+    text-indent: -9999px;
+    cursor: pointer;
+
+    &.previous-btn {
+      background-image: url(@/assets/images/page_suivant.svg);
+      transform: scaleX(-1);
+    }
+
+    &.next-btn {
+      background-image: url(@/assets/images/page_suivant.svg);
+    }
+  }
+
+  button.is-disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}
+
+
 
 @media screen and (max-width: 768px) {
   .toc-area-content.toc-content li:not(.more) > .li.container > a.toc-title,

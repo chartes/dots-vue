@@ -1125,6 +1125,11 @@ button.toc-toggle {
 
   .collection-toc-area, .modal-wrapper {
     & .tree li {
+      & > .li.container {
+        a {
+          padding: 8px 10px;
+        }
+      }
       &.more {
         &[data-v-4782eec1] {
           padding-left: 5px !important;
