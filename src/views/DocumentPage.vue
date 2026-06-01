@@ -296,7 +296,7 @@
               />
             </router-link>
             <router-link
-              class="dots-button to-next-fragment has-tooltip"
+              class="dots-button to-next-fragment"
               :class="{ disabled: !nextRefId }"
               :to="{ name: 'Document', params: { collId: collConfig.collectionId, id: resourceId }, query: { refId: nextRefId } }"
               :aria-disabled="!nextRefId"
@@ -309,7 +309,6 @@
                 direction="right"
                 aria-hidden="true"
               />
-              <span class="tooltip">Vers {{ nextRefTitle }}</span>
             </router-link>
           </div>
         </div>
@@ -3143,45 +3142,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   margin-bottom: 0;
   margin-top: 0;
 }
-.has-tooltip {
-  position: relative;
-  display: inline-flex;
-}
 
-.has-tooltip .tooltip {
-  position: absolute;
-  right: 0;
-  bottom: 100%;
-  transform: translateY(-8px);
-  background: #1b2c39;
-  color: #fff;
-  font-size: 12px;
-  line-height: 1.2;
-  padding: 6px 10px;
-  border-radius: 4px;
-  white-space: nowrap;
-
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  z-index: 1000;
-}
-
-.has-tooltip .tooltip::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  right: 10px;
-  border-width: 6px;
-  border-style: solid;
-  border-color: #1b2c39 transparent transparent transparent;
-}
-
-.has-tooltip:hover .tooltip,
-.has-tooltip:focus-visible .tooltip {
-  opacity: 1;
-  transform: translateY(-12px);
-}
 .to-previous-fragment {
   border-bottom: none !important;
   &.disabled {
@@ -3578,9 +3539,6 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
       margin-left: 0;
       margin-right: 25px;
     }
-  }
-  .tooltip {
-    display: none;
   }
 
   .controls {
