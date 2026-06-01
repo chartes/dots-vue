@@ -20,7 +20,7 @@ const sources = [
   { name: 'sudoc', ext: 'sudoc.fr', type: 'document_link' },
   { name: 'biblissima', ext: 'biblissima', type: 'document_link' },
   { name: 'creativecommons', ext: 'creativecommons.org', type: 'document_link' },
-  { name: 'enc_red_small', ext: 'chartes.psl.eu', type: 'other_link' },
+  { name: 'enc_red_small', ext: 'www.chartes.psl.eu', type: 'other_link' },
   { name: 'iiif', ext: 'manifest', type: 'other_link' },
   { name: 'dots', ext: _baseApiURL, type: 'other_link' },
   { name: 'dots_circle', ext: window.location.pathname.split('/').slice(1, 3).join('/'), type: 'other_link' },
