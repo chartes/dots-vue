@@ -280,6 +280,7 @@
           </div>
           <!-- Previous / Next navigation buttons -->
           <div
+            v-if="previousRefId || nextRefId"
             class="navigation-document-top"
             aria-label="Navigation dans le document"
           >
@@ -287,7 +288,9 @@
               class="dots-button to-previous-fragment"
               :class="previousRefId === '' ? 'disabled' : ''"
               :to="{ name: 'Document', params: { collId: collConfig.collectionId, id: resourceId }, query: { refId: previousRefId } }"
-              aria-label="Fragment précédent"
+              :aria-disabled="!previousRefId"
+              :aria-label="'Vers ' + previousRefTitle"
+              :tabindex="previousRefId ? 0 : -1"
             >
               <DirectionArrows
                 :size="40"
