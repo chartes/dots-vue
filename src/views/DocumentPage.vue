@@ -280,7 +280,7 @@
           </div>
           <!-- Previous / Next navigation buttons -->
           <div
-            v-if="previousRefId || nextRefId"
+            v-if="previousRefId !== '' || nextRefId !== ''"
             class="navigation-document-top"
             aria-label="Navigation dans le document"
           >
