@@ -614,8 +614,7 @@ figure.image img{
     gap: 0 !important;
 
     & > td {
-      flex: 70% 0 0;
-      width: 70%;
+      flex: 1 0 0;
       border: none;
       padding: 2px !important;
     }
@@ -627,8 +626,8 @@ figure.image img{
     }
 
     & > td:last-child {
-      flex: 30% 0 0;
-      width: 30%;
+      flex: auto 0 0;
+      padding-left: 15px !important;
     }
   }
 
