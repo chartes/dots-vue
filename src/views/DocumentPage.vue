@@ -58,7 +58,7 @@
                 <a
                   :class="selectedCollectionId === selectStoreCollection(item).identifier ? 'active' : ''"
                   href="#"
-                  @click.prevent="openObject(selectStoreCollection(item), index)"
+                  @click.prevent="openObject(selectStoreCollection(item), index, $event)"
                 >
                   <CollectionIcon
                     v-if="selectStoreCollection(item).citeType === 'Collection'"
@@ -81,7 +81,7 @@
                 <a
                   :class="selectedCollectionId === item[0].identifier ? 'active' : ''"
                   href="#"
-                  @click.prevent="openObject(item[0], index)"
+                  @click.prevent="openObject(item[0], index, $event)"
                 >
                   <collection-icon
                     v-if="item[0].citeType === 'Collection'"
@@ -137,7 +137,7 @@
                 class="dots-button breadcrumb-top-toggle-btn"
                 fg="blue"
                 size="40"
-                @click.prevent="openObject(activeObject, activeBreadcrumb)"
+                @click.prevent="openObject(activeObject, activeBreadcrumb, $event)"
               />
             </div>
 
@@ -1500,7 +1500,7 @@ export default {
       }
     }
 
-    function openObject(breadcrumbItem, index) {
+    function openObject(breadcrumbItem, index, event) {
       isModalOpened.value = true
 
       // Case 1 : same breadcrumb then toggle off
@@ -1521,8 +1521,16 @@ export default {
       // Case 2 : new objet
       activeBreadcrumb.value = index
       activeObject.value = breadcrumbItem
-      console.log('openObject ', activeObject.value)
       activePanel.value = 'meta'
+
+      if (event && event.target) {
+        // On clock, active element is positionned on left by scrolling Ariane block
+        const arianeElement = event.target.closest('li');
+        const arianeParent = arianeElement.closest('ul');
+        if (arianeElement && arianeParent) {
+          arianeParent.scrollLeft = arianeElement.offsetLeft;
+        }
+      }
 
       selectedCollectionId.value = breadcrumbItem.identifier
 
