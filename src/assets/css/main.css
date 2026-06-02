@@ -1006,7 +1006,7 @@ button.dots-button {
     font-size: var(--button-font-size);
     font-weight: 700;
     cursor: pointer;
-    color: unset !important;
+    color: inherit;
 
     &:hover,
     &:focus {

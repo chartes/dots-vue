@@ -3176,7 +3176,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   background-color: var(--meta-area-fill-color);
 }
 
-.tab-header button {
+.tab-header button.dots-button {
   width: auto;
   background: #FFF;
   font-family: var(--font-primary), sans-serif;
@@ -3185,7 +3185,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   border: 1px solid var(--fill-color);
 }
 
-.tab-header button.active {
+.tab-header button.dots-button.active {
   color: white;
   background-color: var(--fill-color);
 }
