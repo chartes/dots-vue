@@ -59,7 +59,7 @@ if (isDocProjectIdIncluded) {
       // console.log('scrollBehavior to', to);
       // console.log('scrollBehavior from', from);
 
-      const defaultTop = window.innerWidth < 1024 ? 45 : 82;
+      const defaultTop = 0; // window.innerWidth < 1024 ? 45 : 82;
 
       if (to.path === from.path && to.hash.length) {
         // Local anchors

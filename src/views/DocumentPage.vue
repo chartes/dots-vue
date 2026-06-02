@@ -2834,6 +2834,7 @@ div.remove-bottom-padding #article {
   z-index: 11;
 }
 
+
 .navigation-document {
   position: relative;
   display: flex;
@@ -3272,8 +3273,8 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   .toc-aside-is-opened .document-views {
-    width: 100% !important;
-    margin-left: calc(105px - 100vw);
+    width: calc(100vw - 40px) !important;
+    margin-left: calc(125px - 100vw);
 
     &::before {
       content: "";
@@ -3282,7 +3283,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
       height: 100%;
       background-color: rgba(0,0,0,0.65);
       position: absolute;
-      left: 0;
+      left: -20px;
       top: 0;
     }
   }
@@ -3475,14 +3476,16 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   /* Negative margin is necessary to maintain the sticky behavior */
   .toc-aside-is-opened .toc-area-aside {
-    width: calc(100vw - 20px);
+    width: calc(100vw - 60px);
+    margin-left: 0;
   }
 
   .toc-aside-is-opened .document-views {
-    margin-left: calc(75px - 100vw);
+    width: 100vw !important;
+    margin-left: calc(60px - 100vw);
 
     &::before {
-      left: -20px;
+      left: 0;
     }
   }
 
