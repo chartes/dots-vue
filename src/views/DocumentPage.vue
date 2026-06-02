@@ -373,8 +373,8 @@
           <button
             type="button"
             class="dots-button notes-btn"
-            :class="{ 'is-opened': isNotesOpened }"
-            aria-pressed="isNotesOpened"
+            :class="{ 'is-notes-opened': isNotesOpened }"
+            :aria-pressed="isNotesOpened"
             aria-label="Afficher les notes"
             @click="toggleNotes"
           >
@@ -2181,10 +2181,6 @@ export default {
 
 .controls .notes-btn {
   color: #C3C3C3;
-
-  &.is-opened {
-    color: var(--fill-color);
-  }
 }
 .controls button:focus-visible {
   outline: 2px solid #B9192F;
