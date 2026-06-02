@@ -2058,6 +2058,7 @@ export default {
 }
 .toc-area .toc-area-content aside {
   width: 100% !important;
+  overflow-x: hidden;
   padding: 20px 10px !important;
 }
 .toc-area .toc-area-content nav > ol.tree {
