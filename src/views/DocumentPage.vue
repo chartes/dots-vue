@@ -2672,6 +2672,7 @@ div.remove-bottom-padding #article {
       &.is-opened {
         color: white;
       }
+
       &.disabled {
         pointer-events: none;
         opacity: 0.2;
@@ -2861,6 +2862,7 @@ div.remove-bottom-padding #article {
   flex-direction: row;
   justify-content: right;
   height: 100%;
+  color: var(--fill-color);
 }
 .navigation-document-top a span {
   line-height: 1.25;

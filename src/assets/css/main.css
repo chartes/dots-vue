@@ -996,7 +996,8 @@ a.noteref sup {
     --text-decoration-hover: underline dotted;
 }
 
-.dots-button {
+a.dots-button,
+button.dots-button {
     width: var(--button-size);
     height: var(--button-size);
     min-width: var(--button-size);
@@ -1005,6 +1006,12 @@ a.noteref sup {
     font-size: var(--button-font-size);
     font-weight: 700;
     cursor: pointer;
+    color: unset !important;
+
+    &:hover,
+    &:focus {
+        color: inherit;
+    }
 
     & > .icon-wrapper {
         width: 100%;
