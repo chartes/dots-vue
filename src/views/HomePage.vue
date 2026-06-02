@@ -1049,8 +1049,9 @@ input[type=number] {
     left: calc( 2 * var(--mobile-margin));
   }
 
-  #home-article {
-    padding: 20px var(--mobile-margin) 0 !important;
+  #home-article.article {
+    padding: 12px var(--mobile-margin) 10px !important;
+    margin-bottom: 0;
   }
 
   .home-article-wrapper {
