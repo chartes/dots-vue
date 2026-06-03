@@ -2817,7 +2817,7 @@ div.remove-bottom-padding #article {
 .controls {
   position: sticky;
   top: 85px;
-  z-index: 12;
+  z-index: 10;
   pointer-events: none;
 }
 
@@ -3552,7 +3552,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   .controls {
-    z-index: 13;
+    z-index: 10;
     display: flex;
     flex-direction: row;
     align-items: center;
