@@ -59,10 +59,11 @@ if (isDocProjectIdIncluded) {
       // console.log('scrollBehavior to', to);
       // console.log('scrollBehavior from', from);
 
-      const defaultTop = 0; // window.innerWidth < 1024 ? 45 : 82;
+      const defaultTop = window.innerWidth < 1024 ? 45 : 82;
 
       if (to.path === from.path && to.hash.length) {
         // Local anchors
+        console.log('scrollBehavior Local anchors', to.path);
         return {
           el: to.hash,
           behavior: 'smooth',
@@ -70,27 +71,52 @@ if (isDocProjectIdIncluded) {
         }
       }
 
+      const documentScroll = window.documentScrollY ? window.documentScrollY : window.scrollY;
       const documentArea = document.querySelector('.navigation-document');
       if (documentArea) {
-        const documentAreaTop = documentArea.getBoundingClientRect().top + window.scrollY;
-        if (window.scrollY >= documentAreaTop) {
-          // If window scroll is beyond sticky navigation bar
-          const documentAreaElement = document.querySelector('.document-area')
-          if (documentAreaElement) {
+
+        const documentAreaElement = document.querySelector('.document-area')
+        const documentAreaElementTop = documentAreaElement.getBoundingClientRect().top
+
+        const documentAreaTop = documentArea.getBoundingClientRect().top + documentScroll;
+        const breadcrumbPanel = document.getElementById('breadcrumb-panel');
+        const breadcrumbPanelHeight = ! breadcrumbPanel ? 0 : breadcrumbPanel.offsetHeight;
+
+        console.log('scrollBehavior documentArea ?', documentAreaTop, '<' , documentScroll, window.scrollY, '?', breadcrumbPanelHeight + 157);
+
+        if (documentAreaElementTop <= defaultTop) {
+          // If window scroll is beyond sticky navigation bar, scroll the top of the document under the sticky menu
+            console.log('scrollBehavior documentArea1', defaultTop);
             return {
               el: documentAreaElement,
               top: defaultTop,
             }
-          } else {
-            return { top: 0 }
+        } else if (documentScroll > breadcrumbPanelHeight + 157) {
+          console.log('scrollBehavior documentArea2', defaultTop);
+          return {
+            el: documentAreaElement,
+            top: defaultTop,
           }
         }
       }
 
+      if (window.documentScrollY !== window.scrollY) {
+        console.log('scrollBehavior documentArea3', documentScroll, window.scrollY);
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve({ top: documentScroll, behavior: 'instant' })
+          }, 0)
+        })
+      }
+
       // else scroll is unchanged...
+      console.log('scrollBehavior else1');
     }
   })
+
 } else {
+
+  console.log('scrollBehavior else2');
   router = createRouter({
     history: createWebHistory(rootURL),
     routes: [

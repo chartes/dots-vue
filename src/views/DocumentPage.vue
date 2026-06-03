@@ -114,6 +114,7 @@
           </div>
           <div
             v-if="activeObject"
+            id="breadcrumb-panel"
             class="breadcrumb-panel is-opened"
           >
             <div class="tab-header">
@@ -616,6 +617,9 @@ export default {
     })
 
     const updateMiradorTopPosition = function () {
+      // Cf scrollBehavior in router index.js
+      window.documentScrollY = window.scrollY;
+
       const miradorView = document.getElementById('mirador-view')
       const textView = document.getElementById('text-view')
       console.log('Document.vue no anchor update mirador position')
@@ -1740,8 +1744,8 @@ export default {
               scrollTo()
             } else {
               // Scroll to top if no anchor
-              console.log('DocumentPage watch no anchor scrollTo Page TOP')
-              window.scrollTo({ top: 0, behavior: 'instant' })
+              console.log('scrollBehavior DocumentPage watch no anchor scrollTo Page TOP')
+              // window.scrollTo({ top: 0, behavior: 'instant' })
             }
             isLoading.value = true
           } else {
@@ -1919,6 +1923,7 @@ export default {
       window.removeEventListener('resize', onResize)
       document.body.removeEventListener('click', closeTOC);
 
+      window.documentScrollY = false;
     })
 
     return {
