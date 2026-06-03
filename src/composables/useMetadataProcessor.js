@@ -21,7 +21,7 @@ const sources = [
   { name: 'biblissima', ext: 'biblissima', type: 'document_link' },
   { name: 'creativecommons', ext: 'creativecommons.org', type: 'document_link' },
   { name: 'enc_red_small', ext: 'www.chartes.psl.eu', type: 'other_link' },
-  { name: 'iiif', ext: 'manifest', type: 'other_link' },
+  { name: 'iiif', ext: 'iiif', type: 'other_link' },
   { name: 'dots', ext: _baseApiURL, type: 'other_link' },
   { name: 'dots_circle', ext: window.location.pathname.split('/').slice(1, 3).join('/'), type: 'other_link' },
   { name: 'tei', ext: 'tei+xml', type: 'other_link' },
@@ -50,9 +50,14 @@ function findSource(id) {
   try {
     url = new URL(id)
   } catch {
-    // id n'est pas une URL → on tente un MIME type
+    const normalized = id.toLowerCase()
+
+    // Case id not URL and has MIME but not strict MIME type (iiif)
+    if (normalized.includes('iiif.io')) {
+      return sources.find(s => s.name === 'iiif') ?? null
+    }
+    // Case id not a URL, nor IIIF → trying MIME type
     if (isMediaObjectMimeType(id)) {
-      const normalized = id.toLowerCase()
 
       const source = sources.find(s =>
         normalized.includes(s.ext.toLowerCase())
