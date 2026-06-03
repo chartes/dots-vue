@@ -59,8 +59,7 @@ const cssVars = {
   border-color: #e5e5e5;
 }
 
-.is-opened > .icon-wrapper,
-.icon-wrapper:hover {
+.is-notes-opened > .icon-wrapper {
   color: #FFF;
   background-color: var(--fill-color);
 
@@ -68,4 +67,16 @@ const cssVars = {
     fill: #CCC;
   }
 }
+
+@media screen and (min-width: 1024px) {
+  :not(.is-notes-opened) > .icon-wrapper:hover {
+    color: #FFF;
+    background-color: var(--fill-color);
+
+    .note-no {
+      fill: #CCC;
+    }
+  }
+}
+
 </style>

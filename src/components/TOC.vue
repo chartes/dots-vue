@@ -433,9 +433,13 @@ div.toc-area-content.toc-content {
     .tree {
       columns: 1;
       gap: 15px;
-      overflow: auto;
-      max-height: calc(100vh - 280px); /* Horizontal scroll */
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-height: calc(100vh - 320px); /* Horizontal scroll */
       padding: 20px 0;
+
+      position: relative;
+      z-index: 1;
     }
   }
 

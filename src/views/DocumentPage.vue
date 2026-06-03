@@ -114,6 +114,7 @@
           </div>
           <div
             v-if="activeObject"
+            id="breadcrumb-panel"
             class="breadcrumb-panel is-opened"
           >
             <div class="tab-header">
@@ -373,8 +374,8 @@
           <button
             type="button"
             class="dots-button notes-btn"
-            :class="{ 'is-opened': isNotesOpened }"
-            aria-pressed="isNotesOpened"
+            :class="{ 'is-notes-opened': isNotesOpened }"
+            :aria-pressed="isNotesOpened"
             aria-label="Afficher les notes"
             @click="toggleNotes"
           >
@@ -616,6 +617,9 @@ export default {
     })
 
     const updateMiradorTopPosition = function () {
+      // Cf scrollBehavior in router index.js
+      window.documentScrollY = window.scrollY;
+
       const miradorView = document.getElementById('mirador-view')
       const textView = document.getElementById('text-view')
       console.log('Document.vue no anchor update mirador position')
@@ -1740,8 +1744,8 @@ export default {
               scrollTo()
             } else {
               // Scroll to top if no anchor
-              console.log('DocumentPage watch no anchor scrollTo Page TOP')
-              window.scrollTo({ top: 0, behavior: 'instant' })
+              console.log('scrollBehavior DocumentPage watch no anchor scrollTo Page TOP')
+              // window.scrollTo({ top: 0, behavior: 'instant' })
             }
             isLoading.value = true
           } else {
@@ -1919,6 +1923,7 @@ export default {
       window.removeEventListener('resize', onResize)
       document.body.removeEventListener('click', closeTOC);
 
+      window.documentScrollY = false;
     })
 
     return {
@@ -2058,6 +2063,7 @@ export default {
 }
 .toc-area .toc-area-content aside {
   width: 100% !important;
+  overflow-x: hidden;
   padding: 20px 10px !important;
 }
 .toc-area .toc-area-content nav > ol.tree {
@@ -2180,10 +2186,6 @@ export default {
 
 .controls .notes-btn {
   color: #C3C3C3;
-
-  &.is-opened {
-    color: var(--fill-color);
-  }
 }
 .controls button:focus-visible {
   outline: 2px solid #B9192F;
@@ -2671,6 +2673,7 @@ div.remove-bottom-padding #article {
       &.is-opened {
         color: white;
       }
+
       &.disabled {
         pointer-events: none;
         opacity: 0.2;
@@ -2833,6 +2836,7 @@ div.remove-bottom-padding #article {
   z-index: 11;
 }
 
+
 .navigation-document {
   position: relative;
   display: flex;
@@ -2859,6 +2863,7 @@ div.remove-bottom-padding #article {
   flex-direction: row;
   justify-content: right;
   height: 100%;
+  color: var(--fill-color);
 }
 .navigation-document-top a span {
   line-height: 1.25;
@@ -3176,7 +3181,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   background-color: var(--meta-area-fill-color);
 }
 
-.tab-header button {
+.tab-header button.dots-button {
   width: auto;
   background: #FFF;
   font-family: var(--font-primary), sans-serif;
@@ -3185,7 +3190,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   border: 1px solid var(--fill-color);
 }
 
-.tab-header button.active {
+.tab-header button.dots-button.active {
   color: white;
   background-color: var(--fill-color);
 }
@@ -3271,8 +3276,8 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   .toc-aside-is-opened .document-views {
-    width: 100% !important;
-    margin-left: calc(105px - 100vw);
+    width: calc(100vw - 40px) !important;
+    margin-left: calc(125px - 100vw);
 
     &::before {
       content: "";
@@ -3281,7 +3286,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
       height: 100%;
       background-color: rgba(0,0,0,0.65);
       position: absolute;
-      left: 0;
+      left: -20px;
       top: 0;
     }
   }
@@ -3474,14 +3479,16 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   /* Negative margin is necessary to maintain the sticky behavior */
   .toc-aside-is-opened .toc-area-aside {
-    width: calc(100vw - 20px);
+    width: calc(100vw - 60px);
+    margin-left: 0;
   }
 
   .toc-aside-is-opened .document-views {
-    margin-left: calc(75px - 100vw);
+    width: 100vw !important;
+    margin-left: calc(60px - 100vw);
 
     &::before {
-      left: -20px;
+      left: 0;
     }
   }
 

@@ -1729,6 +1729,16 @@ input[type=number] {
     font-size: 18px;
   }
 
+  .toc-mode .collection-toc-area-header {
+    padding: 20px 15px;
+
+    & > a {
+      padding: 0;
+    }
+  }
+  .toc-mode.collection-toc-area.expanded .toggle-btn, .toggle-btn.expanded {
+    background-size: calc(var(--button-size) * 0.65) auto;
+  }
   .mixed-mode .collection-toc-area .menu.expanded ul.tree li a {
     padding: 13px var(--mobile-margin) 11px;
   }
