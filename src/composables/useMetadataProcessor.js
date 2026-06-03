@@ -21,7 +21,7 @@ const sources = [
   { name: 'biblissima', ext: 'biblissima', type: 'document_link' },
   { name: 'creativecommons', ext: 'creativecommons.org', type: 'document_link' },
   { name: 'enc_red_small', ext: 'www.chartes.psl.eu', type: 'other_link' },
-  { name: 'iiif', ext: 'manifest', type: 'other_link' },
+  { name: 'iiif', ext: 'iiif', type: 'other_link' },
   { name: 'dots', ext: _baseApiURL, type: 'other_link' },
   { name: 'dots_circle', ext: window.location.pathname.split('/').slice(1, 3).join('/'), type: 'other_link' },
   { name: 'tei', ext: 'tei+xml', type: 'other_link' },
@@ -50,9 +50,14 @@ function findSource(id) {
   try {
     url = new URL(id)
   } catch {
-    // id n'est pas une URL → on tente un MIME type
+    const normalized = id.toLowerCase()
+
+    // Case id not URL and has MIME but not strict MIME type (iiif)
+    if (normalized.includes('iiif.io')) {
+      return sources.find(s => s.name === 'iiif') ?? null
+    }
+    // Case id not a URL, nor IIIF → trying MIME type
     if (isMediaObjectMimeType(id)) {
-      const normalized = id.toLowerCase()
 
       const source = sources.find(s =>
         normalized.includes(s.ext.toLowerCase())
@@ -366,7 +371,8 @@ export async function buildDisplayModel(rawMetadata, config) {
   const excludeConfig      = config?.excludeMetadata      ?? {}
   const excludeFields = [
     ...(excludeConfig.fields ?? []),
-    ...APP_KEYS
+    ...APP_KEYS,
+    ...APP_DISPLAY_EXCLUDES
   ]
   const onlyDeclared       = excludeConfig.onlyDeclared   ?? false
 
@@ -560,41 +566,74 @@ export async function buildDisplayModel(rawMetadata, config) {
 // Sa seule responsabilité propre : enrichir avec les données TOC
 // Le reste est délégué à buildDisplayModel
 // ─────────────────────────────────────────────────────────────────────────────
-const APP_KEYS = new Set([
-  'editorialLevelIndicator',
-  'totalDescendants',
-  'descendant',
-  'router',
-  'router_params',
-  'router_refid',
-  'router_hash',
-  'url',
-  'hash',
-  'show',
-  'expanded',
-  'ancestor_editorialLevel',
-  'member',
-  'children',
-  'parent',
-  'projectIdentifier',
-  'totalParents',
-  'totalChildren',
-  'totalItems',
-  'citeType',
-    'level'
-])
+const APP_FIELDS = {
+  editorialLevelIndicator: true,
+  totalDescendants: true,
+  descendant: true,
+  router: true,
+  router_params: true,
+  router_refid: true,
+  router_hash: true,
+  url: true,
+  hash: true,
+  show: true,
+  expanded: true,
+  ancestor_editorialLevel: true,
+  member: true,
+  children: true,
+  parent: true,
+  projectIdentifier: true,
+  totalParents: true,
+  totalChildren: true,
+  totalItems: true,
+  citeType: true,
+  level: true,
+
+  // nested key example
+  'extensions.dots:shortTitle': true,
+}
+const APP_KEYS = new Set(Object.keys(APP_FIELDS))
+
+const APP_DISPLAY_EXCLUDES = Object.entries(APP_FIELDS)
+  .filter(([path]) => path.includes('.'))
+  .map(([path]) =>
+    path.split('.').pop()
+  )
 
 function splitMetadata(raw = {}) {
+  // helpers
+  function get(obj, path) {
+    return path.split('.').reduce(
+      (acc, key) => acc?.[key],
+      obj
+    )
+  }
 
-  const metadata = {}
-  const appData  = {}
+  function defaultFieldName(path) {
+    return path
+      .split('.')
+      .pop()
+      .replace(/^.*:/, '')
+  }
 
-  for (const [key, value] of Object.entries(raw)) {
+  const metadata = { ...raw }
+  const appData = {}
 
-    if (APP_KEYS.has(key)) {
-      appData[key] = value
-    } else {
-      metadata[key] = value
+  for (const [path, alias] of Object.entries(APP_FIELDS)) {
+    const value = get(raw, path)
+
+    if (value === undefined) continue
+
+    const targetKey =
+      alias === true || alias === ''
+        ? defaultFieldName(path)
+        : alias
+
+    appData[targetKey] = value
+
+    // non nested keys :
+    if (!path.includes('.')) {
+      delete metadata[path]
     }
   }
 

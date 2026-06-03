@@ -1483,15 +1483,96 @@ export default {
     }
 
     const ancestorLabel = (ancestor) => {
-      if ( ancestor.citeType === 'Resource' && ancestor?.dublinCore?.creator) {
-        if (Array.isArray(ancestor.dublinCore.creator)) {
-          return `${ancestor.dublinCore.creator
-            .map(c => typeof c === 'string' ? c : Object.values(c)[0])
-            .join(', ')}, ${ancestor.title}`
-        } else {
-          return `${ancestor.dublinCore.creator}, ${ancestor.title}`
+      // helpers
+      function formatValue(value) {
+        if (value == null) return null
+
+        if (Array.isArray(value)) {
+          return value
+            .map(item => {
+              if (typeof item === 'string') return item
+              if (typeof item === 'object') {
+                return item.name ?? Object.values(item)[0]
+              }
+              return String(item)
+            })
+            .join(', ')
         }
+
+        return String(value)
       }
+
+      function get(obj, path) {
+        return path.split('.').reduce(
+          (acc, key) => acc?.[key],
+          obj
+        )
+      }
+
+      function getRuleValue(ancestor, path) {
+        let value = get(ancestor, path)
+
+        // Fallback spécifique pour le titre court
+        if (
+          value == null &&
+          path === 'extensions.dots:shortTitle'
+        ) {
+          value = ancestor.title
+        }
+
+        return value
+      }
+
+      function isValidValue(value) {
+        return value !== undefined &&
+               value !== null &&
+               value !== ''
+      }
+
+      function buildLabelFromRules(ancestor, rules) {
+        if (!rules?.length) {
+          return null
+        }
+
+        const values = rules.map(path =>
+          getRuleValue(ancestor, path)
+        )
+
+        if (!values.some(isValidValue)) {
+          return null
+        }
+
+        return values
+          .filter(isValidValue)
+          .map(formatValue)
+          .join(', ')
+      }
+
+      if (ancestor.citeType !== 'Resource') {
+        return ancestor.title
+      }
+
+      const label = buildLabelFromRules(
+        ancestor,
+        collConfig.value?.topBreadcrumbButtonLabel
+      )
+
+      if (label) {
+        console.log('ancestorLabel label', label)
+        return label
+      }
+
+      const defaultLabel = buildLabelFromRules(
+        ancestor,
+        appConfig.value?.genericConf?.topBreadcrumbButtonLabel
+      )
+
+      console.log('ancestorLabel defaultLabel', defaultLabel)
+
+      if (defaultLabel) {
+        return defaultLabel
+      }
+
       return ancestor.title
     }
 
