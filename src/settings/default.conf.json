@@ -66,6 +66,9 @@
       "schema": "https://schema.org/",
       "dots":   "https://github.com/chartes/dots/"
     },
+    "topBreadcrumbButtonLabel": [
+      "title"
+    ],
     "metadataDisplayOrder": [
       "dts:title",
       "dts:identifier",
