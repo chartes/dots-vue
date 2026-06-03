@@ -444,6 +444,7 @@ table td:not([align]), table th:not([align]) {
 
 .layout-navbar {
     grid-area: header;
+    height: 70px;
 }
 .layout-main {
     grid-area: main;
@@ -874,6 +875,7 @@ a.noteref sup {
 }
 
 @media screen and (max-width: 768px) {
+
     .app-width-padding {
         padding-left: var(--mobile-margin);
         padding-right: var(--mobile-margin);
@@ -882,6 +884,10 @@ a.noteref sup {
         margin: 0;
         max-width: 100%;
         padding: 0 var(--mobile-margin);
+    }
+
+    .layout-grid-container {
+        display: block;
     }
 
     .toggle-btn {
@@ -920,11 +926,13 @@ a.noteref sup {
 }
 
 @media screen and (max-width: 640px) {
+
     p.header-baseline {
         margin: auto;
         width: 60%;
         text-align: center;
     }
+
     .layout-navbar:not(.document) {
         position: fixed;
         left:0;
@@ -933,6 +941,10 @@ a.noteref sup {
 
         width: 100vw;
         z-index: 25;
+
+        & + .layout-main {
+            margin-top: var(--top-navbar-height);
+        }
     }
 }
 
@@ -966,6 +978,7 @@ a.noteref sup {
     --button-size: 40px;
     --button-border-radius: 4px;
     --button-font-size: 14px;
+    --top-navbar-height: 70px;
 
     @media screen and (max-width: 768px) {
         --font-default-size : 14px;

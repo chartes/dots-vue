@@ -414,6 +414,8 @@ export default {
     flex: auto;
   }
   .footer .title-container {
+    width: auto;
+    
     & > .title {
       font-size: 24px;
     }
