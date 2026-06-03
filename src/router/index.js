@@ -75,42 +75,30 @@ if (isDocProjectIdIncluded) {
       const documentArea = document.querySelector('.navigation-document');
       if (documentArea) {
 
-        const documentAreaElement = document.querySelector('.document-area')
-        const documentAreaElementTop = documentAreaElement.getBoundingClientRect().top
+        const navTopContainer = document.getElementById('navigation-row-top-container');
+        const navTopContainerHeight = ! navTopContainer ? 0 : navTopContainer.offsetHeight;
 
-        const documentAreaTop = documentArea.getBoundingClientRect().top + documentScroll;
-        const breadcrumbPanel = document.getElementById('breadcrumb-panel');
-        const breadcrumbPanelHeight = ! breadcrumbPanel ? 0 : breadcrumbPanel.offsetHeight;
+        console.log('scrollBehavior documentArea ?', documentScroll, '>=' , navTopContainerHeight + defaultTop, navTopContainerHeight);
 
-        console.log('scrollBehavior documentArea ?', documentAreaTop, '<' , documentScroll, window.scrollY, '?', breadcrumbPanelHeight + 157);
-
-        if (documentAreaElementTop <= defaultTop) {
+        if (documentScroll >= navTopContainerHeight + defaultTop) {
           // If window scroll is beyond sticky navigation bar, scroll the top of the document under the sticky menu
             console.log('scrollBehavior documentArea1', defaultTop);
-            return {
-              el: documentAreaElement,
-              top: defaultTop,
-            }
-        } else if (documentScroll > breadcrumbPanelHeight + 157) {
-          console.log('scrollBehavior documentArea2', defaultTop);
-          return {
-            el: documentAreaElement,
-            top: defaultTop,
-          }
+            return new Promise((resolve, reject) => {
+              setTimeout(() => {
+                resolve({ top: navTopContainerHeight + defaultTop, behavior: 'instant' })
+              }, 0)
+            })
         }
-      }
 
-      if (window.documentScrollY !== window.scrollY) {
-        console.log('scrollBehavior documentArea3', documentScroll, window.scrollY);
         return new Promise((resolve, reject) => {
           setTimeout(() => {
             resolve({ top: documentScroll, behavior: 'instant' })
           }, 0)
         })
+
       }
 
       // else scroll is unchanged...
-      console.log('scrollBehavior else1');
     }
   })
 

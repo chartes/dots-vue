@@ -16,7 +16,7 @@
       :toc="flatTOC"
       @change="closeModal"
     />-->
-    <div class="navigation-row-top-container">
+    <div class="navigation-row-top-container" id="navigation-row-top-container">
       <div class="navigation-row-top app-width-margin">
         <div class="ariane-collection-top">
           <div
@@ -114,7 +114,6 @@
           </div>
           <div
             v-if="activeObject"
-            id="breadcrumb-panel"
             class="breadcrumb-panel is-opened"
           >
             <div class="tab-header">
