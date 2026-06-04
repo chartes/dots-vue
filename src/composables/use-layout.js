@@ -42,6 +42,7 @@ export default function useLayout () {
   const changeViewMode = function (v) {
     //viewMode.value = v
     console.log('changeViewMode before : ', viewMode.value, v)
+    const isMobile = window.innerWidth < 768;
     if (v === 'init') {
       viewMode.value = 'text-mode'
     } else if (viewMode.value === 'init' && v === 'text-mode') {
@@ -49,15 +50,15 @@ export default function useLayout () {
     } else if (viewMode.value === 'text-mode' && v === 'text-mode') {
       viewMode.value = 'images-mode'
     } else if (viewMode.value === 'text-mode' && v === 'images-mode') {
-      viewMode.value = 'text-and-images-mode'
+      viewMode.value = isMobile ? 'images-mode' : 'text-and-images-mode'
     } else if (viewMode.value === 'images-mode' && v === 'images-mode') {
       viewMode.value = 'text-mode'
     } else if (viewMode.value === 'images-mode' && v === 'text-mode') {
-      viewMode.value = 'text-and-images-mode'
+      viewMode.value = isMobile ? 'text-mode' : 'text-and-images-mode'
     } else if (viewMode.value === 'text-and-images-mode' && v === 'text-mode') {
-      viewMode.value = 'images-mode'
+      viewMode.value = isMobile ? 'text-mode' : 'images-mode'
     } else if (viewMode.value === 'text-and-images-mode' && v === 'images-mode') {
-      viewMode.value = 'text-mode'
+      viewMode.value = isMobile ? 'images-mode' : 'text-mode'
     }
     if (isTOCMenuOpened.value && String(viewMode.value).includes('images')) {
       isTOCMenuOpened.value = false

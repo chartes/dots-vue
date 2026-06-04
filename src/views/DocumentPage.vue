@@ -339,7 +339,7 @@
         class="controls-list"
         :class="isControlsOpened ? 'is-opened' : ''"
       >
-        <li v-if="manifestIsAvailable">
+        <li v-if="manifestIsAvailable" >
           <button
             type="button"
             class="dots-button text-btn"
@@ -354,7 +354,7 @@
           </button>
         </li>
 
-        <li v-if="manifestIsAvailable" class="images-parent-btn">
+        <li v-if="manifestIsAvailable" >
           <button
             type="button"
             class="dots-button images-btn"
@@ -3465,8 +3465,22 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     display: none;
   }
 
-  .controls .images-parent-btn {
-    display: none;
+  .text-mode .controls {
+    .text-btn {
+      pointer-events: none;
+    }
+    .images-btn {
+      pointer-events: auto;
+    }
+  }
+
+  .images-mode .controls {
+    .text-btn {
+      pointer-events: auto;
+    }
+    .images-btn {
+      pointer-events: none;
+    }
   }
 
   .controls {
