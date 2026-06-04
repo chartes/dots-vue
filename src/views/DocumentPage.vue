@@ -2632,6 +2632,24 @@ div.remove-bottom-padding #article {
     position: relative;
   }
 
+  .footnotes > h3 {
+    border-bottom: #E4E4E4 4px solid !important;
+  }
+
+  .footnotes ol {
+    list-style-position: inside;
+
+    & > li {
+      position: relative;
+      margin-left: 30px;
+
+      & > a.noteback {
+        top: 0;
+      }
+    }
+  }
+
+  /*
   .footnotes::before {
     content: "Notes";
     display: block;
@@ -2649,6 +2667,8 @@ div.remove-bottom-padding #article {
     width: 100%;
     border-top: #E4E4E4 4px solid !important;
   }
+
+   */
 
   .footnotes > *:first-child {
     display: block;
@@ -3396,6 +3416,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
       position: absolute;
       left: -20px;
       top: 0;
+      z-index: 11;
     }
   }
 
