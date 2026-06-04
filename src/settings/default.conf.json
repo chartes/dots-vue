@@ -70,30 +70,12 @@
       "title"
     ],
     "metadataDisplayOrder": [
-      "dts:title",
-      "dts:identifier",
+      "dts:id",
       "dts:type",
-      "dct:identifier",
-      "dct:title",
-      "dct:creator",
-      "dct:contributor",
-      "dct:created",
-      "dct:issued",
-      "dct:coverage",
-      "dct:relation",
-      "dct:source",
-      "dts:download",
-      "dct:citation",
-      "dct:publisher",
-      "schema:publisher",
-      "dct:license",
-      "dct:rights",
-      "dct:isVersionOf",
-      "schema:isVersionOf",
-      "schema:creator",
-      "schema:contributor",
-      "schema:source",
-      "schema:isBasedOn"
+      "dts:*",
+      "dct:*",
+      "schema:*",
+      "dots:*"
     ],
     "metadataRename": {
       "@id": "dts:id",
@@ -102,9 +84,7 @@
     "excludeMetadata": {
       "onlyDeclared": false,
       "fields": [
-        "schema:inLanguage",
-        "dts:citationTrees",
-        "schema:dots:*"
+        "dts:citationTrees"
       ]
     }
   }
