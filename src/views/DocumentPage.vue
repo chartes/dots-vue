@@ -882,9 +882,7 @@ export default {
 
     const initArianeDoc = function() {
       updateDocBreadcrumbHorizontalScrollAndMeasurements();
-      breadcrumbScrollToLastItem();
       updateHorizontalScrollAndMeasurements();
-      arianeDocScrollToLastItem();
     }
 
 
