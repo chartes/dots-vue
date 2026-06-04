@@ -302,6 +302,19 @@ const SCHEMA_SAMEAS_URI        = 'https://schema.org/sameAs'
 // ─────────────────────────────────────────────────────────────────────────────
 function enrichValue(value, path) {
   try {
+    if (
+      path === 'dots:resourceIIIFManifest' &&
+      typeof value === 'string'
+    ) {
+      return {
+        value,
+        url: value,
+        source: {
+          name: 'iiif',
+          type: 'other_link'
+        }
+      }
+    }
 
     if (typeof value === 'string') {
       const cleanUrl = value.replace(/\{[^}]*\}/g, '').replace(/\?$/, '')
