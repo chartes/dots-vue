@@ -8,7 +8,7 @@
         <img
           class="pb-thumbnail"
           :src="thumbnail"
-          @click.prevent="goToCanvas()"
+          @click.prevent="goToCanvas($event)"
         />
       </div>
     </article>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { inject } from 'vue'
+import {inject, nextTick} from 'vue'
 
 export default {
   name: 'PageBreak',
@@ -27,8 +27,14 @@ export default {
     const mirador = inject('mirador')
     const layout = inject('variable-layout')
 
-    const goToCanvas = function () {
+    const goToCanvas = function (event) {
       if (mirador) {
+
+        // Thumbnail y-position and scroll before mode change
+        const imageThumbnail = event.target;
+        const imageThumbnailY = imageThumbnail.getBoundingClientRect().top;
+        const textScrollBefore = window.scrollY;
+
         console.log(props.canvasId)
         const currentCanvasId = Object.values(mirador.miradorStore.getState().windows)[0].canvasId
         console.log('currentCanvasId / props.canvasId', currentCanvasId, props.canvasId, currentCanvasId.substring(currentCanvasId.lastIndexOf('/f') + 1, currentCanvasId.length))
@@ -36,6 +42,7 @@ export default {
           layout.changeViewMode('init')
           mirador.setCanvasId(props.canvasId.substring(0, props.canvasId.lastIndexOf('/f') + 1) + 'f1')
         } else {
+
           mirador.setCanvasId(props.canvasId)
           // if (layout.miradorVisible != true) {
           // layout.setMiradorVisible(true);
@@ -44,6 +51,16 @@ export default {
           }
           // }
         }
+
+        // Thumbnail y-position and scroll after mode change
+        nextTick(function () {
+          const textScrollAfter = textScrollBefore + (imageThumbnail.getBoundingClientRect().top - imageThumbnailY);
+          window.scrollTo({
+            top: textScrollAfter,
+            behavior: 'instant'
+          })
+        });
+
       }
     }
 
