@@ -769,6 +769,7 @@ a.noteref sup {
 .aside-noteref-content {
     font-family: var(--font-primary), sans-serif;
     font-size: var(--font-small-size);
+    line-height: 1.25;
 }
 
 .aside-noteref-content a.notebottom,
