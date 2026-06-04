@@ -75,17 +75,22 @@ if (isDocProjectIdIncluded) {
       const documentArea = document.querySelector('.navigation-document');
       if (documentArea) {
 
+        const topNavBar = document.querySelector('.layout-navbar:first-child');
+        const topNavBarHeight = topNavBar.offsetHeight;
+
         const navTopContainer = document.getElementById('navigation-row-top-container');
         const navTopContainerHeight = ! navTopContainer ? 0 : navTopContainer.offsetHeight;
 
+        const totalHeaderHeight = navTopContainerHeight + topNavBarHeight;
+
         console.log('scrollBehavior documentArea ?', documentScroll, '>=' , navTopContainerHeight + defaultTop, navTopContainerHeight);
 
-        if (documentScroll >= navTopContainerHeight + defaultTop) {
+        if (documentScroll >= totalHeaderHeight) {
           // If window scroll is beyond sticky navigation bar, scroll the top of the document under the sticky menu
-            console.log('scrollBehavior documentArea1', defaultTop);
+            console.log('scrollBehavior documentArea1', navTopContainerHeight + defaultTop, defaultTop);
             return new Promise((resolve, reject) => {
               setTimeout(() => {
-                resolve({ top: navTopContainerHeight + defaultTop, behavior: 'instant' })
+                resolve({ top: totalHeaderHeight, behavior: 'instant' })
               }, 0)
             })
         }

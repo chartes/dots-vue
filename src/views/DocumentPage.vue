@@ -747,7 +747,9 @@ export default {
           collCrumbsWithEllipsis.value = true
         }
       })
-      el.scrollLeft = el.scrollWidth - el.clientWidth
+
+      // Horizontal scroll : scroll to last item
+      breadcrumbScrollToLastItem('instant')
       updateMeasurements()
     }
     let isResizing = false
@@ -755,7 +757,6 @@ export default {
     const onColBreadcrumbScroll = (event) => {
       if (isResizing) return  // ignoring parasite scroll from browser
       const target = event.target
-      console.log('onColBreadcrumbScroll', target)
       updateMeasurements()
       colBreadcrumbScrollLeft.value = target.scrollLeft
       colBreadcrumbClientWidth.value = target.clientWidth
@@ -765,7 +766,6 @@ export default {
     const breadcrumbToLeft = function() {
       console.log('DOM breadcrumbToLeft', breadcrumbEl.value)
       if (!breadcrumbEl.value) return
-
       const el = breadcrumbEl.value
 
       el.scrollTo({
@@ -774,9 +774,22 @@ export default {
       })
     }
 
+    const breadcrumbScrollToLastItem = function(behavior = 'smooth') {
+      console.log('DOM breadcrumbScrollToLastItem', breadcrumbEl.value)
+      if (!breadcrumbEl.value) return
+      const el = breadcrumbEl.value
+
+      const breadcrumbLastChild = el.querySelector('li:last-child')
+      if (breadcrumbLastChild) {
+        el.scrollTo({
+          left: breadcrumbLastChild.offsetLeft - 40,
+          behavior: behavior
+        })
+      }
+    }
+
     const breadcrumbToRight = function() {
       if (!breadcrumbEl.value) return
-
       const el = breadcrumbEl.value
 
       el.scrollTo({
@@ -813,6 +826,31 @@ export default {
       docBreadcrumbScrollWidth.value = target.scrollWidth
     }
 
+    const arianeDocScrollToLastItem = function(behavior = 'smooth') {
+      console.log('DOM arianeDocScrollToLastItem', arianeDocContainer.value)
+      if (!arianeDocContainer.value) return
+      const el = arianeDocContainer.value
+
+      const arianeLastChild = el.querySelector('li:last-child')
+      if (arianeLastChild) {
+        el.scrollTo({
+          left: arianeLastChild.offsetLeft - 30,
+          behavior: behavior
+        })
+      }
+    }
+
+    const arianeDocToRight = function(behavior = 'smooth') {
+      console.log('DOM arianeDocToRight', arianeDocContainer.value)
+      if (!arianeDocContainer.value) return
+      const el = arianeDocContainer.value
+
+      el.scrollTo({
+        left: el.scrollWidth,
+        behavior: behavior
+      })
+    }
+
     // Maintains Document Ariane horizontal scroll on right when resizing window
     const updateDocBreadcrumbHorizontalScrollAndMeasurements = function() {
       if (!arianeDocContainer.value) return
@@ -827,8 +865,8 @@ export default {
         }
       })
 
-      // Horizontal scroll
-      el.scrollLeft = el.scrollWidth - el.clientWidth
+      // Horizontal scroll : scroll to last item
+      arianeDocScrollToLastItem('instant')
       updateMeasurementsAriane()
     }
 
@@ -842,21 +880,11 @@ export default {
       docBreadcrumbScrollWidth.value = el.scrollWidth
     }
 
-    const arianeDocToRight = function() {
-      console.log('DOM arianeDocToRight', arianeDocContainer.value)
-      if (!arianeDocContainer.value) return
-      const el = arianeDocContainer.value
-
-      el.scrollTo({
-        left: el.scrollWidth,
-        behavior: 'smooth'
-      })
-    }
-
     const initArianeDoc = function() {
       updateDocBreadcrumbHorizontalScrollAndMeasurements();
+      breadcrumbScrollToLastItem();
       updateHorizontalScrollAndMeasurements();
-      arianeDocToRight();
+      arianeDocScrollToLastItem();
     }
 
 
@@ -1911,7 +1939,7 @@ export default {
 
     watch(breadcrumbEl, (val) => {
       console.log('DOM breadcrumbEl updated:', val)
-      nextTick().then(breadcrumbToRight)
+      nextTick().then(breadcrumbScrollToLastItem)
     })
 
     function scrollTo() {
@@ -2029,11 +2057,13 @@ export default {
       onDocBreadcrumbScroll,
       breadcrumbToLeft,
       breadcrumbToRight,
+      breadcrumbScrollToLastItem,
       colFadeLeftVisible,
       colFadeRightVisible,
       docFadeLeftVisible,
       docFadeRightVisible,
       arianeDocContainer,
+      arianeDocScrollToLastItem,
       arianeDocToRight,
       initArianeDoc,
       activeBreadcrumb,
