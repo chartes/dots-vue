@@ -706,6 +706,11 @@ a.noteref sup {
     line-height: inherit;
 }
 
+.images-mode .aside-noteref-list,
+.text-and-images-mode .aside-noteref-list {
+    margin: 0;
+}
+
 .aside-noteref-list:not(:empty)::before {
     content: "";
     display: block;
