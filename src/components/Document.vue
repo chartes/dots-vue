@@ -342,8 +342,6 @@ export default {
         notesPresent = hasNotesInHTML(data)
       }
 
-      console.log("notesPresent", notesPresent, mediaType.value)
-
       // Emit presence of notes to parent
       emit('has-notes', notesPresent)
       hasNotes.value = notesPresent
@@ -399,7 +397,7 @@ export default {
           const yOffset = -90
           const y = el.getBoundingClientRect().top + window.scrollY + yOffset
           console.log('Document.vue scrollTo y : ', y)
-          window.scrollTo({ top: y, behavior: 'instant' })
+          //window.scrollTo({ top: y, behavior: 'instant' })
         }
       } /* removing scroll top for now 06/02/2026 else {
         // Scroll to the top of Page if no anchor and new route or to reader TOP in reading context
@@ -445,6 +443,8 @@ export default {
       asideNotesParent = main.querySelector('.aside-noteref-parent')
       asideNotes = main.querySelector('.aside-noteref-list')
 
+      console.log('initAsideNotes', asideNotes)
+
       if (!asideNotesParent) {
         asideNotesParent = document.createElement('aside')
         asideNotesParent.classList.add('aside-noteref-parent')
@@ -489,7 +489,7 @@ export default {
 
         if (noteTop > documentInViewTop && noteTop < documentInViewBottom) {
           const noteId = noteRef.getAttribute('href')?.substring(1)
-          const noteElement = document.querySelector(`.note[id="${noteId}"]`)
+          const noteElement = document.querySelector(`.fn-note[id="${noteId}"]`)
           if (!noteElement) return
 
           notesInView.push({
