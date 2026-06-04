@@ -1706,23 +1706,69 @@ export default {
       scrollCurrentTocItemIntoView()
     }
 
-    const setMirador = function () {
-      fetch(getIiifManifestUrl(), {
-        method: 'GET'
-      })
-        .then((r) => {
-          manifestIsAvailable.value = r.ok
-          return r.json()
+    const setMirador = async () => {
+      try {
+        const response = await fetch(getIiifManifestUrl(), {
+          method: 'GET'
         })
-        .then((loadedManifest) => {
-          manifest.value = loadedManifest
-          console.log('setMirador loadedManifest : ', loadedManifest, manifest.value)
-        })
-        .catch((error) => {
-          console.log('setMirador error : ', error)
+
+        if (!response.ok) {
           manifestIsAvailable.value = false
-        })
+          return
+        }
+
+        const loadedManifest = await response.json()
+
+        const currentItem = refId.value
+          ? flatTOC.value.find(item => item.identifier === refId.value)
+          : flatTOC.value.find(item => item.identifier === resourceId.value)
+
+        if (loadedManifest?.type === 'Collection') {
+          console.log('setMirador loadedManifest type:', loadedManifest.type)
+
+          const docManifestURL =
+            currentItem?.extensions?.['dots:resourceIIIFManifest'] ?? null
+
+          console.log('setMirador docManifestURL:', docManifestURL)
+
+          if (!docManifestURL) {
+            manifest.value = null
+            manifestIsAvailable.value = false
+            return
+          }
+
+          const documentResponse = await fetch(docManifestURL, {
+            method: 'GET'
+          })
+
+          if (!documentResponse.ok) {
+            manifest.value = null
+            manifestIsAvailable.value = false
+            return
+          }
+
+          const loadedDocumentManifest = await documentResponse.json()
+
+          console.log(
+            'setMirador loadedDocumentManifest:',
+            loadedDocumentManifest
+          )
+
+          manifest.value = loadedDocumentManifest
+          manifestIsAvailable.value = true
+        } else {
+          manifest.value = loadedManifest
+          manifestIsAvailable.value = true
+        }
+
+        console.log('setMirador manifest:', manifest.value)
+      } catch (error) {
+        console.error('setMirador error:', error)
+        manifest.value = null
+        manifestIsAvailable.value = false
+      }
     }
+
     const toggleNotes = () => {
       isNotesOpened.value = !isNotesOpened.value
     }
