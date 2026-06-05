@@ -282,11 +282,11 @@ article.about .page-header h1,
 }
 .about .about-content h2,
 .about .content h2 {
-  margin: 0 0 45px;
+  margin: 25px 0;
   font-family: var(--font-primary), sans-serif;
   font-size: 30px;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.2;
   color: var(--document-text-color);
 }
 .about .about-content h3,
@@ -444,10 +444,13 @@ article.about .page-header h1,
     text-align: left;
     width: 80%;
   }
-
+  .about .about-content h2,
+  .about .content h2 {
+    font-size: 24px;
+  }
   .about-page .tab-menu {
     padding: 0;
-    margin: 0 0 40px;
+    margin: 0 0 10px;
   }
 
   /*
