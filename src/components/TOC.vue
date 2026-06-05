@@ -435,6 +435,7 @@ div.toc-area-content.toc-content {
       gap: 15px;
       overflow-x: auto;
       overflow-y: hidden;
+      scrollbar-width: thin;
       max-height: calc(100vh - 320px); /* Horizontal scroll */
       padding: 20px 0;
 
@@ -624,6 +625,7 @@ div.bottom-toc {
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
+  padding-bottom: 10px;
 
   &.is-hidden {
     display: none;
