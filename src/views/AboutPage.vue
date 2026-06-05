@@ -193,6 +193,7 @@ article.about {
   align-content: center;
   padding-top: 64px;
   padding-bottom: 150px;
+  overflow-x: hidden;
 
   & .tab-menu {
     height: 100%;
