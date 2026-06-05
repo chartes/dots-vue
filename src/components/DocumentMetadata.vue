@@ -237,17 +237,40 @@ export default {
       }
     }
     const ImgUrl = (source) => {
-      console.log('ImgUrl / source', source)
-      const imgUrls = import.meta.glob('../assets/images/logo_*.svg', {
-        import: 'default',
-        eager: true
-      })
-      if (imgUrls[`../assets/images/logo_${source}.svg`]) {
-        console.log('ImgUrl / found an svg for : ', source)
-        return imgUrls[`../assets/images/logo_${source}.svg`]
-      } else {
-        return new URL(`/src/assets/images/logo_${source}.png`, import.meta.url).href
+      const defaultLogos = import.meta.glob(
+        '../assets/images/logo_*.svg',
+        {
+          import: 'default',
+          eager: true
+        }
+      )
+
+      const confLogos = import.meta.glob(
+        'confs/*/assets/images/logo_*.svg',
+        {
+          import: 'default',
+          eager: true
+        }
+      )
+
+      const logos = {
+        ...defaultLogos,
+        ...confLogos
       }
+
+      const logo = Object.entries(logos).find(([path]) =>
+        path.endsWith(`/logo_${source}.svg`)
+      )
+      console.log('ImgUrl source logo', source, Object.entries(logos))
+      if (logo) {
+        console.log('ImgUrl / found svg for:', source, logo[0])
+        return logo[1]
+      }
+
+      return new URL(
+        `/src/assets/images/logo_${source}.png`,
+        import.meta.url
+      ).href
     }
 
     console.log('DocumentMetadata metadata.value : ', metadata.value)

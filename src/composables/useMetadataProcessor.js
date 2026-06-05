@@ -23,7 +23,7 @@ const sources = [
   { name: 'enc_red_small', ext: 'www.chartes.psl.eu', type: 'other_link' },
   { name: 'iiif', ext: 'iiif', type: 'other_link' },
   { name: 'dots', ext: _baseApiURL, type: 'other_link' },
-  { name: 'dots_circle', ext: window.location.pathname.split('/').slice(1, 3).join('/'), type: 'other_link' },
+  { name: 'elec_txt', ext: window.location.pathname.split('/').slice(1, 3).join('/'), type: 'other_link' },
   { name: 'tei', ext: 'tei+xml', type: 'other_link' },
   { name: 'html', ext: 'text/html', type: 'other_link' },
   { name: 'pdf', ext: 'application/pdf', type: 'other_link' }
@@ -78,12 +78,12 @@ function findSource(id) {
       return sources.find(s => s.name === 'dots') ?? null
     }
     // Même serveur mais hors API (page ENC/app)
-    return sources.find(s => s.name === 'dots_circle') ?? null
+    return sources.find(s => s.name === 'elec_txt') ?? null
   }
 
   // Même hostname ET port que le frontend ?
   if (url.hostname === _appURL.hostname && url.port === _appURL.port) {
-    return sources.find(s => s.name === 'dots_circle') ?? null
+    return sources.find(s => s.name === 'elec_txt') ?? null
   }
 
   const source = sources.find(s => normalized.includes(s.ext.toLowerCase()))
