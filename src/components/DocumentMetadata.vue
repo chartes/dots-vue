@@ -436,7 +436,6 @@ export default {
 .is-opened .toggle-btn {
   background: url(../assets/images/croix.svg) center / cover no-repeat;
 }
-
 .document-metadata-header > a {
   text-decoration: none;
   border: none;
@@ -481,6 +480,12 @@ aside.menu > .columns > .column:nth-child(3) {
     font-weight: normal;
     font-style: normal;
     color: #4a4a4a;
+
+    &:hover {
+      color: #000;
+      border-bottom: dotted 1px #000;
+      background-color: transparent;
+    }
   }
 }
 .title {

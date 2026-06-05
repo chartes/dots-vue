@@ -640,7 +640,7 @@ p.header-baseline span {
 
     position: absolute;
     right: 35px;
-    width: 40px;
+    width: var(--button-size);
 }
 
 /* Notes */
