@@ -554,14 +554,18 @@ ul.submenu a:hover {
     display: flex;
     margin-top: 0;
     z-index: 10; /* cf documentation menu */
+    padding-left: 12px;
+    padding-right: 12px;
 
     /*position: fixed;
     top:0;*/
     width: 100vw;
   }
   .logo-header {
+    width: 50px;
     min-width: 45px;
     max-width: unset;
+    margin-right: 12px;
   }
   .level-left .level-item:not(:last-child),
   .level-right .level-item:not(:last-child) {
@@ -598,9 +602,16 @@ ul.submenu a:hover {
 
     & > a.level-item-external {
       line-height: 1.2;
+
       &:not(:first-child) {
         display: block !important;
       }
+
+      &:nth-child(2) {
+        margin-left: 15px;
+        padding-left: 15px;
+      }
+
       /*&:first-child {
         top: 22px;
         position: fixed;
@@ -610,6 +621,7 @@ ul.submenu a:hover {
         display: none;
       }
     }
+
   }
 
   .level-right {
@@ -619,6 +631,7 @@ ul.submenu a:hover {
   .level-left {
     width: 100%;
     overflow: hidden;
+    gap: 10px;
   }
 
   .level-left .level-item {
