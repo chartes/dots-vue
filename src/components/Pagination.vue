@@ -376,7 +376,7 @@ input[type=number] {
 
   /* Font sizes */
   .pagination-documents-count {
-    font-size: 16px;
+    font-size: 19px;
   }
 
   .pagination-controls  {

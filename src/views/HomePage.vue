@@ -1059,8 +1059,8 @@ input[type=number] {
   }
 
   #home-article h1 {
-    padding: 0 0 10px;
-    font-size: 36px;
+    padding: 15px 0 10px;
+    font-size: 30px;
   }
 
   #home-article.article + a {

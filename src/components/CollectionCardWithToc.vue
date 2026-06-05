@@ -962,9 +962,10 @@ input[type=number] {
 
   .mixed-mode .collection-wrapper {
     flex: 100% 0 0;
-    border-radius: 30px 30px 0 0;
+    border-radius: 15px 15px 0 0;
     align-self: unset;
     margin-right: 0;
+    padding: 25px 35px 30px 20px;
   }
   .mixed-mode .collection-toc-area {
     padding-bottom: 50px;
