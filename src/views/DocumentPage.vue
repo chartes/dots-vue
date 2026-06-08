@@ -602,6 +602,7 @@ export default {
     console.log('DocumentPage props.collectionConfig', props.collectionConfig)
     const manifestIsAvailable = ref(false)
     const manifest = ref(null)
+    const resourceManifest = ref(null)
     const miradorContainer = ref(null)
     const activeBreadcrumb = ref(null)
     const activeObject = ref(null)       // collection / resource
@@ -1734,69 +1735,6 @@ export default {
       scrollCurrentTocItemIntoView()
     }
 
-    const setMirador = async () => {
-      try {
-        const response = await fetch(getIiifManifestUrl(), {
-          method: 'GET'
-        })
-
-        if (!response.ok) {
-          manifestIsAvailable.value = false
-          return
-        }
-
-        const loadedManifest = await response.json()
-
-        const currentItem = refId.value
-          ? flatTOC.value.find(item => item.identifier === refId.value)
-          : flatTOC.value.find(item => item.identifier === resourceId.value)
-
-        if (loadedManifest?.type === 'Collection') {
-          console.log('setMirador loadedManifest type:', loadedManifest.type)
-
-          const docManifestURL =
-            currentItem?.extensions?.['dots:resourceIIIFManifest'] ?? null
-
-          console.log('setMirador docManifestURL:', docManifestURL)
-
-          if (!docManifestURL) {
-            manifest.value = null
-            manifestIsAvailable.value = false
-            return
-          }
-
-          const documentResponse = await fetch(docManifestURL, {
-            method: 'GET'
-          })
-
-          if (!documentResponse.ok) {
-            manifest.value = null
-            manifestIsAvailable.value = false
-            return
-          }
-
-          const loadedDocumentManifest = await documentResponse.json()
-
-          console.log(
-            'setMirador loadedDocumentManifest:',
-            loadedDocumentManifest
-          )
-
-          manifest.value = loadedDocumentManifest
-          manifestIsAvailable.value = true
-        } else {
-          manifest.value = loadedManifest
-          manifestIsAvailable.value = true
-        }
-
-        console.log('setMirador manifest:', manifest.value)
-      } catch (error) {
-        console.error('setMirador error:', error)
-        manifest.value = null
-        manifestIsAvailable.value = false
-      }
-    }
-
     const toggleNotes = () => {
       isNotesOpened.value = !isNotesOpened.value
     }
@@ -1809,6 +1747,7 @@ export default {
         flatTOC.value.some(item => item.parent === hasChildren) : true
       )
     })
+
     const getIiifManifestUrl = () => {
       const resourceIIIFManifest = metadata.value?.extensions?.['dots:resourceIIIFManifest']
       console.log('getIiifManifestUrl metadata.value.extensions["dots:resourceIIIFManifest"] : ', resourceIIIFManifest)
@@ -1835,20 +1774,141 @@ export default {
       return null
     }
 
+    const loadResourceManifest = async () => {
+      const response = await fetch(getIiifManifestUrl(), {
+        method: 'GET'
+      })
+
+      if (!response.ok) {
+        throw new Error('Unable to load IIIF manifest')
+      }
+
+      resourceManifest.value = await response.json()
+      console.log('mirador loadResourceManifest resourceManifest:', resourceManifest.value)
+    }
+
+    const updateDisplayedManifest = async () => {
+      try {
+        if (!resourceManifest.value) {
+          manifest.value = null
+          manifestIsAvailable.value = false
+          return
+        }
+
+        // Cas 1 : la ressource est déjà un manifeste
+        if (resourceManifest.value.type !== 'Collection') {
+          manifest.value = resourceManifest.value
+          manifestIsAvailable.value = true
+          if (miradorInstance.miradorStore) {
+            miradorInstance.loadManifest(manifest.value, manifest.value.items[0].id)
+          }
+          return
+        }
+
+        // Cas 2 : la ressource est une collection
+        const currentItem = refId.value
+          ? flatTOC.value.find(item => item.identifier === refId.value)
+          : null
+
+        console.log('mirador updateDisplayedManifest refId/currentItem', refId.value, currentItem)
+
+        const docManifestURL =
+          currentItem?.extensions?.['dots:resourceIIIFManifest']
+
+        if (!docManifestURL) {
+          manifest.value = null
+          manifestIsAvailable.value = false
+          return
+        }
+
+        const response = await fetch(docManifestURL)
+
+        if (!response.ok) {
+          manifest.value = null
+          manifestIsAvailable.value = false
+          return
+        }
+
+        manifest.value = await response.json()
+        manifestIsAvailable.value = true
+
+        console.log('mirador updateDisplayedManifest manifest:', manifest.value)
+
+        if (miradorInstance.miradorStore) {
+          miradorInstance.loadManifest(manifest.value, manifest.value.items[0].id)
+        }
+
+      } catch (error) {
+        console.error('mirador updateDisplayedManifest error:', error)
+
+        manifest.value = null
+        manifestIsAvailable.value = false
+
+      }
+    }
+
     watch(
-      () => metadata.value?.extensions?.['dots:resourceIIIFManifest'],
-      (newVal) => {
-        console.log('watch metadata.value', metadata.value?.extensions)
-        if (newVal?.length > 0) {
-          //getIiifManifestUrl()
-          console.log('metadata.iiifManifestUrl is now available !!! : ', manifestIsAvailable.value)
-          layout.imageIsAvailable.value = true
-          setMirador()
-        } else {
+  () => metadata.value?.extensions?.['dots:resourceIIIFManifest'],
+  async (newVal) => {
+        console.log('mirador watch resourceIIIFManifest', metadata.value?.extensions)
+
+        if (!newVal) {
           layout.imageIsAvailable.value = false
+          manifest.value = null
+          resourceManifest.value = null
+          manifestIsAvailable.value = false
+          return
+        }
+
+        layout.imageIsAvailable.value = true
+
+        try {
+          await loadResourceManifest()
+          await updateDisplayedManifest()
+        } catch (error) {
+          console.error('mirador resourceIIIFManifest error', error)
+
+          manifest.value = null
+          resourceManifest.value = null
+          manifestIsAvailable.value = false
         }
       }, { immediate: true }
     )
+
+    watch(
+  () => refId.value,
+  async (newRefId, oldRefId) => {
+    console.log(
+      'watch mirador updateDisplayedManifest refId', oldRefId, '->', newRefId)
+
+    //if (resourceManifest.value?.type === 'Collection') {
+      await updateDisplayedManifest()
+    //}
+      }
+    )
+
+    watch(
+  () => flatTOC.value.length,
+  async (length) => {
+        if (
+          length > 0 &&
+          resourceManifest.value?.type === 'Collection'
+        ) {
+          await updateDisplayedManifest()
+        }
+      }
+    )
+
+    // Initialiser Mirador dès que le container est disponible dans le DOM
+      watch(miradorContainer, async (newContainer, oldContainer) => {
+      if (newContainer && !oldContainer) {
+        await miradorInstance.initialize()
+        // Si un manifeste est déjà disponible au moment du montage
+        if (manifest.value) {
+          miradorInstance.loadManifest(manifest.value, manifest.value.items[0].id)
+        }
+      }
+    })
 
     watch(props, async (newProps) => {
 
@@ -2121,6 +2181,7 @@ export default {
       metadata,
       manifestIsAvailable,
       manifest,
+      resourceManifest,
       layout,
       resourceId,
       collection,
