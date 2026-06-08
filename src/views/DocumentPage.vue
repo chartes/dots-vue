@@ -369,7 +369,9 @@
           </button>
         </li>
 
-        <li v-if="hasNotes">
+        <li v-if="hasNotes"
+          class="notes-btn-parent"
+        >
           <button
             type="button"
             class="dots-button notes-btn"
@@ -3390,6 +3392,12 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 .tab-content ul.tree, .tab-content .collection-toc-area, .tab-content .table.is-fullwidth  {
   margin: 0;
   border-radius: 0 0 6px 6px;
+}
+
+.images-mode .controls {
+  .notes-btn-parent {
+    display: none;
+  }
 }
 
 
