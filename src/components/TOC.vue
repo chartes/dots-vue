@@ -435,6 +435,7 @@ div.toc-area-content.toc-content {
       gap: 15px;
       overflow-x: auto;
       overflow-y: hidden;
+      overflow-y: -webkit-paged-x;
       scrollbar-width: thin;
       max-height: calc(100vh - 320px); /* Horizontal scroll */
       padding: 20px 0;
