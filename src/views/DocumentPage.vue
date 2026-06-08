@@ -214,6 +214,7 @@
         <div class="ariane">
           <div
             class="ariane-wrapper"
+            :class="{ 'no-prev-next' : previousRefId === '' && nextRefId === '' }"
           >
             <!-- LeftTOC button -->
             <button
@@ -2822,6 +2823,10 @@ div.remove-bottom-padding #article {
     max-width: calc(100% - 90px - 20px);
     margin-right: 20px;
 
+    &.no-prev-next {
+      max-width: 100%;
+    }
+
     & > button.toc-menu-toggle {
       /* remove default button behavior */
       appearance: none;
@@ -3274,7 +3279,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   position: absolute;
   top: 2px;
-  width: 10%; /* largeur du gradient */
+  width: 8%; /* largeur du gradient */
   height: 43px;
   z-index: 0;
 
