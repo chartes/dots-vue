@@ -63,7 +63,7 @@ export default {
     width: 100%;
   }
   .navbar-burger span {
-    width: 33px;
+    width: 28px;
     background-color: #FFFFFF;
     height: 3px;
     right: 0;
