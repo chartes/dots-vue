@@ -2993,7 +2993,7 @@ div.remove-bottom-padding #article {
 .controls {
   position: sticky;
   top: 85px;
-  z-index: 11;
+  z-index: 15; /* above document-area layer */
   pointer-events: none;
 }
 
@@ -3473,6 +3473,10 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
       top: 0;
       z-index: 11;
     }
+  }
+
+  .controls {
+    z-index: 11; /* under semi-transparent bg when aside TOC is opened */
   }
 
 }
