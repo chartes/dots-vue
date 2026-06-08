@@ -489,7 +489,7 @@ export default {
 
         if (noteTop > documentInViewTop && noteTop < documentInViewBottom) {
           const noteId = noteRef.getAttribute('href')?.substring(1)
-          const noteElement = document.querySelector(`.fn-note[id="${noteId}"]`)
+          const noteElement = document.querySelector('[id="${noteId}"], [class$="note"]')
           if (!noteElement) return
 
           notesInView.push({

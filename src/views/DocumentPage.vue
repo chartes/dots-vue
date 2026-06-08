@@ -2741,7 +2741,7 @@ div.remove-bottom-padding #article {
 
   .footnotes aside.note {
     position: relative;
-    padding: 0 0 0 25px;
+    padding: 0 0 0 40px;
     margin: 0 0 40px;
     border: none;
   }
@@ -2757,7 +2757,7 @@ div.remove-bottom-padding #article {
   .footnotes aside.note a.noteback {
     position: absolute;
     left: 0;
-    top: 0;
+    top: -2px;
     display: inline;
     width: auto;
     margin: 0;
