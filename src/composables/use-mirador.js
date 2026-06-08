@@ -107,7 +107,7 @@ export default function useMirador(container, manifest) {
     if (homeButton) {
       homeButton.click()
     } else {
-      console.warn('resetView: Reset zoom button not found')
+      console.warn('mirador resetView: Reset zoom button not found')
     }
   }
 
@@ -120,7 +120,7 @@ export default function useMirador(container, manifest) {
     }
 
     const state = instance.miradorStore.getState()
-    console.log('state before', JSON.stringify({
+    console.log('mirador state before', JSON.stringify({
       windows: Object.keys(state.windows || {}),
       manifests: Object.keys(state.manifests || {}),
     }))
@@ -149,19 +149,20 @@ export default function useMirador(container, manifest) {
     // console.log('state after windows detail', JSON.stringify(
     //   stateAfter.windows?.[_windowId]
     // ))
-    setTimeout(() => resetView(), 100)
+    resetView()
   }
 
   function dispatchAction(action) {
     if (instance.miradorStore) {
       instance.miradorStore.dispatch(action)
+      console.log('mirador dispatchAction action', action)
     }
   }
 
   function setCanvasId(canvasId) {
-    console.log('setCanvasId', canvasId)
+    console.log('mirador setCanvasId', canvasId)
     dispatchAction(Mirador.actions.setCanvas(_windowId, canvasId))
-    setTimeout(() => resetView(), 100)
+    resetView()
   }
 
   onUnmounted(() => {

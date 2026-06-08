@@ -1787,7 +1787,10 @@ export default {
       console.log('mirador loadResourceManifest resourceManifest:', resourceManifest.value)
     }
 
+    let _currentLoadId = 0
     const updateDisplayedManifest = async () => {
+      const loadId = ++_currentLoadId
+
       try {
         if (!resourceManifest.value) {
           manifest.value = null
@@ -1823,6 +1826,11 @@ export default {
 
         const response = await fetch(docManifestURL)
 
+        if (loadId !== _currentLoadId) {
+          console.log('updateDisplayedManifest cancelled', loadId)
+          return
+        }
+
         if (!response.ok) {
           manifest.value = null
           manifestIsAvailable.value = false
@@ -1830,6 +1838,11 @@ export default {
         }
 
         manifest.value = await response.json()
+
+        if (loadId !== _currentLoadId) {
+          console.log('updateDisplayedManifest cancelled after json', loadId)
+          return
+        }
         manifestIsAvailable.value = true
 
         console.log('mirador updateDisplayedManifest manifest:', manifest.value)
@@ -1903,10 +1916,7 @@ export default {
       watch(miradorContainer, async (newContainer, oldContainer) => {
       if (newContainer && !oldContainer) {
         await miradorInstance.initialize()
-        // Si un manifeste est déjà disponible au moment du montage
-        if (manifest.value) {
-          miradorInstance.loadManifest(manifest.value, manifest.value.items[0].id)
-        }
+        await updateDisplayedManifest()
       }
     })
 
