@@ -1,143 +1,17 @@
 <template>
-  <div
-    class="collection-list"
-    :class="{
-      'root-collection-list': collectionId === rootCollectionId,
-      'has-banner': hasBanner,
-      [`banner-${bannerType}`]: true,
-      'has-image': hasImage,
-      [`image-${imageType}`]: true,
-    }"
-  >
-    <div class="tiles">
-      <div
-        class="tile page-header"
-        :style="collectionBanner"
-      >
-        <div class="is-flex is-flex-direction-row wrapper collection-header app-width-margin">
-          <div class="tile article">
-            <div class="title-tile">
-              <p class="title">
-                {{ collectionAltTitle?.length > 0 ? collectionAltTitle : currCollection.title }}
-              </p>
-            </div>
-            <div
-              v-if="aboutBttnTxt"
-              class="project-tile"
-            >
-              <button
-                class="about-button"
-                @click="toggleAbout"
-              >
-                <span class="about-button-text">{{ aboutBttnTxt }}</span>
-                <DirectionalChevron :direction="isAboutOpened ? 'up' : 'down'" />
-              </button>
-              <!--<router-link
-                v-if="collectionId !== rootCollectionId"
-                :to="{ name: 'About', params: { collId: collectionId } }"
-                active-class="active"
-              >
-                {{ aboutBttnTxt }}
-              </router-link>
-              <router-link
-                v-else
-                :to="{ name: 'About'}"
-                active-class="active"
-              >
-                {{ aboutBttnTxt }}
-              </router-link>-->
-            </div>
-          </div>
-          <div class="collection-image">
-            <div class="collection-image-wrapper" v-if="bannerType !== 'collection'">
-              <!-- component -->
-              <component
-                v-if="imageType === 'component'"
-                :is="image.component"
-                class="collection-component"
-              />
-
-              <!-- image -->
-              <img
-                v-else-if="hasImage"
-                :src="imgUrl"
-                alt=""
-              />
-
-              <!--<img
-                :src="imgUrl"
-                alt=""
-              />
-              <img
-                v-else
-                src="@/assets/images/dots-logo-retro.drawio.svg"
-                alt=""
-              />-->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <transition name="fade-slide">
-      <section
-        v-if="isAboutOpened"
-        class="main collection-about app-width-margin"
-      >
-        <!-- homePageSettings.descriptionSection.customCollectionDescription, use it and pass DTS description and homePageSettings.descriptionSection.collectionDescription settings if available -->
-        <div class="home-article-wrapper">
-          <div
-            v-if="customDescription"
-            id="home-article"
-            class="article"
-          >
-            <component
-              :is="customDescription"
-              :dts-collection-description="currCollection.description"
-              :custom-collection-description="collectionDescription"
-              :application-root-url="normalisedBaseUrl(appRootUrl)"
-            />
-            <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
-          </div>
-          <!-- no homePageSettings.descriptionSection.customCollectionDescription : use DTS API collection description if available -->
-          <div
-            v-else-if="currCollection.description"
-            id="home-article"
-            class="article"
-          >
-            <h1>La collection</h1>
-            {{ currCollection.description }}
-          </div>
-          <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
-          <div
-            v-else-if="collectionDescription"
-            id="home-article"
-            class="article"
-          >
-            <h1>La collection</h1>
-            {{ collectionDescription }}
-            <!-- <p class="texte no-dts-description">This collection provides no DTS default description.</p> -->
-          </div>
-          <router-link
-            v-if="hasAbout && collectionId !== rootCollectionId"
-            :to="{ name: 'About', params: { collId: collectionId } }"
-            active-class="active"
-          >
-            En savoir plus
-          </router-link>
-          <router-link
-            v-else-if="hasAbout"
-            :to="{ name: 'About'}"
-            active-class="active"
-          >
-            En savoir plus
-          </router-link>
-        </div>
-      </section>
-    </transition>
+  <div class="collection-wrapper">
+    <CollectionHeader
+      :collection-config="collConfig"
+      :application-config="appConfig"
+      :current-collection="currCollection"
+      :collection-identifier="collectionId"
+      :root-collection-identifier="rootCollectionId"
+      :show-about="true"
+    />
     <div
       class="document-list app-width-margin"
-      :class="isAboutOpened ? `is-about-opened ${displayOpt}-mode` : `${displayOpt}-mode`"
-    >
+      :class="displayOpt + '-mode'"
+    ><!--:class="isAboutOpened ? `is-about-opened ${displayOpt}-mode` : `${displayOpt}-mode`"-->
 
       <CollectionTOC
         v-if="displayOpt !== 'list' && displayOpt !== 'mixed'"
@@ -191,6 +65,7 @@ import CollectionTOC from '@/components/CollectionTOC.vue'
 import { getSimpleObject } from '@/composables/utils.js'
 import CollectionCardWithToc from '@/components/CollectionCardWithToc.vue'
 import DirectionalChevron from '@/assets/images/DirectionalChevron.vue'
+import CollectionHeader from '@/components/CollectionHeader.vue'
 
 const collator = new Intl.Collator('fr', {
   numeric: true,
@@ -199,7 +74,7 @@ const collator = new Intl.Collator('fr', {
 
 export default {
   name: 'HomePage',
-  components: { DirectionalChevron, CollectionCardWithToc, ResourcesList, CollectionTOC },
+  components: { CollectionHeader, CollectionCardWithToc, ResourcesList, CollectionTOC },
   props: {
     isDocProjectIdIncluded: {
       type: Boolean,
@@ -501,61 +376,61 @@ export default {
       }
     }
 
-    const getCustomHomeDescription = async () => {
-      let component
-      console.log('HomePage getCustomHomeDescription collConfig.value.collectionId', collConfig.value.collectionId)
-      console.log('HomePage getCustomHomeDescription collConfig.value.aboutPageSettings', collConfig.value.homePageSettings)
-      const comps = Object.fromEntries(Object.entries(import.meta.glob('confs/**/*.vue')).map(([key, value]) => {
-        // remove first / if exists
-        const newKey = key.replace(import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH, '').replace(/^\//, '')
-        return [newKey, value]
-      }))
-
-      const defaultSettings = import.meta.glob('../settings/default/HomePageContent.vue', { eager: true })
-      comps['../settings/default/HomePageContent.vue'] = defaultSettings['../settings/default/HomePageContent.vue']
-
-      const match = comps[`${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`]
-      const matchRootCollection = comps[`${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`]
-      console.log('match 1 : ', match)
-      console.log('matchRootCollection : ', matchRootCollection)
-      const defaultCollection = comps['../settings/default/HomePageContent.vue']
-
-      if (match) {
-        console.log('match 2 : ', match)
-        component = defineAsyncComponent(() => import(`confs/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`)
-          .then((comp) => {
-            return comp
-          })
-          .catch((error) => {
-            console.log(`error loading 1 confs/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue : `, error)
-          })
-        )
-      } else if (matchRootCollection) {
-        component = defineAsyncComponent(() => import(`confs/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`)
-          .then((comp) => {
-            return comp
-          })
-          .catch((error) => {
-            console.log(`error loading 2 confs/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue : `, error)
-          })
-        )
-      // matching About pages as default
-      // TODO : replace tabName by the default tabNames if incorrectly set
-      } else if (defaultCollection) {
-        component = defineAsyncComponent(() => import('../settings/default/HomePageContent.vue')
-          .then((comp) => {
-            return comp
-          })
-          .catch((error) => {
-            console.log('error loading \'../settings/default/HomePageContent.vue\' : ', error)
-          })
-        )
-      } else {
-        console.log('nothing')
-        component = null
-      }
-      return component
-    }
+    // const getCustomHomeDescription = async () => {
+    //   let component
+    //   console.log('HomePage getCustomHomeDescription collConfig.value.collectionId', collConfig.value.collectionId)
+    //   console.log('HomePage getCustomHomeDescription collConfig.value.aboutPageSettings', collConfig.value.homePageSettings)
+    //   const comps = Object.fromEntries(Object.entries(import.meta.glob('confs/**/*.vue')).map(([key, value]) => {
+    //     // remove first / if exists
+    //     const newKey = key.replace(import.meta.env.VITE_APP_CUSTOM_SETTINGS_PATH, '').replace(/^\//, '')
+    //     return [newKey, value]
+    //   }))
+    //
+    //   const defaultSettings = import.meta.glob('../settings/default/HomePageContent.vue', { eager: true })
+    //   comps['../settings/default/HomePageContent.vue'] = defaultSettings['../settings/default/HomePageContent.vue']
+    //
+    //   const match = comps[`${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`]
+    //   const matchRootCollection = comps[`${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`]
+    //   console.log('match 1 : ', match)
+    //   console.log('matchRootCollection : ', matchRootCollection)
+    //   const defaultCollection = comps['../settings/default/HomePageContent.vue']
+    //
+    //   if (match) {
+    //     console.log('match 2 : ', match)
+    //     component = defineAsyncComponent(() => import(`confs/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue`)
+    //       .then((comp) => {
+    //         return comp
+    //       })
+    //       .catch((error) => {
+    //         console.log(`error loading 1 confs/${collConfig.value.collectionId}/${customCollectionDescription.value.compName}.vue : `, error)
+    //       })
+    //     )
+    //   } else if (matchRootCollection) {
+    //     component = defineAsyncComponent(() => import(`confs/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue`)
+    //       .then((comp) => {
+    //         return comp
+    //       })
+    //       .catch((error) => {
+    //         console.log(`error loading 2 confs/${rootCollectionId.value}/${customCollectionDescription.value.compName}.vue : `, error)
+    //       })
+    //     )
+    //   // matching About pages as default
+    //   // TODO : replace tabName by the default tabNames if incorrectly set
+    //   } else if (defaultCollection) {
+    //     component = defineAsyncComponent(() => import('../settings/default/HomePageContent.vue')
+    //       .then((comp) => {
+    //         return comp
+    //       })
+    //       .catch((error) => {
+    //         console.log('error loading \'../settings/default/HomePageContent.vue\' : ', error)
+    //       })
+    //     )
+    //   } else {
+    //     console.log('nothing')
+    //     component = null
+    //   }
+    //   return component
+    // }
 
     const toggleAbout = () => {
       isAboutOpened.value = !isAboutOpened.value
@@ -572,23 +447,23 @@ export default {
       { immediate: true }
     )
 
-    watch(
-  () => customCollectionDescription.value,
-  async (newVal) => {
-    if (!newVal) {
-      customDescription.value = null
-      return
-    }
-
-    try {
-      customDescription.value = await getCustomHomeDescription()
-    } catch (e) {
-      console.error('Erreur chargement description:', e)
-      customDescription.value = null
-    }
-  },
-  { immediate: true }
-)
+//     watch(
+//   () => customCollectionDescription.value,
+//   async (newVal) => {
+//     if (!newVal) {
+//       customDescription.value = null
+//       return
+//     }
+//
+//     try {
+//       customDescription.value = await getCustomHomeDescription()
+//     } catch (e) {
+//       console.error('Erreur chargement description:', e)
+//       customDescription.value = null
+//     }
+//   },
+//   { immediate: true }
+// )
     watch(
   () => props.currentCollection,
   (newVal) => {
@@ -746,7 +621,7 @@ export default {
       displayOpt,
       browseBttnTxt,
       customCollectionDescription,
-      getCustomHomeDescription,
+      //getCustomHomeDescription,
       customDescription,
       toggleAbout,
       isAboutOpened,
@@ -760,14 +635,19 @@ export default {
   }
 }
 </script>
-
 <style scoped>
-a {
-  border-bottom: none;
+.collection-wrapper {
+  width: 100%;
 }
 .collection-list {
   --first-column-width: 70%;
+  /*margin-bottom: 60px;*/
 }
+/*.collection-list.is-about-opened {
+  --first-column-width: 70%;
+  margin-bottom: 0;
+}*/
+
 .home-article-wrapper {
   padding: 40px 10% 120px;
   border-bottom: 1px dotted #ffffff;
@@ -811,7 +691,6 @@ a {
 .wrapper {
   width: 100%;
 }
-
 .collection-list.has-image:not(.has-banner) .page-header .wrapper {
   background: #FFFFFF;
   gap: 4px;
@@ -828,7 +707,6 @@ a {
 .collection-list:not(.has-banner) .page-header .wrapper > .tile {
   background: #0f0f0f;
 }
-
 .collection-image {
   width: calc(100% - var(--first-column-width));
   height: 300px;
@@ -843,18 +721,18 @@ a {
   border-bottom-right-radius: 52px;
   background-color: #FBF8F4;
 }
-/* still needed ? */
 .collection-list.root-collection-list .collection-image,
 .collection-list:not(.root-collection-list) .tile.page-header {
   background: transparent;
 }
-
 .collection-list.banner-none.has-image .collection-image,
 .collection-list.banner-default.has-image .collection-image {
   display: flex;
   align-items: center;
   justify-content: center;
-  & > .collection-image-wrapper > img, .collection-component {
+
+  & > .collection-image-wrapper > img,
+  .collection-component {
     display: block;
     width: 100% !important;
     height: 100% !important;
@@ -871,7 +749,9 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  & > .collection-image-wrapper > img, .collection-component {
+
+  & > .collection-image-wrapper > img,
+  .collection-component {
     display: block;
     width: 100% !important;
     height: 100% !important;
@@ -882,13 +762,11 @@ a {
     background-color: var(--fill-color);
   }
 }
-
 .tile.article,
 .tile.app-width-margin {
   position: relative;
   width: 100%;
 }
-
 .title-tile {
   display: flex;
   flex-direction: row;
@@ -897,16 +775,14 @@ a {
   border-radius: 6px;
 
   & > p {
-      color: white !important;
+    color: white !important;
   }
 }
-
 .project-tile {
   position: absolute;
   bottom: 0;
   left: 45px;
   z-index: 2;
-
   display: flex;
   width: fit-content;
   background-color: var(--fill-color);
@@ -935,7 +811,6 @@ a {
     background-color: #000000;
   }
 }
-
 .document-list {
   display: flex;
   justify-content: center;
@@ -944,48 +819,11 @@ a {
   margin-top: 60px;
   padding-top: 25px;
   padding-bottom: 25px;
+
   &.is-about-opened {
     margin-top: 0;
   }
 }
-
-.no-dts-description {
-  margin: 25px auto 25px;
-}
-
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.collection-header {
-  min-height: 30px;
-}
-
-.collection-header :deep(.home-content) {
-  font-family: var(--font-primary), sans-serif;
-  font-weight: normal;
-  line-height: 1.4;
-  color: var(--default-text-color);
-
-  a {
-    color: var(--default-text-color);
-    text-decoration: underline;
-
-    &:hover {
-      color: var(--text-color);
-    }
-  }
-  p, ul {
-    margin-bottom: 10px;
-  }
-  li {
-    line-height: 1.4;
-  }
-}
-
 .fade-slide-enter-active,
 .fade-slide-leave-active {
   transition: all 0.4s ease;
@@ -1001,18 +839,13 @@ input::-webkit-inner-spin-button {
   min-height: 30px;
 }
 
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
 @media screen and (max-width: 768px) {
   .collection-about {
     background-color: var(--default-bg-color);
   }
 
   .collection-list {
-    --first-column-width: 100%;
+    --first-column-width: 100% !important;
   }
 
   .collection-list:not(.root-collection-list) .page-header .wrapper {
@@ -1023,7 +856,7 @@ input[type=number] {
     padding: 0;
   }
 
-  .collection-header.app-width-margin :deep(.home-content.app-width-padding)  {
+  .collection-header.app-width-margin :deep(.home-content.app-width-padding) {
     padding: 0;
   }
 
@@ -1038,9 +871,7 @@ input[type=number] {
 
 }
 
-
 @media screen and (max-width: 640px) {
-
   .page-header .wrapper > .tile {
     padding: 25px var(--mobile-margin);
   }
@@ -1068,5 +899,279 @@ input[type=number] {
   }
 
 }
-
 </style>
+
+<!--<style scoped>-->
+<!--a {-->
+<!--  border-bottom: none;-->
+<!--}-->
+<!--.collection-list {-->
+<!--  &#45;&#45;first-column-width: 70%;-->
+<!--}-->
+<!--.home-article-wrapper {-->
+<!--  padding: 40px 10% 120px;-->
+<!--  border-bottom: 1px dotted #ffffff;-->
+<!--}-->
+<!--.home-article-wrapper {-->
+<!--  width: calc(var(&#45;&#45;first-column-width) );-->
+<!--  margin: 0 0 30px !important;-->
+<!--  padding: 45px !important;-->
+<!--  background-color: var(&#45;&#45;default-bg-color);-->
+<!--}-->
+<!--#home-article.article {-->
+<!--  margin-bottom: 20px;-->
+<!--}-->
+
+<!--#home-article article {-->
+<!--  margin: 0;-->
+<!--}-->
+<!--#home-article h1 {-->
+<!--  margin: 0;-->
+<!--  padding-top: 20px;-->
+<!--  padding-bottom: 20px;-->
+
+<!--  font-family: var(&#45;&#45;font-primary), sans-serif;-->
+<!--  font-size: 48px;-->
+<!--  font-weight: 700;-->
+<!--  line-height: 1.2;-->
+<!--  text-transform: none;-->
+<!--  color: #000;-->
+<!--}-->
+
+<!--.wrapper {-->
+<!--  width: 100%;-->
+<!--}-->
+
+<!--.collection-list.has-image:not(.has-banner) .page-header .wrapper {-->
+<!--  background: #FFFFFF;-->
+<!--  gap: 4px;-->
+<!--}-->
+
+<!--.page-header .wrapper > .tile {-->
+<!--  padding: 25px 45px;-->
+<!--}-->
+
+<!--.collection-list.has-banner .page-header .wrapper > .tile {-->
+<!--  background: #0f0f0f85;-->
+<!--}-->
+
+<!--.collection-list:not(.has-banner) .page-header .wrapper > .tile {-->
+<!--  background: #0f0f0f;-->
+<!--}-->
+
+<!--.collection-image {-->
+<!--  width: calc(100% - var(&#45;&#45;first-column-width));-->
+<!--  height: 330px;-->
+<!--}-->
+
+<!--.collection-image-wrapper {-->
+<!--  width: 100%;-->
+<!--  height: 100%;-->
+<!--}-->
+<!--.banner-default.has-image .collection-component,-->
+<!--.banner-default.has-image .collection-image {-->
+<!--  border-bottom-right-radius: 52px;-->
+<!--  background-color: #FBF8F4;-->
+<!--}-->
+<!--/* still needed ? */-->
+<!--.collection-list.root-collection-list .collection-image,-->
+<!--.collection-list:not(.root-collection-list) .tile.page-header {-->
+<!--  background: transparent;-->
+<!--}-->
+
+<!--.collection-list.banner-none.has-image .collection-image,-->
+<!--.collection-list.banner-default.has-image .collection-image {-->
+<!--  display: flex;-->
+<!--  align-items: center;-->
+<!--  justify-content: center;-->
+<!--  & > .collection-image-wrapper > img, .collection-component {-->
+<!--    display: block;-->
+<!--    width: 100% !important;-->
+<!--    height: 100% !important;-->
+<!--    object-fit: cover;-->
+<!--    object-position: center;-->
+<!--    border-bottom-right-radius: 52px;-->
+<!--    color: var(&#45;&#45;fill-color);-->
+<!--    background-color: var(&#45;&#45;fill-color);-->
+<!--  }-->
+<!--}-->
+
+<!--.collection-list.banner-none.image-component .collection-image,-->
+<!--.collection-list.banner-default.image-component .collection-image {-->
+<!--  display: flex;-->
+<!--  align-items: center;-->
+<!--  justify-content: center;-->
+<!--  & > .collection-image-wrapper > img, .collection-component {-->
+<!--    display: block;-->
+<!--    width: 100% !important;-->
+<!--    height: 100% !important;-->
+<!--    object-fit: cover;-->
+<!--    object-position: center;-->
+<!--    border-bottom-right-radius: 52px;-->
+<!--    color: var(&#45;&#45;fill-color);-->
+<!--    background-color: var(&#45;&#45;fill-color);-->
+<!--  }-->
+<!--}-->
+
+<!--.tile.article,-->
+<!--.tile.app-width-margin {-->
+<!--  position: relative;-->
+<!--  width: 100%;-->
+<!--}-->
+
+<!--.title-tile {-->
+<!--  display: flex;-->
+<!--  flex-direction: row;-->
+<!--  justify-content: center;-->
+<!--  width: 100%;-->
+<!--  border-radius: 6px;-->
+
+<!--  & > p {-->
+<!--      color: white !important;-->
+<!--  }-->
+<!--}-->
+
+<!--.project-tile {-->
+<!--  position: absolute;-->
+<!--  bottom: 0;-->
+<!--  left: 45px;-->
+
+<!--  display: flex;-->
+<!--  width: fit-content;-->
+<!--  background-color: var(&#45;&#45;fill-color);-->
+<!--  transform: translateY(50%);-->
+<!--}-->
+
+<!--.about-button {-->
+<!--  display: flex;-->
+<!--  align-items: center;-->
+<!--  justify-content: space-between;-->
+<!--  gap: 8px;-->
+
+<!--  padding: 6px 10px;-->
+<!--  font-family: var(&#45;&#45;font-secondary), sans-serif;-->
+<!--  font-weight: 400;-->
+<!--  font-size: 16px;-->
+<!--  text-transform: uppercase;-->
+<!--  color: white;-->
+
+<!--  &:hover {-->
+<!--    background-color: #000000;-->
+<!--  }-->
+<!--}-->
+
+<!--.document-list {-->
+<!--  display: flex;-->
+<!--  justify-content: center;-->
+<!--  flex-direction: column;-->
+<!--  width: 100%;-->
+<!--  margin-top: 60px;-->
+<!--  padding-top: 25px;-->
+<!--  padding-bottom: 25px;-->
+<!--  &.is-about-opened {-->
+<!--    margin-top: 0;-->
+<!--  }-->
+<!--}-->
+
+<!--.no-dts-description {-->
+<!--  margin: 25px auto 25px;-->
+<!--}-->
+
+<!--/* Chrome, Safari, Edge, Opera */-->
+<!--input::-webkit-outer-spin-button,-->
+<!--input::-webkit-inner-spin-button {-->
+<!--  -webkit-appearance: none;-->
+<!--  margin: 0;-->
+<!--}-->
+
+<!--.collection-header {-->
+<!--  min-height: 30px;-->
+<!--}-->
+
+<!--.collection-header :deep(.home-content) {-->
+<!--  font-family: var(&#45;&#45;font-primary), sans-serif;-->
+<!--  font-weight: normal;-->
+<!--  line-height: 1.4;-->
+<!--  color: var(&#45;&#45;default-text-color);-->
+
+<!--  a {-->
+<!--    color: var(&#45;&#45;default-text-color);-->
+<!--    text-decoration: underline;-->
+
+<!--    &:hover {-->
+<!--      color: var(&#45;&#45;text-color);-->
+<!--    }-->
+<!--  }-->
+<!--  p, ul {-->
+<!--    margin-bottom: 10px;-->
+<!--  }-->
+<!--  li {-->
+<!--    line-height: 1.4;-->
+<!--  }-->
+<!--}-->
+
+<!--.fade-slide-enter-active,-->
+<!--.fade-slide-leave-active {-->
+<!--  transition: all 0.4s ease;-->
+<!--}-->
+
+<!--.fade-slide-enter-from,-->
+<!--.fade-slide-leave-to {-->
+<!--  opacity: 0;-->
+<!--  transform: translateY(-10px);-->
+<!--}-->
+
+<!--.collection-about {-->
+<!--  min-height: 30px;-->
+<!--}-->
+
+<!--/* Firefox */-->
+<!--input[type=number] {-->
+<!--  -moz-appearance: textfield;-->
+<!--}-->
+
+<!--@media screen and (max-width: 768px) {-->
+<!--  .collection-list {-->
+<!--    &#45;&#45;first-column-width: 100%;-->
+<!--  }-->
+
+<!--  .collection-list:not(.root-collection-list) .page-header .wrapper {-->
+<!--    gap: 0;-->
+<!--  }-->
+
+<!--  .collection-header.app-width-margin {-->
+<!--    padding: 0;-->
+<!--  }-->
+
+<!--  .collection-header.app-width-margin :deep(.home-content.app-width-padding)  {-->
+<!--    padding: 0;-->
+<!--  }-->
+
+<!--  .pagination {-->
+<!--    flex-direction: column !important;-->
+<!--    justify-content: center;-->
+<!--  }-->
+<!--}-->
+
+
+<!--@media screen and (max-width: 640px) {-->
+
+<!--  .page-header .wrapper > .tile {-->
+<!--    padding: 25px var(&#45;&#45;mobile-margin);-->
+<!--  }-->
+
+<!--  .project-tile {-->
+<!--    left: var(&#45;&#45;mobile-margin);-->
+<!--  }-->
+
+<!--  #home-article {-->
+<!--    padding: 40px var(&#45;&#45;mobile-margin) !important;-->
+<!--  }-->
+
+<!--  #home-article h1 {-->
+<!--    padding: 0;-->
+<!--    font-size: 36px;-->
+<!--  }-->
+<!--}-->
+
+<!--</style>-->

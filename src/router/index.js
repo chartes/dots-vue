@@ -17,6 +17,25 @@ console.log('router const rootURL :', rootURL)
 const isDocProjectIdIncluded = `${import.meta.env.VITE_APP_DOCUMENT_ROUTE_INCLUDE_PROJECT_ID}`.toLowerCase() === 'true'
 console.log('router const isDocProjectIdIncluded :', isDocProjectIdIncluded)
 // const appBasePath = isDocProjectIdIncluded ? '' : ':collId'
+const collectionConfigs = import.meta.glob('confs/*.conf.json', { eager: true })
+
+const getCollectionConfig = (collId) => {
+  if (!collId) return null
+
+  const normalizedId = collId.toLowerCase()
+
+  const match = Object.entries(collectionConfigs).find(([path]) =>
+    path.toLowerCase().includes(`${normalizedId}.conf.json`)
+  )
+
+  return match ? match[1] : null
+}
+
+const viewComponents = {
+  SearchPage: () => import('@/views/SearchPage.vue')
+}
+
+
 
 // NB : scrollBehavior cf https://router.vuejs.org/guide/advanced/scroll-behavior
 
@@ -51,6 +70,12 @@ if (isDocProjectIdIncluded) {
         path: '/:collId?/document/:id',
         name: 'Document',
         component: () => import('@/views/DocumentPage.vue'),
+        props: true
+      },
+      {
+        path: '/:collId?/:customPage',
+        name: 'CustomPage',
+        component: () => import('@/views/CustomPageLoader.vue'),
         props: true
       }
     ],
@@ -139,6 +164,12 @@ if (isDocProjectIdIncluded) {
         name: 'Document',
         component: () => import('@/views/DocumentPage.vue'),
         props: true
+      },
+      {
+        path: '/:customPage',
+        name: 'CustomPage',
+        component: () => import('@/views/CustomPageLoader.vue'),
+        props: true
       }
     ],
     scrollBehavior (to, from, savedPosition) {
@@ -192,6 +223,27 @@ if (isDocProjectIdIncluded) {
   })
   router.beforeEach((to, from, next) => {
     previousRoute = from
+
+    // Gestion des custom routes
+    if (to.name === 'CustomPage') {
+      const collId = to.params.collId
+
+      // ⚠sécurité si pas de collId en mode multi
+      if (isDocProjectIdIncluded && !collId) {
+        return next({ name: 'Home' })
+      }
+
+      const config = getCollectionConfig(collId)
+
+      const exists = config?.customRoutes?.some(
+        r => r.path === to.params.customPage
+      )
+
+      if (!exists) {
+        return next({ name: 'Home', params: to.params })
+      }
+    }
+
     next()
   })
 } else {
@@ -203,5 +255,6 @@ if (isDocProjectIdIncluded) {
     next()
   })
 }
+
 
 export { router, previousRoute }

@@ -102,10 +102,7 @@
 
       <!-- LOADING -->
       <template v-if="isTableLoading">
-        <li
-          v-for="n in 5"
-          :key="n"
-        >
+        <li v-for="n in 5" :key="n">
           <div class="li container row">
             <div
               v-for="col in columns"
@@ -120,32 +117,101 @@
 
       <!-- ROWS -->
       <template v-else>
-        <li
-          v-for="item in paginated"
-          :key="item.identifier"
-        >
-          <div
-            class="li container row"
-            @click="goToPageTable(item, $event)"
+
+        <!-- 🔍 MODE SEARCH HIGHLIGHTS RESULTS -->
+        <template v-if="isHighlights">
+
+          <template v-for="item in paginated" :key="item.identifier">
+
+            <!-- ROW principale -->
+            <li>
+              <div
+                class="li container row"
+                :class="{ 'is-selected': isOpen(item.identifier) }"
+                @click="toggle(item.identifier)"
+              >
+                <div
+                  v-for="col in columns"
+                  :key="col.key"
+                  class="cell"
+                  :class="col.key === 'chevron' ? isOpen(item.identifier) ? 'chevron-down' : 'chevron-up' : ''"
+                >
+                  <!-- colonne chevron -->
+                  <template v-if="col.key === 'chevron'">
+                    <a
+                      href="#"
+                      @click.stop.prevent="toggle(item.identifier)"
+                    ></a>
+                  </template>
+
+                  <!-- 📄 autres colonnes -->
+                  <template v-else>
+                    {{ getRowValue(item, col.key) }}
+                  </template>
+
+                </div>
+              </div>
+            </li>
+
+            <!-- ROW détails -->
+            <li v-if="isOpen(item.identifier)">
+              <div class="li container row-details">
+                <div class="cell" :style="{ gridColumn: '1 / -1' }">
+                  <ul class="hits-list">
+                    <li
+                      v-for="hit in item.hits"
+                      :key="hit.passageId"
+                    >
+                      <a :href="hit.passageUrl"><!--getSearchTableHref(item.identifier, hit.ancestors)  `${item.identifier}?refId=${hit.passageId}`-->
+                        {{ buildBreadcrumb(hit) }}
+                      </a>
+
+                      <ul v-if="hit.highlight?.content">
+                        <li
+                          v-for="phrase in hit.highlight.content"
+                          :key="phrase"
+                        >
+                          <span v-html="phrase"></span>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+          </template>
+        </template>
+
+        <!-- 📄 MODE NORMAL (inchangé) -->
+        <template v-else>
+          <li
+            v-for="item in paginated"
+            :key="item.identifier"
           >
             <div
-              v-for="col in columns"
-              :key="col.key"
-              class="cell"
+              class="li container row"
+              @click="goToPageTable(item, $event)"
             >
-              <a :href="getTableHref(item)">
-                {{ getValue(item, col.key) }}
-              </a>
+              <div
+                v-for="col in columns"
+                :key="col.key"
+                class="cell"
+              >
+                <a :href="getTableHref(item)">
+                  {{ getRowValue(item, col.key) }}
+                </a>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
+        </template>
+
       </template>
     </ul>
   </div>
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import {ref, computed, watch, isProxy} from 'vue'
 import { router } from '@/router'
 import store from '@/store'
 import { useTable } from '@/composables/useTable.js'
@@ -156,6 +222,7 @@ import Pagination from '@/components/Pagination.vue'
 
 export default {
 name: 'CollectionTOC',
+  methods: {isProxy},
   components: {
     SortIcon,
     Pagination
@@ -168,10 +235,12 @@ name: 'CollectionTOC',
     isDocProjectIdIncluded: Boolean,
     rootCollectionIdentifier: String,
     counts: { type: Number },
-    isTableLoading: Boolean
+    isTableLoading: Boolean,
+    isWithHighlights: Boolean,
   },
 
   setup(props) {
+    const isDocProjectIdInc = computed(() => props.isDocProjectIdIncluded)
     // STATE
     const currentPage = ref(1)
     const dataSource = computed(() => props.data || [])
@@ -180,7 +249,37 @@ name: 'CollectionTOC',
     const resultsCounts = computed(() => props.counts)
 
     // TABLE
-    const columns = ref([...(props.columnsConfig || []).filter(Boolean)])
+    const isHighlights = computed(() => props.isWithHighlights)
+
+    const openRows = ref([])
+
+    const toggle = (id) => {
+      if (openRows.value.includes(id)) {
+        openRows.value = openRows.value.filter(i => i !== id)
+      } else {
+        openRows.value.push(id)
+      }
+    }
+
+    const isOpen = (id) => openRows.value.includes(id)
+
+    const columns = computed(() => {
+      const baseCols = (props.columnsConfig || []).filter(Boolean)
+
+      if (!isHighlights.value) {
+        return baseCols
+      }
+
+      return [
+        ...baseCols,
+        {
+          key: 'chevron',
+          label: '',
+          type: 'icon',
+          width: '40px'
+        }
+      ]
+    })
 
     const table = useTable(dataSource, columns, pageSize, currentPage)
 
@@ -198,6 +297,10 @@ name: 'CollectionTOC',
     const totalResults = computed(() => table.totalResults.value)
     const getValue = computed(() => table.getValue)
     const paginated = computed(() => table.paginated.value)
+
+    const getRowValue = (row, key) => {
+      return table.getValue(row, key)
+    }
 
     watch(() => columns.value, (cols) => {
       if (!cols?.length) return
@@ -258,9 +361,53 @@ name: 'CollectionTOC',
       return `repeat(${cols.length}, 1fr)`
     })
 
+    // DOCUMENT BREADCRUMB
+    const formatCiteType = (str) => str?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+
+    const getLabel = (item) => {
+      if (!item) return null
+      return item.title || formatCiteType(item.citeType)
+    }
+
+    const buildBreadcrumb = (hit) => {
+      const parts = [
+        ...(hit.ancestors || []).map(getLabel),
+        getLabel(hit)
+      ]
+
+      return parts.filter(Boolean).join(' > ')
+    }
+
+
     // NAVIGATION
     const setStateCollection = (collId) => {
       store.commit('setCollectionId', collId)
+    }
+
+    const buildSearchDocumentRoute = (resId, passId) => {
+      if (isDocProjectIdInc.value) {
+        return {
+          name: 'Document',
+          params: {
+            collId: store.state.collectionId,
+            id: resId
+          },
+          query: {
+            refId: passId
+          }
+        }
+      }
+      return {
+        name: 'Document',
+        params: { id: resId }
+      }
+    }
+
+    const getSearchTableHref = (resId, passId) => {
+      const to = buildSearchDocumentRoute(resId, passId)
+      console.log('getSearchTableHref', to)
+      console.log('getSearchTableHref resId, passId', resId, passId)
+      return router.resolve(to).href
     }
 
     const buildDocumentRoute = (item) => {
@@ -301,6 +448,10 @@ name: 'CollectionTOC',
       currentPage,
       dataSource,
       resultsCounts,
+      isHighlights,
+      openRows,
+      toggle,
+      isOpen,
       columns,
       table,
       filters,
@@ -308,12 +459,15 @@ name: 'CollectionTOC',
       totalPages,
       totalResults,
       getValue,
+      getRowValue,
       paginated,
       documentsCountText,
       toggleSort,
       setStateCollection,
       buildDocumentRoute,
+      buildBreadcrumb,
       getTableHref,
+      getSearchTableHref,
       goToPageTable,
       gridTemplateColumns
     }
@@ -404,7 +558,7 @@ name: 'CollectionTOC',
 /* ROW */
 .list-mode .row {
   width: 100%;
-  padding: 15px 0;
+  padding: 15px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
 }
@@ -412,6 +566,11 @@ name: 'CollectionTOC',
 /* HOVER */
 .list-mode .row:hover {
   background: #fafafa;
+}
+
+/* HIGHLIGHTS OPENED */
+.list-mode .row.is-selected {
+  background-color: #e3e3e3;
 }
 
 /* CELLS */
@@ -443,6 +602,99 @@ name: 'CollectionTOC',
 
 .list-mode .cell:nth-child(2n + 1) a {
   color: #000000;
+}
+
+.list-mode .cell .hits-list {
+  padding-left: 1rem;
+  list-style-type: none;
+  margin: 0;
+  background-color: #f1f1f1;
+}
+
+.list-mode .cell .hits-list > li {
+  margin-bottom: 1rem;
+}
+.list-mode .cell .hits-list > li:first-child {
+  padding-top: 1rem;
+}
+.list-mode .cell .hits-list > li:last-child {
+  margin-bottom: 0; /* pas de margin sur le dernier */
+}
+
+.list-mode .cell .hits-list > li > a {
+  font-weight: 600;
+  color: #004085;
+  text-decoration: underline;
+  cursor: pointer;
+  word-break: break-word;
+}
+
+.list-mode .cell .hits-list > li > a:hover {
+  color: #002752;
+  text-decoration: none;
+}
+
+.list-mode .cell .hits-list > li > ul {
+  margin-top: 0.25rem;
+  padding-left: 1rem;
+  list-style-type: disc;
+}
+
+.list-mode .cell .hits-list > li > ul > li {
+  margin-bottom: 0.3rem;
+  color: #333;
+  line-height: 1.4;
+}
+
+.list-mode .cell .hits-list > li > ul > li > span {
+  display: block;
+  width: 100%;
+  word-break: break-word;
+  & > mark {
+    background-color: #ffe066 !important;
+  }
+}
+
+.list-mode .cell .hits-list > li > ul > li:last-child {
+  margin-bottom: 0; /* pas de margin sur le dernier */
+}
+
+.list-mode .cell .hits-list em {
+  background-color: #ffe066 !important;
+  font-weight: bold;
+}
+
+.list-mode .cell.chevron-down a,
+.list-mode .cell.chevron-up a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+.list-mode .cell.chevron-down a:hover,
+.list-mode .cell.chevron-up a:hover {
+  background-color: transparent !important;
+  text-decoration: none !important;
+}
+
+.list-mode .cell.chevron-up a::before,
+.list-mode .cell.chevron-down a::before {
+  content: "";
+  display: inline-block;
+  width: 27px;
+  height: 20px;
+  transform-origin: 50%;
+}
+
+.list-mode .cell.chevron-up a::before {
+  background: url(../assets/images/chevron_rouge.svg) center / contain no-repeat;
+}
+
+.list-mode .row.is-selected .cell.chevron-down a::before {
+  background: url(../assets/images/croix.svg) center / contain no-repeat;
 }
 
 /* FILTER */
