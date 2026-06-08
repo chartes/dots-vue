@@ -214,6 +214,7 @@
         <div class="ariane">
           <div
             class="ariane-wrapper"
+            :class="{ 'no-prev-next' : previousRefId === '' && nextRefId === '' }"
           >
             <!-- LeftTOC button -->
             <button
@@ -369,7 +370,9 @@
           </button>
         </li>
 
-        <li v-if="hasNotes">
+        <li v-if="hasNotes"
+          class="notes-btn-parent"
+        >
           <button
             type="button"
             class="dots-button notes-btn"
@@ -2800,7 +2803,7 @@ div.remove-bottom-padding #article {
 
   .footnotes aside.note {
     position: relative;
-    padding: 0 0 0 25px;
+    padding: 0 0 0 40px;
     margin: 0 0 40px;
     border: none;
   }
@@ -2816,7 +2819,7 @@ div.remove-bottom-padding #article {
   .footnotes aside.note a.noteback {
     position: absolute;
     left: 0;
-    top: 0;
+    top: -2px;
     display: inline;
     width: auto;
     margin: 0;
@@ -2880,6 +2883,10 @@ div.remove-bottom-padding #article {
     width: 100%;
     max-width: calc(100% - 90px - 20px);
     margin-right: 20px;
+
+    &.no-prev-next {
+      max-width: 100%;
+    }
 
     & > button.toc-menu-toggle {
       /* remove default button behavior */
@@ -3052,7 +3059,7 @@ div.remove-bottom-padding #article {
 .controls {
   position: sticky;
   top: 85px;
-  z-index: 11;
+  z-index: 15; /* above document-area layer */
   pointer-events: none;
 }
 
@@ -3333,7 +3340,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   position: absolute;
   top: 2px;
-  width: 10%; /* largeur du gradient */
+  width: 8%; /* largeur du gradient */
   height: 43px;
   z-index: 0;
 
@@ -3453,6 +3460,13 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   border-radius: 0 0 6px 6px;
 }
 
+.images-mode {
+  .notes-opened .aside-noteref-parent,
+  .controls .notes-btn-parent {
+    display: none;
+  }
+}
+
 
 @media screen and (max-width: 1320px) {
   .toc-area .toc-area-content nav > ol.tree {
@@ -3527,6 +3541,10 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     }
   }
 
+  .controls {
+    z-index: 11; /* under semi-transparent bg when aside TOC is opened */
+  }
+
 }
 
 @media screen and (max-width: 768px) {
@@ -3558,6 +3576,12 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   .text-mode .document-views,
   .text-and-images-mode .document-views {
     margin-right: 0;
+  }
+
+  .mirador-view {
+    height: calc(100vh - 170px);
+    min-height: 80vh;
+    max-height: 100vh;
   }
 
   .text-and-images-mode .document-views .mirador-view {

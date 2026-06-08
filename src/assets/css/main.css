@@ -673,6 +673,14 @@ a.noteref sup {
     vertical-align: middle;
 }
 
+a.noteref:focus {
+    outline: none;
+
+    sup {
+        background: var(--fill-color);
+    }
+}
+
 .notes-opened .aside-noteref-parent{
     visibility: visible;
 }
