@@ -42,6 +42,7 @@ export default function useMirador(container, manifest) {
     initialize,
     loadManifest,
     setCanvasId,
+    resetView,
     dispatchAction,
     reactRoot: null,
     miradorStore: null
@@ -101,6 +102,15 @@ export default function useMirador(container, manifest) {
     }))
   }
 
+  function resetView() {
+    const homeButton = container.value?.querySelector('button[aria-label="Reset zoom"]')
+    if (homeButton) {
+      homeButton.click()
+    } else {
+      console.warn('resetView: Reset zoom button not found')
+    }
+  }
+
   function loadManifest(manifestObject, canvasId) {
     console.log('mirador loadManifest', manifestObject?.id, canvasId)
 
@@ -139,6 +149,7 @@ export default function useMirador(container, manifest) {
     // console.log('state after windows detail', JSON.stringify(
     //   stateAfter.windows?.[_windowId]
     // ))
+    setTimeout(() => resetView(), 100)
   }
 
   function dispatchAction(action) {
@@ -150,6 +161,7 @@ export default function useMirador(container, manifest) {
   function setCanvasId(canvasId) {
     console.log('setCanvasId', canvasId)
     dispatchAction(Mirador.actions.setCanvas(_windowId, canvasId))
+    setTimeout(() => resetView(), 100)
   }
 
   onUnmounted(() => {
