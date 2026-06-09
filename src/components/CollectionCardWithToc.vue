@@ -850,9 +850,8 @@ button.toc-toggle {
   border-radius: 30px 30px 0 30px;
   align-self: flex-start;
   padding: 30px 45px 45px 30px;
-  background: var(--default-bg-color) !important;
+  background: var(--fill-color) !important;
   box-shadow: none;
-  border: 2px solid var(--fill-color)
 }
 
 .mixed-mode .card-header .collection-metadata .collection-metadata-title {
@@ -860,7 +859,7 @@ button.toc-toggle {
   font-family: var(--font-primary), sans-serif;
   font-weight: 700;
   font-size: 24px;
-  color: /*#FFF*/var(--fill-color);
+  color: #FFF;
 }
 
 .mixed-mode .collection-toc-area {
@@ -890,7 +889,7 @@ button.toc-toggle {
   display: flex;
   height: 100%;
   font-size: 18px;
-  color: /*#FFFFFF*/var(--default-text-color);
+  color: #FFFFFF;
 }
 .mixed-mode .card-link + .collection-description {
   margin-top: 20px;
