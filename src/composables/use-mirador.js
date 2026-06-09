@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import Mirador from 'mirador'
 import MiradorApp from 'mirador/dist/es/src/components/App'
 import createPluggableStore from 'mirador/dist/es/src/state/createPluggableStore'
+import { miradorImageToolsPlugin } from 'mirador-image-tools'
 
 export default function useMirador(container, manifest) {
   const _windowId = 'document'
@@ -69,7 +70,7 @@ export default function useMirador(container, manifest) {
       React.createElement(
         Provider,
         { store: instance.miradorStore },
-        React.createElement(MiradorApp, { plugins: [] })
+        React.createElement(MiradorApp, { plugins: [...miradorImageToolsPlugin] })
       )
     )
     const fillColor = getComputedStyle(document.documentElement)
@@ -136,6 +137,8 @@ export default function useMirador(container, manifest) {
     })
 
     dispatchAction(Mirador.actions.addWindow({
+      imageToolsEnabled: true,
+      imageToolsOpen: false,
       id: _windowId,
       manifestId: manifestObject.id,
       loadedManifest: manifestObject.id,

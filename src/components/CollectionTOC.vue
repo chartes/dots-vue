@@ -1,4 +1,5 @@
 <template>
+  <!-- PAGINATION TOP for RESOURCE LIST AS CARDS (+/- TABLE OF CONTENT) -->
   <div
     v-if="displayMode !== 'toc'"
     class="pagination has-text-centered is-flex is-flex-direction-row is-justify-content-center"
@@ -119,6 +120,20 @@
         </div>
       </template>
     </div>
+  </div>
+  <!-- PAGINATION BOTTOM (if totalPages>1) for RESOURCE LIST AS CARDS with (+/- TABLE OF CONTENT) (applicable conf (cascade): homePageSettings.listSection.displayMode = 'card'/'mixed') -->
+  <div
+    v-if="displayMode !== 'toc' && totalPages > 1"
+    class="pagination has-text-centered is-flex is-flex-direction-row is-justify-content-center"
+  >
+    <Pagination
+      v-if="displayMode !== 'toc'"
+      v-model="currentPage"
+      :total-pages="totalPages"
+      :is-loading="false"
+      documents-count-text=""
+      @update:modelValue="onPaginationUpdate"
+    />
   </div>
 
   <!-- RESOURCE LIST AS TOC (conf: homePageSettings.listSection.displayMode = 'toc' or unset) -->

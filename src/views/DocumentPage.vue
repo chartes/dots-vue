@@ -3593,7 +3593,7 @@ a.pb {
 
   .images-mode .document-views,
   .text-and-images-mode .document-views {
-    margin-right: 45px;
+    margin-right: 0px;
   }
 
   .text-mode .document-views,
@@ -3789,6 +3789,24 @@ a.pb {
     }
   }
 
+  .mirador-window-top-bar {
+    padding-right: 50px !important;
+  }
+
+  div.MuiPaper-elevation4:has(button[aria-label="collapse"]) {
+    right: unset !important;
+    left: 8px;
+  }
+
+  div.MuiPaper-elevation4:has(button[aria-label="collapse"]) .MuiSvgIcon-root {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  div.MuiPaper-elevation4:has(button[aria-label="collapse"]) .MuiIconButton-root {
+    padding: 6px !important;
+  }
+
 }
 
 @media screen and (max-width: 640px) {
@@ -3877,6 +3895,18 @@ a.pb {
     order: 1; /* liste avant le bouton */
   }
 
+}
+
+button[aria-label="Window options"] > span {
+  width: 100%;
+  height: 100%;
+  background: url('../assets/images/tools.svg') top center / 30px no-repeat;
+  /* background-color: transparent;*/
+  background-size: contain;
+}
+
+button[aria-label="Window options"] > span > svg {
+  display: none;
 }
 
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <!-- PAGINATION -->
+  <!-- PAGINATION TOP -->
   <Pagination
     v-model="currentPage"
     :total-pages="totalPages"
@@ -208,6 +208,14 @@
       </template>
     </ul>
   </div>
+  <!-- PAGINATION BOTTOM -->
+  <Pagination
+    v-if="totalPages > 1"
+    v-model="currentPage"
+    :total-pages="totalPages"
+    :is-table-loading="isTableLoading"
+    documents-count-text=""
+  />
 </template>
 
 <script>
