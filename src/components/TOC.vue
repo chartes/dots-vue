@@ -57,7 +57,7 @@
 
 <script>
 
-import {computed, onMounted, onUnmounted, ref, watch} from 'vue'
+import {computed, nextTick, onMounted, onUnmounted, ref, watch} from 'vue'
 import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import store from '@/store'
@@ -297,6 +297,24 @@ export default {
       }
     }
 
+    const initColumnScroll = function(){
+      const tocTree = document.getElementById('toc-tree');
+      if (tocTree) {
+        const tocDetails = getColumnsDetails();
+        if (tocDetails.columnsCount > 1) {
+          const currrentTOCElement = tocTree.querySelector('.is-current');
+          if (currrentTOCElement) {
+            const currentElementLeft = currrentTOCElement.getBoundingClientRect().left;
+            const treeLeft = tocTree.getBoundingClientRect().left;
+            if (Math.abs(currentElementLeft - treeLeft) > 100) {
+              const scrollLeft = tocDetails.columnWidth * Math.floor((currentElementLeft - treeLeft) / tocDetails.columnWidth);
+              tocTree.scrollTo({ left: scrollLeft, behavior: 'instant'})
+            }
+          }
+        }
+      }
+    }
+
     const updateColumnNavigation = function(){
       const tocTree = document.getElementById('toc-tree');
       const tocTreeNavigation = document.getElementById('toc-tree-navigation');
@@ -307,7 +325,8 @@ export default {
         } else {
           tocTreeNavigation.classList.add('is-hidden')
         }
-        const tocTreeScrollableColumnWidth = (tocTree.scrollWidth - 15 * tocTreeScrollableColumns) / tocTreeScrollableColumns
+
+        // const tocTreeScrollableColumnWidth = (tocTree.scrollWidth - 15 * tocTreeScrollableColumns) / tocTreeScrollableColumns
         // console.log('tocTree nbColomns', tocTreeScrollableColumns, tocTree.scrollWidth, tocTree.clientWidth, tocTree.scrollLeft, tocTreeScrollableColumnWidth);
       }
       updateColumnNavigationButtons();
@@ -335,8 +354,9 @@ export default {
       if (tocTree) {
         tocTree.addEventListener('click', updateColumnNavigation)
         tocTree.addEventListener('scroll', updateColumnNavigationButtons)
+        nextTick(initColumnScroll);
+        updateColumnNavigation();
       }
-      updateColumnNavigation();
     })
 
     onUnmounted(() => {

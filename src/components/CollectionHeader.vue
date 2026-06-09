@@ -659,6 +659,7 @@ export default {
   font-size: 16px;
   text-transform: uppercase;
   color: white;
+  cursor: pointer;
 }
 
 .about-button:hover {
