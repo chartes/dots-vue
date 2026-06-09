@@ -1,4 +1,5 @@
 <template>
+  <!-- PAGINATION TOP -->
   <div
     class="pagination has-text-centered is-flex is-flex-direction-row is-justify-content-center"
   >
@@ -130,6 +131,18 @@
         </div>
       </template>
     </div>
+  </div>
+  <!-- PAGINATION BOTTOM -->
+  <div
+    v-if="totalPages > 1"
+    class="pagination has-text-centered is-flex is-flex-direction-row is-justify-content-center"
+  >
+    <Pagination
+      v-model="currentPage"
+      :total-pages="totalPages"
+      :is-loading="false"
+      documents-count-text=""
+    />
   </div>
 </template>
 <script>
