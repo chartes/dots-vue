@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "bulma": "^1.0.4",
+    "jsonld": "9.0.0",
     "md5": "^2.3.0",
     "mirador": "^3.4.3",
+    "mirador-image-tools": "0.11.0",
     "rdflib": "^2.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -24,8 +26,7 @@
     "vue3-carousel": "^0.17.0",
     "vue3-highlightjs": "^1.0.5",
     "vuex": "4.1.0",
-    "zod": "^4.3.6",
-    "jsonld": "9.0.0"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "5.2.4",

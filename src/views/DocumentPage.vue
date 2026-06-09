@@ -3581,7 +3581,7 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
 
   .images-mode .document-views,
   .text-and-images-mode .document-views {
-    margin-right: 45px;
+    margin-right: 0px;
   }
 
   .text-mode .document-views,
@@ -3777,6 +3777,24 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     }
   }
 
+  .Connect\(WithPlugins\(WindowTopBar\)\)-windowTopBarStyle-16 {
+    padding-right: 50px !important;
+  }
+
+  div[class*="MiradorImageTools2"] {
+    right: unset !important;
+    left: 8px;
+  }
+
+  [class*="WithWidth(MiradorImageTools2)-root"] .MuiSvgIcon-root {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  [class*="WithWidth(MiradorImageTools2)-root"] .MuiIconButton-root {
+    padding: 6px !important;
+  }
+
 }
 
 @media screen and (max-width: 640px) {
@@ -3865,6 +3883,18 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     order: 1; /* liste avant le bouton */
   }
 
+}
+
+button[aria-label="Window options"] > span {
+  width: 100%;
+  height: 100%;
+  background: url('../assets/images/tools.svg') top center / 30px no-repeat;
+  /* background-color: transparent;*/
+  background-size: contain;
+}
+
+button[aria-label="Window options"] > span > svg {
+  display: none;
 }
 
 </style>
