@@ -675,7 +675,6 @@ export default {
 .fade-slide-enter-from,
 .fade-slide-leave-to {
   opacity: 0;
-  transform: translateY(-10px);
 }
 
 .collection-about {
