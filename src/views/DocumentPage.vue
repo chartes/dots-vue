@@ -3214,6 +3214,7 @@ ul.breadcrumb-top {
     background: #E5E5E5;
     color: black;
     text-decoration: none;
+    white-space: nowrap;
 
     border: 2px solid var(--meta-banner-fill-color);
     border-radius: var(--crumb-radius);

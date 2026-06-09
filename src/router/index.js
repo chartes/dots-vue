@@ -88,11 +88,28 @@ if (isDocProjectIdIncluded) {
 
       if (to.path === from.path && to.hash.length) {
         // Local anchors
-        console.log('scrollBehavior Local anchors', to.path, 'window.innerWidth', window.innerWidth, defaultTop);
-        return {
-          el: to.hash,
-          behavior: 'smooth',
-          top: defaultTop
+        const anchor = document.getElementById(to.hash);
+        console.log('scrollBehavior Local anchors', to.path, to.hash, 'window.innerWidth', window.innerWidth, defaultTop, anchor);
+        if (anchor) {
+          // Local anchor of current loaded part of the document
+          return {
+            el: to.hash,
+            behavior: 'smooth',
+            top: defaultTop
+          }
+        } else {
+          // Local anchor of another (non loaded) part of the document
+          return new Promise((resolve, reject) => {
+            setTimeout(() => {
+              const anchor = document.getElementById(to.hash);
+              // console.log('scrollBehavior Local anchors timeout', to.path, to.hash, 'window.innerWidth', window.innerWidth, defaultTop, anchor);
+              resolve({
+                el: to.hash,
+                behavior: 'smooth',
+                top: defaultTop
+              })
+            }, 500)
+          })
         }
       }
 
