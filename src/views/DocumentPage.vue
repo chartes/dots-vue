@@ -3777,21 +3777,21 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
     }
   }
 
-  .Connect\(WithPlugins\(WindowTopBar\)\)-windowTopBarStyle-16 {
+  .mirador-window-top-bar {
     padding-right: 50px !important;
   }
 
-  div[class*="MiradorImageTools2"] {
+  div.MuiPaper-elevation4:has(button[aria-label="collapse"]) {
     right: unset !important;
     left: 8px;
   }
 
-  [class*="WithWidth(MiradorImageTools2)-root"] .MuiSvgIcon-root {
+  div.MuiPaper-elevation4:has(button[aria-label="collapse"]) .MuiSvgIcon-root {
     width: 24px !important;
     height: 24px !important;
   }
 
-  [class*="WithWidth(MiradorImageTools2)-root"] .MuiIconButton-root {
+  div.MuiPaper-elevation4:has(button[aria-label="collapse"]) .MuiIconButton-root {
     padding: 6px !important;
   }
 
