@@ -673,7 +673,10 @@ a.noteref sup {
     vertical-align: middle;
 }
 
+a.noteref:hover,
 a.noteref:focus {
+    border-bottom: none !important;
+    text-decoration: none;
     outline: none;
 
     sup {
