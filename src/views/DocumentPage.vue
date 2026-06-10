@@ -119,19 +119,19 @@
             <div class="tab-header">
               <button
                 class="dots-button"
+                :class="{ active: activePanel === 'summary' }"
+                @click="activePanel = 'summary'"
+              >
+                Sommaire
+              </button>
+              <button
+                class="dots-button"
                 :class="{ active: activePanel === 'meta' }"
                 @click="activePanel = 'meta'"
               >
                 Notice
               </button>
 
-              <button
-                class="dots-button"
-                :class="{ active: activePanel === 'summary' }"
-                @click="activePanel = 'summary'"
-              >
-                Sommaire
-              </button>
               <CloseCross
                 href="#"
                 class="dots-button breadcrumb-top-toggle-btn"
@@ -1637,7 +1637,7 @@ export default {
       // Case 2 : new objet
       activeBreadcrumb.value = index
       activeObject.value = breadcrumbItem
-      activePanel.value = 'meta'
+      activePanel.value = 'summary'
 
       if (event && event.target) {
         // On clock, active element is positionned on left by scrolling Ariane block
