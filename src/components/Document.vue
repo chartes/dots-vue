@@ -489,7 +489,7 @@ export default {
 
         if (noteTop > documentInViewTop && noteTop < documentInViewBottom) {
           const noteId = noteRef.getAttribute('href')?.substring(1)
-          const noteElement = document.querySelector('[id="${noteId}"], [class$="note"]')
+          const noteElement = document.querySelector('[class$="note"][id="' + noteId + '"]'); /*  */
           if (!noteElement) return
 
           notesInView.push({
@@ -524,6 +524,7 @@ export default {
             'href',
             '#' + note.noteId.split('_').join('')
           )
+
         } else {
           const noteLink = content.querySelector('a');
           noteLink.classList.add('notebottom')

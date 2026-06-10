@@ -3478,6 +3478,17 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 }
 
+a.pb {
+  border: none;
+  background: transparent;
+
+  &:focus,
+  &:hover {
+    color: var(--text-color);
+  }
+
+}
+
 
 @media screen and (max-width: 1320px) {
   .toc-area .toc-area-content nav > ol.tree {
@@ -3491,12 +3502,13 @@ ul.breadcrumb-top > li:nth-child(10) { z-index: 1; }
   }
 
   /* Document page numbers */
-  .pb {
+  a.pb {
     float: none;
     display: block;
     width: 100%;
     position: relative;
     padding: 20px 0;
+    text-decoration: none !important;
   }
 
   .cb, .ed {
