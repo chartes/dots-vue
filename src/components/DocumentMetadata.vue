@@ -64,7 +64,7 @@
                         <a v-if="item.url" :href="item.url" target="_blank">
                           {{ item['schema:name'] ?? item.url }}
                         </a>
-                        <span v-else>{{ item.name ?? JSON.stringify(item) }}</span>
+                        <span v-else>{{ item['schema:name'] ?? JSON.stringify(item) }}</span>
                       </template>
                       <!-- scalar item -->
                       <template v-else>
