@@ -890,7 +890,7 @@ export default {
     }
 
 
-    const miradorInstance = useMirador(miradorContainer, manifest)
+    const miradorInstance = useMirador(miradorContainer)
     // provide an uninitialized instance of Mirador
     provide('mirador', miradorInstance)
 
@@ -1798,60 +1798,93 @@ export default {
           return
         }
 
-        // Cas 1 : la ressource est déjà un manifeste
-        if (resourceManifest.value.type !== 'Collection') {
-          manifest.value = resourceManifest.value
-          manifestIsAvailable.value = true
-          if (miradorInstance.miradorStore) {
-            miradorInstance.loadManifest(manifest.value, manifest.value.items[0].id)
+        // CAS 1 : ressource = Collection
+        if (resourceManifest.value.type === 'Collection') {
+
+          // Sous-cas 1a : un refId est demandé
+          // => charger le manifeste de l'item ciblé
+
+          if (refId.value) {
+            console.log('mirador updateDisplayedManifest refId/currentItem', refId.value, currentItem.value)
+
+            const currentRes = flatTOC.value.find(
+              item => item.identifier === refId.value
+            )
+
+            console.log('mirador updateDisplayedManifest refId/currentItem', refId.value, currentItem)
+
+            const docManifestURL =
+              currentRes?.extensions?.['dots:resourceIIIFManifest']
+
+            if (!docManifestURL) {
+              manifest.value = null
+              manifestIsAvailable.value = false
+              return
+            }
+
+            const response = await fetch(docManifestURL)
+
+            if (loadId !== _currentLoadId) {
+              console.log('updateDisplayedManifest cancelled', loadId)
+              return
+            }
+
+            if (!response.ok) {
+              manifest.value = null
+              manifestIsAvailable.value = false
+              return
+            }
+
+            const manifestJson = await response.json()
+
+            if (loadId !== _currentLoadId) {
+              console.log('updateDisplayedManifest cancelled after json', loadId)
+              return
+            }
+
+            manifest.value = manifestJson
+            manifestIsAvailable.value = true
+
+            console.log('mirador updateDisplayedManifest resourceManifest.value manifest:', resourceManifest.value, manifest.value)
+
+            if (miradorInstance.miradorStore) {
+              miradorInstance.loadManifest(
+                manifest.value,
+                manifest.value?.items?.[0]?.id
+              )
+            }
+
+            return
           }
+
+          // Sous-cas 1b : affichage de la collection
+          manifestIsAvailable.value = true
+
+          if (miradorInstance.miradorStore) {
+            miradorInstance.loadCollectionManifest(
+              resourceManifest.value
+            )
+          }
+
           return
         }
 
-        // Cas 2 : la ressource est une collection
-        const currentItem = refId.value
-          ? flatTOC.value.find(item => item.identifier === refId.value)
-          : null
-
-        console.log('mirador updateDisplayedManifest refId/currentItem', refId.value, currentItem)
-
-        const docManifestURL =
-          currentItem?.extensions?.['dots:resourceIIIFManifest']
-
-        if (!docManifestURL) {
-          manifest.value = null
-          manifestIsAvailable.value = false
-          return
-        }
-
-        const response = await fetch(docManifestURL)
-
-        if (loadId !== _currentLoadId) {
-          console.log('updateDisplayedManifest cancelled', loadId)
-          return
-        }
-
-        if (!response.ok) {
-          manifest.value = null
-          manifestIsAvailable.value = false
-          return
-        }
-
-        manifest.value = await response.json()
-
-        if (loadId !== _currentLoadId) {
-          console.log('updateDisplayedManifest cancelled after json', loadId)
-          return
-        }
+        // CAS 2 : ressource = manifest
+        manifest.value = resourceManifest.value
         manifestIsAvailable.value = true
 
         console.log('mirador updateDisplayedManifest manifest:', manifest.value)
 
         if (miradorInstance.miradorStore) {
-          miradorInstance.loadManifest(manifest.value, manifest.value.items[0].id)
+          miradorInstance.loadManifest(manifest.value, manifest.value?.items?.[0]?.id)
         }
 
       } catch (error) {
+        if (loadId !== _currentLoadId) {
+          console.log('updateDisplayedManifest cancelled in catch', loadId)
+          return
+        }
+
         console.error('mirador updateDisplayedManifest error:', error)
 
         manifest.value = null
@@ -1861,8 +1894,25 @@ export default {
     }
 
     watch(
-  () => metadata.value?.extensions?.['dots:resourceIIIFManifest'],
-  async (newVal) => {
+      () => layout.getViewMode?.(),
+      (newValue, oldValue) => {
+        console.log('mirador layout.getViewMode watch ', oldValue, newValue)
+        const entersImageMode =
+          !oldValue?.includes?.('image') &&
+          newValue?.includes?.('image')
+
+        if (entersImageMode) {
+          console.log('mirador entersImageMode resetView button')
+          nextTick(() => {
+            miradorInstance.resetView()
+          })
+        }
+      }
+    )
+
+    watch(
+      () => metadata.value?.extensions?.['dots:resourceIIIFManifest'],
+      async (newVal) => {
         console.log('mirador watch resourceIIIFManifest', metadata.value?.extensions)
 
         if (!newVal) {
@@ -1889,20 +1939,19 @@ export default {
     )
 
     watch(
-  () => refId.value,
-  async (newRefId, oldRefId) => {
-    console.log(
-      'watch mirador updateDisplayedManifest refId', oldRefId, '->', newRefId)
+      () => refId.value,
+      async (newRefId, oldRefId) => {
+        console.log('watch mirador updateDisplayedManifest refId', oldRefId, '->', newRefId)
 
-    //if (resourceManifest.value?.type === 'Collection') {
-      await updateDisplayedManifest()
-    //}
+        //if (resourceManifest.value?.type === 'Collection') {
+          await updateDisplayedManifest()
+        //}
       }
     )
 
     watch(
-  () => flatTOC.value.length,
-  async (length) => {
+      () => flatTOC.value.length,
+      async (length) => {
         if (
           length > 0 &&
           resourceManifest.value?.type === 'Collection'
