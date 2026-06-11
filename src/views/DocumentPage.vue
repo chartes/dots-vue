@@ -118,6 +118,7 @@
           >
             <div class="tab-header">
               <button
+                v-if="topTOC.length > 1"
                 class="dots-button"
                 :class="{ active: activePanel === 'summary' }"
                 @click="activePanel = 'summary'"
@@ -1637,7 +1638,7 @@ export default {
       // Case 2 : new objet
       activeBreadcrumb.value = index
       activeObject.value = breadcrumbItem
-      activePanel.value = 'summary'
+      activePanel.value = topTOC.value.length > 1 ? 'summary' : 'meta'
 
       if (event && event.target) {
         // On clock, active element is positionned on left by scrolling Ariane block
