@@ -118,7 +118,7 @@
           >
             <div class="tab-header">
               <button
-                v-if="topTOC.length > 1"
+                v-if="topTOC.length > 1 && topTOCDisplayIndicator"
                 class="dots-button"
                 :class="{ active: activePanel === 'summary' }"
                 @click="activePanel = 'summary'"
@@ -1638,7 +1638,7 @@ export default {
       // Case 2 : new objet
       activeBreadcrumb.value = index
       activeObject.value = breadcrumbItem
-      activePanel.value = topTOC.value.length > 1 ? 'summary' : 'meta'
+      activePanel.value = topTOCDisplayIndicator.value && topTOC.value.length > 1 ? 'summary' : 'meta'
 
       if (event && event.target) {
         // On clock, active element is positionned on left by scrolling Ariane block
@@ -1745,7 +1745,7 @@ export default {
 
       return (
         leftTOCFragmentIsDocument.value ? leftTOCDisplayIndicator.value &&
-        flatTOC.value.some(item => item.parent === hasChildren) : flatTOC.value.filter(item => item.identifier === currentItem.value.identifier)[0]?.children?.length >= 1
+        flatTOC.value.some(item => item.parent === hasChildren) : leftTOCDisplayIndicator.value && flatTOC.value.filter(item => item.identifier === currentItem.value.identifier)[0]?.children?.length >= 1
       )
     })
 
