@@ -104,7 +104,7 @@
             id="home-article"
             class="article app-width-margin"
           >
-            <h1>La collection</h1>
+            <!--<h1>La collection</h1>-->
             {{ currCollection.description }}
           </div>
           <!-- no homePageSettings.descriptionSection.customCollectionDescription & no DTS description : use user settings description (homePageSettings.collectionDescription) -->
