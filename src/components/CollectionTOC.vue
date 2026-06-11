@@ -132,7 +132,7 @@
       :total-pages="totalPages"
       :is-loading="false"
       documents-count-text=""
-      @update:modelValue="onPaginationUpdate"
+      @update:modelValue="onBottomPaginationUpdate"
     />
   </div>
 
@@ -717,6 +717,14 @@ export default {
       });
     }
 
+    const onBottomPaginationUpdate = function() {
+      onPaginationUpdate()
+      nextTick(function () {
+        setTimeout(function () {
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        })
+      })
+    }
 
 
     const documentsCountText = computed(() => {
@@ -1013,6 +1021,7 @@ export default {
       paginated,
       totalResults,
       onPaginationUpdate,
+      onBottomPaginationUpdate,
       documentsCountText,
       getHref,
       getRoute,
