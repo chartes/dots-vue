@@ -1745,7 +1745,7 @@ export default {
 
       return (
         leftTOCFragmentIsDocument.value ? leftTOCDisplayIndicator.value &&
-        flatTOC.value.some(item => item.parent === hasChildren) : true
+        flatTOC.value.some(item => item.parent === hasChildren) : flatTOC.value.filter(item => item.identifier === currentItem.value.identifier)[0]?.children?.length >= 1
       )
     })
 
