@@ -3957,5 +3957,12 @@ button[aria-label="Window options"] > span {
 button[aria-label="Window options"] > span > svg {
   display: none;
 }
+/* force no height for Mirador bottom buttons container to correct an incorrect behaviour */
+.mirador-canvas-nav, .mirador52 {
+  height: unset !important;
+  & > * {
+    background-color: unset !important;
+  }
+}
 
 </style>
