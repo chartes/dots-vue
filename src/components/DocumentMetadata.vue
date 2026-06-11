@@ -135,7 +135,7 @@
                       >
                         {{ value['schema:name'] || value['@id'] || value.url }}
                       </a>
-                      <span v-else>{{ value.name || JSON.stringify(value) }}</span>
+                      <span v-else>{{ value['schema:name'] || JSON.stringify(value) }}</span>
                     </span>
                   </td>
                   <td>
