@@ -175,7 +175,7 @@ export default {
       return baseURL.replace(/\/+$/, '') + '/'
     }
 
-    const hasNonEmptyObject = arr => arr.some(obj => obj && Object.keys(obj).length > 0)
+    const hasNonEmptyObject = arr => Array.isArray(arr) && arr.some(obj => obj && Object.keys(obj).length > 0)
     const hasAbout = computed(() => hasNonEmptyObject(props.collectionConfig.aboutPageSettings))
 
     const toggleAbout = () => {
