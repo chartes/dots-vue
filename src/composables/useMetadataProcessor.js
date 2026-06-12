@@ -5,31 +5,33 @@ import store from '@/store/index.js'
 const _baseApiURL = `${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`.replace(/^https?:\/\//, '')
 const _apiURL = new URL(`${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`)  // URL complète parsée
 const _appURL = new URL(window.location.origin)  // URL de l'app frontend
+// Extraire les 2 premiers segments de chemin de l'URL courante comme "empreinte" du document
+const _currentPathSegments = window.location.pathname.split('/').filter(Boolean).slice(0, 2).join('/')
 
-const sources = [
-  { name: 'wikidata', ext: 'wikidata', type: 'author_link' },
-  { name: 'wikipedia', ext: 'wikipedia', type: 'author_link' },
-  { name: 'dbpedia', ext: 'dbpedia.org', type: 'author_link' },
-  { name: 'nakala', ext: 'nakala', type: 'document_link' },
-  { name: 'idref', ext: 'idref.fr', type: 'author_link' },
-  { name: 'databnf', ext: 'data.bnf.fr', type: 'author_link' },
-  { name: 'cataloguebnf', ext: 'catalogue.bnf.fr', type: 'author_link' },
-  { name: 'gallica', ext: 'gallica.bnf.fr', type: 'document_link' },
-  { name: 'thenca', ext: 'thenca', type: 'document_link' },
-  { name: 'hal', ext: 'hal', type: 'document_link' },
-  { name: 'benc', ext: 'koha', type: 'document_link' },
-  { name: 'sudoc', ext: 'sudoc.fr', type: 'document_link' },
-  { name: 'biblissima', ext: 'biblissima', type: 'document_link' },
-  { name: 'creativecommons', ext: 'creativecommons.org', type: 'document_link' },
-  { name: 'etalab', ext: 'etalab.gouv', type: 'document_link' },
-  { name: 'enc_red_small', ext: 'www.chartes.psl.eu', type: 'other_link' },
-  { name: 'iiif', ext: 'iiif', type: 'other_link' },
-  { name: 'dots', ext: _baseApiURL, type: 'other_link' },
-  { name: 'elec_txt', ext: window.location.pathname.split('/').slice(1, 3).join('/'), type: 'other_link' },
-  { name: 'tei', ext: 'tei+xml', type: 'other_link' },
-  { name: 'html', ext: 'text/html', type: 'other_link' },
-  { name: 'pdf', ext: 'application/pdf', type: 'other_link' }
-]
+// const sources = [
+//   { name: 'wikidata', ext: 'wikidata', type: 'author_link' },
+//   { name: 'wikipedia', ext: 'wikipedia', type: 'author_link' },
+//   { name: 'dbpedia', ext: 'dbpedia.org', type: 'author_link' },
+//   { name: 'nakala', ext: 'nakala', type: 'document_link' },
+//   { name: 'idref', ext: 'idref.fr', type: 'author_link' },
+//   { name: 'databnf', ext: 'data.bnf.fr', type: 'author_link' },
+//   { name: 'cataloguebnf', ext: 'catalogue.bnf.fr', type: 'author_link' },
+//   { name: 'gallica', ext: 'gallica.bnf.fr', type: 'document_link' },
+//   { name: 'thenca', ext: 'thenca', type: 'document_link' },
+//   { name: 'hal', ext: 'hal', type: 'document_link' },
+//   { name: 'benc', ext: 'koha', type: 'document_link' },
+//   { name: 'sudoc', ext: 'sudoc.fr', type: 'document_link' },
+//   { name: 'biblissima', ext: 'biblissima', type: 'document_link' },
+//   { name: 'creativecommons', ext: 'creativecommons.org', type: 'document_link' },
+//   { name: 'etalab', ext: 'etalab.gouv', type: 'document_link' },
+//   { name: 'enc_red_small', ext: 'www.chartes.psl.eu', type: 'other_link' },
+//   { name: 'iiif', ext: 'iiif', type: 'other_link' },
+//   { name: 'dots', ext: _baseApiURL, type: 'other_link' },
+//   { name: 'elec_txt', ext: window.location.pathname.split('/').slice(1, 3).join('/'), type: 'other_link' },
+//   { name: 'tei', ext: 'tei+xml', type: 'other_link' },
+//   { name: 'html', ext: 'text/html', type: 'other_link' },
+//   { name: 'pdf', ext: 'application/pdf', type: 'other_link' }
+// ]
 /*
  { name: 'tei', ext: 'api/dts/document', type: 'other_link' },
   { name: 'json', ext: 'api/dts/collection', type: 'other_link' },
@@ -37,6 +39,19 @@ const sources = [
    { name: 'tei', ext: 'application/tei+xml', type: 'other_link' },
   { name: 'pdf', ext: 'application/pdf', type: 'other_link' },
 */
+const DYNAMIC_RESOLVERS = {
+  dots_api_base_url: () => `${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`.replace(/^https?:\/\//, ''),
+  dots_vue_self: () => window.location.pathname.split('/').filter(Boolean).slice(0, 2).join('/')
+}
+
+function resolveSources(sourcesMap) {
+  return sourcesMap.map(source => {
+    if (source.dynamic && DYNAMIC_RESOLVERS[source.dynamic]) {
+      return { ...source, ext: DYNAMIC_RESOLVERS[source.dynamic]() }
+    }
+    return source
+  })
+}
 
 const MEDIA_OBJECT_MIME_REGEX =
   /^(application|audio|font|image|model|text|video)\/[a-z0-9.+-]+$/i
@@ -45,51 +60,52 @@ function isMediaObjectMimeType(value) {
   return MEDIA_OBJECT_MIME_REGEX.test(value)
 }
 
-function findSource(id) {
+function findSource(id, sourcesMap) {
   if (!id) return null
+  const normalized = id.toLowerCase()
+  const sources = resolveSources(sourcesMap)
 
   let url
   try {
     url = new URL(id)
   } catch {
-    const normalized = id.toLowerCase()
-
     // Case id not URL and has MIME but not strict MIME type (iiif)
     if (normalized.includes('iiif.io')) {
       return sources.find(s => s.name === 'iiif') ?? null
     }
     // Case id not a URL, nor IIIF → trying MIME type
     if (isMediaObjectMimeType(id)) {
-
-      const source = sources.find(s =>
-        normalized.includes(s.ext.toLowerCase())
-      )
-
-      return source
-        ? { name: source.name, type: source.type }
-        : null
+      const source = sources.find(s => normalized.includes(s.ext.toLowerCase()))
+      return source ? { name: source.name } : null
     }
     return null
   }
 
-  const normalized = id.toLowerCase()
-
-  // Même hostname ET port que l'API DTS ?
+  // Case API DTS ?
   if (url.hostname === _apiURL.hostname && url.port === _apiURL.port) {
     if (normalized.includes(_baseApiURL.toLowerCase())) {
       return sources.find(s => s.name === 'dots') ?? null
     }
-    // Même serveur mais hors API (page ENC/app)
-    return sources.find(s => s.name === 'elec_txt') ?? null
   }
 
-  // Même hostname ET port que le frontend ?
+  // Case DoTS-vue implementation (possibly different serveur) : entry for which dynamic is dots_vue_self
+  const vueSelfSource = sources.find(s => s.dynamic === 'dots_vue_self') ?? null
+
+  if (
+    vueSelfSource &&
+    _currentPathSegments &&
+    url.pathname.toLowerCase().includes(_currentPathSegments.toLowerCase()) &&
+    !normalized.includes(_baseApiURL.toLowerCase())
+  ) {
+    return vueSelfSource
+  }
+  // Case same DoTS-vue implementation (self)
   if (url.hostname === _appURL.hostname && url.port === _appURL.port) {
-    return sources.find(s => s.name === 'elec_txt') ?? null
+    return vueSelfSource
   }
 
   const source = sources.find(s => normalized.includes(s.ext.toLowerCase()))
-  return source ? { name: source.name, type: source.type } : null
+  return source ? { name: source.name } : null
 }
 
 // Version namespace
@@ -302,7 +318,7 @@ const SCHEMA_SAMEAS_URI        = 'https://schema.org/sameAs'
 // ─────────────────────────────────────────────────────────────────────────────
 // enrichValue — inchangé
 // ─────────────────────────────────────────────────────────────────────────────
-function enrichValue(value, path) {
+function enrichValue(value, path, sourcesMap) {
   try {
     if (
       path === 'dots:resourceIIIFManifest' &&
@@ -320,7 +336,7 @@ function enrichValue(value, path) {
 
     if (typeof value === 'string') {
       const cleanUrl = value.replace(/\{[^}]*\}/g, '').replace(/\?$/, '')
-      const src = findSource(cleanUrl)
+      const src = findSource(cleanUrl, sourcesMap)
       console.log('imgURL enrichValue value, path', value, path, cleanUrl, src, `/${window.location.pathname.split('/').slice(2, 4).join('/')}`)
       if (!src) return value
       const isHttp = cleanUrl.startsWith('http')
@@ -332,7 +348,7 @@ function enrichValue(value, path) {
     }
 
     if (Array.isArray(value)) {
-      return value.map(v => enrichValue(v, path))
+      return value.map(v => enrichValue(v, path, sourcesMap))
     }
 
     if (value && typeof value === 'object') {
@@ -340,9 +356,9 @@ function enrichValue(value, path) {
       const url = value.url ?? value['@id'] ?? value.id ?? value['schema:contentUrl']
       console.log('testing value', value, url, value['schema:encodingFormat'])
       // Pour les MediaObject, chercher la source sur encodingFormat plutôt que l'URL
-      const formatSrc = value['schema:encodingFormat'] ? findSource(value['schema:encodingFormat']) : null
+      const formatSrc = value['schema:encodingFormat'] ? findSource(value['schema:encodingFormat'], sourcesMap) : null
       console.log('testing formatSrc', url, formatSrc)
-      const urlSrc = url ? findSource(url) : null
+      const urlSrc = url ? findSource(url, sourcesMap) : null
       const src = formatSrc ?? urlSrc
       console.log('testing src', src)
 
@@ -353,7 +369,7 @@ function enrichValue(value, path) {
         const arr = Array.isArray(sameAsValue) ? sameAsValue : [sameAsValue]
         for (const sa of arr) {
           const saUrl = typeof sa === 'string' ? sa : sa['@id']
-          const saSrc = findSource(saUrl)
+          const saSrc = findSource(saUrl, sourcesMap)
           if (saSrc) sameAsSources.push({ value: saUrl, source: saSrc })
         }
       }
@@ -389,6 +405,7 @@ export async function buildDisplayModel(rawMetadata, config) {
     ...APP_KEYS,
     ...APP_DISPLAY_EXCLUDES
   ]
+  const sourcesMap = config?.metadataLogosMapping ?? []
   const onlyDeclared       = excludeConfig.onlyDeclared   ?? false
 
   const { metadata: rawJsonLd, appData } = splitMetadata(rawMetadata)
@@ -499,7 +516,7 @@ export async function buildDisplayModel(rawMetadata, config) {
           continue
         }
 
-        result[key] = enrichValue(val, key)
+        result[key] = enrichValue(val, key, sourcesMap)
         handledKeys.add(key)
       }
 
@@ -515,7 +532,7 @@ export async function buildDisplayModel(rawMetadata, config) {
         const val = metadata[parent][subkey]
         if (val !== undefined && val !== null && val !== '') {
           const label = renameMap[term] ?? term
-          result[label] = enrichValue(val, term)
+          result[label] = enrichValue(val, term, sourcesMap)
           handledKeys.add(parent) // on marque le parent comme traité
         }
       }
@@ -540,7 +557,7 @@ export async function buildDisplayModel(rawMetadata, config) {
     }
 
 
-    result[term] = enrichValue(val, term)
+    result[term] = enrichValue(val, term, sourcesMap)
 
     // Marquer TOUTES les clés candidates comme traitées
     for (const k of candidateKeys) handledKeys.add(k)
@@ -566,7 +583,7 @@ export async function buildDisplayModel(rawMetadata, config) {
         console.log('buildDisplayModel deemed invalid 2', key, val)
         continue
       }
-      result[key] = enrichValue(val, key)
+      result[key] = enrichValue(val, key, sourcesMap)
       console.log('buildDisplayModel Phase 2 enriched', key, result[key])
     }
     console.log('buildDisplayModel Phase 2 end', metadata, result)

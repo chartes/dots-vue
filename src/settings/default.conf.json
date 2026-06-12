@@ -86,6 +86,30 @@
       "fields": [
         "dts:citationTrees"
       ]
-    }
+    },
+    "metadataLogosMapping": [
+      { "name": "wikidata", "ext": "wikidata" },
+      { "name": "wikipedia", "ext": "wikipedia" },
+      { "name": "dbpedia", "ext": "dbpedia.org" },
+      { "name": "nakala", "ext": "nakala" },
+      { "name": "idref", "ext": "idref.fr" },
+      { "name": "databnf", "ext": "data.bnf.fr" },
+      { "name": "cataloguebnf", "ext": "catalogue.bnf.fr" },
+      { "name": "gallica", "ext": "gallica.bnf.fr" },
+      { "name": "thenca", "ext": "thenca" },
+      { "name": "hal", "ext": "hal" },
+      { "name": "benc", "ext": "koha" },
+      { "name": "sudoc", "ext": "sudoc.fr" },
+      { "name": "biblissima", "ext": "biblissima" },
+      { "name": "creativecommons", "ext": "creativecommons.org" },
+      { "name": "etalab", "ext": "etalab.gouv" },
+      { "name": "enc_red_small", "ext": "www.chartes.psl.eu" },
+      { "name": "iiif", "ext": "iiif" },
+      { "name": "dots", "ext": null, "dynamic": "dots_api_base_url" },
+      { "name": "elec_txt", "ext": null, "dynamic": "dots_vue_self" },
+      { "name": "tei", "ext": "tei+xml" },
+      { "name": "html", "ext": "text/html" },
+      { "name": "pdf", "ext": "application/pdf" }
+    ]
   }
 }
