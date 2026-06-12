@@ -246,7 +246,7 @@ export default {
       )
 
       const confLogos = import.meta.glob(
-        'confs/*/assets/images/logo_*.svg',
+        'confs/*/assets/images/logo_*.{svg,png}',
         {
           import: 'default',
           eager: true
@@ -259,7 +259,7 @@ export default {
       }
 
       const logo = Object.entries(logos).find(([path]) =>
-        path.endsWith(`/logo_${source}.svg`)
+        path.endsWith(`/logo_${source}.svg`) || path.endsWith(`/logo_${source}.png`)
       )
       console.log('ImgUrl source logo', source, Object.entries(logos))
       if (logo) {
