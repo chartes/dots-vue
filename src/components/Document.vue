@@ -396,8 +396,8 @@ export default {
         if (el) {
           const yOffset = -90
           const y = el.getBoundingClientRect().top + window.scrollY + yOffset
-          console.log('Document.vue scrollTo y : ', y)
-          //window.scrollTo({ top: y, behavior: 'instant' })
+          console.log('Document.vue (scrollBehavior) scrollTo y : ', y)
+          window.scrollTo({ top: y, behavior: 'instant' })
         }
       } /* removing scroll top for now 06/02/2026 else {
         // Scroll to the top of Page if no anchor and new route or to reader TOP in reading context
