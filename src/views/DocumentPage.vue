@@ -779,15 +779,17 @@ export default {
       })
     }
 
+    // Scroll Collection Ariane to active or last Item :
     const breadcrumbScrollToLastItem = function(behavior = 'smooth') {
       console.log('DOM breadcrumbScrollToLastItem', breadcrumbEl.value)
       if (!breadcrumbEl.value) return
       const el = breadcrumbEl.value
 
-      const breadcrumbLastChild = el.querySelector('li:last-child')
-      if (breadcrumbLastChild) {
+      let breadcrumbTargetChild = el.querySelector('li.active')
+      if (!breadcrumbTargetChild) breadcrumbTargetChild = el.querySelector('li:last-child')
+      if (breadcrumbTargetChild) {
         el.scrollTo({
-          left: breadcrumbLastChild.offsetLeft - 40,
+          left: breadcrumbTargetChild.offsetLeft - 40,
           behavior: behavior
         })
       }
