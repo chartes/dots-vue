@@ -39,6 +39,7 @@ const viewComponents = {
 
 // NB : scrollBehavior cf https://router.vuejs.org/guide/advanced/scroll-behavior
 
+let timeout;
 let previousRoute = null
 let router = () => {}
 if (isDocProjectIdIncluded) {
@@ -86,6 +87,8 @@ if (isDocProjectIdIncluded) {
 
       const defaultTop = window.innerWidth < 768 ? 45 : 82;
 
+      if (timeout) clearTimeout(timeout);
+
       if (to.path === from.path && to.hash.length) {
         // Local anchors
         const anchor = document.getElementById(to.hash);
@@ -100,7 +103,8 @@ if (isDocProjectIdIncluded) {
         } else {
           // Local anchor of another (non loaded) part of the document
           return new Promise((resolve, reject) => {
-            setTimeout(() => {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => {
               const anchor = document.getElementById(to.hash);
               // console.log('scrollBehavior Local anchors timeout', to.path, to.hash, 'window.innerWidth', window.innerWidth, defaultTop, anchor);
               resolve({
@@ -131,14 +135,16 @@ if (isDocProjectIdIncluded) {
           // If window scroll is beyond sticky navigation bar, scroll the top of the document under the sticky menu
             console.log('scrollBehavior documentArea1', navTopContainerHeight + defaultTop, defaultTop);
             return new Promise((resolve, reject) => {
-              setTimeout(() => {
+              if (timeout) clearTimeout(timeout);
+              timeout = setTimeout(() => {
                 resolve({ top: totalHeaderHeight, behavior: 'instant' })
               }, 0)
             })
         }
 
         return new Promise((resolve, reject) => {
-          setTimeout(() => {
+          if (timeout) clearTimeout(timeout);
+          timeout = setTimeout(() => {
             resolve({ top: documentScroll, behavior: 'instant' })
           }, 0)
         })
