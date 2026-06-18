@@ -82,35 +82,36 @@ if (isDocProjectIdIncluded) {
     ],
     scrollBehavior (to, from, savedPosition) {
 
-      // console.log('scrollBehavior to', to);
-      // console.log('scrollBehavior from', from);
+      console.log('scrollBehavior to', to);
+      console.log('scrollBehavior from', from);
 
       const defaultTop = window.innerWidth < 768 ? 45 : 82;
+      const toHash = to.hash.slice(1);
 
       if (timeout) clearTimeout(timeout);
 
-      if (to.path === from.path && to.hash.length) {
+      if (to.path === from.path && toHash.length) {
         // Local anchors
-        const anchor = document.getElementById(to.hash);
+        const anchor = document.getElementById(toHash);
         console.log('scrollBehavior Local anchors', to.path, to.hash, 'window.innerWidth', window.innerWidth, defaultTop, anchor);
         if (anchor) {
           // Local anchor of current loaded part of the document
           return {
             el: to.hash,
             behavior: 'smooth',
-            top: defaultTop
+            top: defaultTop + 10
           }
         } else {
           // Local anchor of another (non loaded) part of the document
           return new Promise((resolve, reject) => {
             if (timeout) clearTimeout(timeout);
             timeout = setTimeout(() => {
-              const anchor = document.getElementById(to.hash);
+              // const anchor = document.getElementById(toHash);
               // console.log('scrollBehavior Local anchors timeout', to.path, to.hash, 'window.innerWidth', window.innerWidth, defaultTop, anchor);
               resolve({
                 el: to.hash,
                 behavior: 'smooth',
-                top: defaultTop
+                top: defaultTop + 10
               })
             }, 500)
           })

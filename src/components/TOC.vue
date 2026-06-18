@@ -561,7 +561,7 @@ div.toc-area-aside.toc-content {
 }
 div.bottom-toc {
   .tree {
-    margin-left: -9px;
+    /* margin-left: -9px; */
   }
   .tree li {
     margin-bottom: 5px;

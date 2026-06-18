@@ -45,6 +45,11 @@ ul {
     list-style: none;
 }
 
+article ul {
+    list-style-position: inside;
+    margin: 10px 0 10px 10px;
+}
+
 a {
     color: #485fc7;
     cursor: pointer;
