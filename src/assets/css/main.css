@@ -9,6 +9,7 @@ html {
     min-width: 300px;
     overflow-x: hidden;
     overflow-y: scroll;
+    scroll-behavior: smooth; /* nneded for router scrollBehavior option { behavior : smooth } */
     text-rendering: optimizeLegibility;
     -moz-text-size-adjust: 100%;
     text-size-adjust: 100%;
