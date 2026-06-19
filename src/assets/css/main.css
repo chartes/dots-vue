@@ -9,10 +9,12 @@ html {
     min-width: 300px;
     overflow-x: hidden;
     overflow-y: scroll;
+    scroll-behavior: smooth; /* nneded for router scrollBehavior option { behavior : smooth } */
     text-rendering: optimizeLegibility;
     -moz-text-size-adjust: 100%;
     text-size-adjust: 100%;
     box-sizing: border-box;
+    font-size: var(--font-default-size);
 }
 html,
 body {
@@ -20,7 +22,6 @@ body {
     min-height: 100%;
     margin: 0;
     padding: 0;
-    font-size: 20px;
 }
 
 article, aside, figure, footer, header, hgroup, section {
@@ -43,6 +44,11 @@ button, input, select, textarea {
 
 ul {
     list-style: none;
+}
+
+article ul {
+    list-style-position: inside;
+    margin: 10px 0 10px 10px;
 }
 
 a {
@@ -662,7 +668,7 @@ a.noteref sup {
     transform: translateY(-3px);
     display: inline-block;
     height: auto;
-    padding: 3px 4px 1px;
+    padding: 0.15rem 0.2rem 0.1rem;
     background: #000;
     margin:0 4px;
 
@@ -920,6 +926,10 @@ a.noteref:focus {
 
     .pagination {
         flex-wrap: wrap;
+
+        &:not(:last-child) {
+            margin-bottom: 20px;
+        }
     }
 
     .scroll-top {

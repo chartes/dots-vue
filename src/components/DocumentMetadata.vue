@@ -583,6 +583,7 @@ figure.image img{
   }
 
   .menu {
+    font-size: var(--font-default-size);
     line-height: 1;
   }
 

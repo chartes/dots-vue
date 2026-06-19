@@ -779,15 +779,17 @@ export default {
       })
     }
 
+    // Scroll Collection Ariane to active or last Item :
     const breadcrumbScrollToLastItem = function(behavior = 'smooth') {
       console.log('DOM breadcrumbScrollToLastItem', breadcrumbEl.value)
       if (!breadcrumbEl.value) return
       const el = breadcrumbEl.value
 
-      const breadcrumbLastChild = el.querySelector('li:last-child')
-      if (breadcrumbLastChild) {
+      let breadcrumbTargetChild = el.querySelector('li.active')
+      if (!breadcrumbTargetChild) breadcrumbTargetChild = el.querySelector('li:last-child')
+      if (breadcrumbTargetChild) {
         el.scrollTo({
-          left: breadcrumbLastChild.offsetLeft - 40,
+          left: breadcrumbTargetChild.offsetLeft - 40,
           behavior: behavior
         })
       }
@@ -2454,6 +2456,7 @@ export default {
 .controls-toggle .icon-wrapper {
   color: var(--fill-color);
 }
+.controls-toggle:hover .icon-wrapper,
 .controls-toggle[aria-expanded="true"] .icon-wrapper {
   color: #ffffff;
   background-color: var(--fill-color);
@@ -3616,6 +3619,20 @@ a.pb {
 
   .controls {
     z-index: 11; /* under semi-transparent bg when aside TOC is opened */
+  }
+  
+  .text-mode .dots-button.text-btn {
+    .icon-wrapper {
+      color: #FFF;
+      background-color: var(--fill-color);
+    }
+  }
+
+  .images-mode .dots-button.images-btn {
+    .icon-wrapper {
+      color: #FFF;
+      background-color: var(--fill-color);
+    }
   }
 
 }

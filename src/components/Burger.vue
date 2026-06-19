@@ -61,6 +61,7 @@ export default {
     display: block;
     border: none;
     width: 100%;
+    min-height: 65px;
   }
   .navbar-burger span {
     width: 28px;

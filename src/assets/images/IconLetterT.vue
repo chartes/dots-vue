@@ -64,6 +64,19 @@ const cssVars = {
   color: var(--fill-color, var(--icon-text-color));
 }
 
+/* Prevents Hover state, replaced by active state */
+@media (hover: none) {
+  .icon-wrapper:hover {
+    color: inherit;
+    background-color: inherit;
+  }
+  .text-mode .icon-wrapper,
+  .icon-wrapper:active {
+    color: #FFF;
+    background-color: var(--fill-color);
+  }
+}
+
 .icon {
   width: 100%;
   height: 100%;

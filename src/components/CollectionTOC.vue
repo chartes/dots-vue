@@ -717,10 +717,13 @@ export default {
       });
     }
 
+    let bottomNavigationTimeout;
+
     const onBottomPaginationUpdate = function() {
       onPaginationUpdate()
       nextTick(function () {
-        setTimeout(function () {
+        if (bottomNavigationTimeout) clearTimeout(bottomNavigationTimeout);
+        bottomNavigationTimeout = setTimeout(function () {
           window.scrollTo({ top: 0, behavior: 'smooth' })
         })
       })
