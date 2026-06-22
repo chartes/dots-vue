@@ -78,9 +78,9 @@
                 Powered by
               </span>
               <a
-                  class="dots-logo"
-                  target="_blank"
-                  href="https://chartes.github.io/dots_documentation/"
+                class="dots-logo"
+                target="_blank"
+                href="https://dots-suite.github.io/dots_documentation/"
               >
                 <!--<img
                   class="dots-logo"
