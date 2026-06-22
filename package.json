@@ -1,6 +1,6 @@
 {
-  "name": "dots-vue-generic",
-  "version": "0.1.0",
+  "name": "dots-vue",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
     "serve": "vite --mode=development",
@@ -11,29 +11,28 @@
     "lint:fix": "eslint --ext .js,.vue --fix src"
   },
   "dependencies": {
-    "bulma": "^1.0.4",
     "jsonld": "9.0.0",
-    "md5": "^2.3.0",
-    "mirador": "^3.4.3",
+    "md5": "2.3.0",
+    "mirador": "3.4.3",
     "mirador-image-tools": "0.11.0",
-    "rdflib": "^2.3.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-image": "^4.1.0",
+    "rdflib": "2.3.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-image": "4.1.0",
     "vue": "3.5.25",
     "vue-router": "4.6.3",
-    "vue-slider-component": "^4.1.0-beta.7",
-    "vue3-carousel": "^0.17.0",
-    "vue3-highlightjs": "^1.0.5",
+    "vue-slider-component": "4.1.0-beta.7",
+    "vue3-carousel": "0.17.0",
+    "vue3-highlightjs": "1.0.5",
     "vuex": "4.1.0",
-    "zod": "^4.3.6"
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "5.2.4",
-    "@vue/eslint-config-standard": "^9.0.1",
-    "eslint": "^9.39.1",
-    "eslint-plugin-vue": "^10.6.2",
-    "globals": "^16.5.0",
+    "@vue/eslint-config-standard": "9.0.1",
+    "eslint": "9.39.1",
+    "eslint-plugin-vue": "10.6.2",
+    "globals": "16.5.0",
     "lodash": "4.17.21",
     "vite": "5.4.21",
     "vue-eslint-parser": "^10.2.0"
