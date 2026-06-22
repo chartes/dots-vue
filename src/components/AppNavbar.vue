@@ -81,7 +81,7 @@
           <a
             v-else
             target="_blank"
-            href="https://chartes.github.io/dots_documentation/api/"
+            href="https://dots-suite.github.io/dots_documentation/api/"
           >
             API <b>{ }</b>
           </a>
