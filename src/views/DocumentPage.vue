@@ -2092,6 +2092,14 @@ export default {
       }
     })
 
+    watch(layout.isTOCMenuOpened, (val) => {
+      console.log('isTOCMenuOpened changed:', val)
+      if (val) {
+        console.log('isTOCMenuOpened changed: scrollTOC')
+        scrollCurrentTocItemIntoView()
+      }
+    })
+
     watch(breadcrumbEl, (val) => {
       console.log('DOM breadcrumbEl changed:', val)
       updateMeasurements()
