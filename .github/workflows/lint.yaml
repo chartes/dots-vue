@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - dev
-      - maquette
+      - maquette2
+      - master
   pull_request:
     branches:
       - dev
-      - maquette
+      - maquette2
+      - master
 
 jobs:
   eslint:
