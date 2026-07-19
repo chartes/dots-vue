@@ -1,8 +1,15 @@
 import { ref, computed, watch } from 'vue'
 
-export function useTable(dataSource, columns, pageSize, currentPage) {
+export function useTable(dataSource, columns, options = {}) {
   const filters = ref({})
   const sort = ref({ key: null, direction: 'none' }) // none | asc | desc
+
+  const {
+    pageSize,
+    currentPage,
+    remote = ref(false),
+    totalResults : remoteTotalResults = ref(0)
+  } = options
 
   // Init dynamic filters
   watch(columns, (cols) => {
@@ -81,21 +88,46 @@ export function useTable(dataSource, columns, pageSize, currentPage) {
   })
 
   // Pagination
+  // const totalPages = computed(() => {
+  //   if (!pageSize.value) return 1
+  //   return Math.ceil(sorted.value.length / pageSize.value)
+  // })
+
   const totalPages = computed(() => {
-    if (!pageSize.value) return 1
-    return Math.ceil(sorted.value.length / pageSize.value)
+    const total = remote.value
+      ? remoteTotalResults.value
+      : filtered.value.length
+
+    return pageSize.value
+      ? Math.ceil(total / pageSize.value)
+      : 1
   })
 
+  // const paginated = computed(() => {
+  //   const start = (currentPage.value - 1) * pageSize.value
+  //   return sorted.value.slice(start, start + pageSize.value)
+  // })
   const paginated = computed(() => {
+    if (remote.value) {
+      return dataSource.value
+    }
+
     const start = (currentPage.value - 1) * pageSize.value
     return sorted.value.slice(start, start + pageSize.value)
   })
 
-  const totalResults = computed(() => filtered.value.length)
+  //const totalResults = computed(() => filtered.value.length)
+  const totalResults = computed(() => {
+    return remote.value
+      ? remoteTotalResults.value
+      : filtered.value.length
+  })
 
   // Reset page when filters change
   watch(filters, () => {
-    currentPage.value = 1
+    if (!remote.value) {
+      currentPage.value = 1
+    }
   }, { deep: true })
 
   return {

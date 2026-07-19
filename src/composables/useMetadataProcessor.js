@@ -1,6 +1,6 @@
 import jsonld from 'jsonld'
 import { toRaw } from 'vue'
-import store from '@/store/index.js'
+import store from '@/store'
 
 const _baseApiURL = `${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`.replace(/^https?:\/\//, '')
 const _apiURL = new URL(`${import.meta.env.VITE_APP_DTS_ENDPOINT_URL}`)  // URL complète parsée

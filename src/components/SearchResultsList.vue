@@ -38,16 +38,17 @@
                 class="input-wrapper"
               >
                 <input
-                  v-model="filters[col.key]"
+                  :value="filters[col.key] || ''"
                   class="filter"
                   type="text"
                   @click.stop
+                  @input="onFilterInput(col.key, $event.target.value)"
                 >
                 <svg
                   v-if="filters[col.key]"
                   class="clear-icon"
                   viewBox="0 0 24 24"
-                  @click.stop="filters[col.key] = ''"
+                  @click.stop="clearFilter(col.key)"
                 >
                   <circle cx="12" cy="12" r="10"/>
                   <line x1="15" y1="9" x2="9" y2="15"/>
@@ -229,7 +230,6 @@ import { useTable } from '@/composables/useTable.js'
 
 import SortIcon from '@/assets/images/SortIcon.vue'
 import Pagination from '@/components/Pagination.vue'
-import useSimpleSearch from '@/composables/use-simple-search'
 
 
 export default {
@@ -243,26 +243,28 @@ name: 'CollectionTOC',
   props: {
     data: { type: Array, required: true },
     columnsConfig: { type: Array, required: true },
-    currentPage: { type: Number, default: 1 },
     pageSize: { type: Number, default: 10 },
     isDocProjectIdIncluded: Boolean,
     rootCollectionIdentifier: String,
     counts: { type: Number },
-    isElasticSearch: Boolean,
     totalBuckets: { type: Number },
     isTableLoading: Boolean,
-    isWithHighlights: Boolean
+    isWithHighlights: Boolean,
+    filters: { type: Object }
   },
+  emits: [
+    'filter-change',
+    'sort-change'
+  ],
 
-  setup(props) {
+  setup(props, { emit }) {
     const isDocProjectIdInc = computed(() => props.isDocProjectIdIncluded)
     // STATE
-    const currentPage = ref(props.currentPage)
+    const currentPage = ref(1)
     const dataSource = computed(() => props.data || [])
     const isTableLoading = computed(() => props.isTableLoading)
     const pageSize = ref(props.pageSize)
     const resultsCounts = computed(() => props.counts)
-    const isElasticSearch = computed(() => props.isElasticSearch || false)
     const bucketsCount = computed(() => props.totalBuckets)
 
     // TABLE
@@ -298,25 +300,23 @@ name: 'CollectionTOC',
 
     })
 
-    //const table = useTable(dataSource, columns, pageSize, currentPage)
-    const remoteTotalResults = computed(() =>
-      isHighlights.value && bucketsCount.value > 0
-        ? bucketsCount.value
-        : resultsCounts.value
-    )
+    const table = useTable(dataSource, columns, pageSize, currentPage)
 
-    const table = useTable(dataSource, columns, {
-      pageSize,
-      currentPage,
-      remote: isElasticSearch,
-      totalResults: remoteTotalResults
-    })
+    const filters = computed(() => props.filters || {})
+
+    const onFilterInput = (key, value) => {
+      emit('filter-change', { key, value })
+    }
+
+    const clearFilter = (key) => {
+      emit('filter-change', { key, value: '' })
+    }
 
     // FILTERS INIT
-    const filters = computed({
-      get: () => table.filters.value,
-      set: (val) => (table.filters.value = val)
-    })
+    // const filters = computed({
+    //   get: () => table.filters.value,
+    //   set: (val) => (table.filters.value = val)
+    // })
 
     // SORT
     const sort = computed(() => table.sort.value)
@@ -330,22 +330,6 @@ name: 'CollectionTOC',
     const getRowValue = (row, key) => {
       return table.getValue(row, key)
     }
-    const search = useSimpleSearch()
-
-    watch(currentPage, async (page) => {
-      if (isElasticSearch.value) {
-        store.commit('search/setSearchPage', page < 1 ? 1 : page)
-
-        await search.execute()
-      }
-    })
-
-    watch(
-      () => props.currentPage,
-      page => {
-        currentPage.value = page
-      }
-    )
 
     watch(() => columns.value, (cols) => {
       if (!cols?.length) return
@@ -520,6 +504,8 @@ name: 'CollectionTOC',
       columns,
       table,
       filters,
+      onFilterInput,
+      clearFilter,
       sort,
       totalPages,
       totalResults,

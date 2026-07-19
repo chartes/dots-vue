@@ -1,164 +1,336 @@
-import { reactive, readonly, ref, watchEffect, computed } from 'vue'
+import {computed, watch, watchEffect} from 'vue'
 import { debounce } from 'lodash'
+import { useStore } from 'vuex'
 import useApi from '@/composables/use-api'
 
-const _baseApiURL = `${import.meta.env.VITE_ELASTICSEARCH_URL}`
+const _baseApiURL = import.meta.env.VITE_ELASTICSEARCH_URL
 
-export default function useSimpleSearch () {
+export default function useSimpleSearch() {
+  const store = useStore()
   const api = useApi()
 
-  // --- STATE ---
-  const term = ref('')
-  const ranges = reactive({})
-  const sorts = ref('')
-  const pageNum = ref(1)
-  const pageSize = ref(25)
-  const result = ref([])
-  const totalCount = ref(0)
-  const bucketCount = ref(0)
-  const afterKey = ref(null)
-  const noHighlight = ref(false)
-  const isFulltextSearch = ref(true)
-  const collectionId = ref(null)
-  const isResourceSearch = computed(() => {
-    // si on a un terme, ce n’est pas une recherche resources
-    if (term.value && term.value.trim() !== '') return false
-    // si on a un collectionId et pas de term → resource search
-    return !!collectionId.value
+  const searchState = computed(() => {
+    const pid = store.state.search.activeProjectId
+    if (!pid) return null
+    return store.state.search.byProject[pid]
   })
+
+  // ----------------------
+  // DERIVED (safe)
+  // ----------------------
+  const isResourceSearch = computed(() => {
+    const s = searchState.value
+    if (!s) return false
+    return !s.term || s.term.trim() === '' ? !!s.collectionId : false
+  })
+
   const groupbyField = computed(() => {
-    return !isResourceSearch.value && term.value ? 'resource_id' : ''
+    const s = searchState.value
+    if (!s) return ''
+    return !isResourceSearch.value && s.term ? 'resource_id' : ''
   })
 
   const withIds = computed(() => {
-    // Si on fait une recherche fulltext (terme présent) et qu’on veut récupérer tous les hits, on peut mettre 10000
-    return term.value && term.value.trim() !== '' ? 10000 : 0
+    const s = searchState.value
+    if (!s) return 0
+    return s.term?.trim() ? 10000 : 0
   })
 
+  const pageCount = computed(() => {
+    const s = searchState.value
+    if (!s) return 0
+    return Math.ceil((s.totalCount || 0) / (s.pageSize || 1))
+  })
 
+  // ----------------------
+  // MUTATIONS
+  // ----------------------
+  const setSearchCollectionId = v => store.commit('search/setSearchCollectionId', v)
+  const setNoHighlight = v => store.commit('search/setNoHighlight', v)
+  const setTerm = v => store.commit('search/setSearchTerm', v)
+  const setSearchFilter = ({ key, value }) => store.commit('search/setSearchFilter', { key, value })
+  const setRange = (k, v) => store.commit('search/setSearchRange', { key: k, value: v })
+  const setSorts = v => store.commit('search/setSearchSorts', v)
+  const setPageNum = v => store.commit('search/setSearchPage', v)
+  const setCollectionId = v => store.commit('search/setSearchActiveCollection', v)
+  const setProject = v => store.commit('search/setSearchProject', v)
+  const setIsFulltextSearch = v => store.commit('search/setSearchIsFulltextSearch', v)
+  const setFacet = ({ facetType, value }) =>
+    store.commit('search/setFacet', {
+      facetType,
+      value
+  })
 
-  // --- COMPUTED ---
-  const pageCount = computed(() => Math.ceil(totalCount.value / pageSize.value))
+  const saveSnapshot = () => store.commit('search/saveSearchSnapshot')
+  const restoreSnapshot = dir => store.commit('search/restoreSearchSnapshot', dir)
 
-  // --- SETTERS ---
-  const setIsFulltextSearch = (val) => { isFulltextSearch.value = val }
-  const setTerm = (t) => { term.value = t }
-  const setRange = (key, ops) => { ranges[key] = ops }
-  const setSorts = (s) => { sorts.value = s }
-  const setPageNum = (num) => { pageNum.value = num }
-  const setNoHighlight = (b) => { noHighlight.value = b }
-  const setGroupbyField = (field) => { groupbyField.value = field }
-  const setWithIds = (flag) => { withIds.value = flag }
-  const setCollectionId = (id) => {
-    collectionId.value = id
-    isResourceSearch.value = !!id
-  }
+  // ----------------------
+  // QUERY
+  // ----------------------
+  function updateQuery() {
+    const s = searchState.value
+    if (!s) return
 
-  // --- BUILD QUERY ---
-  function updateQuery () {
-
-    // let filtersArg = ''
-    // if (collectionId.value) {
-    //   filtersArg += `&filters[path_ids]=${collectionId.value}`
+    // let rangesArg = ''
+    // for (const k in s.ranges) {
+    //   rangesArg += `&range[${k}]=${s.ranges[k]}`
     // }
-
     let rangesArg = ''
-    for (const rangeName in ranges) {
-      rangesArg += `&range[${rangeName}]=${ranges[rangeName]}`
+
+    // Object.entries(s.ranges || {}).forEach(([field, range]) => {
+    //   const params = []
+    //
+    //   if (range.gte != null) {
+    //     params.push(`gte:${range.gte}`)
+    //   }
+    //
+    //   if (range.lte != null) {
+    //     params.push(`lte:${range.lte}`)
+    //   }
+    //
+    //   if (params.length) {
+    //     rangesArg += `&range[${field}]=${params.join(',')}`
+    //   }
+    // })
+    Object.entries(s.ranges || {}).forEach(([field, range]) => {
+
+
+  // ---------- intervalle historique ----------
+  if (range.startField && range.endField) {
+
+    if (range.lte != null) {
+      rangesArg +=
+        `&range[${range.startField}]=lte:${range.lte}`
     }
 
-    let sortArg = sorts.value ? `&sort=${sorts.value}` : ''
-    const highlightArg = noHighlight.value ? '&no-highlight' : ''
-    const termValue = !isResourceSearch.value ? (term.value || '***') : ''
+    if (range.gte != null) {
+      rangesArg +=
+        `&range[${range.endField}]=gte:${range.gte}`
+    }
+
+    return
+  }
+
+
+  // ---------- intervalle simple ----------
+  if (range.gte != null || range.lte != null) {
+
+    const params = []
+
+    if (range.gte != null)
+      params.push(`gte:${range.gte}`)
+
+    if (range.lte != null)
+      params.push(`lte:${range.lte}`)
+
+    if (params.length) {
+      rangesArg +=
+        `&range[${field}]=${params.join(',')}`
+    }
+
+  }
+
+})
+
+    const sortArg = s.sorts ? `&sort=${s.sorts}` : ''
+    const highlightArg = s.noHighlight ? '&no-highlight' : ''
+    const termValue = !isResourceSearch.value ? (s.term || '***') : ''
 
     let groupbyArg = ''
     if (groupbyField.value) {
       groupbyArg = `&groupby[field]=${groupbyField.value}`
       if (withIds.value) groupbyArg += `&groupby[with-ids]=${withIds.value}`
-      if (afterKey.value) groupbyArg += `&groupby[after-page]=${afterKey.value}`
+      //if (s.afterKey) groupbyArg += `&groupby[after-page]=${s.afterKey}`
     }
 
-    let collectionsArg = ''
-    if (collectionId.value) {
-      collectionsArg = `&collectionId=${collectionId.value}`
+    let afterArg = ''
+    if (s.noHighlight === false && s.pageNum > 1) {
+      afterArg = `&after=${s.afterKeys[s.pageNum - 1]}`
     }
 
-    console.log('useSimpleSearch isResourceSearch.value collectionId.value', isResourceSearch.value, collectionId.value, groupbyArg)
+    const collectionArg =
+      s.collectionId || s.activeCollectionId
+        ? `&collectionId=${s.collectionId || s.activeCollectionId}`
+        : ''
+    console.log('searchPage before api.setQuery',{
+      term: s.term,
+      's.activeCollectionId': s.activeCollectionId,
+      's.collectionId': s.collectionId,
+      isResourceSearch: isResourceSearch.value,
+      termValue
+    })
 
-    if (isResourceSearch.value && collectionId.value) {
-      // --- mode Resource-only par collection ---
-      // ✅ On passe collectionId au backend et backend injectera type.keyword=Resource + path_ids.keyword
-      api.setQuery(
-        `${_baseApiURL}/search?query=&page[number]=${pageNum.value}&page[size]=${pageSize.value}${sortArg}${rangesArg}${highlightArg}${collectionsArg}`
-      )
-    } else {
-      // --- mode fulltext classique ---
-      api.setQuery(
-        `${_baseApiURL}/search?query=${encodeURIComponent(termValue)}${sortArg}&page[number]=${pageNum.value}&page[size]=${pageSize.value}${highlightArg}${groupbyArg}${collectionsArg}`
-      )
+    // SEARCH FILTERS
+    let filterArgs = ''
+
+    const filters = Object.entries(s.filters || {})
+      .filter(([, value]) => value)
+
+    if (filters.length) {
+      filterArgs =
+        'filters=' +
+        filters
+          .map(([field, value]) =>
+            `resource_metadata.dublincore.${field}:${encodeURIComponent(value)}`
+          )
+          .join(',')
     }
+
+    // SEARCH FACETS
+    let facetArgs = ''
+    //10juillet2026 Object.entries(s.facets.selected).forEach(([facetType, values]) => {
+    //   values.forEach(value => {
+    //     facetArgs += `&${facetType}=[${encodeURIComponent(value)}]`
+    //   })
+    // })
+    const selectedFacets = Object.fromEntries(
+      Object.entries(s.facets.selected)
+        .filter(([, values]) => values.length > 0)
+    )
+
+    if (Object.keys(selectedFacets).length) {
+
+      facetArgs =
+        `&facets=${encodeURIComponent(
+          JSON.stringify(selectedFacets)
+        )}`
+
+    }
+
+    api.setQuery(
+      `${_baseApiURL}/search?query=${encodeURIComponent(termValue)}&${filterArgs}&page[number]=${s.pageNum}&page[size]=${s.pageSize}${sortArg}${highlightArg}${groupbyArg}${collectionArg}${facetArgs}${rangesArg}${afterArg}`
+    )
+    console.log('searchPage api.setQuery',{
+      term: s.term,
+      activeCollectionId: s.activeCollectionId,
+      isResourceSearch: isResourceSearch.value,
+      termValue
+    })
+    console.log('searchPage final query', `${_baseApiURL}/search?query=${encodeURIComponent(termValue)}&${filterArgs}&page[number]=${s.pageNum}&page[size]=${s.pageSize}${sortArg}${highlightArg}${groupbyArg}${collectionArg}${facetArgs}${rangesArg}${afterArg}`)
   }
 
-  watchEffect(() => updateQuery(), { flush: 'post' })
+  watch(
+    () => [
+      searchState.value?.term,
+      searchState.value?.pageNum,
+      searchState.value?.pageSize,
+      searchState.value?.filters,
+      searchState.value?.ranges,
+      searchState.value?.sorts,
+      searchState.value?.collectionId,
+      searchState.value?.noHighlight,
+      searchState.value?.afterKey,
+      JSON.stringify(searchState.value?.facets?.selected),
+    ],
+    updateQuery,
+    { immediate: true, deep: true }  // garde le comportement initial de watchEffect
+  )
 
-  // --- EXECUTE QUERY ---
+  // ----------------------
+  // EXECUTE QUERY ---
+  // ----------------------
   const execute = debounce(async () => {
-    if (!api.query.value) return
+    const pid = store.state.search.activeProjectId
+    if (!pid) return
 
-    await api.runQuery()
+    store.commit('search/setSearchLoading', true)
 
-    if (api.error.value) {
-      console.error('API error:', api.error.value)
-      return
-    }
+    try {
+      if (!api.query.value) return
 
-    const _res = api.result.value
-    console.log('API result:', api.result.value)
+      await api.runQuery()
 
-    if (groupbyField.value) {
-      // --- GROUPED RESULTS ---
-      result.value = _res.buckets || []
-      totalCount.value = _res['total-count'] || 0
-      bucketCount.value = _res['bucket-count'] || 0
-      afterKey.value = _res['after-key'] || null
-    } else {
-      // --- PAGINATED RESULTS ---
-      result.value = _res.data || []
-      totalCount.value = _res['total-count'] || 0
-      bucketCount.value = 0
-      afterKey.value = null
+      const _res = api.result.value
+      console.log('searchPage API result:', _res)
+
+      if (!_res) return
+
+      // -----------------------------
+      // NORMALISATION FORMAT BACKEND
+      // -----------------------------
+
+      const hasBuckets = Array.isArray(_res.buckets)
+      console.log('searchPage hasBuckets ', hasBuckets)
+
+      let res = {}
+
+      if (hasBuckets) {
+        res = {
+          data: _res,
+          buckets: _res.buckets || null,
+          total_count: _res.total_count ?? _res['total-count'] ?? 0,
+          bucket_count: _res.bucket_count ?? _res['bucket-count'] ?? null,
+          after_key: _res.after_key ?? _res['after-key'] ?? null,
+          facets: _res.facets ?? _res['facets'] ?? {},
+          highlight_patterns: _res.highlight_patterns ?? [],
+          temporal: _res.temporal ?? {}
+        }
+      } else {
+        res = {
+          data: _res.data,
+          buckets: _res.buckets || null,
+          total_count: _res.total_count ?? _res['total-count'] ?? 0,
+          bucket_count: _res.bucket_count ?? _res['bucket-count'] ?? null,
+          after_key: _res.after_key ?? _res['after-key'] ?? null,
+          facets: _res.facets ?? _res['facets'] ?? {},
+          highlight_patterns: _res.highlight_patterns ?? [],
+          temporal: _res.temporal ?? {}
+        }
+      }
+
+      console.log('searchPage result res: ', res)
+
+      store.commit('search/setSearchResult', res)
+
+    } catch (e) {
+      console.error('search execute error', e)
+    } finally {
+      store.commit('search/setSearchLoading', false)
     }
   }, 150)
 
+  // ----------------------
+  // API EXPOSED
+  // ----------------------
   return {
-    // state
-    term: readonly(term),
-    ranges: readonly(ranges),
-    sorts: readonly(sorts),
-    pageNum: readonly(pageNum),
-    pageSize: readonly(pageSize),
-    pageCount,
-    result: readonly(result),
-    totalCount: readonly(totalCount),
-    bucketCount: readonly(bucketCount),
-    afterKey: readonly(afterKey),
-    noHighlight: readonly(noHighlight),
-    isFulltextSearch: readonly(isFulltextSearch),
+    term: computed(() => searchState.value?.term || ''),
+    filters: computed(() => searchState.value?.filters || {}),
+    ranges: computed(() => searchState.value?.ranges || {}),
+    sorts: computed(() => searchState.value?.sorts || ''),
+    pageNum: computed(() => searchState.value?.pageNum || 1),
+    pageSize: computed(() => searchState.value?.pageSize || 25),
 
-    // setters
+    result: computed(() => searchState.value?.result || []),
+    openedFacets: computed(() => searchState.value?.openedFacets || []),
+    facets: computed(() => searchState.value?.facets || {}),
+    initialFacets: computed(() => searchState.value?.initialFacets || { available: {} }),
+    temporal: computed(() => searchState.value?.temporal ?? []),
+    initialTemporal: computed(() => searchState.value?.initialTemporal ?? {}),
+    totalCount: computed(() => searchState.value?.totalCount || 0),
+    bucketCount: computed(() => searchState.value?.bucketCount || null),
+    loading: computed(() => searchState.value?.loading || false),
+
+    isFulltextSearch: computed(() => searchState.value?.isFulltextSearch ?? true),
+    isResultTableMode: computed(() => searchState.value?.isResultTableMode ?? true),
+
+    pageCount,
+    setNoHighlight,
     setTerm,
+    setSearchFilter,
     setRange,
     setSorts,
     setPageNum,
-    setNoHighlight,
-    setGroupbyField,
-    setWithIds,
-    setIsFulltextSearch,
+    setSearchCollectionId,
     setCollectionId,
+    setProject,
+    setIsFulltextSearch,
+    setFacet,
 
-    // actions
+    saveSnapshot,
+    restoreSnapshot,
+
     execute,
-    loading: readonly(api.loading),
-    error: readonly(api.error)
+
+    error: computed(() => api.error.value)
   }
 }

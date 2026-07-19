@@ -102,7 +102,7 @@ export default {
     'change'
   ],
   setup (props, context) {
-    const state = reactive({
+    const openedState = reactive({
       isTreeOpened: props.toc.filter(item => item.identifier === props.collectionIdentifier)[0].expanded
     })
 
@@ -196,7 +196,7 @@ export default {
       // Add the collection to the expanded list
       expandedById.value[collId] = !expandedById.value[collId]
       // Expand the Tree
-      state.isTreeOpened = !state.isTreeOpened
+      openedState.isTreeOpened = !openedState.isTreeOpened
       console.log('toggleExpanded after expandedById[collectionId] : ', collId, expandedById.value)
     }
 
@@ -229,7 +229,7 @@ export default {
     }
 
     const modalCssClass = computed(() => {
-      return state.isTreeOpened ? 'is-tree-opened' : ''
+      return openedState.isTreeOpened ? 'is-tree-opened' : ''
     })
 
     watch(props, (newProps) => {

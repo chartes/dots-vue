@@ -61,10 +61,11 @@
 </template>
 
 <script>
-import { defineAsyncComponent, ref, watch } from 'vue'
+import {computed, defineAsyncComponent, ref, watch} from 'vue'
 import { getCoverDataFromApi, getDocumentFromApi } from '@/api/document'
 import { useRoute } from 'vue-router'
 import TOC from '@/components/TOC.vue'
+import { useStore } from 'vuex'
 import { router } from '@/router'
 import { previousRoute } from '@/router'
 
@@ -79,6 +80,7 @@ export default {
 
   async setup (props, { emit }) {
     // Declare route to capture route hash (used in scrollTo()) to display selected Table Of Content items below the editorial level
+    const store = useStore()
     const route = useRoute()
     const isDocProjectIdInc = ref(props.isDocProjectIdIncluded)
     const mediaType = ref(props.mediaTypeEndpoint)
@@ -165,6 +167,7 @@ export default {
 
       // Generate PageBreak components for each iiif canvas link encoded in the DoTS response
       console.log('Document.vue finding pb facs with iiif', tmpDom.querySelectorAll('a.pb[href*="iiif"]'))
+      console.log('Document.vue finding pb facs with iiif manifest.value', manifest.value)
 
       if (mediaType.value === 'html' && manifest.value) {
         const allPageBeginning = Array.from(tmpDom.querySelectorAll('a.pb[href*="iiif"]'))
@@ -396,6 +399,7 @@ export default {
         if (el) {
           const yOffset = -90
           const y = el.getBoundingClientRect().top + window.scrollY + yOffset
+
           console.log('Document.vue (scrollBehavior) scrollTo y : ', y)
           window.scrollTo({ top: y, behavior: 'instant' })
         }
@@ -421,6 +425,7 @@ export default {
 
       initAsideNotes()
       updateSideNotes()
+      highlightSearchPatterns(highlightPatterns.value)
     }
     const hasNotes = ref(false)
     let asideNotesParent = null
@@ -577,6 +582,87 @@ export default {
       return doc.querySelector('section.footnotes') !== null || doc.querySelector('a.noteref') !== null
     }
 
+    const highlightPatterns = computed(() => {
+      const pid = store.state.search.activeProjectId
+      return store.state.search.byProject?.[pid]?.highlightPatterns || []
+    })
+
+    function escapeRegex(text) {
+      return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    }
+
+    function buildRegex(pattern) {
+      switch (pattern.type) {
+        case 'word':
+          return new RegExp(`\\b${escapeRegex(pattern.value)}\\b`, 'giu')
+
+        case 'phrase':
+          return new RegExp(escapeRegex(pattern.value), 'giu')
+
+        case 'prefix':
+          return new RegExp(`\\b${escapeRegex(pattern.value)}\\p{L}*`, 'giu')
+
+        default:
+          return null
+      }
+    }
+
+    function highlightSearchPatterns(patterns) {
+      console.log('Document.vue highlight patterns', patterns)
+
+      if (!patterns?.length) return
+
+      const regexes = patterns
+        .map(buildRegex)
+        .filter(Boolean)
+
+      const article =
+        document.getElementById('article') ||
+        document.querySelector('tei')
+
+      console.log('Document.vue highlight article', article)
+
+      if (!article) return
+
+      const walker = document.createTreeWalker(
+        article,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode(node) {
+            if (
+              !node.parentElement ||
+              ['SCRIPT', 'STYLE', 'MARK'].includes(node.parentElement.tagName)
+            ) {
+              return NodeFilter.FILTER_REJECT
+            }
+
+            return regexes.some(regex => regex.test(node.textContent))
+              ? NodeFilter.FILTER_ACCEPT
+              : NodeFilter.FILTER_REJECT
+          }
+        }
+      )
+
+      const nodes = []
+      while (walker.nextNode()) {
+        nodes.push(walker.currentNode)
+      }
+
+      console.log('Document.vue highlight text nodes found', nodes.length)
+
+      nodes.forEach(node => {
+        let html = node.textContent
+
+        regexes.forEach(regex => {
+          html = html.replace(regex, '<mark class="search-highlight">$&</mark>')
+        })
+
+        const span = document.createElement('span')
+        span.innerHTML = html
+        node.parentNode.replaceChild(span, node)
+      })
+    }
+
 
 
     watch(props, (newProps) => {
@@ -631,3 +717,11 @@ header {
   @import '@/assets/css/tei.css';
 </style>
 <style src="@/assets/css/postprod.css" />
+<style scoped>
+
+:deep(mark.search-highlight) {
+  background-color: #ffe066 !important;
+  font-weight: bold !important;
+}
+
+</style>

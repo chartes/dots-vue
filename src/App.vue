@@ -218,9 +218,11 @@ export default {
       if (collectionId.value !== rootCollectionIdentifier.value) {
         console.log('App.vue setCurrentCollectionContext get project', collectionId.value, rootCollectionIdentifier.value)
         projectCollId.value = await getProjectFromApi(collectionId.value)
+        store.commit('setProjectId', projectCollId.value)
         await getBreadcrumb(collectionId.value)
       } else {
         projectCollId.value = ''
+        store.commit('setProjectId', rootCollectionIdentifier.value)
         breadCrumb.value = []
       }
       console.log('App.vue setCurrentCollectionContext projectCollId.value : ', projectCollId.value)
