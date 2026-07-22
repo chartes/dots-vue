@@ -800,9 +800,13 @@ export default {
       const configFacets =
         collConfig.value?.searchConfig?.facets || []
 
+      const collectionsConfig =
+        configFacets.find(
+          f => f.id === 'collections'
+        )
 
       //
-      if (available.collections) {
+      if (available.collections  && collectionsConfig?.enabled !== false) {
 
         const currentCollections = Object.fromEntries(
           available.collections.map(f => [
