@@ -10,7 +10,7 @@ function createEmptySearchState() {
     ranges: {},
     sorts: '',
     pageNum: 1,
-    pageSize: 1000,
+    pageSize: 25,
 
     result: [],
     bucketCount: null,
