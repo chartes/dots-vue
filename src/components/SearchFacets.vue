@@ -1,8 +1,15 @@
 <template>
   <div class="search-facets">
-    <h2 class="title">
-      Filtres
-    </h2>
+    <div
+      class="title filters-header"
+      @click="toggleAllFacets"
+    >
+      <span>Filtres</span>
+      <i
+        class="arrow"
+        :class="{ opened: allOpened }"
+      />
+    </div>
 
     <div
       v-for="facet in orderedFacets"
@@ -168,6 +175,24 @@ const facetShowAll = ref({})
 function isOpen(facetId){
     return props.openedFacets.includes(facetId)
 }
+
+const allOpened = computed(() => {
+  const ids = orderedFacets.value.map(f => f.id)
+  return ids.length > 0 &&
+    ids.every(id => props.openedFacets.includes(id))
+})
+
+function toggleAllFacets() {
+
+  const ids = orderedFacets.value.map(f => f.id)
+
+  if (allOpened.value) {
+    ids.forEach(id => emit('facet-close', id))
+  } else {
+    ids.forEach(id => emit('facet-open', id))
+  }
+}
+
 
 function toggleOpen(facetId){
     if (isOpen(facetId)) {
@@ -352,6 +377,15 @@ watch(
   display:flex;
   flex-direction:column;
   gap:1rem;
+}
+
+.filters-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+  user-select:none;
+  margin:0;
 }
 
 .facet-box{
