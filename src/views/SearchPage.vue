@@ -824,7 +824,7 @@ export default {
 
         result.push({
           id: 'collections',
-          label: 'Collections',
+          label: collectionsConfig?.label || 'Collections',
           values: collections,
           order: 0
         })
