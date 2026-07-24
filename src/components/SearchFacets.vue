@@ -48,10 +48,7 @@
         <!-- ===================== -->
 
         <template v-else>
-          <div
-            v-if="facet.values?.length > 10"
-            class="facet-search"
-          >
+          <div class="facet-search">
             <input
               class="facet-input"
               type="text"
@@ -261,6 +258,61 @@ const orderedFacets = computed(()=>{
     )
 })
 
+// function filteredFacetValues(facetId, values) {
+//
+//     const term =
+//         (facetFilters.value[facetId] || '')
+//             .trim()
+//             .toLowerCase()
+//
+//     const selected = values.filter(v =>
+//         isSelected(facetId, v)
+//     )
+//
+//     let matching = values
+//
+//     if (!getFacetShowAll(facetId)) {
+//         matching = term
+//             ? values.filter(v =>
+//                 (v.label || v.value || '')
+//                     .toLowerCase()
+//                     .includes(term)
+//             )
+//             : []
+//
+//     }
+//
+//     else if (term) {
+//         matching = values.filter(v =>
+//             (v.label || v.value || '')
+//                 .toLowerCase()
+//                 .includes(term)
+//         )
+//     }
+//
+//     const result = [
+//         ...selected,
+//         ...matching.filter(
+//             v => !selected.includes(v)
+//         ).sort((a,b)=>
+//         (a.label || a.value || '')
+//         .localeCompare(
+//             (b.label || b.value || ''),
+//             'fr',
+//             { sensitivity:'base' }
+//         )
+//     )
+//     ]
+//     return result
+//     // return result.sort((a,b)=>
+//     //     (a.label || a.value || '')
+//     //     .localeCompare(
+//     //         (b.label || b.value || ''),
+//     //         'fr',
+//     //         { sensitivity:'base' }
+//     //     )
+//     // )
+// }
 function filteredFacetValues(facetId, values) {
 
     const term =
@@ -268,47 +320,123 @@ function filteredFacetValues(facetId, values) {
             .trim()
             .toLowerCase()
 
-    const selected = values.filter(v =>
-        isSelected(facetId, v)
-    )
+    const showAll = getFacetShowAll(facetId)
 
-    let matching = values
+    /*
+     * 1) Valeurs actuellement sélectionnées
+     * Même si Elasticsearch ne les renvoie plus dans la facette
+     */
+    const selectedKeys = props.activeFacets
+        .filter(f => f.facetType === facetId)
+        .map(f =>
+            f.raw ??
+            f.facet_key ??
+            f.value ??
+            f.id
+        )
 
-    if (!getFacetShowAll(facetId)) {
-        matching = term
-            ? values.filter(v =>
-                (v.label || v.value || '')
-                    .toLowerCase()
-                    .includes(term)
-            )
-            : []
 
-    }
+    const selectedFromActive = selectedKeys.map(key => {
 
-    else if (term) {
-        matching = values.filter(v =>
+        const existing = values.find(v =>
+            (
+                v.facet_key ??
+                v.value ??
+                v.id
+            ) === key
+        )
+
+        if (existing) {
+            return existing
+        }
+
+        // valeur sélectionnée absente de l'agg ES
+        return {
+            facet_key: key,
+            value: key,
+            label: key,
+            count: 0,
+            selected: true
+        }
+    })
+
+
+    /*
+     * 2) Valeurs disponibles venant d'Elasticsearch
+     */
+    let available = values.filter(v => {
+
+      const key =
+          v.facet_key ??
+          v.value ??
+          v.id
+
+      const matchesTerm =
+          !term ||
+          (v.label || v.value || '')
+              .toLowerCase()
+              .includes(term)
+
+      const hasCount =
+          (v.count ?? 0) > 0
+
+      return (
+          !selectedKeys.includes(key) &&
+          (
+              hasCount ||
+              showAll ||
+              (term && matchesTerm)
+          )
+      )
+    })
+
+    /*
+     * 3) Filtre texte
+     */
+    if (term) {
+        available = available.filter(v =>
             (v.label || v.value || '')
                 .toLowerCase()
                 .includes(term)
         )
     }
 
-    const result = [
-        ...selected,
-        ...matching.filter(
-            v => !selected.includes(v)
-        )
-    ]
 
-    return result.sort((a,b)=>
+    /*
+     * 4) Respect du Show all
+     */
+    if (!getFacetShowAll(facetId) && !term) {
+        available = []
+    }
+
+
+    /*
+     * 5) Tri alpha
+     */
+    const sortAlpha = (a,b) =>
         (a.label || a.value || '')
-        .localeCompare(
-            (b.label || b.value || ''),
-            'fr',
-            { sensitivity:'base' }
-        )
-    )
+            .localeCompare(
+                (b.label || b.value || ''),
+                'fr',
+                {
+                    sensitivity:'base'
+                }
+            )
+
+
+    selectedFromActive.sort(sortAlpha)
+    available.sort(sortAlpha)
+
+
+    /*
+     * 6) Sélectionnés en premier
+     */
+    return [
+        ...selectedFromActive,
+        ...available
+    ]
 }
+
 
 function isSelected(facetId, item){
 
@@ -339,7 +467,7 @@ function toggleFacet(facetId, item) {
         isCollection: facetId === 'collections'
 
     })
-  // Réinitialiser le filtre de cette facette
+    // Réinitialiser le filtre de cette facette
     facetFilters.value[facetId] = ''
 
     // Facultatif : remettre aussi "Show all"
