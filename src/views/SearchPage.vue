@@ -924,6 +924,15 @@ export default {
                     ? `#${passageId}`
                     : ''
       })*/
+      if (passageId === '__DOCUMENT__') {
+        return {
+          name: 'Document',
+          params,
+          query: {},
+          hash: ''
+        }
+      }
+
       return {
         name: 'Document',
         params,

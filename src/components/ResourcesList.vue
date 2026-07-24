@@ -437,7 +437,11 @@ name: 'CollectionTOC',
       const parts = [
         ...(hit.ancestors || []).map(getLabel),
         getLabel(hit)
-      ]
+      ].filter(Boolean)
+
+      if (!parts || parts.length === 0) {
+        return 'Document entier'
+      }
 
       return parts.filter(Boolean).join(' > ')
     }
