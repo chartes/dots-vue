@@ -207,7 +207,7 @@ function setFacetFilter(facetId, value) {
 function getFacetShowAll(facetId) {
 
     if (facetShowAll.value[facetId] === undefined) {
-        facetShowAll.value[facetId] = true
+        facetShowAll.value[facetId] = false
     }
 
     return facetShowAll.value[facetId]
@@ -313,8 +313,130 @@ const orderedFacets = computed(()=>{
 //     //     )
 //     // )
 // }
+// function filteredFacetValues(facetId, values) {
+//
+//     const term =
+//         (facetFilters.value[facetId] || '')
+//             .trim()
+//             .toLowerCase()
+//
+//     const showAll = getFacetShowAll(facetId)
+//
+//     /*
+//      * 1) Valeurs actuellement sélectionnées
+//      * Même si Elasticsearch ne les renvoie plus dans la facette
+//      */
+//     const selectedKeys = props.activeFacets
+//         .filter(f => f.facetType === facetId)
+//         .map(f =>
+//             f.raw ??
+//             f.facet_key ??
+//             f.value ??
+//             f.id
+//         )
+//
+//
+//     const selectedFromActive = selectedKeys.map(key => {
+//
+//         const existing = values.find(v =>
+//             (
+//                 v.facet_key ??
+//                 v.value ??
+//                 v.id
+//             ) === key
+//         )
+//
+//         if (existing) {
+//             return existing
+//         }
+//
+//         // valeur sélectionnée absente de l'agg ES
+//         return {
+//             facet_key: key,
+//             value: key,
+//             label: key,
+//             count: 0,
+//             selected: true
+//         }
+//     })
+//
+//
+//     /*
+//      * 2) Valeurs disponibles venant d'Elasticsearch
+//      */
+//     let available = values.filter(v => {
+//
+//       const key =
+//           v.facet_key ??
+//           v.value ??
+//           v.id
+//
+//       const matchesTerm =
+//           !term ||
+//           (v.label || v.value || '')
+//               .toLowerCase()
+//               .includes(term)
+//
+//       const hasCount =
+//           (v.count ?? 0) > 0
+//
+//       return (
+//           !selectedKeys.includes(key) &&
+//           (
+//               hasCount ||
+//               showAll ||
+//               (term && matchesTerm)
+//           )
+//       )
+//     })
+//
+//     /*
+//      * 3) Filtre texte
+//      */
+//     if (term) {
+//         available = available.filter(v =>
+//             (v.label || v.value || '')
+//                 .toLowerCase()
+//                 .includes(term)
+//         )
+//     }
+//
+//
+//     /*
+//      * 4) Respect du Show all
+//      */
+//     if (!getFacetShowAll(facetId) && !term) {
+//         available = []
+//     }
+//
+//
+//     /*
+//      * 5) Tri alpha
+//      */
+//     const sortAlpha = (a,b) =>
+//         (a.label || a.value || '')
+//             .localeCompare(
+//                 (b.label || b.value || ''),
+//                 'fr',
+//                 {
+//                     sensitivity:'base'
+//                 }
+//             )
+//
+//
+//     selectedFromActive.sort(sortAlpha)
+//     available.sort(sortAlpha)
+//
+//
+//     /*
+//      * 6) Sélectionnés en premier
+//      */
+//     return [
+//         ...selectedFromActive,
+//         ...available
+//     ]
+// }
 function filteredFacetValues(facetId, values) {
-
     const term =
         (facetFilters.value[facetId] || '')
             .trim()
@@ -322,35 +444,15 @@ function filteredFacetValues(facetId, values) {
 
     const showAll = getFacetShowAll(facetId)
 
-    /*
-     * 1) Valeurs actuellement sélectionnées
-     * Même si Elasticsearch ne les renvoie plus dans la facette
-     */
     const selectedKeys = props.activeFacets
         .filter(f => f.facetType === facetId)
-        .map(f =>
-            f.raw ??
-            f.facet_key ??
-            f.value ??
-            f.id
-        )
-
+        .map(f => f.raw ?? f.facet_key ?? f.value ?? f.id)
 
     const selectedFromActive = selectedKeys.map(key => {
-
         const existing = values.find(v =>
-            (
-                v.facet_key ??
-                v.value ??
-                v.id
-            ) === key
+            (v.facet_key ?? v.value ?? v.id) === key
         )
-
-        if (existing) {
-            return existing
-        }
-
-        // valeur sélectionnée absente de l'agg ES
+        if (existing) return existing
         return {
             facet_key: key,
             value: key,
@@ -360,26 +462,12 @@ function filteredFacetValues(facetId, values) {
         }
     })
 
-
-    /*
-     * 2) Valeurs disponibles venant d'Elasticsearch
-     */
     let available = values.filter(v => {
-
-      const key =
-          v.facet_key ??
-          v.value ??
-          v.id
-
+      const key = v.facet_key ?? v.value ?? v.id
       const matchesTerm =
           !term ||
-          (v.label || v.value || '')
-              .toLowerCase()
-              .includes(term)
-
-      const hasCount =
-          (v.count ?? 0) > 0
-
+          (v.label || v.value || '').toLowerCase().includes(term)
+      const hasCount = (v.count ?? 0) > 0
       return (
           !selectedKeys.includes(key) &&
           (
@@ -390,53 +478,23 @@ function filteredFacetValues(facetId, values) {
       )
     })
 
-    /*
-     * 3) Filtre texte
-     */
     if (term) {
         available = available.filter(v =>
-            (v.label || v.value || '')
-                .toLowerCase()
-                .includes(term)
+            (v.label || v.value || '').toLowerCase().includes(term)
         )
     }
 
+    // étape 4 supprimée
 
-    /*
-     * 4) Respect du Show all
-     */
-    if (!getFacetShowAll(facetId) && !term) {
-        available = []
-    }
-
-
-    /*
-     * 5) Tri alpha
-     */
     const sortAlpha = (a,b) =>
         (a.label || a.value || '')
-            .localeCompare(
-                (b.label || b.value || ''),
-                'fr',
-                {
-                    sensitivity:'base'
-                }
-            )
-
+            .localeCompare((b.label || b.value || ''), 'fr', { sensitivity:'base' })
 
     selectedFromActive.sort(sortAlpha)
     available.sort(sortAlpha)
 
-
-    /*
-     * 6) Sélectionnés en premier
-     */
-    return [
-        ...selectedFromActive,
-        ...available
-    ]
+    return [...selectedFromActive, ...available]
 }
-
 
 function isSelected(facetId, item){
 
@@ -468,10 +526,10 @@ function toggleFacet(facetId, item) {
 
     })
     // Réinitialiser le filtre de cette facette
-    facetFilters.value[facetId] = ''
+    //facetFilters.value[facetId] = ''
 
     // Facultatif : remettre aussi "Show all"
-    facetShowAll.value[facetId] = true
+    //facetShowAll.value[facetId] = true
 
 }
 
