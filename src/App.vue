@@ -296,8 +296,6 @@ export default {
             ? collectionIdFromStore
             : undefined
 
-          await setCurrentCollectionContext(route)
-
           // Setting root, project and collection configs
 
           await applyCollectionConfig(collectionIdFromStore)
