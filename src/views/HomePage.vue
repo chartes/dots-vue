@@ -495,6 +495,7 @@ export default {
     let currentRunId = 0
     const isTableLoading = ref(true)
     const resultCount = ref(0)
+
     const listOfResources = async (items, runId) => {
       //console.log('HomePage listOfResources items', items)
       if (!Array.isArray(items)) return []
@@ -562,6 +563,7 @@ export default {
     async () => {
         currentRunId++
         const runId = currentRunId
+        resultCount.value = 0
 
 
         let base = componentTOC.value || []
