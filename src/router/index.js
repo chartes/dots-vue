@@ -74,7 +74,7 @@ if (isDocProjectIdIncluded) {
         props: true
       },
       {
-        path: '/:collId?/:customPage',
+        path: '/:collId/:customPage',
         name: 'CustomPage',
         component: () => import('@/views/CustomPageLoader.vue'),
         props: true
