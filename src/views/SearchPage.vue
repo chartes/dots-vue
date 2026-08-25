@@ -880,13 +880,25 @@ export default {
       let refId = null
 
       // --- priorité : editByCiteType ---
+
       if (passageTocSettings?.editByCiteType?.length) {
-        const match = ancestors.find(a =>
-          passageTocSettings.editByCiteType.includes(a.citeType?.toLowerCase())
-        )
-        if (match) {
-          //console.log('searchPage debug matching refId by editByCiteType', passageTocSettings, match.id)
-          refId = match.id
+        // Passage is itself a match
+        if (
+          hit.citeType &&
+          passageTocSettings.editByCiteType.includes(hit.citeType.toLowerCase())
+        ) {
+          refId = passageId
+        } else {
+          // else check ancestors
+          const match = ancestors.find(a =>
+            a.citeType &&
+            passageTocSettings.editByCiteType.includes(a.citeType.toLowerCase())
+          )
+
+          if (match) {
+            //console.log('searchPage debug matching refId by editByCiteType', passageTocSettings, match.id)
+            refId = match.id
+          }
         }
       }
 
