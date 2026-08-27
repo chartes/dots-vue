@@ -624,6 +624,7 @@
         :is-with-highlights="!!(isFulltextSearch && inputTerm.trim() && inputTerm.trim().length > 0)"
         :filters="filters"
         @filter-change="updateFilter"
+        @sort-change="updateSort"
       /><!--v-if="tableData.length > 0"-->
     </div>
   </div>
@@ -960,125 +961,59 @@ export default {
 
     const tocSettings = collConfig.value?.tableOfContentsSettings
 
-    const getDisplayValue = (source, path) => {
-      const raw = path.split('.').reduce((acc, key) => acc?.[key], source)
-
-      if (raw == null) return '—'
-
-      // ARRAY
-      if (Array.isArray(raw)) {
-        return raw
-          .map(item => {
-            if (item == null) return null
-            if (typeof item === 'object') {
-              return item['@value'] || item.value || item.label || null
-            }
-            return item
-          })
-          .filter(Boolean)
-          .join(', ')
-      }
-
-      // OBJECT
-      if (typeof raw === 'object') {
-        return raw['@value'] || raw.value || raw.label || '—'
-      }
-
-      return raw
-    }
-
-    const buildRowFromColumns = (source) => {
-      // fallback si aucune config → comportement actuel
-      if (!columns.value.length) {
-        return {
-          identifier: source.resource_id || '—',
-          title: source.title || '—',
-          creator: source.creator || '—',
-          date: source.date || '—',
-          coverage: source.coverage || '—'
-        }
-      }
-
-      const row = {
-        identifier: source.resource_id || source.identifier || '—'
-      }
-
-      columns.value.forEach(col => {
-        if (!col) return
-
-        const key = col.field || col.key
-        if (!key) return
-
-        row[key] = getDisplayValue(source, key)
-      })
-
-      return row
-    }
 
     const tableData = computed(() => {
       const result = search.result.value
-      console.log('searchPage RESULT', result)
-      console.log('searchPage facets', search.facets.value)
+
       if (!result) return []
 
-      // --- Cas groupé (buckets) ---
+      // Cas groupé (buckets)
       if (Array.isArray(result.buckets)) {
         console.log('searchPage buckets', result.buckets)
-        return result?.buckets?.map(bucket => {
-          const baseRow = buildRowFromColumns(bucket)
+        return result.buckets.map(bucket => ({
+          ...bucket,
+          identifier: bucket.resource_id || bucket.identifier || '—',
 
-          return {
-            ...baseRow,
+          hits: (bucket.hits || []).map(hit => {
+            const normalizedHit = {
+              passageId: hit.passage_id,
+              title: hit.title || null,
+              citeType: hit.citeType || null,
+              level: hit.level,
+              ancestors: hit.ancestors || [],
+              highlight: hit.highlight || {}
+            }
 
-            hits: (bucket.hits || []).map(hit => {
-              const normalizedHit = {
-                passageId: hit.passage_id,
-                title: hit.title || null,
-                citeType: hit.citeType || null,
-                level: hit.level,
-                ancestors: hit.ancestors || [],
-                highlight: hit.highlight || {}
-              }
+            const route = buildPassageUrl(
+              bucket.resource_id,
+              normalizedHit,
+              tocSettings,
+              collectionId.value,
+              bucket.collection_ids?.[0],
+              props.isDocProjectIdIncluded
+            )
 
-              const route = buildPassageUrl(
-                  bucket.resource_id,
-                  normalizedHit,
-                  tocSettings,
-                  collectionId.value,
-                  bucket.collection_ids?.[0],
-                  props.isDocProjectIdIncluded
-              )
-
-              let passageUrl = {}
-
-              if (route) {
-                passageUrl = router.resolve(route)
-                //passageUrl = new URL(href, window.location.origin).href
-              }
-
-              return {
-                ...normalizedHit,
-                passageUrl
-              }
-            })
-          }
-        })
+            return {
+              ...normalizedHit,
+              passageUrl: route ? router.resolve(route) : {}
+            }
+          })
+        }))
       }
 
-      // --- Cas “tableau direct” ---
+      // Cas tableau direct
       if (Array.isArray(result)) {
         return result.map(item => ({
-          ...buildRowFromColumns({
-            ...item,
-            ...item.fields
-          }),
-          details: [] // pas de hits dans ce cas
+          ...item,
+          ...item.fields,
+          identifier: item.resource_id || item.identifier || '—',
+          details: []
         }))
       }
 
       return []
     })
-    console.log('SearchPage table data', tableData)
+    console.log('SearchPage debug table data', tableData, search.result.value)
 
     const columns = computed(() => {
       const configCols =
@@ -1253,6 +1188,32 @@ export default {
       search.setPageNum(1)
     }
 
+    // SORT
+    const toElasticSortField = key => {
+      if (!key) return null
+
+      const field = [
+        'resource_metadata',
+        ...key.split('.')
+      ]
+        .map(part => part.toLowerCase())
+        .join('.')
+
+      return `${field}.keyword`
+    }
+
+    const updateSort = ({ key, direction }) => {
+      if (!key || direction === 'none') {
+        inputSort.value = null
+        return
+      }
+
+      const elasticField = toElasticSortField(key)
+
+      inputSort.value = direction === 'desc'
+        ? `-${elasticField}`
+        : elasticField
+    }
 
 
     async function executeSearches() {
@@ -1607,7 +1568,7 @@ export default {
     watch(inputSort, () => {
       search.setSorts(inputSort.value)
       search.setPageNum(1)
-      search.executeSearches()
+      executeSearches()
     })
 
     watch(
@@ -1675,6 +1636,7 @@ export default {
       filters,
       updateFilter,
       inputSort,
+      updateSort,
       onrollActive,
       openedFacets,
       onTemporalChange,

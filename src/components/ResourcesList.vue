@@ -14,89 +14,122 @@
       <!-- HEADER -->
       <li class="list-header">
         <div class="li container header">
-          <div
-            v-for="col in columns"
-            :key="col.key"
-            class="cell header-cell"
-          >
-            <span>{{ col.label }}</span>
-
-            <div class="cell header-cell-fields">
-              <!-- SORT -->
-              <SortIcon
-                class="icons"
-                :state="sort.key === col.key ? sort.direction : 'none'"
-                :type="col.type || 'string'"
-                fg-color="white"
-                :size="32"
-                @click="toggleSort(col)"
-              />
-
-              <!-- FILTER -->
-              <div
-                v-if="!col.type || col.type !== 'range'"
-                class="input-wrapper"
-              >
-                <input
-                  v-model="filters[col.key]"
-                  class="filter"
-                  type="text"
-                  @click.stop
-                >
-                <svg
-                  v-if="filters[col.key]"
-                  class="clear-icon"
-                  viewBox="0 0 24 24"
-                  @click.stop="filters[col.key] = ''"
-                >
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="15" y1="9" x2="9" y2="15"/>
-                  <line x1="9" y1="9" x2="15" y2="15"/>
-                </svg>
+          <!-- ============================= -->
+          <!-- ELASTIC SEARCH / HIGHLIGHTS   -->
+          <!-- ============================= -->
+          <template v-if="isElasticSearch">
+            <div
+              v-for="col in columns"
+              :key="col.key"
+              class="cell header-cell search"
+            >
+              <div class="cell header-cell-fields">
+                <SortIcon
+                  class="icons"
+                  :state="sort.key === col.key ? sort.direction : 'none'"
+                  :type="col.type || 'string'"
+                  fg-color="white"
+                  :size="32"
+                  @click="toggleSort(col)"
+                />
+                <span>{{ col.label }}</span>
               </div>
+            </div>
+            <!-- Chevron column -->
+            <div
+              v-if="isHighlights"
+              class="cell header-cell chevron-header-cell"
+            />
+          </template>
+          <!-- ============================= -->
+          <!-- NORMAL                        -->
+          <!-- ============================= -->
+          <template v-else>
+            <div
+              v-for="col in columns"
+              :key="col.key"
+              class="cell header-cell"
+            >
+              <span>{{ col.label }}</span>
 
-              <div
-                v-else
-                class="range-filter"
-                @click.stop
-              >
-                <div class="input-wrapper">
+              <div class="cell header-cell-fields">
+                <!-- SORT -->
+                <SortIcon
+                  class="icons"
+                  :state="sort.key === col.key ? sort.direction : 'none'"
+                  :type="col.type || 'string'"
+                  fg-color="white"
+                  :size="32"
+                  @click="toggleSort(col)"
+                />
+
+                <!-- FILTER -->
+                <div
+                  v-if="!col.type || col.type !== 'range'"
+                  class="input-wrapper"
+                >
                   <input
-                    v-model="filters[col.key].from"
-                    type="number"
-                    placeholder="de"
+                    v-model="filters[col.key]"
+                    class="filter"
+                    type="text"
+                    @click.stop
                   >
                   <svg
-                    v-if="filters[col.key].from"
+                    v-if="filters[col.key]"
                     class="clear-icon"
                     viewBox="0 0 24 24"
-                    @click.stop="filters[col.key].from = ''"
+                    @click.stop="filters[col.key] = ''"
                   >
                     <circle cx="12" cy="12" r="10"/>
                     <line x1="15" y1="9" x2="9" y2="15"/>
                     <line x1="9" y1="9" x2="15" y2="15"/>
                   </svg>
                 </div>
-                <div class="input-wrapper">
-                  <input
-                    v-model="filters[col.key].to"
-                    type="number"
-                    placeholder="à"
-                  >
-                  <svg
-                    v-if="filters[col.key].to"
-                    class="clear-icon"
-                    viewBox="0 0 24 24"
-                    @click.stop="filters[col.key].to = ''"
-                  >
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="15" y1="9" x2="9" y2="15"/>
-                    <line x1="9" y1="9" x2="15" y2="15"/>
-                  </svg>
+
+                <!-- RANGE FILTER -->
+                <div
+                  v-else
+                  class="range-filter"
+                  @click.stop
+                >
+                  <div class="input-wrapper">
+                    <input
+                      v-model="filters[col.key].from"
+                      type="number"
+                      placeholder="de"
+                    >
+                    <svg
+                      v-if="filters[col.key].from"
+                      class="clear-icon"
+                      viewBox="0 0 24 24"
+                      @click.stop="filters[col.key].from = ''"
+                    >
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="15" y1="9" x2="9" y2="15"/>
+                      <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                  </div>
+                  <div class="input-wrapper">
+                    <input
+                      v-model="filters[col.key].to"
+                      type="number"
+                      placeholder="à"
+                    >
+                    <svg
+                      v-if="filters[col.key].to"
+                      class="clear-icon"
+                      viewBox="0 0 24 24"
+                      @click.stop="filters[col.key].to = ''"
+                    >
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="15" y1="9" x2="9" y2="15"/>
+                      <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </template>
         </div>
       </li>
 
@@ -130,29 +163,28 @@
                 :class="{ 'is-selected': isOpen(item.identifier) }"
                 @click="toggle(item.identifier)"
               >
+                <!-- DONNÉES -->
                 <div
                   v-for="col in columns"
                   :key="col.key"
                   class="cell"
-                  :class="col.key === 'chevron' ? isOpen(item.identifier) ? 'chevron-down' : 'chevron-up' : ''"
                 >
-                  <!-- colonne chevron -->
-                  <template v-if="col.key === 'chevron'">
-                    <a
-                      href="#"
-                      @click.stop.prevent="toggle(item.identifier)"
-                    ></a>
-                  </template>
-
-                  <!-- 📄 autres colonnes -->
-                  <template v-else>
-                    <a
-                      href="#"
-                      @click="$event.preventDefault()"
-                    >
-                      {{ getRowValue(item, col.key) }}
-                    </a>
-                  </template>
+                  <a
+                    href="#"
+                    @click.prevent
+                  >
+                    {{ getRowValue(item, col.key) }}
+                  </a>
+                </div>
+                <!-- CHEVRON -->
+                <div class="cell" :class="isOpen(item.identifier) ? 'chevron-down' : 'chevron-up'">
+                  <a
+                    href="#"
+                    :aria-expanded="isOpen(item.identifier)"
+                    aria-label="Afficher les résultats"
+                    @click.stop.prevent="toggle(item.identifier)"
+                  >
+                  </a>
                 </div>
               </div>
             </li>
@@ -185,7 +217,7 @@
           </template>
         </template>
 
-        <!-- 📄 MODE NORMAL (inchangé) -->
+        <!-- NON SEARCH MODE -->
         <template v-else>
           <li
             v-for="item in paginated"
@@ -253,8 +285,11 @@ name: 'CollectionTOC',
     isTableLoading: Boolean,
     isWithHighlights: Boolean
   },
+  emits: [
+    'sort-change'
+  ],
 
-  setup(props) {
+  setup(props, { emit }) {
     const isDocProjectIdInc = computed(() => props.isDocProjectIdIncluded)
     // STATE
     const currentPage = ref(props.currentPage)
@@ -286,12 +321,6 @@ name: 'CollectionTOC',
       if (isHighlights.value && bucketsCount?.value > 0) {
         return [
           ...baseCols,
-          {
-            key: 'chevron',
-            label: '',
-            type: 'icon',
-            width: '40px'
-          }
         ]
       }
       return baseCols
@@ -362,6 +391,7 @@ name: 'CollectionTOC',
 
     // TEXT
     const documentCount = computed(() => {
+      //console.log('ResoucesList resultsCounts.value', resultsCounts.value)
       return isHighlights.value && bucketsCount?.value > 0
         ? (bucketsCount?.value ?? 0)
         : resultsCounts.value
@@ -393,36 +423,46 @@ name: 'CollectionTOC',
       if (sort.value.key !== col.key) {
         sort.value.key = col.key
         sort.value.direction = 'asc'
-        return
+      } else {
+        switch (sort.value.direction) {
+          case 'none':
+            sort.value.direction = 'asc'
+            break
+          case 'asc':
+            sort.value.direction = 'desc'
+            break
+          case 'desc':
+            sort.value.direction = 'none'
+            sort.value.key = null
+            break
+        }
       }
 
-      switch (sort.value.direction) {
-        case 'none':
-          sort.value.direction = 'asc'
-          break
-        case 'asc':
-          sort.value.direction = 'desc'
-          break
-        case 'desc':
-          sort.value.direction = 'none'
-          sort.value.key = null
-          break
-      }
+      emit('sort-change', {
+        key: sort.value.key,
+        direction: sort.value.direction,
+        column: col
+      })
     }
 
     // DYNAMIC COLUMNS CSS
     const gridTemplateColumns = computed(() => {
       const cols = columns.value || []
+      const chevronWidth = '40px'
 
-      if (!cols.length) return ''
-
-      // Width defined in conf.json files → use it
-      if (cols.some(col => col.width)) {
-        return cols.map(col => col.width || '1fr').join(' ')
+      if (!cols.length) {
+        return chevronWidth
       }
 
-      // else → equal columns width
-      return `repeat(${cols.length}, 1fr)`
+      const widths = cols.some(col => col.width)
+        ? cols.map(col => col.width || '1fr')
+        : Array(cols.length).fill('1fr')
+
+      if (isHighlights.value) {
+        return [...widths, chevronWidth].join(' ')
+      } else {
+        return [...widths].join(' ')
+      }
     })
 
     // DOCUMENT BREADCRUMB
@@ -442,7 +482,7 @@ name: 'CollectionTOC',
       if (!parts || parts.length === 0) {
         return 'Document entier'
       }
-
+      //console.log('ResourcesList buildbreadcrumb hit.ancestors parts : ', hit.ancestors, parts, hit)
       return parts.filter(Boolean).join(' > ')
     }
 
@@ -621,7 +661,12 @@ name: 'CollectionTOC',
   cursor: pointer;
 
   font-weight: 500 !important;
+}
 
+.list-mode .header-cell.search {
+  border-bottom: 3px solid #DCDCDC;
+  padding-bottom: 3px;
+  margin-bottom: 15px;
 }
 
 /* ROW */

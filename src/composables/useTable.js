@@ -28,18 +28,46 @@ export function useTable(dataSource, columns, options = {}) {
   const getValue = (obj, path) => {
       const parts = path.replace(/\[(\d+)\]/g, '.$1').split('.')
 
-      const result = parts.reduce((acc, part) => {
-        if (Array.isArray(acc)) {
-          return acc.map(item => item?.[part])
-        }
-        return acc?.[part]
-      }, obj)
+    const result = parts.reduce((acc, part) => {
+      if (acc == null) return undefined
 
-      if (Array.isArray(result)) {
-        return result.filter(v => v != null).join(', ')
+      if (Array.isArray(acc)) {
+        return acc.map(item => {
+          if (item == null) return undefined
+
+          // Exact matching
+          if (Object.prototype.hasOwnProperty.call(item, part)) {
+            return item[part]
+          }
+
+          // Case insensitive matching
+          const matchingKey = Object.keys(item).find(
+            key => key.toLowerCase() === part.toLowerCase()
+          )
+
+          return matchingKey ? item[matchingKey] : undefined
+        })
       }
-      return result
+
+      // Exact matching
+      if (Object.prototype.hasOwnProperty.call(acc, part)) {
+        return acc[part]
+      }
+
+      // Case insensitive matching
+      const matchingKey = Object.keys(acc).find(
+        key => key.toLowerCase() === part.toLowerCase()
+      )
+
+      return matchingKey ? acc[matchingKey] : undefined
+    }, obj)
+
+    if (Array.isArray(result)) {
+      return result.filter(v => v != null).join(', ')
     }
+
+    return result
+  }
 
   // Filtering
   const filtered = computed(() => {
@@ -63,14 +91,71 @@ export function useTable(dataSource, columns, options = {}) {
   })
 
   // Sorting
+  const getSortValue = (obj, path) => {
+  const parts = path
+    .replace(/\[(\d+)\]/g, '.$1')
+    .split('.')
+
+  const result = parts.reduce((acc, part) => {
+    if (acc == null) return undefined
+
+    if (Array.isArray(acc)) {
+      return acc.map(item => {
+        if (item == null) return undefined
+
+        if (Object.prototype.hasOwnProperty.call(item, part)) {
+          return item[part]
+        }
+
+        const matchingKey = Object.keys(item).find(
+          key => key.toLowerCase() === part.toLowerCase()
+        )
+
+        return matchingKey ? item[matchingKey] : undefined
+      })
+    }
+
+    if (Object.prototype.hasOwnProperty.call(acc, part)) {
+      return acc[part]
+    }
+
+    const matchingKey = Object.keys(acc).find(
+      key => key.toLowerCase() === part.toLowerCase()
+    )
+
+    return matchingKey ? acc[matchingKey] : undefined
+  }, obj)
+
+  if (Array.isArray(result)) {
+    const values = result.filter(v => v != null)
+
+    if (!values.length) return undefined
+
+    // Same logic as Elasticsearch :
+    // asc  → minimum value of array
+    // desc → maximum value of array
+    return values.reduce((selected, current) => {
+      const comparison = String(current).localeCompare(String(selected))
+
+      if (sort.value.direction === 'asc') {
+        return comparison < 0 ? current : selected
+      }
+
+      return comparison > 0 ? current : selected
+    })
+  }
+
+  return result
+}
+
   const sorted = computed(() => {
     if (!sort.value.key || sort.value.direction === 'none') {
       return filtered.value
     }
 
     return [...filtered.value].sort((a, b) => {
-      const aVal = getValue(a, sort.value.key)
-      const bVal = getValue(b, sort.value.key)
+      const aVal = getSortValue(a, sort.value.key)
+      const bVal = getSortValue(b, sort.value.key)
 
       if (aVal == null) return 1
       if (bVal == null) return -1
