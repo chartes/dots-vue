@@ -1353,7 +1353,9 @@ export default {
       }
 
       const endTimeBuildTOC = new Date()
-      console.log('TimeBuildTOC : ', endTimeBuildTOC - startTimeBuildTOC)
+      //console.log('TimeBuildTOC : ', endTimeBuildTOC - startTimeBuildTOC)
+      console.log(`TimeBuildTOC : ${((endTimeBuildTOC - startTimeBuildTOC) / 1000).toFixed(3)} s`)
+
 
       if (!editorialTypesIsValid.value) {
         // topTOC.value = list_to_tree(flatTOC.value, editorialLevel.value)
@@ -1814,7 +1816,7 @@ export default {
               item => item.identifier === refId.value
             )
 
-            console.log('mirador updateDisplayedManifest refId/currentItem', refId.value, currentItem)
+            console.log('mirador updateDisplayedManifest refId/currentRes', refId.value, currentRes)
 
             const docManifestURL =
               currentRes?.extensions?.['dots:resourceIIIFManifest']
