@@ -1090,7 +1090,7 @@ export default {
           .map(col => ({
             key: col.key || col.field,
             label: col.label || (col.key || col.field),
-            type: col.type || 'text',
+            type: col.type || 'string',
             width: col.width
           }))
       }
