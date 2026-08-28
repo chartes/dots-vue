@@ -607,6 +607,7 @@
     </div>
     <div
       class="document-list app-width-margin list-mode"
+      :class="openedFacets.length > 0 ? 'with-opened-facets' : ''"
     >
       <!-- <span>search {{ tableData }}</span> -->
       <ResourcesList
@@ -1686,6 +1687,21 @@ export default {
 }
 </script>
 <style scoped>
+.document-list {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 60px;
+  padding-top: 25px;
+  padding-bottom: 25px;
+
+  &.with-opened-facets {
+    margin-top: 0;
+    padding-top: 0;
+  }
+}
+
 a {
   border-bottom: none;
 }

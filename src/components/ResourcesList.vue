@@ -6,7 +6,10 @@
     :is-table-loading="isTableLoading"
     :documents-count-text="resultsSummaryText"
   />
-  <div class="list-mode-wrapper">
+  <div
+    class="list-mode-wrapper"
+    :class="totalPages > 1 ? 'with-bottom-pagination' : 'without-bottom-pagination'"
+  >
     <ul
       class="tree list-mode"
       :style="{ '--grid-template-columns': gridTemplateColumns }"
@@ -250,6 +253,7 @@
     :total-pages="totalPages"
     :is-table-loading="isTableLoading"
     documents-count-text=""
+    class="pagination-bottom"
   />
 </template>
 
@@ -590,6 +594,14 @@ name: 'CollectionTOC',
   margin-bottom: 18px;
 }
 
+.pagination-bottom {
+  padding-top: 20px;
+}
+
+.list-mode .pagination-bottom {
+  border-bottom: none;
+}
+
 /* GLOBAL */
 .list-mode {
   width: 100%;
@@ -599,11 +611,15 @@ name: 'CollectionTOC',
 }
 .list-mode-wrapper {
   width: 100%;
+  border-bottom: 4px solid var(--fill-color);
+}
+
+.list-mode-wrapper.without-bottom-pagination {
+  margin-bottom: 98px;
 }
 
 .list-mode .tree {
   padding-bottom: 36px;
-  border-bottom: 2px solid var(--fill-color);
 }
 
 .list-header {
