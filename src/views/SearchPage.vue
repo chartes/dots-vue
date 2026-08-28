@@ -1192,11 +1192,20 @@ export default {
     const toElasticSortField = key => {
       if (!key) return null
 
+      const parts = key.split('.')
+
       const field = [
         'resource_metadata',
-        ...key.split('.')
+        ...parts
       ]
-        .map(part => part.toLowerCase())
+        .map((part, index) => {
+          // Seuls les champs issus de dublinCore sont normalisés en lowercase
+          if (parts[0] === 'dublinCore') {
+            return part.toLowerCase()
+          }
+
+          return part
+        })
         .join('.')
 
       return `${field}.keyword`
