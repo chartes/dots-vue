@@ -133,6 +133,16 @@ const props = defineProps({
     }
 
 })
+
+const emit = defineEmits([
+    'toggle-facet',
+    'facet-open',
+    'facet-close',
+    'change-range',
+    'reset-range',
+    'reset-facet'
+])//'apply-collections'
+
 watch(
   () => props.ranges,
   ranges => {
@@ -157,14 +167,7 @@ watch(
   }
 )
 
-const emit = defineEmits([
-    'toggle-facet',
-    'facet-open',
-    'facet-close',
-    'change-range',
-    'reset-range',
-    'reset-facet'
-])//'apply-collections'
+
 
 const facetFilters = ref({})
 const facetShowAll = ref({})
