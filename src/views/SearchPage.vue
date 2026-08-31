@@ -725,67 +725,60 @@ export default {
     }
 
     const visibleTemporal = computed(() => {
-
       const config =
         collConfig.value?.searchConfig?.temporalFacets || []
-
-
       const configMap = new Map(
         config.map(c => [c.id, c])
       )
 
+      // temporal.value a la même structure/clés que initialTemporal.value
+      // on suppose un accès par id, ex: temporal.value trouvé via .find ou déjà en Map/objet
+      const availableMap = new Map(
+        (Array.isArray(temporal.value) ? temporal.value : Object.values(temporal.value || {}))
+          .map(f => [f.id, f])
+      )
 
       return initialTemporal.value
-
         .map((facet, index) => {
-
           const c = configMap.get(facet.id)
+          const available = availableMap.get(facet.id)
 
           return {
             ...facet,
-
-            // configuration éventuelle
+            // if optional configuration exists
             label: c?.label || facet.label,
-
-            // ordre explicite sinon ordre backend
+            // explicit order otherwise backend order
             order: c?.order ?? null,
-
-            backendOrder: index
+            backendOrder: index,
+            // available range with current search criteria
+            // fallback on corpus min/max if missing (no results, etc.)
+            available_min: available?.min ?? facet.min,
+            available_max: available?.max ?? facet.max,
+            // range intersection of all resources
+            intersection: available?.intersection ?? facet.intersection ?? null
           }
-
         })
-
-        // exclusion explicite uniquement
+        // explicit exclusion only
         .filter(facet => {
-
           const c = configMap.get(facet.id)
-
           return c?.enabled !== false
-
         })
-
         .sort((a, b) => {
-
-          // les deux ont un ordre configuré
+          // both a & b are configured
           if (a.order != null && b.order != null) {
             return a.order - b.order
           }
-
-          // a configuré, b non
+          // a configured, not b
           if (a.order != null) {
             return a.order - b.backendOrder
           }
-
-          // b configuré, a non
+          // b configured, not a
           if (b.order != null) {
             return a.backendOrder - b.order
           }
-
-          // aucun ordre configuré :
-          // on respecte le backend
+          // none configured : use backend order
           return a.backendOrder - b.backendOrder
         })
-
     })
 
     const visibleFacets = computed(() => {

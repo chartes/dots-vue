@@ -361,8 +361,44 @@ name: 'CollectionTOC',
     const paginated = computed(() => table.paginated.value)
 
     const getRowValue = (row, key) => {
-      return table.getValue(row, key)
+
+      const value = table.getValue(row, key)
+
+      const col = columns.value.find(col => col.key === key)
+
+      // Seules les colonnes de type date sont
+      // soumises à la validation temporelle.
+      if (col?.type !== 'date') {
+        return value
+      }
+
+      const match = key.match(/^dublinCore\.(.+)$/i)
+
+      if (!match) {
+        return value
+      }
+
+      const field = match[1]
+
+      const start = table.getValue(
+        row,
+        `temporal.dublincore.${field}_start`
+      )
+
+      const end = table.getValue(
+        row,
+        `temporal.dublincore.${field}_end`
+      )
+
+      // La normalisation n'a pas produit les deux bornes :
+      // on n'affiche pas la date.
+      if (start == null || end == null) {
+        return ''
+      }
+
+      return value
     }
+
     const search = useSimpleSearch()
 
     watch(currentPage, async (page) => {
