@@ -407,6 +407,7 @@ export async function buildDisplayModel(rawMetadata, config) {
   ]
   const sourcesMap = config?.metadataLogosMapping ?? []
   const onlyDeclared       = excludeConfig.onlyDeclared   ?? false
+  const excludeAlways = excludeConfig.alwaysExclude ?? []
 
   const { metadata: rawJsonLd, appData } = splitMetadata(rawMetadata)
   console.log('buildDisplayModel rawJsonLd', rawJsonLd)
@@ -454,8 +455,28 @@ export async function buildDisplayModel(rawMetadata, config) {
 
   const DISPLAY_KEY_MAP = buildDisplayKeyMap(namespaces, renameMap)
 
+  // helper for isExcluded
+  function matchesPattern(key, pattern) {
+    if (pattern.endsWith(':*')) {
+      return key.startsWith(pattern.slice(0, -1))
+    }
+
+    return key === pattern
+  }
+
   // Construire un Set des champs exclus (support wildcard "dots:*")
   function isExcluded(key) {
+
+    // 1. Always excluded even if in 2.
+    if (
+      excludeAlways.some(pattern =>
+        matchesPattern(key, pattern)
+      )
+    ) {
+      return true
+    }
+
+    // 2. Explicitly defined in displayOrder
     const explicitAllowedKeys = new Set([
       ...displayOrder.filter(k => !isWildcard(k)),
       ...Object.values(renameMap)
@@ -467,13 +488,10 @@ export async function buildDisplayModel(rawMetadata, config) {
     */
     if (explicitAllowedKeys.has(key)) return false
 
-    return excludeFields.some(pattern => {
-      if (pattern.endsWith(':*')) {
-        const prefix = pattern.slice(0, -1) // "dots:"
-        return key.startsWith(prefix)
-      }
-      return key === pattern
-    })
+    // 3. Otherwise exclude those in fields
+    return excludeFields.some(pattern =>
+      matchesPattern(key, pattern)
+    )
   }
 
   const result = {}

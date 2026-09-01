@@ -84,6 +84,8 @@
     "excludeMetadata": {
       "onlyDeclared": false,
       "fields": [
+      ],
+      "alwaysExclude": [
         "dts:citationTrees"
       ]
     },
