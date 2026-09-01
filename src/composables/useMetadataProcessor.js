@@ -557,7 +557,9 @@ export async function buildDisplayModel(rawMetadata, config) {
     }
 
 
-    result[term] = enrichValue(val, term, sourcesMap)
+    //result[term] = enrichValue(val, term, sourcesMap)
+    const label = renameMap[term] ?? term
+    result[label] = enrichValue(val, term, sourcesMap)
 
     // Marquer TOUTES les clés candidates comme traitées
     for (const k of candidateKeys) handledKeys.add(k)
