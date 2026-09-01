@@ -366,34 +366,36 @@ name: 'CollectionTOC',
 
       const col = columns.value.find(col => col.key === key)
 
-      // Seules les colonnes de type date sont
-      // soumises à la validation temporelle.
-      if (col?.type !== 'date') {
-        return value
-      }
+      if (isElasticSearch.value) {
+        // En mode search les colonnes de type date sont
+        // soumises à la validation temporelle.
+        if (col?.type !== 'date') {
+          return value
+        }
 
-      const match = key.match(/^dublinCore\.(.+)$/i)
+        const match = key.match(/^dublinCore\.(.+)$/i)
 
-      if (!match) {
-        return value
-      }
+        if (!match) {
+          return value
+        }
 
-      const field = match[1]
+        const field = match[1]
 
-      const start = table.getValue(
-        row,
-        `temporal.dublincore.${field}_start`
-      )
+        const start = table.getValue(
+          row,
+          `temporal.dublincore.${field}_start`
+        )
 
-      const end = table.getValue(
-        row,
-        `temporal.dublincore.${field}_end`
-      )
+        const end = table.getValue(
+          row,
+          `temporal.dublincore.${field}_end`
+        )
 
-      // La normalisation n'a pas produit les deux bornes :
-      // on n'affiche pas la date.
-      if (start == null || end == null) {
-        return ''
+        // La normalisation n'a pas produit les deux bornes :
+        // on n'affiche pas la date.
+        if (start == null || end == null) {
+          return ''
+        }
       }
 
       return value
