@@ -306,6 +306,17 @@ export default {
       },
       { immediate: true }
     )
+
+    function mergeConfig(...configs) {
+      return _.mergeWith({}, ...configs, (objValue, srcValue) => {
+        if (Array.isArray(srcValue)) {
+          return _.cloneDeep(srcValue)
+        }
+
+        return undefined
+      })
+    }
+
     async function applyCollectionConfig(collectionIdFromStore) {
       collConfigReady.value = false
 
@@ -333,7 +344,7 @@ export default {
           }
 
           rootCollConfig.value = rootCollectionOverrides
-            ? _.merge({}, appConfig.value.genericConf, rootCollectionOverrides)
+            ? mergeConfig({}, appConfig.value.genericConf, rootCollectionOverrides)
             : appConfig.value.genericConf
 
           rootShortTitle.value = rootCollConfig.value
@@ -355,7 +366,7 @@ export default {
             projectCollectionOverrides.homePageSettings.pageHeader.aboutButtonText = 'about'
           }
 
-          projectCollConfig.value = _.merge({}, rootCollConfig.value, projectCollectionOverrides)
+          projectCollConfig.value = mergeConfig({}, rootCollConfig.value, projectCollectionOverrides)
 
           let collectionOverrides =
             appConfig.value.collectionsConf.find(
@@ -369,7 +380,7 @@ export default {
             collectionOverrides = projectCollConfig.value
           }
 
-          collConfig.value = _.merge({}, projectCollConfig.value, collectionOverrides)
+          collConfig.value = mergeConfig({}, projectCollConfig.value, collectionOverrides)
 
           if (collConfig.value.collectionCustomCss) {
             await getCustomCss()
