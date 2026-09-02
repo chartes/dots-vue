@@ -821,7 +821,9 @@ export default {
           id: 'collections',
           label: collectionsConfig?.label || 'Collections',
           values: collections,
-          order: 0
+          order: 0,
+          alphabetScroller: collectionsConfig?.alphabetScroller === true,
+          letterHeaders: collectionsConfig?.letterHeaders !== false
         })
       }
 
@@ -851,7 +853,11 @@ export default {
             values,
 
             order:
-              config?.order ?? 999
+              config?.order ?? 999,
+            alphabetScroller:
+              config?.alphabetScroller === true,
+            letterHeaders:
+              config?.letterHeaders !== false
 
           })
 

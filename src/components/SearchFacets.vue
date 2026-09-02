@@ -49,16 +49,16 @@
 
         <template v-else>
 
-    <template v-if="isAlphabetFacet(facet.id)">
-      <AlphabetFacetPicker
-        :items="alphabetItems(facet.id, facet.values)"
-        :selected-keys="alphabetSelectedKeys(facet.id)"
-        :label="facet.label"
-        :placeholder="`Rechercher ${facet.label}`"
-        :show-letter-headers="showLetterHeadersFor(facet.id)"
-        @toggle="(item) => toggleFacet(facet.id, item)"
-      />
-    </template>
+        <template v-if="facet.alphabetScroller">
+          <AlphabetFacetPicker
+            :items="alphabetItems(facet.id, facet.values)"
+            :selected-keys="alphabetSelectedKeys(facet.id)"
+            :label="facet.label"
+            :placeholder="`Rechercher ${facet.label}`"
+            :show-letter-headers="facet.letterHeaders"
+            @toggle="(item) => toggleFacet(facet.id, item)"
+          />
+        </template>
 
   <template v-else>
     <div class="facet-search">
@@ -187,15 +187,6 @@ watch(
 
 const facetFilters = ref({})
 const facetShowAll = ref({})
-const ALPHABET_FACET_IDS = ['dct:contributor', 'dct:creator', 'dct:language', 'dct:collection']
-const NO_LETTER_HEADERS_FACET_IDS = ['dct:language']
-
-function showLetterHeadersFor(facetId) {
-  return !NO_LETTER_HEADERS_FACET_IDS.includes(facetId)
-}
-function isAlphabetFacet(facetId) {
-  return ALPHABET_FACET_IDS.includes(facetId)
-}
 
 function alphabetSelectedKeys(facetId) {
   return props.activeFacets
@@ -296,7 +287,9 @@ const orderedFacets = computed(()=>{
             values: f.values,
             type: 'terms',
             facet: f,
-            order: f.order ?? 100
+            order: f.order ?? 100,
+            alphabetScroller: f.alphabetScroller === true,
+            letterHeaders: f.letterHeaders !== false
         })
 
     })
