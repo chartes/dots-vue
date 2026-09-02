@@ -32,6 +32,21 @@ function createEmptySearchState() {
     initialTemporal: [],
     temporal: [],
 
+    // Ids of the temporal facets that are explicitly disabled
+    // (searchConfig.temporalFacets, entries with "enabled": false). Sent to
+    // the API so it skips their aggregations. Empty => no restriction.
+    // Exclusion semantics, aligned with visibleTemporal: a facet missing
+    // from the config is still displayed, using the default label provided
+    // by the backend.
+    excludedTemporalFacets: [],
+
+    // Ids of the metadata facets that are explicitly disabled
+    // (searchConfig.facets, entries with "enabled": false). Sent to the API
+    // so it skips their aggregations. Empty => no restriction.
+    // Exclusion semantics, aligned with visibleFacets: a facet missing from
+    // the config is still displayed.
+    excludedFacets: [],
+
     noHighlight: false,
 
     isFulltextSearch: false,
@@ -245,6 +260,59 @@ export default {
       if (!s) return
 
       delete s.ranges[key]
+
+      invalidatePagination(s)
+    },
+
+    setSearchExcludedTemporalFacets(state, v) {
+      const s = getProject(state)
+      if (!s) return
+
+      const next = Array.isArray(v) ? v : []
+
+      const current = s.excludedTemporalFacets || []
+
+      // Order-insensitive comparison: only the composition matters
+      const isSame =
+        current.length === next.length &&
+        [...current].sort().join(',') === [...next].sort().join(',')
+
+      if (isSame) return
+
+      s.excludedTemporalFacets = next
+
+      // The set of facets returned by the API changes: the memorised
+      // initial bounds describe the previous set, so invalidate them.
+      s.initialTemporal = []
+      s.temporal = []
+    },
+
+    setSearchExcludedFacets(state, v) {
+      const s = getProject(state)
+      if (!s) return
+
+      const next = Array.isArray(v) ? v : []
+
+      const current = s.excludedFacets || []
+
+      const isSame =
+        current.length === next.length &&
+        [...current].sort().join(',') === [...next].sort().join(',')
+
+      if (isSame) return
+
+      s.excludedFacets = next
+
+      // The set of facets returned by the API changes: the memorised
+      // initial values describe the previous set, so invalidate them.
+      s.initialFacets = { available: {} }
+      s.facets.available = {}
+
+      // A facet that is now excluded must no longer filter the search:
+      // otherwise its selection would stay active but invisible.
+      next.forEach(id => {
+        delete s.facets.selected[id]
+      })
 
       invalidatePagination(s)
     },

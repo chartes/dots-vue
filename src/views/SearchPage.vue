@@ -724,6 +724,37 @@ export default {
       executeSearches()
     }
 
+    // Ids of the temporal facets that are explicitly disabled.
+    // Same declarative rule as disabledFacetIds below: a facet missing from
+    // the config is still displayed, using the backend default label
+    // (see `label: c?.label || facet.label` in visibleTemporal).
+    // Declaring an entry therefore customises it (label, order) or excludes it.
+    const disabledTemporalFacetIds = computed(() => {
+      const config =
+        collConfig.value?.searchConfig?.temporalFacets || []
+
+      return config
+        .filter(c => c.enabled === false)
+        .map(c => c.id)
+        .filter(Boolean)
+    })
+
+    // Ids of the metadata facets that are explicitly disabled.
+    // We send the DISABLED ones rather than the enabled ones, to match the
+    // rendering rule of visibleFacets below (`config?.enabled === false`):
+    // a facet missing from the config is still displayed. A partial config
+    // such as cid.conf.json (`[{ id: 'collections', enabled: false }]`) is
+    // therefore translated faithfully.
+    const disabledFacetIds = computed(() => {
+      const config =
+        collConfig.value?.searchConfig?.facets || []
+
+      return config
+        .filter(c => c.enabled === false)
+        .map(c => c.id)
+        .filter(Boolean)
+    })
+
     const visibleTemporal = computed(() => {
       const config =
         collConfig.value?.searchConfig?.temporalFacets || []
@@ -1585,6 +1616,24 @@ export default {
       { immediate: true }
     )
 
+    // immediate: true => the list lands in the store before the initial
+    // executeSearches() below, hence from the very first request onwards.
+    watch(
+      disabledTemporalFacetIds,
+      (ids) => {
+        search.setExcludedTemporalFacets(ids)
+      },
+      { immediate: true }
+    )
+
+    watch(
+      disabledFacetIds,
+      (ids) => {
+        search.setExcludedFacets(ids)
+      },
+      { immediate: true }
+    )
+
     const _pid = store.state.search.activeProjectId
     const _existingState = _pid ? store.state.search.byProject[_pid] : null
     const _hasResults = (_existingState?.totalCount ?? 0) > 0
@@ -1645,6 +1694,8 @@ export default {
       onTemporalChange,
       initialTemporal,
       visibleTemporal,
+      disabledTemporalFacetIds,
+      disabledFacetIds,
       visibleFacets,
       temporal,
       ranges,
