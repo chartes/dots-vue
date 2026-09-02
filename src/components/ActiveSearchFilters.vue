@@ -6,14 +6,18 @@
 
     <div class="active-filters-header">
 
-      <div class="active-filters-title">
-        Filtres actifs
-      </div>
-
+      <button
+        type="button"
+        class="collapse-btn"
+        @click="toggleCollapsed"
+      >
+        <span class="active-filters-title">Filtres actifs</span>
+        <i class="collapse-arrow" :class="{ opened: !collapsed }" />
+      </button>
 
       <!-- supprimer tous les filtres -->
       <svg
-        class="clear-icon"
+        class="clearall-icon"
         viewBox="0 0 24 24"
         @click.stop="clearAll"
       >
@@ -24,7 +28,7 @@
 
     </div>
 
-    <div class="filter-tags">
+     <div v-show="!collapsed" class="filter-tags">
 
       <!-- Facettes -->
       <span
@@ -69,7 +73,7 @@
   </div>
 </template>
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
 
@@ -93,6 +97,13 @@ const emit = defineEmits([
   'clear-all'
 ])
 
+// ajouts Charlie
+const collapsed = ref(false)
+
+function toggleCollapsed(){
+  collapsed.value = !collapsed.value
+}
+//
 const hasActiveFilters = computed(() => {
 
   return (
@@ -144,16 +155,79 @@ function clearAll(){
 </script>
 <style scoped>
 
+
+.active-filters {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid #e2e2e2;
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+}
+
 .active-filters-header {
-  display:flex;
+  display:inline-flex;
   align-items:center;
-  gap:.5rem;
+  gap:1rem;
 }
 
 .active-filters-title {
   font-weight:600;
 }
 
+.collapse-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.collapse-arrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #666;
+  transition: transform .15s ease;
+}
+
+.collapse-arrow.opened {
+  transform: rotate(180deg);
+}
+
+/*
+.active-filters {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid #e2e2e2;
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+}
+
+.active-filters-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: .75rem;
+}
+
+.active-filters-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+}
+  */
 .filter-tags {
   display:flex;
   flex-wrap:wrap;
@@ -183,8 +257,40 @@ function clearAll(){
   stroke-width:2;
 }
 
+.clearall-icon {
+  width:18px;
+  height:18px;
+
+  cursor:pointer;
+
+  fill:none;
+  stroke:#666;
+  stroke-width:2;
+}
+
 .clear-icon:hover {
   stroke:#b9192f;
+}
+
+.clearall-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  background: #fdecee;
+  color: #b9192f;
+  border: 1px solid #f3c4cb;
+  border-radius: 20px;
+  padding: .35rem .85rem;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.clearall-btn:hover {
+  background: #b9192f;
+  border-color: #b9192f;
+  color: #fff;
 }
 
 </style>

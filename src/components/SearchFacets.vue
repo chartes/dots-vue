@@ -48,41 +48,56 @@
         <!-- ===================== -->
 
         <template v-else>
-          <div class="facet-search">
-            <input
-              class="facet-input"
-              type="text"
-              :value="facetFilters[facet.id] || ''"
-              @input="setFacetFilter(
-                facet.id,
-                $event.target.value
-              )"
-              :placeholder="`Filtrer ${facet.label}`"
-            >
-            <button
-              type="button"
-              class="facet-eye-btn"
-              @click="toggleFacetShowAll(facet.id)"
-            >
-              {{ getFacetShowAll(facet.id) ? 'Hide' : 'Show all' }}
-            </button>
-          </div>
-          <label
-            v-for="item in filteredFacetValues(facet.id, facet.values)"
-            :key="item.facet_key || item.value"
-            class="checkbox facet-item"
-          >
-            <input
-              type="checkbox"
-              :checked="isSelected(facet.id,item)"
-              @change="toggleFacet(facet.id,item)"
-            >
 
-            {{ item.label || item.value }}
-            ({{ item.count }})
+    <template v-if="isAlphabetFacet(facet.id)">
+      <AlphabetFacetPicker
+        :items="alphabetItems(facet.id, facet.values)"
+        :selected-keys="alphabetSelectedKeys(facet.id)"
+        :label="facet.label"
+        :placeholder="`Rechercher ${facet.label}`"
+        :show-letter-headers="showLetterHeadersFor(facet.id)"
+        @toggle="(item) => toggleFacet(facet.id, item)"
+      />
+    </template>
 
-          </label>
-        </template>
+  <template v-else>
+    <div class="facet-search">
+      <input
+        class="facet-input"
+        type="text"
+        :value="facetFilters[facet.id] || ''"
+        @input="setFacetFilter(
+          facet.id,
+          $event.target.value
+        )"
+        :placeholder="`Filtrer ${facet.label}`"
+      >
+      <button
+        type="button"
+        class="facet-eye-btn"
+        @click="toggleFacetShowAll(facet.id)"
+      >
+        {{ getFacetShowAll(facet.id) ? 'Hide' : 'Show all' }}
+      </button>
+    </div>
+    <label
+      v-for="item in filteredFacetValues(facet.id, facet.values)"
+      :key="item.facet_key || item.value"
+      class="checkbox facet-item"
+    >
+      <input
+        type="checkbox"
+        :checked="isSelected(facet.id,item)"
+        @change="toggleFacet(facet.id,item)"
+      >
+
+      {{ item.label || item.value }}
+      ({{ item.count }})
+
+    </label>
+  </template>
+
+</template>
         <button
           type="button"
           class="facet-reset-btn"
@@ -100,6 +115,7 @@
 
 import { computed, ref, watch } from 'vue'
 import TemporalFacetSlider from './TemporalFacetSlider.vue'
+import AlphabetFacetPicker from './AlphabetFacetPicker.vue'
 
 const props = defineProps({
 
@@ -171,6 +187,34 @@ watch(
 
 const facetFilters = ref({})
 const facetShowAll = ref({})
+const ALPHABET_FACET_IDS = ['dct:contributor', 'dct:creator', 'dct:language', 'dct:collection']
+const NO_LETTER_HEADERS_FACET_IDS = ['dct:language']
+
+function showLetterHeadersFor(facetId) {
+  return !NO_LETTER_HEADERS_FACET_IDS.includes(facetId)
+}
+function isAlphabetFacet(facetId) {
+  return ALPHABET_FACET_IDS.includes(facetId)
+}
+
+function alphabetSelectedKeys(facetId) {
+  return props.activeFacets
+    .filter(f => f.facetType === facetId)
+    .map(f => f.raw ?? f.facet_key ?? f.value ?? f.id)
+}
+
+function alphabetItems(facetId, values) {
+  const list = values || []
+  const selectedKeys = alphabetSelectedKeys(facetId)
+  const selectedFromActive = selectedKeys.map(key => {
+    const existing = list.find(v => (v.facet_key ?? v.value ?? v.id) === key)
+    if (existing) return existing
+    return { facet_key: key, value: key, label: key, count: 0, selected: true }
+  })
+  const rest = list.filter(v => !selectedKeys.includes(v.facet_key ?? v.value ?? v.id))
+  return [...selectedFromActive, ...rest]
+}
+
 
 function isOpen(facetId){
     return props.openedFacets.includes(facetId)
