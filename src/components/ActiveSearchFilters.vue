@@ -106,7 +106,7 @@ const temporalLabels = computed(() => {
 
   return Object.fromEntries(
     props.temporalFacets.map(f => [
-      f.field,
+      f.key,
       f.label
     ])
   )

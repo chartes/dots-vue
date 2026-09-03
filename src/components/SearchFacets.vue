@@ -231,7 +231,7 @@ const orderedFacets = computed(()=>{
     props.temporalFacets.forEach(f=>{
 
         result.push({
-            id: f.field,
+            id: f.key,
             label: f.label,
             type: 'temporal',
             temporal: f,
@@ -247,7 +247,7 @@ const orderedFacets = computed(()=>{
     props.facets.forEach(f=>{
 
         result.push({
-            id: f.id,
+            id: f.key,
             label: f.label,
             values: f.values,
             type: 'terms',
@@ -539,7 +539,7 @@ function toggleFacet(facetId, item) {
 function resetFacet(facet) {
 
     if (facet.type === 'temporal') {
-        emit('reset-range', facet.temporal.field)
+        emit('reset-range', facet.temporal.key)
         return
     }
     emit('reset-facet', facet.id)

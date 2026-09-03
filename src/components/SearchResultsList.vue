@@ -328,7 +328,22 @@ name: 'CollectionTOC',
     const paginated = computed(() => table.paginated.value)
 
     const getRowValue = (row, key) => {
-      return table.getValue(row, key)
+      const value = table.getValue(row, key)
+
+      const col = columns.value.find(col => col.key === key)
+
+      // Search results always come from the index, so date columns get the
+      // same temporal validation as in ResourcesList: when normalisation
+      // produced no bounds, the date is not displayed.
+      if (col?.type === 'date') {
+        const { start, end } = table.getTemporalRange(row, key)
+
+        if (start == null || end == null) {
+          return ''
+        }
+      }
+
+      return value
     }
 
     watch(() => columns.value, (cols) => {
