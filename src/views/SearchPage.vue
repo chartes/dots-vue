@@ -8,40 +8,9 @@
       :root-collection-identifier="rootCollectionId"
       :show-about="false"
     />
-  <!--<div class="collection-list" :class="{ 'root-collection-list' : collectionId === rootCollectionId }">
-    <div class="tiles">
-      <div class="tile page-header">
-        <div class="is-flex is-flex-direction-row wrapper collection-header app-width-margin">
-          <div class="tile article">
-            <div class="title-tile">
-              <p class="title">
-                {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
-              </p>
-            </div>
-          </div>
-          <div class="collection-image"></div>
-        </div>
-      </div>
-    </div>-->
-    <div><!--class="tile"-->
-      <!--<div class="tile page-header app-width-padding">
-        <article class="tile is-child">
-          <div class="is-flex is-flex-direction-row title-tile">
-            <p class="title">
-              Les positions de thèses<br />de l'École nationale des chartes
-            </p>
-            <p class="header-baseline">
-              <span>Position</span> : à l’origine, les positions prises et à défendre par
-              l’élève, face au jury. Depuis, un résumé de la thèse soutenue.
-            </p>
-          </div>
-        </article>
-      </div>-->
-      <div class="tile is-vertical app-width-margin">
-        <div
-          class="tile is-parent search-form-and-carousel"
-          :class="searchMinimizedCssClass"
-        >
+
+  <div class = "sticky-search-header app-width-margin">
+    <div class = "search-bar-row">
           <div class="tile is-child search-form">
             <div class="search-bar-row">
               <!-- Fulltext or Metadata search selector -->
@@ -227,7 +196,26 @@
 <!--                </div>-->
 <!--              </div>-->
             </div>
-            <ActiveSearchFilters
+
+            <!-- Fulltext + results count -->
+
+            <!-- Minimized version -->
+            <div class="minimized-controls">
+              <button
+                class="button is-light is-medium search"
+                @click="expandSearchForm"
+              />
+              <button
+                class="button is-light is-medium expand-form-button"
+                @click="expandSearchForm"
+              />
+            </div>
+          </div>
+    </div>
+    
+  </div>
+          <div class="search-facets-and-results app-width-margin">
+              <ActiveSearchFilters
               :facets="activeFacetTags"
               :ranges="ranges"
               :temporal-facets="visibleTemporal"
@@ -250,19 +238,44 @@
               @reset-range="resetRange"
               @reset-facet="resetFacet"
             />
+          </div>
 
-            <!-- Minimized version -->
-            <div class="minimized-controls">
-              <button
-                class="button is-light is-medium search"
-                @click="expandSearchForm"
-              />
-              <button
-                class="button is-light is-medium expand-form-button"
-                @click="expandSearchForm"
-              />
+  
+  <!--<div class="collection-list" :class="{ 'root-collection-list' : collectionId === rootCollectionId }">
+    <div class="tiles">
+      <div class="tile page-header">
+        <div class="is-flex is-flex-direction-row wrapper collection-header app-width-margin">
+          <div class="tile article">
+            <div class="title-tile">
+              <p class="title">
+                {{ collectionAltTitle ? collectionAltTitle : currCollection.title }}
+              </p>
             </div>
           </div>
+          <div class="collection-image"></div>
+        </div>
+      </div>
+    </div>-->
+    <div><!--class="tile"-->
+      <!--<div class="tile page-header app-width-padding">
+        <article class="tile is-child">
+          <div class="is-flex is-flex-direction-row title-tile">
+            <p class="title">
+              Les positions de thèses<br />de l'École nationale des chartes
+            </p>
+            <p class="header-baseline">
+              <span>Position</span> : à l’origine, les positions prises et à défendre par
+              l’élève, face au jury. Depuis, un résumé de la thèse soutenue.
+            </p>
+          </div>
+        </article>
+      </div>-->
+      <div class="tile is-vertical app-width-margin">
+        <div
+          class="tile is-parent search-form-and-carousel"
+          :class="searchMinimizedCssClass"
+        >
+
           <!--<div class="tile is-child carousel-parent">
             <article class="tile is-child">
               <div class="content">
@@ -1870,15 +1883,7 @@ tr td.chevron-up a::before {
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
 }
-.search-form > *:first-child {
-  display: flex;
-  align-items: center;
-  /*background-color: #868686;*/
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-  padding: 32px 24px 34px 28px;
-  margin-bottom: 0;
-}
+
 .search-form > *:not(:first-child) {
   background-color: #e4e4e4;
   margin-bottom: 0;
@@ -1917,19 +1922,23 @@ tr td.chevron-up a::before {
 .search-minimized .search-form > div.minimized-controls button.search.button.is-light {
   margin-left: 0;
 }
-.search-bar-row {
-  display: flex;
-  align-items: stretch;
-  width: 100%;
-  gap: 0;
-  position : sticky;
+.sticky-search-header {
+  position: sticky;
   top: 0;
-  z-index: 21;
-  background-color: #f0f0f0;
+  z-index: 22;
+  background-color: #f0f0f0fa;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+.sticky-search-header .search-bar-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 10px 10px 10px;
 }
 
-:deep(.active-filters) {
-  top: 108px;
+.search-bar-row {
+  width: 100%;
+  gap: 0;
 }
 
 /* SELECT */
