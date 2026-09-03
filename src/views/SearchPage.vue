@@ -250,16 +250,7 @@
               @reset-range="resetRange"
               @reset-facet="resetFacet"
             />
-            <!-- Fulltext + results count -->
-            <div class="field is-flex px-2 search-form-footer">
-              <div v-if="search.result.value" class="results-count">
-                <span v-if="search.loading.value" class="results-count dot-flash">...</span>
-                <span v-else>
-                  {{ displayedCount }}
-                </span>
-                <span>position(s)</span>
-              </div>
-            </div>
+
             <!-- Minimized version -->
             <div class="minimized-controls">
               <button
@@ -1931,6 +1922,14 @@ tr td.chevron-up a::before {
   align-items: stretch;
   width: 100%;
   gap: 0;
+  position : sticky;
+  top: 0;
+  z-index: 21;
+  background-color: #f0f0f0;
+}
+
+:deep(.active-filters) {
+  top: 108px;
 }
 
 /* SELECT */
