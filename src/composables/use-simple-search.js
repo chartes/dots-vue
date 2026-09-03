@@ -55,6 +55,8 @@ export default function useSimpleSearch() {
   const setCollectionId = v => store.commit('search/setSearchActiveCollection', v)
   const setProject = v => store.commit('search/setSearchProject', v)
   const setIsFulltextSearch = v => store.commit('search/setSearchIsFulltextSearch', v)
+  const setExcludedTemporalFacets = v => store.commit('search/setSearchExcludedTemporalFacets', v)
+  const setExcludedFacets = v => store.commit('search/setSearchExcludedFacets', v)
   const setFacet = ({ facetType, value }) =>
     store.commit('search/setFacet', {
       facetType,
@@ -197,8 +199,34 @@ export default function useSimpleSearch() {
 
     }
 
+    // EXCLUDED TEMPORAL FACETS
+    // Temporal facets disabled in searchConfig.temporalFacets: the API
+    // skips their aggregations. Empty list => no parameter, the API falls
+    // back to its historical behaviour.
+    let temporalArg = ''
+
+    if (s.excludedTemporalFacets?.length) {
+      temporalArg =
+        `&excludeTemporalFacets=${
+          s.excludedTemporalFacets.map(encodeURIComponent).join(',')
+        }`
+    }
+
+    // EXCLUDED FACETS
+    // Metadata facets disabled in searchConfig.facets: the API skips their
+    // aggregations. Empty list => no parameter, the API falls back to its
+    // historical behaviour.
+    let excludeFacetsArg = ''
+
+    if (s.excludedFacets?.length) {
+      excludeFacetsArg =
+        `&excludeFacets=${
+          s.excludedFacets.map(encodeURIComponent).join(',')
+        }`
+    }
+
     api.setQuery(
-      `${_baseApiURL}/search?query=${encodeURIComponent(termValue)}&${filterArgs}&page[number]=${s.pageNum}&page[size]=${s.pageSize}${sortArg}${highlightArg}${groupbyArg}${collectionArg}${facetArgs}${rangesArg}${afterArg}`
+      `${_baseApiURL}/search?query=${encodeURIComponent(termValue)}&${filterArgs}&page[number]=${s.pageNum}&page[size]=${s.pageSize}${sortArg}${highlightArg}${groupbyArg}${collectionArg}${facetArgs}${rangesArg}${temporalArg}${excludeFacetsArg}${afterArg}`
     )
     console.log('searchPage api.setQuery',{
       term: s.term,
@@ -206,7 +234,7 @@ export default function useSimpleSearch() {
       isResourceSearch: isResourceSearch.value,
       termValue
     })
-    console.log('searchPage final query', `${_baseApiURL}/search?query=${encodeURIComponent(termValue)}&${filterArgs}&page[number]=${s.pageNum}&page[size]=${s.pageSize}${sortArg}${highlightArg}${groupbyArg}${collectionArg}${facetArgs}${rangesArg}${afterArg}`)
+    console.log('searchPage final query', `${_baseApiURL}/search?query=${encodeURIComponent(termValue)}&${filterArgs}&page[number]=${s.pageNum}&page[size]=${s.pageSize}${sortArg}${highlightArg}${groupbyArg}${collectionArg}${facetArgs}${rangesArg}${temporalArg}${excludeFacetsArg}${afterArg}`)
   }
 
   watch(
@@ -221,6 +249,8 @@ export default function useSimpleSearch() {
       searchState.value?.noHighlight,
       searchState.value?.afterKey,
       JSON.stringify(searchState.value?.facets?.selected),
+      JSON.stringify(searchState.value?.excludedTemporalFacets),
+      JSON.stringify(searchState.value?.excludedFacets),
     ],
     updateQuery,
     { immediate: true, deep: true }  // garde le comportement initial de watchEffect
@@ -305,6 +335,8 @@ export default function useSimpleSearch() {
     facets: computed(() => searchState.value?.facets || {}),
     initialFacets: computed(() => searchState.value?.initialFacets || { available: {} }),
     temporal: computed(() => searchState.value?.temporal ?? []),
+    excludedTemporalFacets: computed(() => searchState.value?.excludedTemporalFacets ?? []),
+    excludedFacets: computed(() => searchState.value?.excludedFacets ?? []),
     initialTemporal: computed(() => searchState.value?.initialTemporal ?? {}),
     totalCount: computed(() => searchState.value?.totalCount || 0),
     bucketCount: computed(() => searchState.value?.bucketCount || null),
@@ -325,6 +357,8 @@ export default function useSimpleSearch() {
     setProject,
     setIsFulltextSearch,
     setFacet,
+    setExcludedTemporalFacets,
+    setExcludedFacets,
 
     saveSnapshot,
     restoreSnapshot,

@@ -25,42 +25,44 @@ export function useTable(dataSource, columns, options = {}) {
     filters.value = f
   }, { immediate: true })
 
-  const getValue = (obj, path) => {
-      const parts = path.replace(/\[(\d+)\]/g, '.$1').split('.')
+  // Walks a dotted path through an object. Each segment falls back to a
+  // case-insensitive match, which is what lets a configuration written in
+  // the DTS casing (`dublinCore.created`) resolve against a payload that
+  // spells the namespace differently -- the ES index, when used, stores `dublincore`.
+  // That fallback is the whole reason `columns` already works both against
+  // the DTS API and against the search API.
+  const walkPath = (obj, path) => {
+    const parts = path.replace(/\[(\d+)\]/g, '.$1').split('.')
 
-    const result = parts.reduce((acc, part) => {
-      if (acc == null) return undefined
-
-      if (Array.isArray(acc)) {
-        return acc.map(item => {
-          if (item == null) return undefined
-
-          // Exact matching
-          if (Object.prototype.hasOwnProperty.call(item, part)) {
-            return item[part]
-          }
-
-          // Case insensitive matching
-          const matchingKey = Object.keys(item).find(
-            key => key.toLowerCase() === part.toLowerCase()
-          )
-
-          return matchingKey ? item[matchingKey] : undefined
-        })
-      }
+    const read = (source, part) => {
+      if (source == null) return undefined
 
       // Exact matching
-      if (Object.prototype.hasOwnProperty.call(acc, part)) {
-        return acc[part]
+      if (Object.prototype.hasOwnProperty.call(source, part)) {
+        return source[part]
       }
 
       // Case insensitive matching
-      const matchingKey = Object.keys(acc).find(
+      const matchingKey = Object.keys(source).find(
         key => key.toLowerCase() === part.toLowerCase()
       )
 
-      return matchingKey ? acc[matchingKey] : undefined
+      return matchingKey ? source[matchingKey] : undefined
+    }
+
+    return parts.reduce((acc, part) => {
+      if (acc == null) return undefined
+
+      if (Array.isArray(acc)) {
+        return acc.map(item => read(item, part))
+      }
+
+      return read(acc, part)
     }, obj)
+  }
+
+  const getValue = (obj, path) => {
+    const result = walkPath(obj, path)
 
     if (Array.isArray(result)) {
       return result.filter(v => v != null).join(', ')
@@ -68,6 +70,16 @@ export function useTable(dataSource, columns, options = {}) {
 
     return result
   }
+
+  // Temporal properties are normalised at indexing time into a pair of
+  // numeric bounds: the metadata key `dublinCore.created` is stored as
+  // `temporal.dublincore.created_start` / `_end`. Because walkPath is
+  // case-insensitive, the key resolves with no mapping table, and this
+  // holds for any namespace -- `extensions.dateCreated` included.
+  const getTemporalRange = (obj, key) => ({
+    start: getValue(obj, `temporal.${key}_start`),
+    end: getValue(obj, `temporal.${key}_end`)
+  })
 
   // Filtering
   const filtered = computed(() => {
@@ -92,48 +104,19 @@ export function useTable(dataSource, columns, options = {}) {
 
   // Sorting
   const getSortValue = (obj, path) => {
-  const parts = path
-    .replace(/\[(\d+)\]/g, '.$1')
-    .split('.')
+    const result = walkPath(obj, path)
 
-  const result = parts.reduce((acc, part) => {
-    if (acc == null) return undefined
-
-    if (Array.isArray(acc)) {
-      return acc.map(item => {
-        if (item == null) return undefined
-
-        if (Object.prototype.hasOwnProperty.call(item, part)) {
-          return item[part]
-        }
-
-        const matchingKey = Object.keys(item).find(
-          key => key.toLowerCase() === part.toLowerCase()
-        )
-
-        return matchingKey ? item[matchingKey] : undefined
-      })
+    if (!Array.isArray(result)) {
+      return result
     }
 
-    if (Object.prototype.hasOwnProperty.call(acc, part)) {
-      return acc[part]
-    }
-
-    const matchingKey = Object.keys(acc).find(
-      key => key.toLowerCase() === part.toLowerCase()
-    )
-
-    return matchingKey ? acc[matchingKey] : undefined
-  }, obj)
-
-  if (Array.isArray(result)) {
     const values = result.filter(v => v != null)
 
     if (!values.length) return undefined
 
     // Same logic as Elasticsearch :
-    // asc  → minimum value of array
-    // desc → maximum value of array
+    // asc  -> minimum value of array
+    // desc -> maximum value of array
     return values.reduce((selected, current) => {
       const comparison = String(current).localeCompare(String(selected))
 
@@ -144,9 +127,6 @@ export function useTable(dataSource, columns, options = {}) {
       return comparison > 0 ? current : selected
     })
   }
-
-  return result
-}
 
   const sorted = computed(() => {
     if (!sort.value.key || sort.value.direction === 'none') {
@@ -223,6 +203,7 @@ export function useTable(dataSource, columns, options = {}) {
     totalPages,
     paginated,
     totalResults,
-    getValue
+    getValue,
+    getTemporalRange
   }
 }

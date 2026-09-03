@@ -3,8 +3,8 @@
     <!--<div class="temporal-tabs">
       <button
         v-for="facet in availableTabs"
-        :key="facet.field"
-        :class="{ active: facet.field === currentFacet.field }"
+        :key="facet.key"
+        :class="{ active: facet.key === currentFacet.key }"
         @click="selectFacet(facet)"
       >
         {{ facet.label }}
@@ -111,7 +111,7 @@ const currentFacet = computed(() => {
 
   return (
     availableTabs.value.find(
-      facet => facet.id === currentFacetId.value
+      facet => facet.key === currentFacetId.value
     ) ??
     availableTabs.value[0]
   )
@@ -176,18 +176,18 @@ watch(
 
     // Initialisation
     if (!currentFacetId.value) {
-      currentFacetId.value = tabs[0].id
+      currentFacetId.value = tabs[0].key
       return
     }
 
     // Facet still exists : we keep it
     const exists = tabs.some(
-      facet => facet.id === currentFacetId.value
+      facet => facet.key === currentFacetId.value
     )
 
     // Otherwise select the first
     if (!exists) {
-      currentFacetId.value = tabs[0].id
+      currentFacetId.value = tabs[0].key
     }
   },
   {
@@ -197,7 +197,7 @@ watch(
 
 
 function selectFacet(facet) {
-  currentFacetId.value = facet.id
+  currentFacetId.value = facet.key
 }
 
 
@@ -216,7 +216,7 @@ const currentRange = computed(() => {
     }
   }
 
-  const r = props.ranges?.[currentFacet.value.field]
+  const r = props.ranges?.[currentFacet.value.key]
 
   const [min, max] = clampRange(
     r?.gte ?? effectiveAvailableMin.value,
@@ -263,7 +263,7 @@ watch(
     inputMax.value = max
 
     emit('change', {
-      field: currentFacet.value.field,
+      key: currentFacet.value.key,
       range: {
         startField: currentFacet.value.start_field,
         endField: currentFacet.value.end_field,
@@ -524,7 +524,7 @@ watch(
     //   '[TemporalSlider] currentFacet values:',
     //   {
     //     id: facet.id,
-    //     field: facet.field,
+    //     key: facet.key,
     //     min: facet.min,
     //     max: facet.max,
     //     available_min: facet.available_min,
@@ -590,7 +590,7 @@ watch(
   () => {
     if (!currentFacet.value) return
 
-    const r = props.ranges?.[currentFacet.value.field]
+    const r = props.ranges?.[currentFacet.value.key]
 
     const [min, max] = clampRange(
       r?.gte ?? effectiveAvailableMin.value,

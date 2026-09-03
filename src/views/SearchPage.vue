@@ -707,32 +707,67 @@ export default {
 
     const openedFacets = search.openedFacets
 
-    function onTemporalChange({field, range}){
+    function onTemporalChange({key, range}){
+      // `ranges` is keyed by the canonical key; the Elasticsearch paths
+      // travel inside `range` as startField / endField.
       setRange(
-        field,
+        key,
         range
       )
       executeSearches()
     }
 
+    // Facets and configuration entries are both designated by `key`, the
+    // canonical metadata key an editor writes (`dublinCore.created`).
+    // Ids of the temporal facets that are explicitly disabled.
+    // Same declarative rule as disabledFacetIds below: a facet missing from
+    // the config is still displayed, using the backend default label
+    // (see `label: c?.label || facet.label` in visibleTemporal).
+    // Declaring an entry therefore customises it (label, order) or excludes it.
+    const disabledTemporalFacetIds = computed(() => {
+      const config =
+        collConfig.value?.searchConfig?.temporalFacets || []
+
+      return config
+        .filter(c => c.enabled === false)
+        .map(c => c.key)
+        .filter(Boolean)
+    })
+
+    // Ids of the metadata facets that are explicitly disabled.
+    // We send the DISABLED ones rather than the enabled ones, to match the
+    // rendering rule of visibleFacets below (`config?.enabled === false`):
+    // a facet missing from the config is still displayed. A partial config
+    // such as cid.conf.json (`[{ id: 'collections', enabled: false }]`) is
+    // therefore translated faithfully.
+    const disabledFacetIds = computed(() => {
+      const config =
+        collConfig.value?.searchConfig?.facets || []
+
+      return config
+        .filter(c => c.enabled === false)
+        .map(c => c.key)
+        .filter(Boolean)
+    })
+
     const visibleTemporal = computed(() => {
       const config =
         collConfig.value?.searchConfig?.temporalFacets || []
       const configMap = new Map(
-        config.map(c => [c.id, c])
+        config.map(c => [c.key, c])
       )
 
       // temporal.value a la même structure/clés que initialTemporal.value
       // on suppose un accès par id, ex: temporal.value trouvé via .find ou déjà en Map/objet
       const availableMap = new Map(
         (Array.isArray(temporal.value) ? temporal.value : Object.values(temporal.value || {}))
-          .map(f => [f.id, f])
+          .map(f => [f.key, f])
       )
 
       return initialTemporal.value
         .map((facet, index) => {
-          const c = configMap.get(facet.id)
-          const available = availableMap.get(facet.id)
+          const c = configMap.get(facet.key)
+          const available = availableMap.get(facet.key)
 
           return {
             ...facet,
@@ -751,7 +786,7 @@ export default {
         })
         // explicit exclusion only
         .filter(facet => {
-          const c = configMap.get(facet.id)
+          const c = configMap.get(facet.key)
           return c?.enabled !== false
         })
         .sort((a, b) => {
@@ -788,7 +823,7 @@ export default {
 
       const collectionsConfig =
         configFacets.find(
-          f => f.id === 'collections'
+          f => f.key === 'collections'
         )
 
       //
@@ -809,7 +844,7 @@ export default {
         })).filter(f => f.id !== collectionId.value)
 
         result.push({
-          id: 'collections',
+          key: 'collections',
           label: collectionsConfig?.label || 'Collections',
           values: collections,
           order: 0,
@@ -825,7 +860,7 @@ export default {
 
           const config =
             configFacets.find(
-              f => f.id === id
+              f => f.key === id
             )
 
 
@@ -835,7 +870,7 @@ export default {
 
           result.push({
 
-            id,
+            key: id,
 
             label:
               config?.label ||
@@ -1012,10 +1047,10 @@ export default {
 
       if (configCols?.length > 0) {
         return configCols
-          .filter(col => col && (col.key || col.field)) // security null + lodash + fallback
+          .filter(col => col && col.key) // security null + lodash
           .map(col => ({
-            key: col.key || col.field,
-            label: col.label || (col.key || col.field),
+            key: col.key,
+            label: col.label || col.key,
             type: col.type || 'string',
             width: col.width
           }))
@@ -1582,6 +1617,24 @@ export default {
       { immediate: true }
     )
 
+    // immediate: true => the list lands in the store before the initial
+    // executeSearches() below, hence from the very first request onwards.
+    watch(
+      disabledTemporalFacetIds,
+      (ids) => {
+        search.setExcludedTemporalFacets(ids)
+      },
+      { immediate: true }
+    )
+
+    watch(
+      disabledFacetIds,
+      (ids) => {
+        search.setExcludedFacets(ids)
+      },
+      { immediate: true }
+    )
+
     const _pid = store.state.search.activeProjectId
     const _existingState = _pid ? store.state.search.byProject[_pid] : null
     const _hasResults = (_existingState?.totalCount ?? 0) > 0
@@ -1642,6 +1695,8 @@ export default {
       onTemporalChange,
       initialTemporal,
       visibleTemporal,
+      disabledTemporalFacetIds,
+      disabledFacetIds,
       visibleFacets,
       temporal,
       ranges,

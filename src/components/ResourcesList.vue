@@ -373,23 +373,8 @@ name: 'CollectionTOC',
           return value
         }
 
-        const match = key.match(/^dublinCore\.(.+)$/i)
-
-        if (!match) {
-          return value
-        }
-
-        const field = match[1]
-
-        const start = table.getValue(
-          row,
-          `temporal.dublincore.${field}_start`
-        )
-
-        const end = table.getValue(
-          row,
-          `temporal.dublincore.${field}_end`
-        )
+        // The metadata key resolves on its own, whatever its namespace
+        const { start, end } = table.getTemporalRange(row, key)
 
         // La normalisation n'a pas produit les deux bornes :
         // on n'affiche pas la date.
