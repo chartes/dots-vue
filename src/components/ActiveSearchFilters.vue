@@ -158,12 +158,11 @@ function clearAll(){
 
 .active-filters {
   position: sticky;
+  width: 85.5%;
   top: 0;
   z-index: 20;
-  background: #fff;
   padding: .75rem 1rem;
-  border-bottom: 1px solid #e2e2e2;
-  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+  border: 3px solid #f9f9f9;
 }
 
 .active-filters-header {
@@ -201,16 +200,7 @@ function clearAll(){
   transform: rotate(180deg);
 }
 
-/*
-.active-filters {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: #fff;
-  padding: .75rem 1rem;
-  border-bottom: 1px solid #e2e2e2;
-  box-shadow: 0 2px 6px rgba(0,0,0,.06);
-}
+
 
 .active-filters-header {
   display: flex;
@@ -227,7 +217,7 @@ function clearAll(){
   text-transform: uppercase;
   color: #1a1a1a;
 }
-  */
+
 .filter-tags {
   display:flex;
   flex-wrap:wrap;

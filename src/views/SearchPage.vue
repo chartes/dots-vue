@@ -8,7 +8,6 @@
       :root-collection-identifier="rootCollectionId"
       :show-about="false"
     />
-
   <div class = "sticky-search-header app-width-margin">
     <div class = "search-bar-row">
           <div class="tile is-child search-form">
@@ -65,7 +64,39 @@
                 :disabled="isInvalidQuery || search.loading.value"
                 @click="executeSearches"
               />
+
             </div>
+
+            <div class="active-filters-and-sliders">
+                <button
+                  class="button is-medium hide-filters-button"
+                  @click="hideFilters"
+                  :title="filtersHidden ? 'Afficher les filtres' : 'Masquer les filtres'"
+                  :aria-label="filtersHidden ? 'Afficher les filtres' : 'Masquer les filtres'"
+                >
+                  <img
+                    v-if="filtersHidden === true"
+                    src="@/assets/images/filters-show.svg"
+                    alt="Afficher les filtres"
+                    class="filter-icon"
+                  />
+                  <img
+                    v-else
+                    src="@/assets/images/filters-hide.svg"
+                    alt="Masquer les filtres"
+                    class="filter-icon"
+                  />
+                </button>
+              <ActiveSearchFilters
+              :facets="activeFacetTags"
+              :ranges="ranges"
+              :temporal-facets="visibleTemporal"
+              @remove-facet="removeActiveFacet"
+              @remove-range="removeActiveRange"
+              @clear-all="clearAllFilters"
+            />
+  </div>
+
             <!-- FACET AUTOCOMPLETE -->
 <!--            <div class="field">-->
 <!--              <div class="control is-expanded search-control">-->
@@ -214,15 +245,8 @@
     </div>
     
   </div>
-          <div class="search-facets-and-results app-width-margin">
-              <ActiveSearchFilters
-              :facets="activeFacetTags"
-              :ranges="ranges"
-              :temporal-facets="visibleTemporal"
-              @remove-facet="removeActiveFacet"
-              @remove-range="removeActiveRange"
-              @clear-all="clearAllFilters"
-            />
+          <div class="search-facets-and-results app-width-margin" v-show="!filtersHidden">
+
             <SearchFacets
               class="search-facets"
               :opened-facets="openedFacets"
@@ -707,6 +731,11 @@ export default {
     const pageSize = computed(() =>
         `${import.meta.env.VITE_SEARCH_RESULT_PER_PAGE}`
     )
+    const filtersHidden = ref(false)
+
+    function hideFilters() {
+      filtersHidden.value = !filtersHidden.value
+    }
 
     // ⚠️ compat API existante (on garde "search.xxx")
     const search = useSimpleSearch()
@@ -1718,7 +1747,9 @@ export default {
       openFacet,
       closeFacet,
       resetRange,
-      resetFacet
+      resetFacet,
+      filtersHidden,
+      hideFilters,
     }
   },
   methods: {
@@ -1991,9 +2022,18 @@ tr td.chevron-up a::before {
   padding: 10px 10px 10px 10px;
 }
 
+.hide-filters-button {
+  background-color: transparent !important;
+  box-shadow: none;
+}
+
 .search-bar-row {
   width: 100%;
   gap: 0;
+}
+.active-filters-and-sliders{
+  width: flex;
+  position:sticky
 }
 
 /* SELECT */
@@ -2107,7 +2147,11 @@ tr td.chevron-up a::before {
   cursor: pointer;
   color: var(--fill-color);
 }
-
+.hide-filters-button .filter-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
 /* SEARCH BUTTON */
 .search-submit {
   width: 44px;
@@ -2358,6 +2402,12 @@ input[type="number"]::-webkit-inner-spin-button {
   text-transform: none;
   color: #5b5b5b;
   margin: 0;
+}
+.active-filters-and-sliders {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 .carousel-parent article .subtitle {
   font-size: 20px;
