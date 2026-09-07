@@ -32,7 +32,7 @@
         </g>
       </template>
 
-      <template v-else-if="state === 'asc' && type === 'range'">
+      <template v-else-if="state === 'asc' && (type === 'range' || type === 'date')">
         <g stroke="currentColor" stroke-width="6" stroke-linecap="square">
           <line x1="64" y1="44" x2="64" y2="78"/>
           <line x1="48" y1="72" x2="64" y2="84"/>
@@ -40,7 +40,7 @@
         </g>
       </template>
 
-      <template v-else-if="state === 'desc' && type === 'range'">
+      <template v-else-if="state === 'desc' && (type === 'range' || type === 'date')">
         <g stroke="currentColor" stroke-width="6" stroke-linecap="square">
           <line x1="64" y1="84" x2="64" y2="50"/>
           <line x1="48" y1="56" x2="64" y2="44"/>
