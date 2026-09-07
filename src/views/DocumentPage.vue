@@ -1642,7 +1642,8 @@ export default {
       // Case 2 : new objet
       activeBreadcrumb.value = index
       activeObject.value = breadcrumbItem
-      activePanel.value = topTOCDisplayIndicator.value && topTOC.value.length > 1 ? 'summary' : 'meta'
+      activePanel.value = 'meta'
+      // if opening topTOC first, previous rule: activePanel.value = topTOCDisplayIndicator.value && topTOC.value.length > 1 ? 'summary' : 'meta'
 
       if (event && event.target) {
         // On clock, active element is positionned on left by scrolling Ariane block
