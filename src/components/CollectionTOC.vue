@@ -520,22 +520,29 @@ export default {
       // Default image name ?
       const defaultImgName = appConfig.value?.genericConf?.homePageSettings?.listSection?.logo
 
-      // If collection image name is default name
-      if (collectionImg === defaultImgName) {
+      // Explicit empty image name : the collection opts out of any image (cancels the default)
+      if (typeof collectionImg === 'string' && collectionImg.trim().length === 0) {
+        return {
+          url: null,
+          type: 'none'
+        }
+      }
 
-        // Default images (Dots-vue app or custom folder)
+      // Default image (custom settings default folder, then Dots-vue app folder)
+      const resolveDefaultImage = () => {
+        if (!defaultImgName) return null
+
         const defaultCustMatch = images[`default/assets/images/${defaultImgName}`]
         const defaultAppMatch = images[`src/assets/images/${defaultImgName}`]
 
-        // Generic image (custom settings default folder)
-        const resolved =
+        return (
           resolveModule(defaultCustMatch, 'default') ||
           resolveModule(defaultAppMatch, 'default')
-
-        if (resolved) return resolved
+        )
       }
-      // Not a default image : find a matching image
-      else if (collectionImg && collectionImg.length > 0) {
+
+      // Collection declares its own image : find a matching image
+      if (collectionImg && collectionImg.length > 0 && collectionImg !== defaultImgName) {
 
         // External URL
         if (collectionImg.startsWith('http')) {
@@ -551,6 +558,10 @@ export default {
         const resolved = resolveModule(match, 'collection')
         if (resolved) return resolved
       }
+
+      // No collection image (or unresolvable) : fall back to the app default
+      const resolvedDefault = resolveDefaultImage()
+      if (resolvedDefault) return resolvedDefault
 
       // No image found
       return {
