@@ -11,23 +11,20 @@
         class="collapse-btn"
         @click="toggleCollapsed"
       >
-              <!-- supprimer tous les filtres -->
-        <i class="collapse-arrow" :class="{ opened: !collapsed }" />
-
         <span class="active-filters-title">Filtres actifs</span>
-          <svg
-            class="clearall-icon"
-            title="Supprimer tous les filtres"
-            viewBox="0 0 24 24"
-            @click.stop="clearAll"
-          >
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="15" y1="9" x2="9" y2="15"/>
-            <line x1="9" y1="9" x2="15" y2="15"/>
-          </svg>
+        <i class="collapse-arrow" :class="{ opened: !collapsed }" />
       </button>
 
-
+      <!-- supprimer tous les filtres -->
+      <svg
+        class="clearall-icon"
+        viewBox="0 0 24 24"
+        @click.stop="clearAll"
+      >
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
 
     </div>
 
@@ -73,9 +70,6 @@
         </svg>
       </span>
     </div>
-  </div>
-  <div v-else class="active-filters">
-    <span class="active-filters-title">Aucun filtre actif</span>
   </div>
 </template>
 <script setup>
@@ -123,7 +117,7 @@ const temporalLabels = computed(() => {
 
   return Object.fromEntries(
     props.temporalFacets.map(f => [
-      f.key,
+      f.field,
       f.label
     ])
   )
@@ -162,13 +156,25 @@ function clearAll(){
 <style scoped>
 
 
+/*
+  NOTE : cette page peut aussi afficher un document (Document.vue), qui
+  importe des feuilles de styles globales et non scopées (tei.css,
+  postprod.css). Ces styles restent injectés dans <head> pour le reste de la
+  session même après être revenu sur la recherche (pas de rechargement en
+  SPA), et peuvent contenir des règles génériques qui affectent la
+  typographie ici. En attendant de corriger ces fichiers à la source, on fixe
+  explicitement la police/taille/poids des libellés ci-dessous (avec
+  !important) pour que ce composant reste correct quoi qu'il arrive.
+*/
 .active-filters {
   position: sticky;
-  width: 85.5%;
   top: 0;
   z-index: 20;
+  background: #fff;
   padding: .75rem 1rem;
-  border: 0px solid #f9f9f9;
+  border-bottom: 1px solid #e2e2e2;
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+  font-family: "Barlow", sans-serif !important;
 }
 
 .active-filters-header {
@@ -178,7 +184,10 @@ function clearAll(){
 }
 
 .active-filters-title {
-  font-weight:600;
+  font-family: "Barlow", sans-serif !important;
+  font-size: .95rem !important;
+  font-weight: 600 !important;
+  color: #1a1a1a !important;
 }
 
 .collapse-btn {
@@ -189,6 +198,7 @@ function clearAll(){
   border: none;
   padding: 0;
   font: inherit;
+  font-family: "Barlow", sans-serif !important;
   cursor: pointer;
 }
 
@@ -206,7 +216,16 @@ function clearAll(){
   transform: rotate(180deg);
 }
 
-
+/*
+.active-filters {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid #e2e2e2;
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+}
 
 .active-filters-header {
   display: flex;
@@ -223,7 +242,7 @@ function clearAll(){
   text-transform: uppercase;
   color: #1a1a1a;
 }
-
+  */
 .filter-tags {
   display:flex;
   flex-wrap:wrap;
@@ -240,6 +259,12 @@ function clearAll(){
   border-radius:15px;
 
   padding:.25rem .75rem;
+
+  font-family: "Barlow", sans-serif !important;
+  font-size: .85rem !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  color: #333 !important;
 }
 
 .clear-icon {
