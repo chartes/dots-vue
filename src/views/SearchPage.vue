@@ -1218,8 +1218,28 @@ export default {
     }
 
     // SORT
-    const toElasticSortField = key => {
+
+    // Temporal properties bounds are normalized in the indexes:
+    // `dublinCore.created` → `temporal.dublincore.created_start` / `_end`
+
+    // Date columns should sort on the normalized bound, not the raw value
+    // Unparseable dates, excluded from results (`getRowValue`), should not affect sorting either
+
+    const toElasticTemporalSortField = key => {
+      const [namespace, ...rest] = key.split('.')
+
+      // Namespace dublinCore normalised during indexation (`dublinCore` -> `dublincore`)
+      const path = [namespace.toLowerCase(), ...rest].join('.')
+
+      return `temporal.temporal.${path}_start`
+    }
+
+    const toElasticSortField = (key, type) => {
       if (!key) return null
+
+      if (type === 'date') {
+        return toElasticTemporalSortField(key)
+      }
 
       const parts = key.split('.')
 
@@ -1228,7 +1248,7 @@ export default {
         ...parts
       ]
         .map((part, index) => {
-          // Seuls les champs issus de dublinCore sont normalisés en lowercase
+          // Namespace dublinCore normalised during indexation (`dublinCore` -> `dublincore`)
           if (parts[0] === 'dublinCore') {
             return part.toLowerCase()
           }
@@ -1240,13 +1260,13 @@ export default {
       return `${field}.keyword`
     }
 
-    const updateSort = ({ key, direction }) => {
+    const updateSort = ({ key, direction, column }) => {
       if (!key || direction === 'none') {
         inputSort.value = null
         return
       }
 
-      const elasticField = toElasticSortField(key)
+      const elasticField = toElasticSortField(key, column?.type)
 
       inputSort.value = direction === 'desc'
         ? `-${elasticField}`
