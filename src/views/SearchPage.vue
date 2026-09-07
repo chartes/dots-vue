@@ -12,6 +12,18 @@
     <div class = "search-bar-row">
           <div class="tile is-child search-form">
             <div class="search-bar-row">
+                              <button
+                  class="button is-medium burger-menu-button"
+                  @click="toggleSidebar"
+                  :title="sidebarOpen ? 'Fermer les filtres' : 'Ouvrir les filtres'"
+                  :aria-label="sidebarOpen ? 'Fermer les filtres' : 'Ouvrir les filtres'"
+                >
+                  <span class="burger-icon" :class="{ 'is-active': sidebarOpen }">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                </button>
               <!-- Fulltext or Metadata search selector -->
               <div class="search-mode-wrapper">
                 <!-- SELECT BUTTON -->
@@ -35,6 +47,7 @@
               </div>
               <!-- input -->
               <div class="search-input-wrapper">
+    
                 <input
                   class="input is-medium"
                   :class="isInvalidQuery ? 'input-error' : ''"
@@ -68,33 +81,9 @@
             </div>
 
             <div class="active-filters-and-sliders">
-                <button
-                  class="button is-medium hide-filters-button"
-                  @click="hideFilters"
-                  :title="filtersHidden ? 'Afficher les filtres' : 'Masquer les filtres'"
-                  :aria-label="filtersHidden ? 'Afficher les filtres' : 'Masquer les filtres'"
-                >
-                  <img
-                    v-if="filtersHidden === true"
-                    src="@/assets/images/filters-show.svg"
-                    alt="Afficher les filtres"
-                    class="filter-icon"
-                  />
-                  <img
-                    v-else
-                    src="@/assets/images/filters-hide.svg"
-                    alt="Masquer les filtres"
-                    class="filter-icon"
-                  />
-                </button>
-              <ActiveSearchFilters
-              :facets="activeFacetTags"
-              :ranges="ranges"
-              :temporal-facets="visibleTemporal"
-              @remove-facet="removeActiveFacet"
-              @remove-range="removeActiveRange"
-              @clear-all="clearAllFilters"
-            />
+
+
+
   </div>
 
             <!-- FACET AUTOCOMPLETE -->
@@ -228,7 +217,6 @@
 <!--              </div>-->
             </div>
 
-            <!-- Fulltext + results count -->
 
             <!-- Minimized version -->
             <div class="minimized-controls">
@@ -245,26 +233,41 @@
     </div>
     
   </div>
-          <div class="search-facets-and-results app-width-margin" v-show="!filtersHidden">
+          <div class="page-body app-width-margin" :class="{ 'sidebar-open': sidebarOpen }">
 
-            <SearchFacets
-              class="search-facets"
-              :opened-facets="openedFacets"
-              :facets="visibleFacets"
-              :temporal-facets="visibleTemporal"
-              :active-facets="activeFacetTags"
+            <aside class="facets-sidebar" v-if="sidebarOpen">
+              <div class="facets-sidebar-header">
+
+              </div>
+              <ActiveSearchFilters
+              v-show="!filtersHidden"
+              :facets="activeFacetTags"
               :ranges="ranges"
-              @facet-open="openFacet"
-              @facet-close="closeFacet"
-              @toggleFacet="onToggleFacet"
-              @change-range="onTemporalChange"
-              @apply-collections="executeSearches()"
-              @reset-range="resetRange"
-              @reset-facet="resetFacet"
+              :temporal-facets="visibleTemporal"
+              @remove-facet="removeActiveFacet"
+              @remove-range="removeActiveRange"
+              @clear-all="clearAllFilters"
             />
-          </div>
+              <SearchFacets
+                class="search-facets"
+                :opened-facets="openedFacets"
+                :facets="visibleFacets"
+                :temporal-facets="visibleTemporal"
+                :active-facets="activeFacetTags"
+                :ranges="ranges"
+                @facet-open="openFacet"
+                @facet-close="closeFacet"
+                @toggleFacet="onToggleFacet"
+                @change-range="onTemporalChange"
+                @apply-collections="executeSearches()"
+                @reset-range="resetRange"
+                @reset-facet="resetFacet"
+              />
+            </aside>
 
-  
+            <div class="page-main">
+
+
   <!--<div class="collection-list" :class="{ 'root-collection-list' : collectionId === rootCollectionId }">
     <div class="tiles">
       <div class="tile page-header">
@@ -294,7 +297,7 @@
           </div>
         </article>
       </div>-->
-      <div class="tile is-vertical app-width-margin">
+      <div class="tile is-vertical">
         <div
           class="tile is-parent search-form-and-carousel"
           :class="searchMinimizedCssClass"
@@ -634,7 +637,7 @@
       </div>
     </div>
     <div
-      class="document-list app-width-margin list-mode"
+      class="document-list list-mode"
       :class="openedFacets.length > 0 ? 'with-opened-facets' : ''"
     >
       <!-- <span>search {{ tableData }}</span> -->
@@ -656,6 +659,8 @@
         @sort-change="updateSort"
       /><!--v-if="tableData.length > 0"-->
     </div>
+    </div><!-- ferme .page-main -->
+  </div><!-- ferme .page-body -->
   </div>
 </template>
 
@@ -735,6 +740,12 @@ export default {
 
     function hideFilters() {
       filtersHidden.value = !filtersHidden.value
+    }
+
+    const sidebarOpen = ref(false)
+
+    function toggleSidebar() {
+      sidebarOpen.value = !sidebarOpen.value
     }
 
     // ⚠️ compat API existante (on garde "search.xxx")
@@ -1588,6 +1599,9 @@ export default {
         !inputTerm.value ||
         inputTerm.value.length === 0
       )
+      if (v) {
+        isResultTableMode.value = false
+      }
       /* recherche immédiate à la selection (debounced)
       executeSearches()
        */
@@ -1750,6 +1764,8 @@ export default {
       resetFacet,
       filtersHidden,
       hideFilters,
+      sidebarOpen,
+      toggleSidebar,
     }
   },
   methods: {
@@ -1781,8 +1797,8 @@ export default {
   justify-content: center;
   flex-direction: column;
   width: 100%;
-  margin-top: 60px;
-  padding-top: 25px;
+  margin-top: 0;
+  padding-top: 0;
   padding-bottom: 25px;
 
   &.with-opened-facets {
@@ -1962,7 +1978,7 @@ tr td.chevron-up a::before {
   /*gap: 20px;*/
   padding-bottom: 50px !important;
   border-bottom: solid 1px #b8b8b8;
-  margin-bottom: 24px !important;
+  margin-bottom: 2px !important;
 }
 .search-form {
   background-color: #f0f0f0 !important;
@@ -2025,6 +2041,85 @@ tr td.chevron-up a::before {
 .hide-filters-button {
   background-color: transparent !important;
   box-shadow: none;
+}
+
+/* Sidebar des facettes (burger) */
+.page-body {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.facets-sidebar {
+  position: sticky;
+  top: 130 px;
+  max-height: auto;
+  overflow-y: auto;
+  flex: 0 0 33.333%;
+  max-width: 33.333%;
+  box-sizing: border-box;
+  padding: 20px;
+  background: #fff;
+  border-right: none;
+  min-height: 100%;
+}
+
+.facets-sidebar-header {
+  display: flex;
+  position: sticky !important;
+  justify-content: flex-start;
+  margin-bottom: 1px;
+}
+
+.close-sidebar-btn {
+  background: none;
+  border: none;
+  color: #b9192f;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.page-main {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Bouton burger */
+.burger-menu-button {
+  background-color: transparent !important;
+  box-shadow: none;
+}
+
+.burger-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 20px;
+  height: 14px;
+}
+
+.burger-icon span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background-color: #4a4a4a;
+  border-radius: 1px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.burger-icon.is-active span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.burger-icon.is-active span:nth-child(2) {
+  opacity: 0;
+}
+.burger-icon.is-active span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
 .search-bar-row {
@@ -2535,6 +2630,7 @@ tr.row-details :deep(li) {
   line-height: 26px;
   color: #000000;
   margin-bottom: 10px;
+
 }
 .text-results .table > a .position-author {
   font-size: 16px;
@@ -2809,4 +2905,22 @@ tr.row-details :deep(em),
   padding: 40px;
 }
 
+.active-filters {
+  position: sticky;
+  width: flex;
+  top: 0;
+  z-index: 20;
+  padding: .75rem 1rem;
+  border: 0px solid #f9f9f9;
+}
+
+.active-filters-header {
+  display:inline-flex;
+  align-items:center;
+  gap:1rem;
+}
+
+.active-filters-title {
+  font-weight:600;
+}
 </style>

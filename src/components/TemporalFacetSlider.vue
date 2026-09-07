@@ -685,7 +685,7 @@ watch(
 /* values */
 .slider-label span,
 .temporal-inputs span {
-  font-size:14px;
+  font-size:12px;
   color:#979797;
 }
 
@@ -699,7 +699,7 @@ watch(
   -moz-appearance: textfield;
   background-color:#fff;
 
-  max-width:70px;
+  max-width:50px;
   padding:2px 0;
   margin:0 15px;
 

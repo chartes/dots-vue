@@ -11,20 +11,23 @@
         class="collapse-btn"
         @click="toggleCollapsed"
       >
-        <span class="active-filters-title">Filtres actifs</span>
+              <!-- supprimer tous les filtres -->
         <i class="collapse-arrow" :class="{ opened: !collapsed }" />
+
+        <span class="active-filters-title">Filtres actifs</span>
+          <svg
+            class="clearall-icon"
+            title="Supprimer tous les filtres"
+            viewBox="0 0 24 24"
+            @click.stop="clearAll"
+          >
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
       </button>
 
-      <!-- supprimer tous les filtres -->
-      <svg
-        class="clearall-icon"
-        viewBox="0 0 24 24"
-        @click.stop="clearAll"
-      >
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="15" y1="9" x2="9" y2="15"/>
-        <line x1="9" y1="9" x2="15" y2="15"/>
-      </svg>
+
 
     </div>
 
@@ -70,6 +73,9 @@
         </svg>
       </span>
     </div>
+  </div>
+  <div v-else class="active-filters">
+    <span class="active-filters-title">Aucun filtre actif</span>
   </div>
 </template>
 <script setup>
@@ -162,7 +168,7 @@ function clearAll(){
   top: 0;
   z-index: 20;
   padding: .75rem 1rem;
-  border: 3px solid #f9f9f9;
+  border: 0px solid #f9f9f9;
 }
 
 .active-filters-header {
